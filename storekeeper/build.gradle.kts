@@ -4,7 +4,7 @@ plugins {
     application
 }
 
-val ktorVersion = "2.0.0"
+val ktorVersion = "2.1.0"
 
 application {
     mainClass.set("io.ktor.server.netty.EngineMain")
@@ -17,7 +17,7 @@ dependencies {
     implementation("io.ktor:ktor-server-netty:$ktorVersion")
     implementation("io.ktor:ktor-server-content-negotiation:$ktorVersion")
     implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
-    implementation("io.ktor:ktor-server-cors:$ktorVersion")
+    implementation("io.ktor:ktor-server-call-logging:$ktorVersion")
 
     implementation("ch.qos.logback:logback-classic:1.2.11")
 

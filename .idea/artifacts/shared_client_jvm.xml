@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="shared-client-jvm">
+    <output-path>$PROJECT_DIR$/shared-client/build/libs</output-path>
+    <root id="archive" name="shared-client-jvm.jar">
+      <element id="module-output" name="wheretopark.shared-client.jvmMain" />
+    </root>
+  </artifact>
+</component>
