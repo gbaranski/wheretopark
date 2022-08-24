@@ -1,0 +1,23 @@
+{
+  "pins" : [
+    {
+      "identity" : "bottomsheet",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/adamfootdev/BottomSheet",
+      "state" : {
+        "revision" : "0e6db002eeb5e3ba402e94dfe6a120f78b5a64df",
+        "version" : "0.2.4"
+      }
+    },
+    {
+      "identity" : "phonenumberkit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/marmelroy/PhoneNumberKit.git",
+      "state" : {
+        "revision" : "aecb35499789bc4e22e3a025d647eef922be418e",
+        "version" : "3.4.7"
+      }
+    }
+  ],
+  "version" : 2
+}
