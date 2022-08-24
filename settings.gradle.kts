@@ -9,7 +9,6 @@ pluginManagement {
 rootProject.name = "wheretopark"
 
 include(":shared")
-include(":shared-client")
 include(":android")
 include(":storekeeper")
 

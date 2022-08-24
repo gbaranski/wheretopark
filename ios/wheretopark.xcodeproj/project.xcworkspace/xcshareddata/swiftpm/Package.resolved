@@ -12,7 +12,7 @@
     {
       "identity" : "phonenumberkit",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/marmelroy/PhoneNumberKit.git",
+      "location" : "https://github.com/marmelroy/PhoneNumberKit",
       "state" : {
         "revision" : "aecb35499789bc4e22e3a025d647eef922be418e",
         "version" : "3.4.7"

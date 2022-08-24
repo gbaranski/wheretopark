@@ -1,4 +1,4 @@
-package com.gbaranski.wheretopark.android
+package app.wheretopark.android
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
