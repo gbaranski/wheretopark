@@ -32,7 +32,7 @@ class StorekeeperClient {
     suspend fun states(): Map<ParkingLotID, ParkingLotState> {
         val response = http.get(baseURL) {
             url {
-                appendPathSegments("parking-lot", "metadata")
+                appendPathSegments("parking-lot", "state")
             }
         }
         return response.body()
