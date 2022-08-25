@@ -9,7 +9,7 @@ plugins {
 val ktorVersion = "2.1.0"
 
 application {
-    mainClass.set("io.ktor.server.netty.EngineMain")
+    mainClass.set("app.wheretopark.storekeeper.ApplicationKt")
 }
 
 dependencies {

@@ -6,15 +6,23 @@ import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.application.Application
 import io.ktor.server.application.call
 import io.ktor.server.application.install
+import io.ktor.server.engine.*
+import io.ktor.server.netty.*
 import io.ktor.server.plugins.callloging.*
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
-fun main(args: Array<String>) = io.ktor.server.netty.EngineMain.main(args)
+fun main() {
+    val port = System.getenv("PORT")?.toInt() ?: 8080
 
-fun Application.module(testing: Boolean = false) {
+    embeddedServer(Netty, port = port) {
+        configureRouting()
+    }.start(wait = true)
+}
+
+fun Application.configureRouting() {
     install(ContentNegotiation) {
         json()
     }
