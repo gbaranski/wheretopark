@@ -1,8 +1,0 @@
-<component name="ArtifactManager">
-  <artifact type="jar" name="wheretopark-jvm-1.0-SNAPSHOT">
-    <output-path>$PROJECT_DIR$/build/libs</output-path>
-    <root id="archive" name="wheretopark-jvm-1.0-SNAPSHOT.jar">
-      <element id="module-output" name="wheretopark.jvmMain" />
-    </root>
-  </artifact>
-</component>

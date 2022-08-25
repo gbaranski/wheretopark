@@ -93,15 +93,14 @@ struct MapViewRepresentable: UIViewRepresentable {
 
     func updateAnnotations(view: MKMapView) {
         let (existing, new) = self.appState.parkingLots.reduce(into: ([ParkingLotID : ParkingLot](), [ParkingLotID : ParkingLot]())) {
-            var (existing, new) = $0
             let (id, parkingLot) = $1
             let exists = view.annotations
                 .compactMap{ $0 as? ParkingLotAnnotation }
                 .contains(where: { $0.id == id })
             if exists {
-                existing[id] = parkingLot
+                $0.0[id] = parkingLot
             } else {
-                new[id] = parkingLot
+                $0.1[id] = parkingLot
             }
         }
         existing.forEach{ id, parkingLot in

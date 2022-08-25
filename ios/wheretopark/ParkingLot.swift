@@ -11,7 +11,7 @@ import shared
 import CoreLocation
 import PhoneNumberKit
 
-extension ParkingLotLocation {
+extension Coordinate {
     var coordinate: CLLocationCoordinate2D {
         CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
     }

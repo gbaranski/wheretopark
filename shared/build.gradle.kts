@@ -4,6 +4,10 @@ plugins {
     id("com.android.library")
 }
 
+repositories {
+    maven { url = uri("https://www.jillesvangurp.com/maven") }
+}
+
 
 kotlin {
     jvm()

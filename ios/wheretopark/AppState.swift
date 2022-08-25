@@ -32,10 +32,10 @@ typealias ParkingLotID = String
         defer { isPerformingTask = false }
         do {
             let metadatas = try await client.metadatas()
-//            let states = try await client.states()
-//            self.parkingLots = Dictionary(uniqueKeysWithValues: parkingLotMetadatas.map{ id, metadata in
-//                (id, ParkingLot(metadata: metadata, state: parkingLotStates[id]!))
-//            })
+            let states = try await client.states()
+            self.parkingLots = Dictionary(uniqueKeysWithValues: metadatas.map{ id, metadata in
+                (id, ParkingLot(metadata: metadata, state: states[id]!))
+            })
         } catch {
             print("error \(error)")
             self.fetchError = FetchError(

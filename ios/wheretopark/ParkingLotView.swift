@@ -182,7 +182,12 @@ struct ParkingLotAdditionalInfoView: View {
                 Divider()
                 VStack(alignment: .leading) {
                     Text("Phone").foregroundColor(.secondary)
-                    Link(phoneNumber, destination: URL(string: "tel:\(phoneNumber)")!)
+                    Link(
+                        phoneNumber,
+                        destination: URL(
+                            string: "tel:\(phoneNumber.filter{$0 != " "})"
+                        )!
+                    )
                 }
             }
             Divider()

@@ -11,4 +11,5 @@ rootProject.name = "wheretopark"
 include(":shared")
 include(":android")
 include(":storekeeper")
-
+include(":providers:tristar")
+include(":providers:cctv")
