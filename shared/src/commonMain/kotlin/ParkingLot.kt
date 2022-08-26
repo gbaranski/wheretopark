@@ -1,6 +1,6 @@
 package app.wheretopark.shared
 
-import kotlinx.datetime.Clock
+import kotlinx.datetime.*
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -9,8 +9,6 @@ import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlin.time.Duration
-import kotlinx.datetime.DayOfWeek
-import kotlinx.datetime.Instant
 import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.seconds
@@ -24,6 +22,7 @@ enum class ParkingLotFeature {
     UNDERGROUND,
 }
 
+
 @Serializable
 data class ParkingLotWeekdays(
     val start: DayOfWeek,
@@ -32,8 +31,8 @@ data class ParkingLotWeekdays(
 
 @Serializable
 data class ParkingLotHours(
-    val start: String,
-    val end: String
+    val start: LocalTime,
+    val end: LocalTime
 )
 
 @Serializable
@@ -87,13 +86,31 @@ data class ParkingLotMetadata(
     val rules: List<ParkingLotRule>,
 ) {
     fun status(at: Instant): ParkingLotStatus {
-        return ParkingLotStatus.CLOSED
+        val dateTime = at.toLocalDateTime(TimeZone.UTC)
+        val weekday = dateTime.dayOfWeek
+        val rule = rules.sortedBy { it.weekdays != null }.find{
+            weekday >= (it.weekdays?.start ?: DayOfWeek.MONDAY) && weekday <= (it.weekdays?.end ?: DayOfWeek.SUNDAY)
+        } ?: return ParkingLotStatus.CLOSED
+        if(rule.hours == null) return ParkingLotStatus.OPEN
+        val startDateTime = rule.hours.start.atDate(dateTime.date)
+        val endDateTime = if (rule.hours.end < rule.hours.start) {
+            rule.hours.end.atDate(dateTime.date.plus(DatePeriod(days = 1)))
+        } else {
+            rule.hours.end.atDate(dateTime.date)
+        }
+        val toStart = dateTime.toInstant(TimeZone.UTC).periodUntil(startDateTime.toInstant(TimeZone.UTC), TimeZone.UTC)
+        val toEnd = dateTime.toInstant(TimeZone.UTC).periodUntil(endDateTime.toInstant(TimeZone.UTC), TimeZone.UTC)
+        val isOpen = dateTime >= startDateTime && dateTime < endDateTime
+        return if (isOpen) {
+            if (toEnd.hours == 0) ParkingLotStatus.CLOSES_SOON else ParkingLotStatus.OPEN
+        } else if (toStart.hours == 0) {
+            ParkingLotStatus.OPENS_SOON
+        } else {
+            ParkingLotStatus.CLOSED
+        }
     }
 
-    fun status(): ParkingLotStatus {
-        return ParkingLotStatus.CLOSED
-    }
-
+    fun status(): ParkingLotStatus = status(Clock.System.now())
 }
 
 @Serializable
@@ -130,7 +147,7 @@ data class ParkingLot(
             rules = listOf(
                 ParkingLotRule(
                     weekdays = ParkingLotWeekdays(start = DayOfWeek.MONDAY, end = DayOfWeek.SATURDAY),
-                    hours = ParkingLotHours(start = "08:00", end = "22:00"),
+                    hours = ParkingLotHours(start = LocalTime(8,0,0), end = LocalTime(22,0,0)),
                     pricing = listOf(
                         ParkingLotPricingRule(
                             duration = 1.hours,
@@ -157,7 +174,7 @@ data class ParkingLot(
                 ),
                 ParkingLotRule(
                     weekdays = ParkingLotWeekdays(start = DayOfWeek.SUNDAY, end = DayOfWeek.SUNDAY),
-                    hours = ParkingLotHours(start = "09:00", end = "21:00"),
+                    hours = ParkingLotHours(start = LocalTime(9,0,0), end = LocalTime(21,0,0)),
                     pricing = listOf(
                         ParkingLotPricingRule(
                             duration = 1.hours,
