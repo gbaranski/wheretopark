@@ -24,3 +24,9 @@ extension Coordinate {
         return from.distance(from: pointLocation)
     }
 }
+
+extension ParkingLotResource {
+    var url: URL {
+        URL(string: self.description())!
+    }
+}

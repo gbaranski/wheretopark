@@ -1,11 +1,13 @@
 package app.wheretopark.shared
 
+import io.ktor.http.*
 import kotlinx.datetime.*
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
+import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlin.time.Duration
@@ -70,16 +72,39 @@ enum class ParkingLotStatus {
     CLOSED,
 }
 
+@Serializable(with = ParkingLotResourceSerializer::class)
+data class ParkingLotResource(val url: Url): Comparable<ParkingLotResource> {
+    constructor(s: String) : this(Url(s))
+
+    fun label() =
+        when(url.protocol.name) {
+            "http", "https" -> "Website"
+            "mailto" -> "E-Mail address"
+            "tel" -> "Phone number"
+            else -> "Unknown"
+        }
+
+    override fun toString() = url.toString()
+    override fun compareTo(other: ParkingLotResource): Int {
+        return (url == other.url).compareTo(false)
+    }
+}
+
+object ParkingLotResourceSerializer : KSerializer<ParkingLotResource> {
+    override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("ParkingLotResource", PrimitiveKind.STRING)
+
+    override fun serialize(encoder: Encoder, value: ParkingLotResource) = UrlSerializer.serialize(encoder, value.url)
+
+    override fun deserialize(decoder: Decoder) = ParkingLotResource(UrlSerializer.deserialize(decoder))
+}
+
+
 @Serializable
 data class ParkingLotMetadata(
     val name: String,
     val address: String,
     val location: Coordinate,
-    val emails: List<String>,
-    @SerialName("phone-numbers")
-    val phoneNumbers: List<String>,
-    val websites: List<String>,
-    @SerialName("total-spots")
+    val resources: List<ParkingLotResource>,
     val totalSpots: UInt,
     val features: List<ParkingLotFeature>,
     val currency: String,
@@ -125,8 +150,8 @@ data class ParkingLot(
     val metadata: ParkingLotMetadata,
     val state: ParkingLotState,
 ) {
-    public companion object {
-        public val galeriaBaltycka = ParkingLot(
+    companion object {
+        val galeriaBaltycka = ParkingLot(
             state = ParkingLotState(
                 availableSpots = 10u,
                 lastUpdated = Clock.System.now().minus(10.seconds)
@@ -138,9 +163,11 @@ data class ParkingLot(
                 latitude = 54.38268,
                 longitude = 18.60024,
             ),
-            emails = listOf("galeria@galeriabaltycka.pl"),
-            phoneNumbers = listOf("+48 58 521 85 52"),
-            websites = listOf("https://www.galeriabaltycka.pl/o-centrum/dojazd-parkingi/parkingi/"),
+            resources = listOf(
+                ParkingLotResource("mailto:galeria@galeriabaltycka.pl"),
+                ParkingLotResource("tel:+48-58-521-85-52"),
+                ParkingLotResource("https://www.galeriabaltycka.pl/o-centrum/dojazd-parkingi/parkingi/")
+            ),
             totalSpots = 1100u,
             features = listOf(ParkingLotFeature.COVERED, ParkingLotFeature.UNCOVERED),
             currency = "PLN",

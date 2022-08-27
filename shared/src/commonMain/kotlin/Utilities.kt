@@ -1,6 +1,16 @@
 package app.wheretopark.shared
 
+import io.ktor.http.*
+import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.builtins.ListSerializer
+import kotlinx.serialization.builtins.MapSerializer
+import kotlinx.serialization.builtins.serializer
+import kotlinx.serialization.descriptors.PrimitiveKind
+import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
+import kotlinx.serialization.descriptors.SerialDescriptor
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
 
 private val BITS = intArrayOf(16, 8, 4, 2, 1)
 
@@ -87,5 +97,18 @@ data class Coordinate(
                 }
             }
             return geohash.toString()
+    }
+}
+
+
+object UrlSerializer : KSerializer<Url> {
+    override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("Url", PrimitiveKind.STRING)
+
+    override fun serialize(encoder: Encoder, value: Url) {
+        encoder.encodeString(value.toString())
+    }
+
+    override fun deserialize(decoder: Decoder): Url {
+        return Url(decoder.decodeString())
     }
 }

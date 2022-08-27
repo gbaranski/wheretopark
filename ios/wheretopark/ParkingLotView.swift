@@ -164,30 +164,11 @@ struct ParkingLotAdditionalInfoView: View {
                 Text("Coordinates").foregroundColor(.secondary)
                 Text("\(metadata.location.latitude), \(metadata.location.longitude)")
             }
-            ForEach(metadata.websites, id: \.self) { website in
+            ForEach(metadata.resources, id: \.self) { resource in
                 Divider()
                 VStack(alignment: .leading) {
-                    Text("Website").foregroundColor(.secondary)
-                    Link(website, destination: URL(string: website)!).truncationMode(.tail).lineLimit(1)
-                }
-            }
-            ForEach(metadata.emails, id: \.self) { email in
-                Divider()
-                VStack(alignment: .leading) {
-                    Text("Email").foregroundColor(.secondary)
-                    Link(email, destination: URL(string: "mailto:\(email)")!)
-                }
-            }
-            ForEach(metadata.phoneNumbers, id: \.self) { phoneNumber in
-                Divider()
-                VStack(alignment: .leading) {
-                    Text("Phone").foregroundColor(.secondary)
-                    Link(
-                        phoneNumber,
-                        destination: URL(
-                            string: "tel:\(phoneNumber.filter{$0 != " "})"
-                        )!
-                    )
+                    Text(resource.label()).foregroundColor(.secondary)
+                    Link(resource.description(), destination: resource.url).truncationMode(.tail).lineLimit(1)
                 }
             }
             Divider()
