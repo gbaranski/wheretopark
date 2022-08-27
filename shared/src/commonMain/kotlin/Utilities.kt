@@ -99,16 +99,3 @@ data class Coordinate(
             return geohash.toString()
     }
 }
-
-
-object UrlSerializer : KSerializer<Url> {
-    override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("Url", PrimitiveKind.STRING)
-
-    override fun serialize(encoder: Encoder, value: Url) {
-        encoder.encodeString(value.toString())
-    }
-
-    override fun deserialize(decoder: Decoder): Url {
-        return Url(decoder.decodeString())
-    }
-}

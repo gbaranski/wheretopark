@@ -99,29 +99,24 @@ enum class ParkingLotStatus {
 }
 
 @Serializable(with = ParkingLotResourceSerializer::class)
-data class ParkingLotResource(val url: Url): Comparable<ParkingLotResource> {
-    constructor(s: String) : this(Url(s))
-
+data class ParkingLotResource(val url: String): Comparable<ParkingLotResource> {
     fun label() =
-        when(url.protocol.name) {
+        when(Url(url).protocol.name) {
             "http", "https" -> "Website"
             "mailto" -> "E-Mail address"
             "tel" -> "Phone number"
             else -> "Unknown"
         }
 
-    override fun toString() = url.toString()
     override fun compareTo(other: ParkingLotResource): Int {
-        return (url == other.url).compareTo(false)
+        return url.compareTo(other.url)
     }
 }
 
 object ParkingLotResourceSerializer : KSerializer<ParkingLotResource> {
     override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("ParkingLotResource", PrimitiveKind.STRING)
-
-    override fun serialize(encoder: Encoder, value: ParkingLotResource) = UrlSerializer.serialize(encoder, value.url)
-
-    override fun deserialize(decoder: Decoder) = ParkingLotResource(UrlSerializer.deserialize(decoder))
+    override fun serialize(encoder: Encoder, value: ParkingLotResource) = encoder.encodeString(value.toString())
+    override fun deserialize(decoder: Decoder) = ParkingLotResource(decoder.decodeString())
 }
 
 

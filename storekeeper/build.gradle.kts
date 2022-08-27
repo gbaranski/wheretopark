@@ -25,4 +25,3 @@ dependencies {
     testImplementation(kotlin("test"))
     testImplementation("io.ktor:ktor-server-tests:$ktorVersion")
 }
-
