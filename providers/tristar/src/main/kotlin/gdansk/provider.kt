@@ -18,22 +18,12 @@ const val METADATA_URL = "https://ckan.multimediagdansk.pl/dataset/cb1e2708-aec1
 const val STATE_URL = "https://ckan2.multimediagdansk.pl/parkingLots"
 
 @Serializable
-data class ParkingLotConfigurationRule(
-    val weekdays: String?,
-    val hours: String?,
-    val pricing: List<ParkingLotPricingRule>
-)
-
-@Serializable
 data class ParkingLotConfiguration(
-    val emails: List<String>,
-    @SerialName("phone-numbers")
-    val phoneNumbers: List<String>,
-    val websites: List<String>,
+    val resources: List<ParkingLotResource>,
     @SerialName("total-spots")
     val totalSpots: UInt,
     val features: List<ParkingLotFeature>,
-    val rules: List<ParkingLotConfigurationRule>
+    val rules: List<ParkingLotRule>
 )
 
 @Serializable
@@ -67,33 +57,11 @@ class TristarGdanskProvider: Provider() {
                 name = it.name,
                 address = it.address,
                 location = it.location,
-                emails = configuration.emails,
-                phoneNumbers = configuration.phoneNumbers,
-                websites = configuration.websites,
+                resources = configuration.resources,
                 totalSpots = configuration.totalSpots,
                 features = configuration.features,
                 currency = "PLN",
-                rules = configuration.rules.map {
-                    val weekdaysSplit = it.weekdays?.split("-")
-                    val hoursSplit = it.hours?.split("-")
-                    ParkingLotRule(
-                        weekdays = if (weekdaysSplit != null) {
-                            assert(weekdaysSplit.count() == 2)
-                            ParkingLotWeekdays(
-                                start = DayOfWeek.valueOf(weekdaysSplit[0].uppercase()),
-                                end = DayOfWeek.valueOf(weekdaysSplit[1].uppercase()),
-                            )
-                        } else { null },
-                        hours = if (hoursSplit != null) {
-                            assert(hoursSplit.count() == 2)
-                            ParkingLotHours(
-                                start = hoursSplit[0],
-                                end = hoursSplit[1],
-                            )
-                        } else { null },
-                        pricing = it.pricing,
-                    )
-                }
+                rules = configuration.rules,
             )
             id to metadata
         }

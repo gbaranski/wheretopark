@@ -25,17 +25,48 @@ enum class ParkingLotFeature {
 }
 
 
-@Serializable
+@Serializable(with = ParkingLotWeekdaysSerializer::class)
 data class ParkingLotWeekdays(
     val start: DayOfWeek,
     val end: DayOfWeek
 )
 
-@Serializable
+object ParkingLotWeekdaysSerializer : KSerializer<ParkingLotWeekdays> {
+    override val descriptor = PrimitiveSerialDescriptor("ParkingLotWeekdays", PrimitiveKind.STRING)
+    override fun serialize(encoder: Encoder, value: ParkingLotWeekdays) {
+        val string = "${value.start}-${value.end}"
+        encoder.encodeString(string)
+    }
+    override fun deserialize(decoder: Decoder): ParkingLotWeekdays {
+        val string = decoder.decodeString()
+        val split = string.split('-', limit = 1)
+        val start = DayOfWeek.valueOf(split[0].uppercase())
+        val end = DayOfWeek.valueOf(split[1].uppercase())
+        return ParkingLotWeekdays(start, end)
+    }
+}
+
+@Serializable(with = ParkingLotHoursSerializer::class)
 data class ParkingLotHours(
     val start: LocalTime,
     val end: LocalTime
 )
+
+object ParkingLotHoursSerializer : KSerializer<ParkingLotHours> {
+    override val descriptor = PrimitiveSerialDescriptor("ParkingLotHours", PrimitiveKind.STRING)
+    override fun serialize(encoder: Encoder, value: ParkingLotHours) {
+        val string = "${value.start}-${value.end}"
+        encoder.encodeString(string)
+    }
+    override fun deserialize(decoder: Decoder): ParkingLotHours {
+        val string = decoder.decodeString()
+        val split = string.split('-', limit = 1)
+        val start = LocalTime.parse(split[0])
+        val end = LocalTime.parse(split[1])
+        return ParkingLotHours(start, end)
+    }
+}
+
 
 @Serializable
 data class ParkingLotPricingRule(
@@ -47,14 +78,8 @@ data class ParkingLotPricingRule(
 
 object DurationSerializer : KSerializer<Duration> {
     override val descriptor = PrimitiveSerialDescriptor("Duration", PrimitiveKind.STRING)
-
-    override fun deserialize(decoder: Decoder): Duration {
-        return Duration.parse(decoder.decodeString())
-    }
-
-    override fun serialize(encoder: Encoder, value: Duration) {
-        encoder.encodeString(value.toIsoString())
-    }
+    override fun serialize(encoder: Encoder, value: Duration) = encoder.encodeString(value.toIsoString())
+    override fun deserialize(decoder: Decoder) = Duration.parse(decoder.decodeString())
 }
 
 @Serializable
