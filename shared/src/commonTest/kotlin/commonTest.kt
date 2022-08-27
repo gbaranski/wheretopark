@@ -1,6 +1,9 @@
 package app.wheretopark.shared
 
 import kotlinx.datetime.*
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -57,4 +60,16 @@ class ParkingLotStatusTest {
         assertEquals(status(DayOfWeek.SUNDAY, 21, 0), ParkingLotStatus.CLOSED)
         assertEquals(status(DayOfWeek.SUNDAY, 22, 0), ParkingLotStatus.CLOSED)
     }
+}
+
+class ParkingLotWeekdaysTest {
+    @Test
+    fun valid() {
+        val weekdays = ParkingLotWeekdays(start=DayOfWeek.MONDAY, end=DayOfWeek.FRIDAY)
+        val string = Json.encodeToString(weekdays)
+        println(string)
+        require(Json.decodeFromString<ParkingLotWeekdays>(string) == weekdays)
+
+    }
+
 }
