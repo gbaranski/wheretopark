@@ -26,7 +26,7 @@ extension Coordinate {
 }
 
 extension ParkingLotResource {
-    var url: URL {
-        URL(string: self.description())!
+    var components: URLComponents {
+        URLComponents(string: self.url)!
     }
 }

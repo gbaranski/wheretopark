@@ -168,7 +168,9 @@ struct ParkingLotAdditionalInfoView: View {
                 Divider()
                 VStack(alignment: .leading) {
                     Text(resource.label()).foregroundColor(.secondary)
-                    Link(resource.description(), destination: resource.url).truncationMode(.tail).lineLimit(1)
+                    Link(
+                        "\(resource.components.host ?? "")\(resource.components.scheme == "tel" ? resource.components.path.replacingOccurrences(of: "-", with: " ") : resource.components.path)",
+                        destination: resource.components.url!).truncationMode(.tail).lineLimit(1)
                 }
             }
             Divider()
