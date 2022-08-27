@@ -1,17 +1,15 @@
 parking-lots:
   "1":
-    emails:
-      - galeria@galeriabaltycka.pl
-    phone-numbers:
-      - +48 58 521 85 52
-    websites:
+    resources:
+      - mailto:galeria@galeriabaltycka.pl
+      - tel:+48-58-521-85-52
       - https://www.galeriabaltycka.pl/o-centrum/dojazd-parkingi/parkingi/
     total-spots: 1100
     features:
       - COVERED
       - UNCOVERED
     rules:
-      - weekdays: monday-saturday
+      - weekdays: MONDAY-SATURDAY
         hours: 08:00-22:00
         pricing:
           - duration: PT1H
@@ -25,7 +23,7 @@ parking-lots:
           - duration: PT1H
             price: 4
             repeating: true
-      - weekdays: sunday-sunday
+      - weekdays: SUNDAY-SUNDAY
         hours: 09:00-21:00
         pricing:
           - duration: PT1H
@@ -41,18 +39,16 @@ parking-lots:
             repeating: true
 
   "2":
-    emails:
-      - biuro@gchmanhattan.pl
-    phone-numbers:
-      - +48 58 767 70 16
-    websites:
+    resources:
+      - mailto:biuro@gchmanhattan.pl
+      - tel:+48-58-767-70-16
       - https://gchmanhattan.pl/o-centrum/
     features:
       - UNDERGROUND
     total-spots: 360
     # TODO: Add Sunday rule, in Poland on Sundays, this Gallery are only open sometimes
     rules:
-      - weekdays: monday-friday
+      - weekdays: MONDAY-FRIDAY
         hours: 09:00-21:00
         pricing:
           - duration: PT30M
@@ -60,7 +56,7 @@ parking-lots:
           - duration: PT1H
             price: 4
             repeating: true
-      - weekdays: saturday-saturday
+      - weekdays: SATURDAY-SATURDAY
         hours: 09:00-21:00
         pricing:
           - duration: PT30M
@@ -70,11 +66,9 @@ parking-lots:
             repeating: true
 
   "3":
-    emails:
-      - parkingi@apcoa.pl
-    phone-numbers:
-      - +48 22 354 83 80
-    websites:
+    resources:
+      - mailto:parkingi@apcoa.pl
+      - tel:+48-22-354-83-80
       - https://www.apcoa.pl/parking-w/gdansk-1/polsat-plus-arena-gdansk-p4-ul-pok-lechii-gdansk/
       - https://www.apcoa.pl/parking-w/gdansk-1/polsat-plus-arena-gdansk-p3-ul-pok-lechii-gdansk/
     features:
@@ -93,11 +87,9 @@ parking-lots:
             repeating: true
 
   "4":
-    emails:
-      - parkingi@apcoa.pl
-    phone-numbers:
-      - +48 22 354 83 80
-    websites:
+    resources:
+      - mailto:parkingi@apcoa.pl
+      - tel:+48-22-354-83-80
       - https://www.apcoa.pl/parking-w/gdansk-1/amber-expo-gdansk-ul-zaglowa-11/
     features:
       - UNCOVERED
@@ -116,17 +108,15 @@ parking-lots:
             repeating: true
 
   "5":
-    emails:
-      - info@madison.gda.pl
-    phone-numbers:
-      - +48 58 766 75 39
-    websites:
+    resources:
+      - mailto:info@madison.gda.pl
+      - tel:+48-58-766-75-39
       - https://madison.gda.pl/pl/parking
     features:
       - UNDERGROUND
     total-spots: 117
     rules:
-      - weekdays: monday-friday
+      - weekdays: MONDAY-FRIDAY
         hours: 08:00-22:00
         pricing:
           - duration: PT1H
@@ -138,7 +128,7 @@ parking-lots:
           - duration: PT1H
             price: 8
             repeating: true
-      - weekdays: saturday-saturday
+      - weekdays: SATURDAY-SATURDAY
         hours: 08:00-22:00
         pricing:
           - duration: PT1H
@@ -150,7 +140,7 @@ parking-lots:
           - duration: PT1H
             price: 8
             repeating: true
-      - weekdays: saturday-saturday
+      - weekdays: SATURDAY-SATURDAY
         hours: 08:00-22:00
         pricing:
           - duration: PT1H
@@ -173,11 +163,9 @@ parking-lots:
             repeating: true
 
   "7":
-    emails:
-      - e.gazda@amuz.gda.pl
-    phone-numbers:
-      - +48 58 300 92 06
-    websites:
+    resources:
+      - mailto:e.gazda@amuz.gda.pl
+      - tel:+48-58-300-92-06
       - https://www.amuz.gda.pl/akademia/infrastruktura/parking,108
     features:
       - UNCOVERED
@@ -193,9 +181,7 @@ parking-lots:
             repeating: true
 
   "14":
-    emails: []
-    phone-numbers: []
-    websites:
+    resources:
       - https://ecs.gda.pl/title,Parking_,pid,601.htm
     features:
       - UNCOVERED
@@ -217,11 +203,9 @@ parking-lots:
             repeating: true
 
   "15":
-    emails:
-      - bartlomiej.jablonski@carpark.com.pl
-    phone-numbers:
-      - +48 661 552 882
-    websites:
+    resources:
+      - mailto:bartlomiej.jablonski@carpark.com.pl
+      - tel:+48-661-552-882
       - https://galeriametropolia.pl/parking/
     features:
       - UNCOVERED
@@ -245,11 +229,9 @@ parking-lots:
             repeating: true
 
   "17":
-    emails:
-      - parking@forumgdansk.pl
-    phone-numbers:
-      - +48 661 551 882
-    websites:
+    resources:
+      - mailto:parking@forumgdansk.pl
+      - tel:+48-661-551-882
       - https://forumgdansk.pl/pl/przydatne-informacje/parking
     features:
       - COVERED
@@ -272,31 +254,27 @@ parking-lots:
             repeating: true
 
   "18":
-    emails:
-      - parkingi@apcoa.pl
-    phone-numbers:
-      - +48 22 354 83 80
-    websites:
+    resources:
+      - mailto:parkingi@apcoa.pl
+      - tel:+48-22-354-83-80
       - https://www.apcoa.pl/parking-w/gdansk-1/gdansk-ul-blekitna/
     features:
       - UNCOVERED
     total-spots: 197
     rules:
-      - weekdays: monday-sunday
+      - weekdays: MONDAY-SUNDAY
         hours: 09:00-19:00
         pricing:
           - duration: P1D
             price: 10
 
   "19":
-    emails: []
-    phone-numbers: []
-    websites: []
+    resources: []
     features:
       - UNCOVERED
     total-spots: 60
     rules:
-      - weekdays: monday-sunday
+      - weekdays: MONDAY-SUNDAY
         hours: 09:00-19:00
         pricing:
           - duration: P1D
@@ -304,14 +282,12 @@ parking-lots:
 
   # TODO: Verify
   "21":
-    emails: []
-    phone-numbers: []
-    websites: []
+    resources: []
     features:
       - UNCOVERED
     total-spots: 340
     rules:
-      - weekdays: monday-sunday
+      - weekdays: MONDAY-SUNDAY
         hours: 09:00-19:00
         pricing:
           - duration: P1D
