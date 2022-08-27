@@ -33,15 +33,16 @@ data class ParkingLotWeekdays(
 
 object ParkingLotWeekdaysSerializer : KSerializer<ParkingLotWeekdays> {
     override val descriptor = PrimitiveSerialDescriptor("ParkingLotWeekdays", PrimitiveKind.STRING)
+    private const val delimiter = '-'
     override fun serialize(encoder: Encoder, value: ParkingLotWeekdays) {
-        val string = "${value.start}-${value.end}"
+        val string = "${value.start}${delimiter}${value.end}"
         encoder.encodeString(string)
     }
     override fun deserialize(decoder: Decoder): ParkingLotWeekdays {
         val string = decoder.decodeString()
-        val split = string.split('-', limit = 1)
-        val start = DayOfWeek.valueOf(split[0].uppercase())
-        val end = DayOfWeek.valueOf(split[1].uppercase())
+        val split = string.split(delimiter, limit = 2)
+        val start = DayOfWeek.valueOf(split[0])
+        val end = DayOfWeek.valueOf(split[1])
         return ParkingLotWeekdays(start, end)
     }
 }
@@ -60,7 +61,7 @@ object ParkingLotHoursSerializer : KSerializer<ParkingLotHours> {
     }
     override fun deserialize(decoder: Decoder): ParkingLotHours {
         val string = decoder.decodeString()
-        val split = string.split('-', limit = 1)
+        val split = string.split('-', limit = 2)
         val start = LocalTime.parse(split[0])
         val end = LocalTime.parse(split[1])
         return ParkingLotHours(start, end)
