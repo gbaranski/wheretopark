@@ -5,7 +5,7 @@ plugins {
     application
 }
 
-val ktorVersion = "2.1.0"
+val ktorVersion: String by project
 
 application {
     mainClass.set("app.wheretopark.storekeeper.ApplicationKt")

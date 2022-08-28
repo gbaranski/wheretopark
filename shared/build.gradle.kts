@@ -26,7 +26,7 @@ kotlin {
 
     sourceSets {
         val serializationVersion = "1.3.2"
-        val ktorVersion = "2.1.0"
+        val ktorVersion: String by project
 
         val commonMain by getting {
             dependencies {
