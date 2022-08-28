@@ -122,13 +122,21 @@ object ParkingLotResourceSerializer : KSerializer<ParkingLotResource> {
 }
 
 
+enum class ParkingSpotType {
+    Car,
+    Motorcycle,
+    Handicap,
+    Electric,
+}
+
 @Serializable
 data class ParkingLotMetadata(
     val name: String,
     val address: String,
     val location: Coordinate,
     val resources: List<ParkingLotResource>,
-    val totalSpots: UInt,
+    @SerialName("total-spots")
+    val totalSpots: Map<ParkingSpotType, UInt>,
     val features: List<ParkingLotFeature>,
     val currency: String,
     val rules: List<ParkingLotRule>,
@@ -166,7 +174,7 @@ data class ParkingLotState (
     @SerialName("last-updated")
     val lastUpdated: Instant,
     @SerialName("available-spots")
-    val availableSpots: UInt
+    val availableSpots: Map<ParkingSpotType, UInt>,
 )
 
 data class ParkingLot(
@@ -176,7 +184,9 @@ data class ParkingLot(
     companion object {
         val galeriaBaltycka = ParkingLot(
             state = ParkingLotState(
-                availableSpots = 10u,
+                availableSpots = mapOf(
+                    Pair(ParkingSpotType.Car, 10u)
+                ),
                 lastUpdated = Clock.System.now().minus(10.seconds)
             ),
             metadata = ParkingLotMetadata(
@@ -191,7 +201,9 @@ data class ParkingLot(
                 ParkingLotResource("tel:+48-58-521-85-52"),
                 ParkingLotResource("https://www.galeriabaltycka.pl/o-centrum/dojazd-parkingi/parkingi/")
             ),
-            totalSpots = 1100u,
+            totalSpots = mapOf(
+                Pair(ParkingSpotType.Car, 1100u)
+            ),
             features = listOf(ParkingLotFeature.COVERED, ParkingLotFeature.UNCOVERED),
             currency = "PLN",
             rules = listOf(
