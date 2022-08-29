@@ -1,0 +1,119 @@
+parking-lots:
+  1:
+    resources:
+      - mailto:sekretariat@zdiz.gdynia.pl
+      - tel:+48-58-761-2000
+      - tel:+48-58-761-2001
+      - https://www.zdiz.gdynia.pl/parkowanie/oplaty/
+    total-spots: 78
+    features:
+      - UNCOVERED
+    rules:
+      - weekdays: null
+        hours: 08:00-20:00
+        pricing:
+          - duration: PT1H
+            price: 5.50
+          - duration: PT2H
+            price: 12.10
+          - duration: PT3H
+            price: 20.00
+          - duration: PT1H
+            price: 5.50
+            repeating: true
+      - weekdays: null
+        hours: 20:00-08:00
+        pricing:
+          - duration: PT1H
+            price: 0
+            repeating: true
+
+  2:
+    resources:
+      - mailto:sekretariat@zdiz.gdynia.pl
+      - tel:+48-58-761-2000
+      - tel:+48-58-761-2001
+      - https://www.zdiz.gdynia.pl/parkowanie/oplaty/
+    total-spots: 50
+    features:
+      - UNCOVERED
+    # Add rules for electric vehicles and for disabled people
+    # Add the WD rules, whatever they are
+    # Add rules for gdynia resident card, it makes sundays free
+    # Add long term subscriptions, like monthly or yearly
+    rules:
+      - weekdays: null
+        hours: 08:00-20:00
+        pricing:
+          - duration: PT1H
+            price: 5.50
+          - duration: PT2H
+            price: 12.10
+          - duration: PT3H
+            price: 20.00
+          - duration: PT1H
+            price: 5.50
+            repeating: true
+      - weekdays: null
+        hours: 20:00-08:00
+        pricing:
+          - duration: PT1H
+            price: 0
+            repeating: true
+
+  3:
+    resources:
+      - mailto:sekretariat@zdiz.gdynia.pl
+      - tel:+48-58-761-2000
+      - tel:+48-58-761-2001
+      - https://www.zdiz.gdynia.pl/parkowanie/oplaty/
+    total-spots: 50
+    features:
+      - UNCOVERED
+    rules:
+      - weekdays: null
+        hours: 08:00-20:00
+        pricing:
+          - duration: PT1H
+            price: 5.50
+          - duration: PT2H
+            price: 12.10
+          - duration: PT3H
+            price: 20.00
+          - duration: PT1H
+            price: 5.50
+            repeating: true
+      - weekdays: null
+        hours: 20:00-08:00
+        pricing:
+          - duration: PT1H
+            price: 0
+            repeating: true
+
+  4:
+    resources:
+      - mailto:sekretariat@zdiz.gdynia.pl
+      - tel:+48-58-761-2000
+      - tel:+48-58-761-2001
+      - https://www.zdiz.gdynia.pl/parkowanie/oplaty/
+    total-spots: 75
+    features:
+      - UNCOVERED
+    rules:
+      - weekdays: null
+        pricing:
+          - duration: PT1H
+            price: 3.90
+          - duration: PT2H
+            price: 8.50
+          - duration: PT3H
+            price: 14.00
+          - duration: PT1H
+            price: 3.90
+            repeating: true
+      - weekdays: null
+        hours: 20:00-08:00
+        pricing:
+          - duration: PT1H
+            price: 0
+            repeating: true

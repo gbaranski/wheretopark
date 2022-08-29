@@ -29,7 +29,7 @@ data class ParkingLotConfiguration(
 @Serializable
 data class Configuration(
     @SerialName("parking-lots")
-    val parkingLots: Map<ParkingLotID, ParkingLotConfiguration>,
+    val parkingLots: Map<String, ParkingLotConfiguration>,
 )
 
 class TristarGdanskProvider: Provider() {

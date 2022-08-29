@@ -1,9 +1,8 @@
 package app.wheretopark.providers.tristar
 
 import app.wheretopark.providers.tristar.gdansk.TristarGdanskProvider
+import app.wheretopark.providers.tristar.gdynia.TristarGdyniaProvider
 import app.wheretopark.shared.*
-import io.ktor.client.*
-import io.ktor.client.engine.cio.*
 
 abstract class Provider {
     abstract suspend fun metadatas(): Map<ParkingLotID, ParkingLotMetadata>
@@ -11,13 +10,20 @@ abstract class Provider {
 }
 
 
-suspend fun main() {
-    val storekeeperClient = StorekeeperClient()
-    val gdanskProvider = TristarGdanskProvider()
-    val metadatas = gdanskProvider.metadatas()
-    val states = gdanskProvider.states()
+suspend fun f(storekeeperClient: StorekeeperClient, provider: Provider) {
+    val metadatas = provider.metadatas()
+    val states = provider.states()
     println(metadatas)
     println(states)
     storekeeperClient.postMetadatas(metadatas)
     storekeeperClient.postStates(states)
+    println("Published ${metadatas.count()} metadatas and ${states.count()} states")
+}
+
+suspend fun main() {
+    val storekeeperClient = StorekeeperClient()
+    val gdanskProvider = TristarGdanskProvider()
+    val gdyniaProvider = TristarGdyniaProvider()
+    f(storekeeperClient, gdanskProvider)
+    f(storekeeperClient, gdyniaProvider)
 }
