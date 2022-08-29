@@ -1,8 +1,7 @@
-
 plugins {
     kotlin("jvm")
     kotlin("plugin.serialization")
-    id("io.ktor.plugin") version "2.1.0"
+    id("com.google.cloud.tools.jib")
     application
 }
 
@@ -24,4 +23,11 @@ dependencies {
 
     testImplementation(kotlin("test"))
     testImplementation("io.ktor:ktor-server-tests:$ktorVersion")
+}
+
+jib {
+    to {
+        image = "wheretopark-storekeeper"
+    }
+    container {}
 }
