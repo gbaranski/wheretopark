@@ -123,10 +123,10 @@ object ParkingLotResourceSerializer : KSerializer<ParkingLotResource> {
 
 
 enum class ParkingSpotType {
-    Car,
-    Motorcycle,
-    Handicap,
-    Electric,
+    CAR,
+    MOTORCYCLE,
+    HANDICAP,
+    ELECTRIC,
 }
 
 @Serializable
@@ -185,7 +185,7 @@ data class ParkingLot(
         val galeriaBaltycka = ParkingLot(
             state = ParkingLotState(
                 availableSpots = mapOf(
-                    Pair(ParkingSpotType.Car, 10u)
+                    Pair(ParkingSpotType.CAR, 10u)
                 ),
                 lastUpdated = Clock.System.now().minus(10.seconds)
             ),
@@ -202,7 +202,7 @@ data class ParkingLot(
                 ParkingLotResource("https://www.galeriabaltycka.pl/o-centrum/dojazd-parkingi/parkingi/")
             ),
             totalSpots = mapOf(
-                Pair(ParkingSpotType.Car, 1100u)
+                Pair(ParkingSpotType.CAR, 1100u)
             ),
             features = listOf(ParkingLotFeature.COVERED, ParkingLotFeature.UNCOVERED),
             currency = "PLN",

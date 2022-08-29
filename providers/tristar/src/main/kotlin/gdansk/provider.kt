@@ -59,7 +59,7 @@ class TristarGdanskProvider: Provider() {
                 location = it.location,
                 resources = configuration.resources,
                 totalSpots = mapOf(
-                    Pair(ParkingSpotType.Car, configuration.totalSpots)
+                    Pair(ParkingSpotType.CAR, configuration.totalSpots)
                 ),
                 features = configuration.features,
                 currency = "PLN",
@@ -78,7 +78,7 @@ class TristarGdanskProvider: Provider() {
             val state = ParkingLotState(
                 lastUpdated = it.lastUpdate,
                 availableSpots = mapOf(
-                    Pair(ParkingSpotType.Car, it.availableSpots)
+                    Pair(ParkingSpotType.CAR, it.availableSpots)
                 ),
             )
             id to state
