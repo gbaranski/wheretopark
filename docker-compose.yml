@@ -17,17 +17,14 @@ services:
       timeout: 5s
       retries: 3
 
-  # provider-tristar:
-  #   container_name: wheretopark-provider-tristar
-  #   build:
-  #     context: ~/code/wheretopark/server
-  #     args:
-  #       PACKAGE_NAME: wheretopark-provider-tristar
-  #   restart: unless-stopped
-  #   environment:
-  #     - STOREKEEPER_URL=http://wheretopark-storekeeper
-  #   depends_on:
-  #     - storekeeper
+  providers-tristar:
+   container_name: wheretopark-providers/tristar
+   image: wheretopark-providers-tristar
+   restart: unless-stopped
+   environment:
+     - STOREKEEPER_URL=http://wheretopark-storekeeper
+   depends_on:
+     - storekeeper
 
 networks:
   web:
