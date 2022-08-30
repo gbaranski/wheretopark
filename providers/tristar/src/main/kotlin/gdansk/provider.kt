@@ -33,6 +33,9 @@ data class Configuration(
 )
 
 class TristarGdanskProvider: Provider() {
+    override val name: String
+        get() = "gdansk"
+
     private val client = HttpClient {
         install(ContentNegotiation) {
             json(Json {

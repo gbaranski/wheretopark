@@ -32,6 +32,9 @@ data class Configuration(
 )
 
 class TristarGdyniaProvider: Provider() {
+    override val name: String
+        get() = "gdynia"
+
     private val client = HttpClient {
         install(ContentNegotiation) {
             json(Json {
