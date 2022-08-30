@@ -5,7 +5,6 @@ import app.wheretopark.providers.tristar.gdynia.TristarGdyniaProvider
 import app.wheretopark.shared.*
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.time.delay
 import java.time.Duration
 
