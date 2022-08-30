@@ -1,8 +1,7 @@
-
 plugins {
     kotlin("jvm")
     kotlin("plugin.serialization")
-    id("io.ktor.plugin") version "2.1.0"
+    id("com.google.cloud.tools.jib")
     application
 }
 
@@ -27,3 +26,9 @@ dependencies {
     testImplementation(kotlin("test"))
 }
 
+jib {
+    to {
+        image = "wheretopark-tristar"
+    }
+    container {}
+}
