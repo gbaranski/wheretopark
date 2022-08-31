@@ -8,6 +8,7 @@
 import SwiftUI
 import CoreLocation
 import MapKit
+import shared
 
 struct ListView: View {
     @Binding var query: String
@@ -27,7 +28,7 @@ struct ListView: View {
             ForEach(processedParkingLots, id: \.key) { id, parkingLot in
                 VStack(alignment: .leading, spacing: 3) {
                     Text(parkingLot.metadata.name).foregroundColor(.primary).font(.headline)
-                    Label("\(parkingLot.state.availableSpots) available parking spots", systemImage: "parkingsign.circle")
+                    Label("\(parkingLot.state.availableSpots[ParkingSpotType.car] ?? 0) available parking spots", systemImage: "parkingsign.circle")
                         .foregroundColor(.secondary)
                         .font(.subheadline)
                     if let userLocation: CLLocation = appState.locationManager.lastLocation {

@@ -61,7 +61,7 @@ struct ParkingLotView: View {
                 HStack{
                     VStack(alignment: .leading) {
                         Text("AVAILABILITY").fontWeight(.black).font(.caption).foregroundColor(.secondary)
-                        Text("\(parkingLot.state.availableSpots) cars").fontWeight(.heavy).foregroundColor(.yellow)
+                        Text("\(parkingLot.state.availableSpots[ParkingSpotType.car] ?? 0) cars").fontWeight(.heavy).foregroundColor(.yellow)
                     }
                     Divider()
                     VStack(alignment: .leading) {
@@ -152,7 +152,7 @@ struct ParkingLotAdditionalInfoView: View {
         Group {
             VStack(alignment: .leading) {
                 Text("Parking lot").foregroundColor(.secondary)
-                Text("\(metadata.totalSpots) total spaces")
+                Text("\(metadata.totalSpots[ParkingSpotType.car] ?? 0) total spaces")
             }
             Divider()
             VStack(alignment: .leading) {

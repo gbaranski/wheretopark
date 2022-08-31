@@ -191,7 +191,7 @@ struct MapViewRepresentable: UIViewRepresentable {
                 return annotationView
             case let cluster as MKClusterAnnotation:
                 let markerAnnotationView = MKMarkerAnnotationView()
-                let totalAvailableSpots = cluster.memberAnnotations.compactMap{ $0 as? ParkingLotAnnotation }.map{ $0.parkingLot.state.availableSpots }.reduce(0, +)
+                let totalAvailableSpots = cluster.memberAnnotations.compactMap{ $0 as? ParkingLotAnnotation }.map{ Int(truncating: $0.parkingLot.state.availableSpots[ParkingSpotType.car] ?? 0) }.reduce(0, +)
                 cluster.title = "\(totalAvailableSpots) total available spots"
                 cluster.subtitle = nil
                 markerAnnotationView.annotation = cluster
