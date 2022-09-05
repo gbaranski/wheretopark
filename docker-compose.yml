@@ -1,31 +1,45 @@
-version: "3"
+version: "3.8"
 services:
   storekeeper:
-    container_name: wheretopark-storekeeper
-    image: wheretopark-storekeeper
-    restart: unless-stopped
+    image: gbaranski/wheretopark-storekeeper
     ports:
-      - "3458:80"
+      - "3458:8080"
     environment:
-      - PORT=80
+      - PORT=8080
     networks:
-      - default
-      - web
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost/health-check"]
-      interval: 5s
-      timeout: 5s
-      retries: 3
+      - net
+      - traefik-public
+    # healthcheck:
+    #   test: ["CMD", "curl", "-f", "http://localhost/health-check"]
+    #   interval: 5s
+    #   timeout: 5s
+    #   retries: 3
+    deploy:
+      labels:
+        - traefik.enable=true
+        - traefik.docker.network=traefik-public
+        - traefik.constraint-label=traefik-public
+        - traefik.http.routers.wheretopark-storekeeper-http.rule=Host(`${STOREKEEPER_DOMAIN?Variable not set}`)
+        - traefik.http.routers.wheretopark-storekeeper-http.entrypoints=http
+        - traefik.http.routers.wheretopark-storekeeper-http.middlewares=https-redirect
+        - traefik.http.routers.wheretopark-storekeeper-https.rule=Host(`${STOREKEEPER_DOMAIN?Variable not set}`)
+        - traefik.http.routers.wheretopark-storekeeper-https.entrypoints=https
+        - traefik.http.routers.wheretopark-storekeeper-https.tls=true
+        - traefik.http.routers.wheretopark-storekeeper-https.tls.certresolver=le
+        - traefik.http.services.wheretopark-storekeeper.loadbalancer.server.port=8080
 
-  providers-tristar:
-   container_name: wheretopark-providers/tristar
-   image: wheretopark-providers-tristar
-   restart: unless-stopped
-   environment:
-     - STOREKEEPER_URL=http://wheretopark-storekeeper
-   depends_on:
-     - storekeeper
+  # providers-tristar:
+  #  image: wheretopark-providers-tristar
+  #  networks:
+  #    - net
+  #  environment:
+  #    - STOREKEEPER_URL=http://storekeeper
+  #  depends_on:
+  #    - storekeeper
 
 networks:
-  web:
+  net:
+    driver: overlay
+    attachable: true
+  traefik-public:
     external: true
