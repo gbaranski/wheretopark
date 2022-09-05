@@ -35,7 +35,7 @@ fun Application.configureRouting() {
             MemoryStore()
         }
         "redis" -> {
-            RedisStore(storeURL.host, storeURL.port)
+            RedisStore(storeURL.host, if (storeURL.port == -1) 6379 else storeURL.port)
         }
         else -> {
             throw IllegalArgumentException("Unknown store scheme: ${storeURL.scheme}")
