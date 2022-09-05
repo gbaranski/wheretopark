@@ -1,6 +1,6 @@
 package app.wheretopark.providers.tristar.gdynia
 
-import app.wheretopark.providers.tristar.Provider
+import app.wheretopark.providers.shared.Provider
 import app.wheretopark.shared.*
 import com.charleskorn.kaml.Yaml
 import io.ktor.client.*
@@ -12,6 +12,9 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.days
+import kotlin.time.Duration.Companion.seconds
 
 const val METADATA_URL = "http://api.zdiz.gdynia.pl/ri/rest/parkings"
 const val STATE_URL = "http://api.zdiz.gdynia.pl/ri/rest/parking_places"
@@ -33,7 +36,11 @@ data class Configuration(
 
 class TristarGdyniaProvider: Provider() {
     override val name: String
-        get() = "gdynia"
+        get() = "tristar/gdynia"
+    override val metadataInterval: Duration
+        get() = 1.days
+    override val stateInterval: Duration
+        get() = 30.seconds
 
     private val client = HttpClient {
         install(ContentNegotiation) {

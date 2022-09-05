@@ -14,6 +14,7 @@ application {
 
 dependencies {
     implementation(project(":shared"))
+    implementation(project(":providers:shared"))
 
     implementation("ch.qos.logback:logback-classic:1.2.11")
     implementation("io.ktor:ktor-client-core:$ktorVersion")

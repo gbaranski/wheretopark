@@ -1,6 +1,6 @@
 package app.wheretopark.providers.tristar.gdansk
 
-import app.wheretopark.providers.tristar.Provider
+import app.wheretopark.providers.shared.Provider
 import app.wheretopark.shared.*
 import com.charleskorn.kaml.Yaml
 import io.ktor.client.*
@@ -12,7 +12,9 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
-import java.time.DayOfWeek
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.days
+import kotlin.time.Duration.Companion.seconds
 
 const val METADATA_URL = "https://ckan.multimediagdansk.pl/dataset/cb1e2708-aec1-4b21-9c8c-db2626ae31a6/resource/d361dff3-202b-402d-92a5-445d8ba6fd7f/download/parking-lots.json"
 const val STATE_URL = "https://ckan2.multimediagdansk.pl/parkingLots"
@@ -34,7 +36,11 @@ data class Configuration(
 
 class TristarGdanskProvider: Provider() {
     override val name: String
-        get() = "gdansk"
+        get() = "tristar/gdansk"
+    override val metadataInterval: Duration
+        get() = 1.days
+    override val stateInterval: Duration
+        get() = 30.seconds
 
     private val client = HttpClient {
         install(ContentNegotiation) {
