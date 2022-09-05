@@ -30,6 +30,17 @@ dependencies {
 jib {
     to {
         image = "wheretopark-storekeeper"
+    from {
+        platforms {
+            platform {
+                architecture = "amd64"
+                os = "linux"
+            }
+            platform {
+                architecture = "arm64"
+                os = "linux"
+            }
+        }
     }
     container {}
 }
