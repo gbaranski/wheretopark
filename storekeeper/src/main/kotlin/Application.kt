@@ -13,6 +13,8 @@ import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import io.ktor.utils.io.bits.*
+import java.net.URL
 
 fun main() {
     val port = System.getenv("PORT")?.toInt() ?: 8080
@@ -28,27 +30,37 @@ fun Application.configureRouting() {
     }
     install(CallLogging)
 
-    val states = mutableMapOf<ParkingLotID, ParkingLotState>()
-    val metadatas = mutableMapOf<ParkingLotID, ParkingLotMetadata>()
+    val storeURL = URL(System.getenv("STORE_URL") ?: "memory:")
+    val store = when(storeURL.protocol) {
+        "memory" -> {
+            MemoryStore()
+        }
+        "redis" -> {
+            RedisStore(storeURL.host, storeURL.port)
+        }
+        else -> {
+            throw IllegalArgumentException("Unknown store protocol: ${storeURL.protocol}")
+        }
+    }
     routing {
         get("/health-check") {
             call.respond("Hello, World!")
         }
         get("/parking-lot/state"){
-            call.respond(states)
+            call.respond(store.getStates())
         }
         post("/parking-lot/state"){
             val newStates = call.receive<Map<ParkingLotID, ParkingLotState>>()
-            states.putAll(newStates)
+            store.updateStates(newStates)
             call.respondText("updated ${newStates.count()} states", status = HttpStatusCode.Accepted)
         }
 
         get("/parking-lot/metadata"){
-            call.respond(metadatas)
+            call.respond(store.getMetadatas())
         }
         post("/parking-lot/metadata"){
             val newMetadatas = call.receive<Map<ParkingLotID, ParkingLotMetadata>>()
-            metadatas.putAll(newMetadatas)
+            store.updateMetadatas(newMetadatas)
             call.respondText("updated ${newMetadatas.count()} states", status = HttpStatusCode.Accepted)
         }
     }
