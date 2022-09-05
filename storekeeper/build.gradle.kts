@@ -29,7 +29,8 @@ dependencies {
 
 jib {
     to {
-        image = "wheretopark-storekeeper"
+        image = "gbaranski/wheretopark-storekeeper"
+    }
     from {
         platforms {
             platform {
