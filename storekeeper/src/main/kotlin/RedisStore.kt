@@ -9,12 +9,10 @@ import kotlinx.datetime.Instant
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.seconds
 
 private const val METADATA_NAMESPACE = "metadata"
 private const val STATE_NAMESPACE = "state"
-private val METADATA_DURATION = 1.days
 private val STATE_DURATION = 3600.seconds
 
 class RedisStore(
@@ -27,6 +25,9 @@ class RedisStore(
 
     private suspend inline fun <reified T> getAll(namespace: String): Map<ParkingLotID, T> {
         val ids = client.keys("${namespace}:*")
+        if (ids.isEmpty()) {
+            return mapOf()
+        }
         val values = client.mget(*ids.toTypedArray())
         val pairs = ids.zip(values)
         return pairs.associate { (id, value) ->
