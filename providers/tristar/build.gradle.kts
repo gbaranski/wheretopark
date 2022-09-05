@@ -28,7 +28,7 @@ dependencies {
 
 jib {
     to {
-        image = "wheretopark-tristar"
+        image = "wheretopark-providers-tristar"
     }
     container {}
 }
