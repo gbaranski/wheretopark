@@ -13,8 +13,7 @@ import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import io.ktor.utils.io.bits.*
-import java.net.URL
+import java.net.URI
 
 fun main() {
     val port = System.getenv("PORT")?.toInt() ?: 8080
@@ -30,8 +29,8 @@ fun Application.configureRouting() {
     }
     install(CallLogging)
 
-    val storeURL = URL(System.getenv("STORE_URL") ?: "memory:")
-    val store = when(storeURL.protocol) {
+    val storeURL = URI(System.getenv("STORE_URL") ?: "memory:")
+    val store = when(storeURL.scheme) {
         "memory" -> {
             MemoryStore()
         }
@@ -39,7 +38,7 @@ fun Application.configureRouting() {
             RedisStore(storeURL.host, storeURL.port)
         }
         else -> {
-            throw IllegalArgumentException("Unknown store protocol: ${storeURL.protocol}")
+            throw IllegalArgumentException("Unknown store scheme: ${storeURL.scheme}")
         }
     }
     routing {
