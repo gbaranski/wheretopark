@@ -31,7 +31,7 @@ fun Application.configureRouting() {
     install(CallLogging)
     install(AutoHeadResponse)
 
-    val storeURL = URI(System.getenv("STORE_URL") ?: "memory:")
+    val storeURL = URI(System.getenv("STORE_URL") ?: "memory:/")
     val store = when(storeURL.scheme) {
         "memory" -> {
             MemoryStore()
