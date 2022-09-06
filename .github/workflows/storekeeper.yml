@@ -10,6 +10,7 @@
 name: Storekeeper CI/CD
 
 on:
+  workflow_dispatch:
   push:
     paths:
       - "storekeeper"
