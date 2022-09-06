@@ -185,6 +185,63 @@ data class ParkingLot(
     val state: ParkingLotState,
 ) {
     companion object {
+        val forumGdansk = ParkingLot(
+            state = ParkingLotState(
+                lastUpdated = Instant.parse("2022-09-06T21:39:21Z"),
+                availableSpots = mapOf(
+                    ParkingSpotType.CAR to 988u,
+                )
+            ),
+            metadata = ParkingLotMetadata(
+                name = "Forum Gdańsk",
+                address = "Targ Sienny 7, 80-806 Gdańsk",
+                location = Coordinate(54.34941, 18.64233),
+                resources = listOf(
+                    ParkingLotResource("mailto:parking@forumgdansk.pl"),
+                    ParkingLotResource("tel:+48-661-551-882"),
+                    ParkingLotResource("https://forumgdansk.pl/pl/przydatne-informacje/parking")
+                ),
+                totalSpots = mapOf(
+                    ParkingSpotType.CAR to 1008u,
+                ),
+                features = listOf(
+                    ParkingLotFeature.COVERED,
+                    ParkingLotFeature.UNCOVERED,
+                ),
+                currency = "PLN",
+                rules = listOf(
+                    ParkingLotRule(
+                        weekdays = null,
+                        hours = null,
+                        pricing = listOf(
+                            ParkingLotPricingRule(
+                                duration = 30.minutes,
+                                price = 0.0,
+                            ),
+                            ParkingLotPricingRule(
+                                duration = 1.hours,
+                                price = 3.0,
+                            ),
+                            ParkingLotPricingRule(
+                                duration = 2.hours,
+                                price = 8.0,
+                            ),
+                            ParkingLotPricingRule(
+                                duration = 3.hours,
+                                price = 13.0,
+                            ),
+                            ParkingLotPricingRule(
+                                duration = 1.hours,
+                                price = 10.0,
+                                repeating = true,
+                            ),
+                        )
+                    )
+                )
+            )
+
+        )
+
         val galeriaBaltycka = ParkingLot(
             state = ParkingLotState(
                 availableSpots = mapOf(
