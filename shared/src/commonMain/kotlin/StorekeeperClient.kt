@@ -8,8 +8,17 @@ import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.json.Json
 
-class StorekeeperClient {
-    private val baseURL = "https://storekeeper.wheretopark.app"
+val DEFAULT_STOREKEEPER_URL = Url("https://storekeeper.wheretopark.app")
+
+class StorekeeperClient(
+    private val baseURL: Url = DEFAULT_STOREKEEPER_URL
+) {
+    constructor(baseURL: String = DEFAULT_STOREKEEPER_URL.toString()) : this(Url(baseURL))
+
+    init {
+        println("using `$baseURL` as Storekeeper URL")
+    }
+
     private val http = HttpClient {
         expectSuccess = true
         install(ContentNegotiation) {

@@ -39,9 +39,11 @@ abstract class Provider {
         }
     }
 
-    suspend fun start() = start(StorekeeperClient())
+    suspend fun start() = start(StorekeeperClient(getStorekeeperURL()))
 }
 
+
+private fun getStorekeeperURL() = System.getenv("STOREKEEPER_URL")
 
 private suspend fun runEvery(delay: Duration, action: suspend () -> Unit) {
     while(true) {
@@ -51,6 +53,6 @@ private suspend fun runEvery(delay: Duration, action: suspend () -> Unit) {
 }
 
 suspend fun startMany(vararg providers: Provider) = coroutineScope {
-    val storekeeperClient = StorekeeperClient()
+    val storekeeperClient = StorekeeperClient(getStorekeeperURL())
     providers.forEach { launch { it.start(storekeeperClient) } }
 }
