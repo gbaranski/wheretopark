@@ -43,7 +43,11 @@ abstract class Provider {
 }
 
 
-private fun getStorekeeperURL() = System.getenv("STOREKEEPER_URL")
+private fun getStorekeeperURL(): String {
+    val url = System.getenv("STOREKEEPER_URL")
+    println("using `$url` as Storekeeper URL")
+    return url
+}
 
 private suspend fun runEvery(delay: Duration, action: suspend () -> Unit) {
     while(true) {
