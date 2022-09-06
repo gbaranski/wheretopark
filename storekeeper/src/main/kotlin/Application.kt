@@ -19,18 +19,6 @@ import java.net.URI
 
 fun main() {
     val port = System.getenv("PORT")?.toInt() ?: 8080
-    embeddedServer(Netty, port = port) {
-        configure()
-    }.start(wait = true)
-}
-
-fun Application.configure() {
-    install(ContentNegotiation) {
-        json()
-    }
-    install(CallLogging)
-    install(AutoHeadResponse)
-
     val storeURL = URI(System.getenv("STORE_URL") ?: "memory:/")
     val store = when(storeURL.scheme) {
         "memory" -> {
@@ -43,6 +31,18 @@ fun Application.configure() {
             throw IllegalArgumentException("Unknown store scheme: ${storeURL.scheme}")
         }
     }
+    embeddedServer(Netty, port = port) {
+        configure(store)
+    }.start(wait = true)
+}
+
+fun Application.configure(store: Store) {
+    install(ContentNegotiation) {
+        json()
+    }
+    install(CallLogging)
+    install(AutoHeadResponse)
+
     routing {
         get("/health-check") {
             call.respond("Hello, World!")

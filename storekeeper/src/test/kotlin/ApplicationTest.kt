@@ -13,7 +13,7 @@ import kotlin.test.assertEquals
 class ServerTest {
     private fun withClient(test: suspend (storekeeperClient: StorekeeperClient) -> Unit) = testApplication {
         application {
-            configure()
+            configure(MemoryStore())
         }
 
         val client = createClient {
