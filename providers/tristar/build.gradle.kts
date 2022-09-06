@@ -28,7 +28,21 @@ dependencies {
 
 jib {
     to {
-        image = "wheretopark-providers-tristar"
+        image = "ghcr.io/wheretopark/providers-tristar"
     }
-    container {}
+    from {
+        platforms {
+            platform {
+                architecture = "amd64"
+                os = "linux"
+            }
+            platform {
+                architecture = "arm64"
+                os = "linux"
+            }
+        }
+    }
+    container {
+        creationTime = "2022-09-06T14:20:32+0000"
+    }
 }
