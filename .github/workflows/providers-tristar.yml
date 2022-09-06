@@ -13,9 +13,9 @@ on:
   workflow_dispatch:
   push:
     paths:
-      - "providers/tristar"
-      - "providers/lib"
-      - "shared"
+      - "providers/tristar/**"
+      - "providers/lib/**"
+      - "shared/**"
 
 jobs:
   build:

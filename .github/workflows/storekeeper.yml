@@ -13,8 +13,8 @@ on:
   workflow_dispatch:
   push:
     paths:
-      - "storekeeper"
-      - "shared"
+      - "storekeeper/**"
+      - "shared/**"
 
 jobs:
   build:
