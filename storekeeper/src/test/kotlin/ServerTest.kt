@@ -1,7 +1,6 @@
 package app.wheretopark.storekeeper
 
 import app.wheretopark.shared.ParkingLot
-import app.wheretopark.shared.ParkingLotMetadata
 import app.wheretopark.shared.StorekeeperClient
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.client.plugins.contentnegotiation.*
