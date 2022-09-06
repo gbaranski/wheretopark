@@ -6,6 +6,7 @@ plugins {
 }
 
 val ktorVersion: String by project
+val kotlinVersion: String by project
 
 application {
     mainClass.set("app.wheretopark.storekeeper.ApplicationKt")
@@ -25,6 +26,9 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
 
     testImplementation(kotlin("test"))
+    testImplementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
+    testImplementation("io.ktor:ktor-server-test-host:$ktorVersion")
+    testImplementation("org.jetbrains.kotlin:kotlin-test:$kotlinVersion")
     testImplementation("io.ktor:ktor-server-tests:$ktorVersion")
 }
 
