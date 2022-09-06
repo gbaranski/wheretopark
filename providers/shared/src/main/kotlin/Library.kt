@@ -25,7 +25,7 @@ abstract class Provider {
     private suspend fun state(storekeeperClient: StorekeeperClient) {
         val states = states()
         storekeeperClient.postStates(states)
-        println("tristar/$name published ${states.count()} states")
+        println("$name published ${states.count()} states")
     }
 
     suspend fun start(storekeeperClient: StorekeeperClient) = coroutineScope {
