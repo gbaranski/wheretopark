@@ -29,7 +29,7 @@ dependencies {
 
 jib {
     to {
-        image = "registry.gbaranski.com/wheretopark-storekeeper"
+        image = "ghcr.io/wheretopark/storekeeper"
     }
     from {
         platforms {
