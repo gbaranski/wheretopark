@@ -31,7 +31,7 @@ class RedisStore(
         val values = client.mget(*ids.toTypedArray())
         val pairs = ids.zip(values)
         return pairs.associate { (id, value) ->
-            id to serialization.decodeFromString(value!!)
+            id.removePrefix("${namespace}:") to serialization.decodeFromString(value!!)
         }
     }
 
