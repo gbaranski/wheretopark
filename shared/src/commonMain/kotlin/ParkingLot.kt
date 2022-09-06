@@ -13,6 +13,7 @@ import kotlinx.serialization.encoding.Encoder
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.hours
+import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 
 typealias ParkingLotID = String
@@ -38,6 +39,7 @@ object ParkingLotWeekdaysSerializer : KSerializer<ParkingLotWeekdays> {
         val string = "${value.start}${delimiter}${value.end}"
         encoder.encodeString(string)
     }
+
     override fun deserialize(decoder: Decoder): ParkingLotWeekdays {
         val string = decoder.decodeString()
         val split = string.split(delimiter, limit = 2)
@@ -59,6 +61,7 @@ object ParkingLotHoursSerializer : KSerializer<ParkingLotHours> {
         val string = "${value.start}-${value.end}"
         encoder.encodeString(string)
     }
+
     override fun deserialize(decoder: Decoder): ParkingLotHours {
         val string = decoder.decodeString()
         val split = string.split('-', limit = 2)
@@ -99,9 +102,9 @@ enum class ParkingLotStatus {
 }
 
 @Serializable(with = ParkingLotResourceSerializer::class)
-data class ParkingLotResource(val url: String): Comparable<ParkingLotResource> {
+data class ParkingLotResource(val url: String) : Comparable<ParkingLotResource> {
     fun label() =
-        when(url.substringBefore(':')) {
+        when (url.substringBefore(':')) {
             "http", "https" -> "Website"
             "mailto" -> "E-Mail address"
             "tel" -> "Phone number"
@@ -144,10 +147,10 @@ data class ParkingLotMetadata(
     fun status(at: Instant): ParkingLotStatus {
         val dateTime = at.toLocalDateTime(TimeZone.UTC)
         val weekday = dateTime.dayOfWeek
-        val rule = rules.sortedBy { it.weekdays != null }.find{
+        val rule = rules.sortedBy { it.weekdays != null }.find {
             weekday >= (it.weekdays?.start ?: DayOfWeek.MONDAY) && weekday <= (it.weekdays?.end ?: DayOfWeek.SUNDAY)
         } ?: return ParkingLotStatus.CLOSED
-        if(rule.hours == null) return ParkingLotStatus.OPEN
+        if (rule.hours == null) return ParkingLotStatus.OPEN
         val startDateTime = rule.hours.start.atDate(dateTime.date)
         val endDateTime = if (rule.hours.end < rule.hours.start) {
             rule.hours.end.atDate(dateTime.date.plus(DatePeriod(days = 1)))
@@ -170,7 +173,7 @@ data class ParkingLotMetadata(
 }
 
 @Serializable
-data class ParkingLotState (
+data class ParkingLotState(
     @SerialName("last-updated")
     val lastUpdated: Instant,
     @SerialName("available-spots")
@@ -190,78 +193,79 @@ data class ParkingLot(
                 lastUpdated = Clock.System.now().minus(10.seconds)
             ),
             metadata = ParkingLotMetadata(
-            name = "Galeria Bałtycka",
-            address = "ul. Dmowskiego",
-            location = Coordinate(
-                latitude = 54.38268,
-                longitude = 18.60024,
-            ),
-            resources = listOf(
-                ParkingLotResource("mailto:galeria@galeriabaltycka.pl"),
-                ParkingLotResource("tel:+48-58-521-85-52"),
-                ParkingLotResource("https://www.galeriabaltycka.pl/o-centrum/dojazd-parkingi/parkingi/")
-            ),
-            totalSpots = mapOf(
-                Pair(ParkingSpotType.CAR, 1100u)
-            ),
-            features = listOf(ParkingLotFeature.COVERED, ParkingLotFeature.UNCOVERED),
-            currency = "PLN",
-            rules = listOf(
-                ParkingLotRule(
-                    weekdays = ParkingLotWeekdays(start = DayOfWeek.MONDAY, end = DayOfWeek.SATURDAY),
-                    hours = ParkingLotHours(start = LocalTime(8,0,0), end = LocalTime(22,0,0)),
-                    pricing = listOf(
-                        ParkingLotPricingRule(
-                            duration = 1.hours,
-                            price = 0.0,
-                        ),
-                        ParkingLotPricingRule(
-                            duration = 2.hours,
-                            price = 2.0,
-                        ),
-                        ParkingLotPricingRule(
-                            duration = 3.hours,
-                            price = 5.0,
-                        ),
-                        ParkingLotPricingRule(
-                            duration = 1.days,
-                            price = 25.0,
-                        ),
-                        ParkingLotPricingRule(
-                            duration = 1.hours,
-                            price = 4.0,
-                            repeating = true,
-                        ),
-                    )
+                name = "Galeria Bałtycka",
+                address = "ul. Dmowskiego",
+                location = Coordinate(
+                    latitude = 54.38268,
+                    longitude = 18.60024,
                 ),
-                ParkingLotRule(
-                    weekdays = ParkingLotWeekdays(start = DayOfWeek.SUNDAY, end = DayOfWeek.SUNDAY),
-                    hours = ParkingLotHours(start = LocalTime(9,0,0), end = LocalTime(21,0,0)),
-                    pricing = listOf(
-                        ParkingLotPricingRule(
-                            duration = 1.hours,
-                            price = 0.0,
-                        ),
-                        ParkingLotPricingRule(
-                            duration = 2.hours,
-                            price = 2.0,
-                        ),
-                        ParkingLotPricingRule(
-                            duration = 3.hours,
-                            price = 5.0,
-                        ),
-                        ParkingLotPricingRule(
-                            duration = 1.days,
-                            price = 25.0,
-                        ),
-                        ParkingLotPricingRule(
-                            duration = 1.hours,
-                            price = 4.0,
-                            repeating = true,
-                        ),
+                resources = listOf(
+                    ParkingLotResource("mailto:galeria@galeriabaltycka.pl"),
+                    ParkingLotResource("tel:+48-58-521-85-52"),
+                    ParkingLotResource("https://www.galeriabaltycka.pl/o-centrum/dojazd-parkingi/parkingi/")
+                ),
+                totalSpots = mapOf(
+                    Pair(ParkingSpotType.CAR, 1100u)
+                ),
+                features = listOf(ParkingLotFeature.COVERED, ParkingLotFeature.UNCOVERED),
+                currency = "PLN",
+                rules = listOf(
+                    ParkingLotRule(
+                        weekdays = ParkingLotWeekdays(start = DayOfWeek.MONDAY, end = DayOfWeek.SATURDAY),
+                        hours = ParkingLotHours(start = LocalTime(8, 0, 0), end = LocalTime(22, 0, 0)),
+                        pricing = listOf(
+                            ParkingLotPricingRule(
+                                duration = 1.hours,
+                                price = 0.0,
+                            ),
+                            ParkingLotPricingRule(
+                                duration = 2.hours,
+                                price = 2.0,
+                            ),
+                            ParkingLotPricingRule(
+                                duration = 3.hours,
+                                price = 5.0,
+                            ),
+                            ParkingLotPricingRule(
+                                duration = 1.days,
+                                price = 25.0,
+                            ),
+                            ParkingLotPricingRule(
+                                duration = 1.hours,
+                                price = 4.0,
+                                repeating = true,
+                            ),
+                        )
+                    ),
+                    ParkingLotRule(
+                        weekdays = ParkingLotWeekdays(start = DayOfWeek.SUNDAY, end = DayOfWeek.SUNDAY),
+                        hours = ParkingLotHours(start = LocalTime(9, 0, 0), end = LocalTime(21, 0, 0)),
+                        pricing = listOf(
+                            ParkingLotPricingRule(
+                                duration = 1.hours,
+                                price = 0.0,
+                            ),
+                            ParkingLotPricingRule(
+                                duration = 2.hours,
+                                price = 2.0,
+                            ),
+                            ParkingLotPricingRule(
+                                duration = 3.hours,
+                                price = 5.0,
+                            ),
+                            ParkingLotPricingRule(
+                                duration = 1.days,
+                                price = 25.0,
+                            ),
+                            ParkingLotPricingRule(
+                                duration = 1.hours,
+                                price = 4.0,
+                                repeating = true,
+                            ),
+                        )
                     )
                 )
             )
-        ))
+        )
     }
 }
