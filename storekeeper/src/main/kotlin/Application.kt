@@ -14,17 +14,17 @@ import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import java.net.ServerSocket
 import java.net.URI
 
 fun main() {
     val port = System.getenv("PORT")?.toInt() ?: 8080
-
     embeddedServer(Netty, port = port) {
-        configureRouting()
+        configure()
     }.start(wait = true)
 }
 
-fun Application.configureRouting() {
+fun Application.configure() {
     install(ContentNegotiation) {
         json()
     }
