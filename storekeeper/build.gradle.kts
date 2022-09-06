@@ -17,6 +17,7 @@ dependencies {
     implementation("io.ktor:ktor-server-netty:$ktorVersion")
     implementation("io.ktor:ktor-server-content-negotiation:$ktorVersion")
     implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
+    implementation("io.ktor:ktor-server-auto-head-response:$ktorVersion")
     implementation("io.ktor:ktor-server-call-logging:$ktorVersion")
 
     implementation("ch.qos.logback:logback-classic:1.2.11")

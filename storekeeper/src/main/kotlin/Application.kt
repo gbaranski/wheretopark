@@ -8,6 +8,7 @@ import io.ktor.server.application.call
 import io.ktor.server.application.install
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
+import io.ktor.server.plugins.autohead.*
 import io.ktor.server.plugins.callloging.*
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.server.request.*
@@ -28,6 +29,7 @@ fun Application.configureRouting() {
         json()
     }
     install(CallLogging)
+    install(AutoHeadResponse)
 
     val storeURL = URI(System.getenv("STORE_URL") ?: "memory:")
     val store = when(storeURL.scheme) {
