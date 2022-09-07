@@ -1,19 +1,22 @@
 version: "3.8"
 services:
   storekeeper:
-    image: gbaranski/wheretopark-storekeeper
+    image: ghcr.io/wheretopark/storekeeper:latest
     ports:
       - "3458:8080"
     environment:
       - PORT=8080
+      - STORE_URL=redis://redis
     networks:
       - net
       - traefik-public
-    # healthcheck:
-    #   test: ["CMD", "curl", "-f", "http://localhost/health-check"]
-    #   interval: 5s
-    #   timeout: 5s
-    #   retries: 3
+    depends_on:
+      - redis
+    healthcheck:
+      test: wget --no-verbose --tries=1 --spider http://localhost:8080/health-check || exit 1
+      interval: 5s
+      timeout: 10s
+      retries: 10
     deploy:
       labels:
         - traefik.enable=true
@@ -28,14 +31,20 @@ services:
         - traefik.http.routers.wheretopark-storekeeper-https.tls.certresolver=le
         - traefik.http.services.wheretopark-storekeeper.loadbalancer.server.port=8080
 
-  # providers-tristar:
-  #  image: wheretopark-providers-tristar
-  #  networks:
-  #    - net
-  #  environment:
-  #    - STOREKEEPER_URL=http://storekeeper
-  #  depends_on:
-  #    - storekeeper
+  providers-tristar:
+   image: ghcr.io/wheretopark/providers-tristar:latest
+   networks:
+     - net
+   environment:
+     - STOREKEEPER_URL=https://${STOREKEEPER_DOMAIN}
+   depends_on:
+     - storekeeper
+
+  redis:
+    image: redis
+    networks:
+      - net
+
 
 networks:
   net:
