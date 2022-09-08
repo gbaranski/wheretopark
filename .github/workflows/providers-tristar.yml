@@ -12,6 +12,8 @@ name: Providers/Tristar CI/CD
 on:
   workflow_dispatch:
   push:
+    branches:
+      - master
     paths:
       - "providers/tristar/**"
       - "providers/lib/**"
