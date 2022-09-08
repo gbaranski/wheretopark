@@ -32,16 +32,67 @@ services:
         - traefik.http.services.wheretopark-storekeeper.loadbalancer.server.port=8080
 
   providers-tristar:
-   image: ghcr.io/wheretopark/providers-tristar:latest
-   networks:
-     - net
-   environment:
-     - STOREKEEPER_URL=https://${STOREKEEPER_DOMAIN}
-   depends_on:
-     - storekeeper
+    image: ghcr.io/wheretopark/providers-tristar:latest
+    networks:
+      - net
+    environment:
+      - STOREKEEPER_URL=https://${STOREKEEPER_DOMAIN}
+    depends_on:
+      - storekeeper
 
   redis:
     image: redis
+    networks:
+      - net
+
+  hydra:
+    image: oryd/hydra:v1.11.10
+    ports:
+      - "4444:4444" # Public port
+      - "4445:4445" # Admin port
+      - "5555:5555" # Port for hydra token user
+    command: serve -c /etc/config/hydra/hydra.yml all --dev
+    volumes:
+      - type: volume
+        source: hydra-sqlite
+        target: /var/lib/sqlite
+        read_only: false
+      - type: bind
+        source: ./contrib/quickstart/5-min
+        target: /etc/config/hydra
+    environment:
+      - DSN=sqlite:///var/lib/sqlite/db.sqlite?_fk=true
+      - WEBFINGER_OIDC_DISCOVERY_SUPPORTED_SCOPE=read.metadata read.state write.metadata write.state
+      - OIDC_DYNAMIC_CLIENT_REGISTRATION_ENABLED=true
+      - WEBFINGER_OIDC_DISCOVERY_CLIENT_REGISTRATION_URL=http://hydra/clients
+    restart: unless-stopped
+    depends_on:
+      - hydra-migrate
+    networks:
+      - net
+  hydra-migrate:
+    image: oryd/hydra:v1.11.10
+    environment:
+      - DSN=sqlite:///var/lib/sqlite/db.sqlite?_fk=true
+    command: migrate -c /etc/config/hydra/hydra.yml sql -e --yes
+    volumes:
+      - type: volume
+        source: hydra-sqlite
+        target: /var/lib/sqlite
+        read_only: false
+      - type: bind
+        source: ./contrib/quickstart/5-min
+        target: /etc/config/hydra
+    restart: on-failure
+    networks:
+      - net
+  consent:
+    environment:
+      - HYDRA_ADMIN_URL=http://hydra:4445
+    image: oryd/hydra-login-consent-node:v1.11.10
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
     networks:
       - net
 
@@ -52,3 +103,8 @@ networks:
     attachable: true
   traefik-public:
     external: true
+
+volumes:
+  hydra-sqlite:
+
+
