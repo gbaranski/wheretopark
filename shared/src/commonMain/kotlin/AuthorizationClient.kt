@@ -23,24 +23,6 @@ enum class AccessType(name: String) {
     WriteState("write:state"),
 }
 
-data class AccessScope(val types: Set<AccessType>)
-
-object AccessScopeSerializer : KSerializer<AccessScope> {
-    override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("AccessScope", PrimitiveKind.STRING)
-
-    override fun serialize(encoder: Encoder, value: AccessScope) {
-        val string = value.types.joinToString(" ") { it.name }
-        encoder.encodeString(string)
-    }
-
-    override fun deserialize(decoder: Decoder): AccessScope {
-        val string = decoder.decodeString()
-        val types = string.split(" ").map { AccessType.valueOf(it) }.toSet()
-        return AccessScope(types)
-    }
-}
-
-
 @Serializable
 data class TokenResponse(
     @SerialName("access_token")
@@ -72,12 +54,12 @@ class AuthorizationClient(
         },
     )
 
-    suspend fun token(clientID: String, clientSecret: String, scope: AccessScope) = http.get("/oauth/token") {
+    suspend fun token(clientID: String, clientSecret: String, accessType: Set<AccessType>) = http.get("/oauth/token") {
         url {
             parameters.append("client_id", clientID)
             parameters.append("client_secret", clientSecret)
             parameters.append("grant_type", "client_credentials")
-            val scopeString = scope.types.joinToString(" ") { it.name }
+            val scopeString = accessType.joinToString(" ") { it.name }
             parameters.append("scope", scopeString)
         }
     }.body<TokenResponse>()

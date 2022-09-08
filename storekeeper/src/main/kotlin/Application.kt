@@ -5,9 +5,7 @@ import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.json
-import io.ktor.server.application.Application
-import io.ktor.server.application.call
-import io.ktor.server.application.install
+import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
 import io.ktor.server.engine.*
@@ -67,6 +65,20 @@ fun main() {
     }.start(wait = true)
 }
 
+// TODO: Find a cleaner way to do it
+suspend fun validateScope(call: ApplicationCall, accessType: AccessType): Boolean {
+    val principal = call.principal<JWTPrincipal>()
+    val scope = principal?.getClaim("scope", String::class) ?: ""
+    val accessScope = scope.split(" ").map { AccessType.valueOf(it) }.toSet()
+    return if (accessScope.contains(accessType)) {
+        true
+    } else {
+        call.respond(HttpStatusCode.Unauthorized, "missing access ${accessType.name} in scope $scope")
+        false
+    }
+
+}
+
 fun Application.configure(store: Store, config: Config) {
     install(ContentNegotiation) {
         json()
@@ -85,31 +97,34 @@ fun Application.configure(store: Store, config: Config) {
             }
         }
     }
-
     routing {
         get("/health-check") {
             call.respond("Hello, World!")
         }
-        authenticate("auth-jwt") {
-            get("/parking-lot/state") {
-                call.respond(store.getStates())
+        route("/parking-lot") {
+            route("/metadata") {
+                get {
+                    if (!validateScope(call, AccessType.ReadMetadata)) return@get
+                    call.respond(store.getMetadatas())
+                }
+                post {
+                    if (!validateScope(call, AccessType.WriteMetadata)) return@post
+                    val newStates = call.receive<Map<ParkingLotID, ParkingLotState>>()
+                    store.updateStates(newStates)
+                    call.respondText("updated ${newStates.count()} states", status = HttpStatusCode.Accepted)
+                }
             }
-            get("/parking-lot/metadata") {
-                call.respond(store.getMetadatas())
-            }
-        }
-
-        authenticate("auth-jwt") {
-            post("/parking-lot/state") {
-                val newStates = call.receive<Map<ParkingLotID, ParkingLotState>>()
-                store.updateStates(newStates)
-                call.respondText("updated ${newStates.count()} states", status = HttpStatusCode.Accepted)
-            }
-
-            post("/parking-lot/metadata") {
-                val newMetadatas = call.receive<Map<ParkingLotID, ParkingLotMetadata>>()
-                store.updateMetadatas(newMetadatas)
-                call.respondText("updated ${newMetadatas.count()} metadatas", status = HttpStatusCode.Accepted)
+            route("/state") {
+                get {
+                    if (!validateScope(call, AccessType.ReadState)) return@get
+                    call.respond(store.getStates())
+                }
+                post {
+                    if (!validateScope(call, AccessType.WriteState)) return@post
+                    val newMetadatas = call.receive<Map<ParkingLotID, ParkingLotMetadata>>()
+                    store.updateMetadatas(newMetadatas)
+                    call.respondText("updated ${newMetadatas.count()} metadatas", status = HttpStatusCode.Accepted)
+                }
             }
         }
     }
