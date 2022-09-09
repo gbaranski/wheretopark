@@ -23,6 +23,7 @@
 		689874A428B6D59400BFA839 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6885B39828B6D0A400860E55 /* Preview Assets.xcassets */; };
 		689874AF28B6DC0000BFA839 /* PhoneNumberKit in Frameworks */ = {isa = PBXBuildFile; productRef = 689874AE28B6DC0000BFA839 /* PhoneNumberKit */; };
 		689874B328B6DD1000BFA839 /* BottomSheet in Frameworks */ = {isa = PBXBuildFile; productRef = 689874B228B6DD1000BFA839 /* BottomSheet */; };
+		689C7D0528CBD190002EE10C /* AppEnvironment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 689C7D0428CBD190002EE10C /* AppEnvironment.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -63,6 +64,7 @@
 		6885B3A828B6D0A400860E55 /* wheretoparkUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = wheretoparkUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		6885B3AC28B6D0A400860E55 /* iosUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iosUITests.swift; sourceTree = "<group>"; };
 		6885B3AE28B6D0A400860E55 /* iosUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iosUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		689C7D0428CBD190002EE10C /* AppEnvironment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppEnvironment.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -118,6 +120,7 @@
 			children = (
 				681513CE28B6D20900172310 /* AppState.swift */,
 				681513D828B6D20A00172310 /* Bridging-Header.h */,
+				689C7D0428CBD190002EE10C /* AppEnvironment.swift */,
 				681513D528B6D20A00172310 /* ListView.swift */,
 				681513D628B6D20A00172310 /* LocationManager.swift */,
 				681513D928B6D20A00172310 /* MapView.swift */,
@@ -335,6 +338,7 @@
 				681513E028B6D20A00172310 /* wheretoparkApp.swift in Sources */,
 				681513E428B6D20A00172310 /* MapView.swift in Sources */,
 				681513E228B6D20A00172310 /* LocationManager.swift in Sources */,
+				689C7D0528CBD190002EE10C /* AppEnvironment.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -28,7 +28,6 @@ extension UISheetPresentationController.Detent.Identifier {
 }
 
 struct ContentView: View {
-    @Environment(\.colorScheme) var colorScheme
     @EnvironmentObject var appState: AppState
 
     @State var primaryBottomSheetVisible = false

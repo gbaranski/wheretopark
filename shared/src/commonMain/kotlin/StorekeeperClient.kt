@@ -16,7 +16,13 @@ const val DEFAULT_STOREKEEPER_URL = "https://storekeeper.wheretopark.app"
 class StorekeeperClient(
     private val http: HttpClient,
 ) {
-    constructor(baseURL: String = DEFAULT_STOREKEEPER_URL, accessToken: String) : this(
+    constructor(
+        baseURL: String = DEFAULT_STOREKEEPER_URL,
+        authorizationClient: AuthorizationClient,
+        clientID: String,
+        clientSecret: String,
+        accessScope: Set<AccessType>
+    ) : this(
         HttpClient {
             defaultRequest {
                 url(baseURL)
@@ -32,12 +38,15 @@ class StorekeeperClient(
             install(Auth) {
                 bearer {
                     loadTokens {
-                        BearerTokens(accessToken, "")
+                        val tokenResponse = authorizationClient.token(clientID, clientSecret, accessScope)
+                        println("obtained new token: ${tokenResponse.accessToken}")
+                        BearerTokens(tokenResponse.accessToken, "")
                     }
                 }
             }
         },
     )
+
     suspend fun metadatas(): Map<ParkingLotID, ParkingLotMetadata> = http.get("/parking-lot/metadata").body()
 
     suspend fun postMetadatas(metadatas: Map<ParkingLotID, ParkingLotMetadata>) =

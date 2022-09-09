@@ -34,10 +34,12 @@ data class TokenResponse(
 
 )
 
+const val DEFAULT_AUTHORIZATION_URL = "https://authorization.wheretopark.app"
+
 class AuthorizationClient(
     private val http: HttpClient
 ) {
-    constructor(baseURL: String = DEFAULT_STOREKEEPER_URL) : this(
+    constructor(baseURL: String = DEFAULT_AUTHORIZATION_URL) : this(
         HttpClient {
             defaultRequest {
                 url(baseURL)

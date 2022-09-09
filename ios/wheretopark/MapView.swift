@@ -19,7 +19,7 @@ struct MapView: View {
     @State var userTrackingMode: MKUserTrackingMode = .follow
     @EnvironmentObject var appState: AppState
     
-    @Environment(\.colorScheme) var colorScheme
+    @Environment(\.colorScheme) private var colorScheme
     
     var body: some View {
             ZStack(alignment: .topTrailing) {
