@@ -1,9 +1,12 @@
-FROM golang:1.19.1-alpine
+FROM golang:1.19.1-alpine as BUILD
 WORKDIR /app
 COPY go.mod ./
 COPY go.sum ./
 RUN go mod download
 COPY authorization/**.go ./
-RUN go build -o /bin/authorization-server .
+RUN go build -o /bin/my-server .
+
+FROM alpine:latest
+COPY --from=BUILD /bin/my-server /bin/my-server
 CMD [ "/bin/authorization-server" ]
 
