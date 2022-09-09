@@ -59,7 +59,7 @@ suspend fun validateScope(call: ApplicationCall, accessType: AccessType): Boolea
     return if (accessScope.contains(accessType)) {
         true
     } else {
-        call.respond(HttpStatusCode.Unauthorized, "missing access ${accessType.name} in scope $scope")
+        call.respond(HttpStatusCode.Unauthorized, "missing access ${accessType.code} in scope $scope")
         false
     }
 
