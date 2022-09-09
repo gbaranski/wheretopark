@@ -7,6 +7,7 @@ COPY authorization/**.go ./
 RUN go build -o /bin/my-server .
 
 FROM alpine:latest
+RUN apk --no-cache add curl
 COPY --from=BUILD /bin/my-server /bin/my-server
 CMD [ "/bin/my-server" ]
 
