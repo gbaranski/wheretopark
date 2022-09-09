@@ -15,6 +15,11 @@ services:
       JWT_SECRET: ${JWT_SECRET}
     networks:
       - net
+    healthcheck:
+      test: curl --fail http://localhost/health-check || exit 1
+      interval: 5s
+      timeout: 10s
+      retries: 10
 
   storekeeper:
     image: wheretopark-storekeeper
@@ -29,19 +34,24 @@ services:
     depends_on:
       - authorization
       - redis
+    healthcheck:
+      test: curl --fail http://localhost/health-check || exit 1
+      interval: 5s
+      timeout: 10s
+      retries: 10
 
-#  providers-tristar:
-#    image: wheretopark-provider-tristar
-#    networks:
-#      - net
-#    environment:
-#      STOREKEEPER_URL: ${STOREKEEPER_URL?STOREKEEPER_URL not set}
-#      AUTHORIZATION_URL: ${AUTHORIZATION_URL?AUTHORIZATION_URL not set}
-#      CLIENT_ID: ${OAUTH_CLIENT_ID?OAUTH_CLIENT_ID not set}
-#      CLIENT_SECRET: ${OAUTH_CLIENT_SECRET?OAUTH_CLIENT_SECRET not set}
-#    depends_on:
-#      - storekeeper
-#      - authorization
+  providers-tristar:
+    image: wheretopark-provider-tristar
+    networks:
+      - net
+    environment:
+      STOREKEEPER_URL: http://storekeeper
+      AUTHORIZATION_URL: http://authorization
+      CLIENT_ID: ${PROVIDER_CLIENT_ID?PROVIDER_CLIENT_ID not set}
+      CLIENT_SECRET: ${PROVIDER_CLIENT_SECRET?PROVIDER_CLIENT_SECRET not set}
+    depends_on:
+      - storekeeper
+      - authorization
 
   redis:
     image: redis
