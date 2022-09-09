@@ -32,7 +32,6 @@ services:
     networks:
       - net
     depends_on:
-      - authorization
       - redis
     healthcheck:
       test: curl --fail http://localhost/health-check || exit 1
