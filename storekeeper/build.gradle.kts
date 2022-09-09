@@ -19,14 +19,16 @@ dependencies {
     implementation("io.ktor:ktor-server-content-negotiation:$ktorVersion")
     implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
     implementation("io.ktor:ktor-server-auto-head-response:$ktorVersion")
+    implementation("io.ktor:ktor-server-auth:$ktorVersion")
+    implementation("io.ktor:ktor-server-auth-jwt:$ktorVersion")
     implementation("io.ktor:ktor-server-call-logging:$ktorVersion")
+    implementation("io.ktor:ktor-client-cio:$ktorVersion")
 
     implementation("ch.qos.logback:logback-classic:1.2.11")
     implementation("io.github.crackthecodeabhi:kreds:0.8")
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
 
     testImplementation(kotlin("test"))
-    testImplementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
     testImplementation("io.ktor:ktor-server-test-host:$ktorVersion")
     testImplementation("org.jetbrains.kotlin:kotlin-test:$kotlinVersion")
     testImplementation("io.ktor:ktor-server-tests:$ktorVersion")
@@ -38,10 +40,10 @@ jib {
     }
     from {
         platforms {
-            platform {
-                architecture = "amd64"
-                os = "linux"
-            }
+//            platform {
+//                architecture = "amd64"
+//                os = "linux"
+//            }
             platform {
                 architecture = "arm64"
                 os = "linux"

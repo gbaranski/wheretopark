@@ -1,9 +1,6 @@
 package app.wheretopark.providers.shared
 
-import app.wheretopark.shared.ParkingLotID
-import app.wheretopark.shared.ParkingLotMetadata
-import app.wheretopark.shared.ParkingLotState
-import app.wheretopark.shared.StorekeeperClient
+import app.wheretopark.shared.*
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -39,24 +36,38 @@ abstract class Provider {
         }
     }
 
-    suspend fun start() = start(StorekeeperClient(getStorekeeperURL()))
+//    suspend fun start() = start(StorekeeperClient(getStorekeeperURL()))
 }
 
 
 private fun getStorekeeperURL(): String {
     val url = System.getenv("STOREKEEPER_URL")
-    println("using `$url` as Storekeeper URL")
+    println("using `$url` as Storekeeper service URL")
+    return url
+}
+
+private fun getAuthorizationURL(): String {
+    val url = System.getenv("AUTHORIZATION_URL")
+    println("using `$url` as Authorization service URL")
     return url
 }
 
 private suspend fun runEvery(delay: Duration, action: suspend () -> Unit) {
-    while(true) {
+    while (true) {
         action()
         delay(delay)
     }
 }
 
 suspend fun startMany(vararg providers: Provider) = coroutineScope {
-    val storekeeperClient = StorekeeperClient(getStorekeeperURL())
+    val clientID = System.getenv("CLIENT_ID")!!
+    val clientSecret = System.getenv("CLIENT_SECRET")!!
+    val authorizationClient = AuthorizationClient(getAuthorizationURL())
+    val token = authorizationClient.token(
+        clientID,
+        clientSecret,
+        setOf(AccessType.WriteMetadata, AccessType.WriteState)
+    )
+    val storekeeperClient = StorekeeperClient(getStorekeeperURL(), token.accessToken)
     providers.forEach { launch { it.start(storekeeperClient) } }
 }

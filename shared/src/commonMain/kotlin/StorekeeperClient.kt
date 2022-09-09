@@ -3,8 +3,9 @@ package app.wheretopark.shared
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.plugins.*
+import io.ktor.client.plugins.auth.*
+import io.ktor.client.plugins.auth.providers.*
 import io.ktor.client.plugins.contentnegotiation.*
-import io.ktor.client.plugins.logging.*
 import io.ktor.client.request.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
@@ -15,19 +16,25 @@ const val DEFAULT_STOREKEEPER_URL = "https://storekeeper.wheretopark.app"
 class StorekeeperClient(
     private val http: HttpClient,
 ) {
-    constructor(baseURL: String = DEFAULT_STOREKEEPER_URL) : this(
+    constructor(baseURL: String = DEFAULT_STOREKEEPER_URL, accessToken: String) : this(
         HttpClient {
             defaultRequest {
                 url(baseURL)
             }
             expectSuccess = true
-            install(Logging)
             install(ContentNegotiation) {
                 json(Json {
                     prettyPrint = true
                     isLenient = true
                     ignoreUnknownKeys = true
                 })
+            }
+            install(Auth) {
+                bearer {
+                    loadTokens {
+                        BearerTokens(accessToken, "")
+                    }
+                }
             }
         },
     )

@@ -12,6 +12,8 @@ name: Storekeeper CI/CD
 on:
   workflow_dispatch:
   push:
+    branches:
+      - master
     paths:
       - "storekeeper/**"
       - "shared/**"
