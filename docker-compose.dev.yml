@@ -8,16 +8,13 @@ services:
       dockerfile: authorization/Dockerfile
     environment:
       PORT: 80
-      CLIENT_ID: ${OAUTH_CLIENT_ID?Variable not set}
-      CLIENT_SECRET: ${OAUTH_CLIENT_SECRET?Variable not set}
+      APPLICATION_CLIENT_ID: ${APPLICATION_CLIENT_ID?APPLICATION_CLIENT_ID not set}
+      APPLICATION_CLIENT_SECRET: ${APPLICATION_CLIENT_SECRET?APPLICATION_CLIENT_SECRET not set}
+      PROVIDER_CLIENT_ID: ${PROVIDER_CLIENT_ID?PROVIDER_CLIENT_ID not set}
+      PROVIDER_CLIENT_SECRET: ${PROVIDER_CLIENT_SECRET?PROVIDER_CLIENT_SECRET not set}
       JWT_SECRET: ${JWT_SECRET}
     networks:
       - net
-    healthcheck:
-      test: wget --no-verbose --tries=1 --spider http://localhost/health-check || exit 1
-      interval: 10s
-      timeout: 10s
-      retries: 5
 
   storekeeper:
     image: wheretopark-storekeeper
@@ -25,33 +22,26 @@ services:
       - "5001:80"
     environment:
       PORT: 80
-      STORE_URL: redis://redis
-      AUTHORIZATION_CLIENT_ID: ${OAUTH_CLIENT_ID?Variable not set}
-      AUTHORIZATION_CLIENT_SECRET: ${OAUTH_CLIENT_SECRET?Variable not set}
+      STORE_URI: redis://redis
       JWT_SECRET: ${JWT_SECRET}
     networks:
       - net
     depends_on:
       - authorization
       - redis
-    healthcheck:
-      test: wget --no-verbose --tries=1 --spider http://localhost/health-check || exit 1
-      interval: 10s
-      timeout: 10s
-      retries: 5
 
-  providers-tristar:
-    image: wheretopark-provider-tristar
-    networks:
-      - net
-    environment:
-      STOREKEEPER_URL: ${STOREKEEPER_URL?STOREKEEPER_URL not set}
-      AUTHORIZATION_URL: ${AUTHORIZATION_URL?AUTHORIZATION_URL not set}
-      CLIENT_ID: ${OAUTH_CLIENT_ID?OAUTH_CLIENT_ID not set}
-      CLIENT_SECRET: ${OAUTH_CLIENT_SECRET?OAUTH_CLIENT_SECRET not set}
-    depends_on:
-      - storekeeper
-      - authorization
+#  providers-tristar:
+#    image: wheretopark-provider-tristar
+#    networks:
+#      - net
+#    environment:
+#      STOREKEEPER_URL: ${STOREKEEPER_URL?STOREKEEPER_URL not set}
+#      AUTHORIZATION_URL: ${AUTHORIZATION_URL?AUTHORIZATION_URL not set}
+#      CLIENT_ID: ${OAUTH_CLIENT_ID?OAUTH_CLIENT_ID not set}
+#      CLIENT_SECRET: ${OAUTH_CLIENT_SECRET?OAUTH_CLIENT_SECRET not set}
+#    depends_on:
+#      - storekeeper
+#      - authorization
 
   redis:
     image: redis

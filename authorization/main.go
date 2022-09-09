@@ -3,9 +3,11 @@ package main
 import (
 	"context"
 	"encoding/base64"
+	"fmt"
+	"github.com/caarlos0/env/v6"
 	"github.com/gin-gonic/gin"
-	"github.com/go-oauth2/gin-server"
 	"github.com/go-oauth2/oauth2/v4"
+	"github.com/go-oauth2/oauth2/v4/errors"
 	"github.com/go-oauth2/oauth2/v4/manage"
 	"github.com/go-oauth2/oauth2/v4/models"
 	"github.com/go-oauth2/oauth2/v4/server"
@@ -13,76 +15,126 @@ import (
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/google/uuid"
 	"log"
-	"os"
+	"net/http"
 	"strconv"
 	"strings"
 )
 
-func getEnv(name string) string {
-	value, exists := os.LookupEnv(name)
-	if !exists {
-		log.Fatalf("%s is not set\n", name)
-	}
-	return value
+type config struct {
+	ApplicationClientID     string `env:"APPLICATION_CLIENT_ID"`
+	ApplicationClientSecret string `env:"APPLICATION_CLIENT_SECRET"`
+	ProviderClientID        string `env:"PROVIDER_CLIENT_ID"`
+	ProviderClientSecret    string `env:"PROVIDER_CLIENT_SECRET"`
+	JwtSecret               string `env:"JWT_SECRET"`
+	Port                    uint16 `env:"PORT" envDefault:"8080"`
 }
 
-func getEnvOr(name string, fallback string) string {
-	value, exists := os.LookupEnv(name)
-	if exists {
-		return value
-	} else {
-		return fallback
+var (
+	ApplicationAccessTypes = []string{
+		"read:metadata",
+		"read:state",
 	}
+	ProviderAccessTypes = []string{
+		"read:metadata",
+		"read:state",
+		"write:metadata",
+		"write:state",
+	}
+)
+
+func contains(s []string, str string) bool {
+	for _, v := range s {
+		if v == str {
+			return true
+		}
+	}
+
+	return false
 }
 
 func main() {
-	clientID := getEnv("CLIENT_ID")
-	clientSecret := getEnv("CLIENT_SECRET")
-	jwtSecret := getEnv("JWT_SECRET")
-	port, err := strconv.Atoi(getEnvOr("PORT", "8080"))
-	if err != nil {
-		log.Fatalf("Invalid port: %v\n", err)
+	var config config
+	if err := env.Parse(&config); err != nil {
+		fmt.Printf("%+v\n", err)
 	}
 	manager := manage.NewDefaultManager()
-
-	// token store
+	// TODO: remove the token store
 	manager.MustTokenStorage(store.NewMemoryTokenStore())
-
-	manager.MapAccessGenerate(NewJWTAccessGenerate([]byte(jwtSecret), jwt.SigningMethodHS512))
+	manager.MapAccessGenerate(NewJWTAccessGenerate([]byte(config.JwtSecret), jwt.SigningMethodHS512))
 
 	// client store
 	clientStore := store.NewClientStore()
-	err = clientStore.Set(clientID, &models.Client{
-		ID:     clientID,
-		Secret: clientSecret,
-	})
-	if err != nil {
-		log.Fatalf("set client error: %v\n", err)
-		return
+	clients := [][2]string{
+		{config.ApplicationClientID, config.ApplicationClientSecret},
+		{config.ProviderClientID, config.ProviderClientSecret},
+	}
+	for _, client := range clients {
+		id, secret := client[0], client[1]
+		fmt.Printf("adding client with ID: %s and secret: %s\n", id, secret)
+		err := clientStore.Set(id, &models.Client{
+			ID:     id,
+			Secret: secret,
+		})
+		if err != nil {
+			log.Fatalf("set client error: %v\n", err)
+			return
+		}
 	}
 	manager.MapClientStorage(clientStore)
-
-	// Initialize the oauth2 service
-	ginserver.InitServer(manager)
-	ginserver.SetAllowGetAccessRequest(true)
-	ginserver.SetClientInfoHandler(server.ClientFormHandler)
-
-	g := gin.Default()
-
-	auth := g.Group("/oauth")
-	{
-		//auth.GET("/authorize", ginserver.HandleAuthorizeRequest)
-		auth.POST("/token", ginserver.HandleTokenRequest)
-		auth.GET("/token", ginserver.HandleTokenRequest)
-	}
-	g.GET("/health-check", func(c *gin.Context) {
-		c.String(200, "Hello, World!")
+	srv := server.NewDefaultServer(manager)
+	srv.SetAllowedGrantType(oauth2.ClientCredentials)
+	srv.SetClientInfoHandler(server.ClientFormHandler)
+	srv.SetInternalErrorHandler(func(err error) (re *errors.Response) {
+		log.Println("Internal Error:", err.Error())
+		return
 	})
 
-	err = g.Run(":" + strconv.Itoa(port))
+	srv.SetResponseErrorHandler(func(re *errors.Response) {
+		log.Println("Response Error:", re.Error.Error())
+	})
+	srv.SetClientScopeHandler(func(tgr *oauth2.TokenGenerateRequest) (bool, error) {
+		var allowedAccessTypes []string
+		if tgr.ClientID == config.ApplicationClientID {
+			allowedAccessTypes = ApplicationAccessTypes
+		} else if tgr.ClientID == config.ProviderClientID {
+			allowedAccessTypes = ProviderAccessTypes
+		} else {
+			return false, errors.New("using not configured Client ID")
+		}
+
+		if tgr.Scope == "" {
+			return true, nil
+		}
+
+		accessTypes := strings.Split(tgr.Scope, " ")
+		for _, accessType := range accessTypes {
+			if !contains(allowedAccessTypes, accessType) {
+				return false, errors.New(fmt.Sprintf("using access type %s is not allowed for application", accessType))
+			}
+		}
+		return true, nil
+	})
+
+	r := gin.Default()
+
+	oauth := r.Group("/oauth")
+	{
+		oauth.Any("/token", func(c *gin.Context) {
+			err := srv.HandleTokenRequest(c.Writer, c.Request)
+			if err != nil {
+				fmt.Printf("token error: %v\n", err)
+				c.String(http.StatusBadRequest, err.Error())
+			}
+		})
+	}
+
+	r.Any("/health-check", func(c *gin.Context) {
+		c.String(http.StatusOK, "Hello, World")
+	})
+
+	err := r.Run(":" + strconv.Itoa(int(config.Port)))
 	if err != nil {
-		log.Fatalf("server run error: %v\n", err)
-		return
+		panic(err)
 	}
 }
 
@@ -113,7 +165,6 @@ func (a *JWTAccessGenerate) Token(ctx context.Context, data *oauth2.GenerateBasi
 	claims := JWTAccessClaims{
 		Scope: data.TokenInfo.GetScope(),
 		RegisteredClaims: jwt.RegisteredClaims{
-			Audience:  []string{data.Client.GetID()},
 			Subject:   data.UserID,
 			ExpiresAt: jwt.NewNumericDate(data.TokenInfo.GetAccessCreateAt().Add(data.TokenInfo.GetAccessExpiresIn())),
 		},

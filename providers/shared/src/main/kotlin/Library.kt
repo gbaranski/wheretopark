@@ -66,7 +66,7 @@ suspend fun startMany(vararg providers: Provider) = coroutineScope {
     val token = authorizationClient.token(
         clientID,
         clientSecret,
-        scope = AccessScope(setOf(AccessType.WriteMetadata, AccessType.WriteState))
+        setOf(AccessType.WriteMetadata, AccessType.WriteState)
     )
     val storekeeperClient = StorekeeperClient(getStorekeeperURL(), token.accessToken)
     providers.forEach { launch { it.start(storekeeperClient) } }

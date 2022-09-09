@@ -18,46 +18,32 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import java.net.URI
 
-data class AuthorizationConfig(
-    val clientID: String,
-    val clientSecret: String,
-    val jwtSecret: String,
-)
-
-data class StoreConfig(val uri: URI)
-
 data class Config(
-    val authorization: AuthorizationConfig,
-    val store: StoreConfig,
+    val jwtSecret: String,
+    val storeURI: URI,
     val port: Int,
 )
 
 fun loadConfig() = Config(
-    authorization = AuthorizationConfig(
-        clientID = System.getenv("AUTHORIZATION_CLIENT_ID")!!,
-        clientSecret = System.getenv("AUTHORIZATION_CLIENT_SECRET")!!,
-        jwtSecret = System.getenv("JWT_SECRET")!!,
-    ),
-    store = StoreConfig(
-        uri = URI(System.getenv("STORE_URI") ?: "memory:/")
-    ),
+    jwtSecret = System.getenv("JWT_SECRET")!!,
+    storeURI = URI(System.getenv("STORE_URI") ?: "memory:/"),
     port = System.getenv("PORT")?.toInt() ?: 8080,
 )
 
 
 fun main() {
     val config = loadConfig()
-    val store = when (config.store.uri.scheme) {
+    val store = when (config.storeURI.scheme) {
         "memory" -> {
             MemoryStore()
         }
 
         "redis" -> {
-            RedisStore(config.store.uri.host, if (config.store.uri.port == -1) 6379 else config.store.uri.port)
+            RedisStore(config.storeURI.host, if (config.storeURI.port == -1) 6379 else config.storeURI.port)
         }
 
         else -> {
-            throw IllegalArgumentException("Unknown store scheme: ${config.store.uri.scheme}")
+            throw IllegalArgumentException("Unknown store scheme: ${config.storeURI.scheme}")
         }
     }
     embeddedServer(Netty, port = config.port) {
@@ -69,7 +55,7 @@ fun main() {
 suspend fun validateScope(call: ApplicationCall, accessType: AccessType): Boolean {
     val principal = call.principal<JWTPrincipal>()
     val scope = principal?.getClaim("scope", String::class) ?: ""
-    val accessScope = scope.split(" ").map { AccessType.valueOf(it) }.toSet()
+    val accessScope = decodeAccessScope(scope)
     return if (accessScope.contains(accessType)) {
         true
     } else {
@@ -89,8 +75,7 @@ fun Application.configure(store: Store, config: Config) {
         jwt("auth-jwt") {
             realm = "Storekeeper service"
             verifier(
-                JWT.require(Algorithm.HMAC512(config.authorization.jwtSecret))
-                    .withAudience(config.authorization.clientID).build()
+                JWT.require(Algorithm.HMAC512(config.jwtSecret)).build()
             )
             validate { credential ->
                 JWTPrincipal(credential.payload)
@@ -101,29 +86,31 @@ fun Application.configure(store: Store, config: Config) {
         get("/health-check") {
             call.respond("Hello, World!")
         }
-        route("/parking-lot") {
-            route("/metadata") {
-                get {
-                    if (!validateScope(call, AccessType.ReadMetadata)) return@get
-                    call.respond(store.getMetadatas())
+        authenticate("auth-jwt") {
+            route("/parking-lot") {
+                route("/metadata") {
+                    get {
+                        if (!validateScope(call, AccessType.ReadMetadata)) return@get
+                        call.respond(store.getMetadatas())
+                    }
+                    post {
+                        if (!validateScope(call, AccessType.WriteMetadata)) return@post
+                        val newStates = call.receive<Map<ParkingLotID, ParkingLotState>>()
+                        store.updateStates(newStates)
+                        call.respondText("updated ${newStates.count()} states", status = HttpStatusCode.Accepted)
+                    }
                 }
-                post {
-                    if (!validateScope(call, AccessType.WriteMetadata)) return@post
-                    val newStates = call.receive<Map<ParkingLotID, ParkingLotState>>()
-                    store.updateStates(newStates)
-                    call.respondText("updated ${newStates.count()} states", status = HttpStatusCode.Accepted)
-                }
-            }
-            route("/state") {
-                get {
-                    if (!validateScope(call, AccessType.ReadState)) return@get
-                    call.respond(store.getStates())
-                }
-                post {
-                    if (!validateScope(call, AccessType.WriteState)) return@post
-                    val newMetadatas = call.receive<Map<ParkingLotID, ParkingLotMetadata>>()
-                    store.updateMetadatas(newMetadatas)
-                    call.respondText("updated ${newMetadatas.count()} metadatas", status = HttpStatusCode.Accepted)
+                route("/state") {
+                    get {
+                        if (!validateScope(call, AccessType.ReadState)) return@get
+                        call.respond(store.getStates())
+                    }
+                    post {
+                        if (!validateScope(call, AccessType.WriteState)) return@post
+                        val newMetadatas = call.receive<Map<ParkingLotID, ParkingLotMetadata>>()
+                        store.updateMetadatas(newMetadatas)
+                        call.respondText("updated ${newMetadatas.count()} metadatas", status = HttpStatusCode.Accepted)
+                    }
                 }
             }
         }
