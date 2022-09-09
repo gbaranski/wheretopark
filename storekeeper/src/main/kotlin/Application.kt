@@ -95,9 +95,9 @@ fun Application.configure(store: Store, config: Config) {
                     }
                     post {
                         if (!validateScope(call, AccessType.WriteMetadata)) return@post
-                        val newStates = call.receive<Map<ParkingLotID, ParkingLotState>>()
-                        store.updateStates(newStates)
-                        call.respondText("updated ${newStates.count()} states", status = HttpStatusCode.Accepted)
+                        val newMetadatas = call.receive<Map<ParkingLotID, ParkingLotMetadata>>()
+                        store.updateMetadatas(newMetadatas)
+                        call.respondText("updated ${newMetadatas.count()} metadatas", status = HttpStatusCode.Accepted)
                     }
                 }
                 route("/state") {
@@ -107,9 +107,9 @@ fun Application.configure(store: Store, config: Config) {
                     }
                     post {
                         if (!validateScope(call, AccessType.WriteState)) return@post
-                        val newMetadatas = call.receive<Map<ParkingLotID, ParkingLotMetadata>>()
-                        store.updateMetadatas(newMetadatas)
-                        call.respondText("updated ${newMetadatas.count()} metadatas", status = HttpStatusCode.Accepted)
+                        val newStates = call.receive<Map<ParkingLotID, ParkingLotState>>()
+                        store.updateStates(newStates)
+                        call.respondText("updated ${newStates.count()} states", status = HttpStatusCode.Accepted)
                     }
                 }
             }
