@@ -1,19 +1,19 @@
 version: "3.8"
 services:
-  storekeeper:
-    image: ghcr.io/wheretopark/storekeeper:latest
-    ports:
-      - "3458:8080"
+  authorization:
+    image: ghcr.io/wheretopark/authorization:latest
     environment:
-      - PORT=8080
-      - STORE_URL=redis://redis
+      PORT: 80
+      JWT_SECRET: ${JWT_SECRET?JWT_SECRET not set}
+      APPLICATION_CLIENT_ID: ${APPLICATION_CLIENT_ID?APPLICATION_CLIENT_ID not set}
+      APPLICATION_CLIENT_SECRET: ${APPLICATION_CLIENT_SECRET?APPLICATION_CLIENT_SECRET not set}
+      PROVIDER_CLIENT_ID: ${PROVIDER_CLIENT_ID?PROVIDER_CLIENT_ID not set}
+      PROVIDER_CLIENT_SECRET: ${PROVIDER_CLIENT_SECRET?PROVIDER_CLIENT_SECRET not set}
     networks:
       - net
       - traefik-public
-    depends_on:
-      - redis
     healthcheck:
-      test: wget --no-verbose --tries=1 --spider http://localhost:8080/health-check || exit 1
+      test: curl --fail http://localhost/health-check || exit 1
       interval: 5s
       timeout: 10s
       retries: 10
@@ -22,80 +22,62 @@ services:
         - traefik.enable=true
         - traefik.docker.network=traefik-public
         - traefik.constraint-label=traefik-public
-        - traefik.http.routers.wheretopark-storekeeper-http.rule=Host(`${STOREKEEPER_DOMAIN?Variable not set}`)
+        - traefik.http.routers.wheretopark-authorization-http.rule=Host(`${AUTHORIZATION_DOMAIN?AUTHORIZATION_DOMAIN not set}`)
+        - traefik.http.routers.wheretopark-authorization-http.entrypoints=http
+        - traefik.http.routers.wheretopark-authorization-http.middlewares=https-redirect
+        - traefik.http.routers.wheretopark-authorization-https.rule=Host(`${AUTHORIZATION_DOMAIN?AUTHORIZATION_DOMAIN not set}`)
+        - traefik.http.routers.wheretopark-authorization-https.entrypoints=https
+        - traefik.http.routers.wheretopark-authorization-https.tls=true
+        - traefik.http.routers.wheretopark-authorization-https.tls.certresolver=le
+        - traefik.http.services.wheretopark-authorization.loadbalancer.server.port=80
+
+  storekeeper:
+    image: ghcr.io/wheretopark/storekeeper:latest
+    environment:
+      PORT: 80
+      STORE_URI: redis://redis
+      JWT_SECRET: ${JWT_SECRET?JWT_SECRET not set}
+    networks:
+      - net
+      - traefik-public
+    depends_on:
+      - redis
+    healthcheck:
+      test: curl --fail http://localhost/health-check || exit 1
+      interval: 5s
+      timeout: 10s
+      retries: 10
+    deploy:
+      labels:
+        - traefik.enable=true
+        - traefik.docker.network=traefik-public
+        - traefik.constraint-label=traefik-public
+        - traefik.http.routers.wheretopark-storekeeper-http.rule=Host(`${STOREKEEPER_DOMAIN?STOREKEEPER_DOMAIN not set}`)
         - traefik.http.routers.wheretopark-storekeeper-http.entrypoints=http
         - traefik.http.routers.wheretopark-storekeeper-http.middlewares=https-redirect
-        - traefik.http.routers.wheretopark-storekeeper-https.rule=Host(`${STOREKEEPER_DOMAIN?Variable not set}`)
+        - traefik.http.routers.wheretopark-storekeeper-https.rule=Host(`${STOREKEEPER_DOMAIN?STOREKEEPER_DOMAIN not set}`)
         - traefik.http.routers.wheretopark-storekeeper-https.entrypoints=https
         - traefik.http.routers.wheretopark-storekeeper-https.tls=true
         - traefik.http.routers.wheretopark-storekeeper-https.tls.certresolver=le
-        - traefik.http.services.wheretopark-storekeeper.loadbalancer.server.port=8080
+        - traefik.http.services.wheretopark-storekeeper.loadbalancer.server.port=80
 
   providers-tristar:
     image: ghcr.io/wheretopark/providers-tristar:latest
     networks:
       - net
     environment:
-      - STOREKEEPER_URL=https://${STOREKEEPER_DOMAIN}
+      STOREKEEPER_URL: http://storekeeper
+      AUTHORIZATION_URL: http://authorization
+      CLIENT_ID: ${PROVIDER_CLIENT_ID?PROVIDER_CLIENT_ID not set}
+      CLIENT_SECRET: ${PROVIDER_CLIENT_SECRET?PROVIDER_CLIENT_SECRET not set}
     depends_on:
       - storekeeper
+      - authorization
 
   redis:
     image: redis
     networks:
       - net
-
-  hydra:
-    image: oryd/hydra:v1.11.10
-    ports:
-      - "4444:4444" # Public port
-      - "4445:4445" # Admin port
-      - "5555:5555" # Port for hydra token user
-    command: serve -c /etc/config/hydra/hydra.yml all --dev
-    volumes:
-      - type: volume
-        source: hydra-sqlite
-        target: /var/lib/sqlite
-        read_only: false
-      - type: bind
-        source: ./contrib/quickstart/5-min
-        target: /etc/config/hydra
-    environment:
-      - DSN=sqlite:///var/lib/sqlite/db.sqlite?_fk=true
-      - WEBFINGER_OIDC_DISCOVERY_SUPPORTED_SCOPE=read.metadata read.state write.metadata write.state
-      - OIDC_DYNAMIC_CLIENT_REGISTRATION_ENABLED=true
-      - WEBFINGER_OIDC_DISCOVERY_CLIENT_REGISTRATION_URL=http://hydra/clients
-    restart: unless-stopped
-    depends_on:
-      - hydra-migrate
-    networks:
-      - net
-  hydra-migrate:
-    image: oryd/hydra:v1.11.10
-    environment:
-      - DSN=sqlite:///var/lib/sqlite/db.sqlite?_fk=true
-    command: migrate -c /etc/config/hydra/hydra.yml sql -e --yes
-    volumes:
-      - type: volume
-        source: hydra-sqlite
-        target: /var/lib/sqlite
-        read_only: false
-      - type: bind
-        source: ./contrib/quickstart/5-min
-        target: /etc/config/hydra
-    restart: on-failure
-    networks:
-      - net
-  consent:
-    environment:
-      - HYDRA_ADMIN_URL=http://hydra:4445
-    image: oryd/hydra-login-consent-node:v1.11.10
-    ports:
-      - "3000:3000"
-    restart: unless-stopped
-    networks:
-      - net
-
 
 networks:
   net:
@@ -103,8 +85,3 @@ networks:
     attachable: true
   traefik-public:
     external: true
-
-volumes:
-  hydra-sqlite:
-
-
