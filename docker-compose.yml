@@ -4,6 +4,7 @@ services:
     image: ghcr.io/wheretopark/authorization:latest
     environment:
       PORT: 80
+      GIN_MODE: release
       JWT_SECRET: ${JWT_SECRET?JWT_SECRET not set}
       APPLICATION_CLIENT_ID: ${APPLICATION_CLIENT_ID?APPLICATION_CLIENT_ID not set}
       APPLICATION_CLIENT_SECRET: ${APPLICATION_CLIENT_SECRET?APPLICATION_CLIENT_SECRET not set}
