@@ -19,7 +19,6 @@ enum class AccessType(val code: String) {
 
 fun Set<AccessType>.encode() = this.joinToString(" ") { it.code }
 fun decodeAccessScope(scope: String) = scope.split(" ").map { s ->
-    println("s: $s")
     AccessType.values().find{ it.code == s }!!
 }.toSet()
 
