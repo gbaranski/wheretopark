@@ -44,5 +44,5 @@ jobs:
         with:
           push: true
           file: authorization/Dockerfile
-          tags: wheretopark/authorization:latest
+          tags: ghcr.io/wheretopark/authorization:latest
           platforms: "linux/amd64,linux/arm64"
