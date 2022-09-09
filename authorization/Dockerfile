@@ -8,5 +8,5 @@ RUN go build -o /bin/my-server .
 
 FROM alpine:latest
 COPY --from=BUILD /bin/my-server /bin/my-server
-CMD [ "/bin/authorization-server" ]
+CMD [ "/bin/my-server" ]
 
