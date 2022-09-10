@@ -33,6 +33,10 @@ class StorekeeperClient(
                     ignoreUnknownKeys = true
                 })
             }
+            install(HttpRequestRetry) {
+                retryOnServerErrors(maxRetries = 5)
+                exponentialDelay()
+            }
             install(Auth) {
                 bearer {
                     loadTokens {

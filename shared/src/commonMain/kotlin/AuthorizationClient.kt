@@ -54,6 +54,10 @@ class AuthorizationClient(
                     ignoreUnknownKeys = true
                 })
             }
+            install(HttpRequestRetry) {
+                retryOnServerErrors(maxRetries = 5)
+                exponentialDelay()
+            }
         },
         clientID,
         clientSecret
