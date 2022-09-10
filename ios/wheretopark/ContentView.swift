@@ -77,11 +77,12 @@ struct ContentView: View {
             if let parkingLotID = appState.selectedParkingLotID {
                 let parkingLot = appState.parkingLots[parkingLotID]!
                 ParkingLotView(
+                    id: parkingLotID,
                     parkingLot: parkingLot,
                     closeAction: {
                         appState.selectedParkingLotID = nil
                     }
-                ).padding([.top, .horizontal])
+                ).padding([.top, .horizontal]).environmentObject(appState)
             }
         }
         .onChange(of: appState.parkingLots) { _ in

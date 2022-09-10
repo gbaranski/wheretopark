@@ -11,7 +11,21 @@ import PhoneNumberKit
 import shared
 
 struct ParkingLotView: View {
+    @EnvironmentObject var appState: AppState
+    let id: ParkingLotID
     let parkingLot: ParkingLot
+    private var isFavourite: Binding<Bool> { Binding (
+        get: {
+            let exists = appState.favouritesStore.exists(id: id)
+            print("get \(id): \(exists)")
+            return exists
+        },
+        set: {
+            print("set \(id): \($0)")
+            $0 ? appState.favouritesStore.add(id: id) : appState.favouritesStore.remove(id: id)
+        }
+        )
+    }
     var closeAction: (() -> Void)? = nil
     
     var body: some View {
@@ -47,11 +61,18 @@ struct ParkingLotView: View {
                     .frame(maxWidth: .infinity)
                     
                     Menu {
-                        Button(action: {}) {
-                            Label("Add to favourites", systemImage: "star")
+                        Button(
+                            action: {
+                                isFavourite.wrappedValue.toggle()
+                            }
+                        ) {
+                            Label(
+                                isFavourite.wrappedValue ? "Remove from favourites" : "Add to favourites",
+                                systemImage: isFavourite.wrappedValue ? "star.fill" : "star"
+                            )
                         }
                     } label: {
-                        Button(action: addToFavourites) {
+                        Button(action: {}) {
                             Label("More", systemImage: "ellipsis")
                         }
                         .controlSize(.large)
@@ -96,10 +117,6 @@ struct ParkingLotView: View {
                 ParkingLotAdditionalInfoView(metadata: parkingLot.metadata)
             }
         }
-    }
-    
-    func addToFavourites() {
-        
     }
     
     func navigate() {
@@ -181,6 +198,6 @@ struct ParkingLotAdditionalInfoView: View {
 
 struct ParkingLotView_Previews: PreviewProvider {
     static var previews: some View {
-        ParkingLotView(parkingLot: ParkingLot.companion.galeriaBaltycka, closeAction: {}).padding()
+        ParkingLotView(id: ParkingLot.companion.galeriaBaltycka.metadata.location.hash(length: 12), parkingLot: ParkingLot.companion.galeriaBaltycka, closeAction: {}).padding()
     }
 }

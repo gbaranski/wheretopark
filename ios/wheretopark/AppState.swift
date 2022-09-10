@@ -28,6 +28,7 @@ typealias ParkingLotID = String
             )
         }
     }
+    let favouritesStore = FavouritesStore()
     @Published private(set) var locationManager = LocationManager()
     @Published private(set) var isPerformingTask = false
     @Published private(set) var fetchError: FetchError? = nil
