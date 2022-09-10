@@ -15,7 +15,7 @@ class ParkingLotStatusTest {
             address = "",
             location = Coordinate(latitude = 0.0, longitude = 0.0),
             resources = listOf(),
-            totalSpots = 0u,
+            totalSpots = mapOf(),
             features = listOf(),
             currency = "",
             rules = rules.map { (weekdays, hours) ->
