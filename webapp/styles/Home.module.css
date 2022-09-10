@@ -1,0 +1,29 @@
+.split {
+  height: 100%;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  bottom: 0;
+  overflow-x: hidden;
+}
+
+#master {
+  width: 75%;
+  right: 0;
+}
+
+#slave {
+  background-color: rgb(255, 253, 246);
+  width: 25%;
+  left: 0;
+}
+
+@media only screen and (min-width: 600px) {
+  #slave {
+    width: 400px;
+  }
+
+  #master {
+    width: calc(100% - 400px);
+  }
+}
