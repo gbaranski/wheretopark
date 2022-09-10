@@ -180,6 +180,13 @@ data class ParkingLotState(
     val availableSpots: Map<ParkingSpotType, UInt>,
 )
 
+fun Map<ParkingLotID, ParkingLot>.split(): Pair<Map<ParkingLotID, ParkingLotMetadata>, Map<ParkingLotID, ParkingLotState>> {
+    val metadatas = entries.associate { it.key to it.value.metadata }
+    val states = entries.associate { it.key to it.value.state }
+    return Pair(metadatas, states)
+}
+
+@Serializable
 data class ParkingLot(
     val metadata: ParkingLotMetadata,
     val state: ParkingLotState,

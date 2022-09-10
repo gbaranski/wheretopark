@@ -54,19 +54,31 @@ class StorekeeperClient(
         },
     )
 
+    private suspend inline fun <reified T> getNullable(url: String): T? = try {
+        http.get(url).body()
+    } catch (e: ClientRequestException) {
+        if (e.response.status == HttpStatusCode.NotFound) null
+        else throw e
+    }
+
+    suspend fun parkingLots(): Map<ParkingLotID, ParkingLot> = http.get("/parking-lot").body()
+    suspend fun parkingLot(id: ParkingLotID): ParkingLot? = getNullable("/parking-lot/$id")
+    suspend fun postParkingLots(parkingLots: Map<ParkingLotID, ParkingLot>) = http.post("/parking-lot") {
+        contentType(ContentType.Application.Json)
+        setBody(parkingLots)
+    }
+
+    suspend fun metadata(id: ParkingLotID): ParkingLotMetadata? = getNullable("/parking-lot/$id/metadata")
     suspend fun metadatas(): Map<ParkingLotID, ParkingLotMetadata> = http.get("/parking-lot/metadata").body()
+    suspend fun postMetadatas(metadatas: Map<ParkingLotID, ParkingLotMetadata>) = http.post("/parking-lot/metadata") {
+        contentType(ContentType.Application.Json)
+        setBody(metadatas)
+    }
 
-    suspend fun postMetadatas(metadatas: Map<ParkingLotID, ParkingLotMetadata>) =
-        http.post("/parking-lot/metadata") {
-            contentType(ContentType.Application.Json)
-            setBody(metadatas)
-        }
-
+    suspend fun state(id: ParkingLotID): ParkingLotState? = getNullable("/parking-lot/$id/state")
     suspend fun states(): Map<ParkingLotID, ParkingLotState> = http.get("/parking-lot/state").body()
-
-    suspend fun postStates(states: Map<ParkingLotID, ParkingLotState>) =
-        http.post("/parking-lot/state") {
-            contentType(ContentType.Application.Json)
-            setBody(states)
-        }
+    suspend fun postStates(states: Map<ParkingLotID, ParkingLotState>) = http.post("/parking-lot/state") {
+        contentType(ContentType.Application.Json)
+        setBody(states)
+    }
 }
