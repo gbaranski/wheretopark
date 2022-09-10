@@ -62,12 +62,11 @@ private suspend fun runEvery(delay: Duration, action: suspend () -> Unit) {
 suspend fun startMany(vararg providers: Provider) = coroutineScope {
     val clientID = System.getenv("CLIENT_ID")!!
     val clientSecret = System.getenv("CLIENT_SECRET")!!
-    val authorizationClient = AuthorizationClient(getAuthorizationURL())
-    val token = authorizationClient.token(
-        clientID,
-        clientSecret,
+    val authorizationClient = AuthorizationClient(getAuthorizationURL(), clientID, clientSecret)
+    val storekeeperClient = StorekeeperClient(
+        getStorekeeperURL(),
+        authorizationClient,
         setOf(AccessType.WriteMetadata, AccessType.WriteState)
     )
-    val storekeeperClient = StorekeeperClient(getStorekeeperURL(), token.accessToken)
     providers.forEach { launch { it.start(storekeeperClient) } }
 }

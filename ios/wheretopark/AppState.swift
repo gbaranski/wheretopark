@@ -16,7 +16,7 @@ typealias ParkingLotID = String
     let environment = AppEnvironment()
     var authorizationClient: AuthorizationClient {
         get {
-            AuthorizationClient(baseURL: environment.authorizationURL.absoluteString)
+            AuthorizationClient(baseURL: environment.authorizationURL.absoluteString, clientID: environment.clientID, clientSecret: environment.clientSecret)
         }
     }
     var storekeeperClient: StorekeeperClient {
@@ -24,8 +24,6 @@ typealias ParkingLotID = String
             StorekeeperClient(
                 baseURL: environment.storekeeperURL.absoluteString,
                 authorizationClient: authorizationClient,
-                clientID: environment.clientID,
-                clientSecret: environment.clientSecret,
                 accessScope: Set([AccessType.readmetadata, AccessType.readstate])
             )
         }

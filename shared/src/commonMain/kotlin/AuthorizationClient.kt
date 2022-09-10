@@ -37,9 +37,11 @@ data class TokenResponse(
 const val DEFAULT_AUTHORIZATION_URL = "https://authorization.wheretopark.app"
 
 class AuthorizationClient(
-    private val http: HttpClient
+    private val http: HttpClient,
+    private val clientID: String,
+    private val clientSecret: String,
 ) {
-    constructor(baseURL: String = DEFAULT_AUTHORIZATION_URL) : this(
+    constructor(baseURL: String = DEFAULT_AUTHORIZATION_URL, clientID: String, clientSecret: String) : this(
         HttpClient {
             defaultRequest {
                 url(baseURL)
@@ -53,9 +55,11 @@ class AuthorizationClient(
                 })
             }
         },
+        clientID,
+        clientSecret
     )
 
-    suspend fun token(clientID: String, clientSecret: String, accessScope: Set<AccessType>) = http.post("/oauth/token") {
+    suspend fun token(accessScope: Set<AccessType>) = http.post("/oauth/token") {
         url {
             parameters.append("client_id", clientID)
             parameters.append("client_secret", clientSecret)

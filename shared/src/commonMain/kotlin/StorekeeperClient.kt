@@ -19,8 +19,6 @@ class StorekeeperClient(
     constructor(
         baseURL: String = DEFAULT_STOREKEEPER_URL,
         authorizationClient: AuthorizationClient,
-        clientID: String,
-        clientSecret: String,
         accessScope: Set<AccessType>
     ) : this(
         HttpClient {
@@ -38,7 +36,7 @@ class StorekeeperClient(
             install(Auth) {
                 bearer {
                     loadTokens {
-                        val tokenResponse = authorizationClient.token(clientID, clientSecret, accessScope)
+                        val tokenResponse = authorizationClient.token(accessScope)
                         println("obtained new token: ${tokenResponse.accessToken}")
                         BearerTokens(tokenResponse.accessToken, "")
                     }
