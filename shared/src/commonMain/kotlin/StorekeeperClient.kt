@@ -40,6 +40,11 @@ class StorekeeperClient(
                         println("obtained new token: ${tokenResponse.accessToken}")
                         BearerTokens(tokenResponse.accessToken, "")
                     }
+                    refreshTokens {
+                        val tokenResponse = authorizationClient.token(accessScope)
+                        println("obtained new token: ${tokenResponse.accessToken}")
+                        BearerTokens(tokenResponse.accessToken, "")
+                    }
                 }
             }
         },
