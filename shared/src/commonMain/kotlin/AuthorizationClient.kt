@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalJsExport::class)
+
 package app.wheretopark.shared
 
 import io.ktor.client.*
@@ -9,7 +11,11 @@ import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
+import kotlin.js.ExperimentalJsExport
+import kotlin.js.JsExport
+import kotlin.js.JsName
 
+@JsExport
 enum class AccessType(val code: String) {
     ReadMetadata("read:metadata"),
     WriteMetadata("write:metadata"),
@@ -23,6 +29,7 @@ fun decodeAccessScope(scope: String) = scope.split(" ").map { s ->
 }.toSet()
 
 @Serializable
+@JsExport
 data class TokenResponse(
     @SerialName("access_token")
     val accessToken: String,
@@ -63,12 +70,12 @@ class AuthorizationClient(
         clientSecret
     )
 
-    suspend fun token(accessScope: Set<AccessType>) = http.post("/oauth/token") {
+    suspend fun token(scope: Set<AccessType>) = http.post("/oauth/token") {
         url {
             parameters.append("client_id", clientID)
             parameters.append("client_secret", clientSecret)
             parameters.append("grant_type", "client_credentials")
-            parameters.append("scope", accessScope.encode())
+            parameters.append("scope", scope.encode())
         }
     }.body<TokenResponse>()
 }
