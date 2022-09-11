@@ -1,14 +1,15 @@
 import { useEffect, useState } from 'react'
-import type { GetServerSidePropsContext, NextPage } from 'next'
+import type { GetServerSidePropsContext } from 'next'
 import Map, { MapView } from '../components/Map'
 import Details from '../components/Details'
-import { ID, ParkingLot } from '../lib/parkingLot'
-import { fetchParkingLots } from '../lib/storekeeper'
+import { ParkingLotID, parseParkingLots, fetchParkingLots } from '../lib/types'
 import styles from '../styles/Home.module.css'
 import List from '../components/List'
 
-const Home = ({ parkingLots }: { parkingLots: ParkingLot[] }) => {
-  const [selectedParkingLotID, setSelectedParkingLotID] = useState<ID | undefined>(undefined)
+const Home = ({ parkingLots: parkingLotsJSON }: { parkingLots: any }) => {
+  console.log("about to parse parking lots")
+  const parkingLots = parseParkingLots(JSON.stringify(parkingLotsJSON))
+  const [selectedParkingLotID, setSelectedParkingLotID] = useState<ParkingLotID | undefined>(undefined)
   const [mapView, setMapView] = useState<MapView>({
     width: 0,
     height: 0,
@@ -27,7 +28,7 @@ const Home = ({ parkingLots }: { parkingLots: ParkingLot[] }) => {
 
   useEffect(() => {
     if (!selectedParkingLotID) return;
-    const parkingLot = parkingLots.find((p) => p.id == selectedParkingLotID)!;
+    const parkingLot = parkingLots[selectedParkingLotID];
     const { latitude, longitude } = parkingLot.metadata.location;
     mapView.longitude = longitude;
     mapView.latitude = latitude;
@@ -41,20 +42,24 @@ const Home = ({ parkingLots }: { parkingLots: ParkingLot[] }) => {
         <Map parkingLots={parkingLots} mapView={mapView} selectParkingLot={setSelectedParkingLotID} />
       </div>
       <div className={styles.split} id={styles.slave}>
-        <img src="wheretopark.svg" style={{ display: 'block', marginLeft: 'auto', marginRight: 'auto', width: '50%', padding: 20 }} />
-        <List parkingLots={parkingLots} onSelect={setSelectedParkingLotID} />
+        <img alt="logo" src="/wheretopark.svg" style={{ display: 'block', marginLeft: 'auto', marginRight: 'auto', width: '50%', padding: 20 }} />
+        <div style={{ display: selectedParkingLotID ? 'none' : 'block' }}>
+          <List parkingLots={parkingLots} onSelect={setSelectedParkingLotID} />
+        </div>
         {selectedParkingLotID &&
-          <Details parkingLot={parkingLots.find((p) => p.id == selectedParkingLotID)!} onDismiss={() => setSelectedParkingLotID(undefined)} />
+          <Details parkingLot={[selectedParkingLotID, parkingLots[selectedParkingLotID]]!} onDismiss={() => setSelectedParkingLotID(undefined)} />
         }
       </div>
     </>
   )
 }
 
-export async function getServerSideProps(context: GetServerSidePropsContext) {
-  const parkingLots = await fetchParkingLots();
+export async function getServerSideProps() {
+  const clientID = "9f75e24c-55d5-425e-8186-d8a75c4e3e85";
+  const clientSecret = "b7271ed3-78ac-436f-8bbc-0222b2b26f9b";
+  const parkingLots = await fetchParkingLots(clientID, clientSecret);
   return {
-    props: { parkingLots }, // will be passed to the page component as props
+    props: { parkingLots: JSON.parse(parkingLots) }, // will be passed to the page component as props
   }
 }
 

@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalJsExport::class)
+
 package app.wheretopark.shared
 
 import io.ktor.http.*
@@ -10,6 +12,8 @@ import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
+import kotlin.js.ExperimentalJsExport
+import kotlin.js.JsExport
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.hours
@@ -19,6 +23,7 @@ import kotlin.time.Duration.Companion.seconds
 typealias ParkingLotID = String
 
 @Serializable
+@JsExport
 enum class ParkingLotFeature {
     UNCOVERED,
     COVERED,
@@ -27,6 +32,7 @@ enum class ParkingLotFeature {
 
 
 @Serializable(with = ParkingLotWeekdaysSerializer::class)
+@JsExport
 data class ParkingLotWeekdays(
     val start: DayOfWeek,
     val end: DayOfWeek
@@ -50,6 +56,7 @@ object ParkingLotWeekdaysSerializer : KSerializer<ParkingLotWeekdays> {
 }
 
 @Serializable(with = ParkingLotHoursSerializer::class)
+@JsExport
 data class ParkingLotHours(
     val start: LocalTime,
     val end: LocalTime
@@ -73,6 +80,7 @@ object ParkingLotHoursSerializer : KSerializer<ParkingLotHours> {
 
 
 @Serializable
+@JsExport
 data class ParkingLotPricingRule(
     @Serializable(with = DurationSerializer::class)
     val duration: Duration,
@@ -87,6 +95,7 @@ object DurationSerializer : KSerializer<Duration> {
 }
 
 @Serializable
+@JsExport
 data class ParkingLotRule(
     val weekdays: ParkingLotWeekdays? = null,
     val hours: ParkingLotHours? = null,
@@ -94,6 +103,7 @@ data class ParkingLotRule(
 )
 
 @Serializable
+@JsExport
 enum class ParkingLotStatus {
     OPENS_SOON,
     OPEN,
@@ -102,6 +112,7 @@ enum class ParkingLotStatus {
 }
 
 @Serializable(with = ParkingLotResourceSerializer::class)
+@JsExport
 data class ParkingLotResource(val url: String) : Comparable<ParkingLotResource> {
     fun label() =
         when (url.substringBefore(':')) {
@@ -125,6 +136,7 @@ object ParkingLotResourceSerializer : KSerializer<ParkingLotResource> {
 }
 
 
+@JsExport
 enum class ParkingSpotType {
     CAR,
     MOTORCYCLE,
@@ -133,6 +145,7 @@ enum class ParkingSpotType {
 }
 
 @Serializable
+@JsExport
 data class ParkingLotMetadata(
     val name: String,
     val address: String,
@@ -144,7 +157,7 @@ data class ParkingLotMetadata(
     val currency: String,
     val rules: List<ParkingLotRule>,
 ) {
-    fun status(at: Instant): ParkingLotStatus {
+    fun statusAt(at: Instant): ParkingLotStatus {
         val dateTime = at.toLocalDateTime(TimeZone.UTC)
         val weekday = dateTime.dayOfWeek
         val rule = rules.sortedBy { it.weekdays != null }.find {
@@ -169,10 +182,11 @@ data class ParkingLotMetadata(
         }
     }
 
-    fun status(): ParkingLotStatus = status(Clock.System.now())
+    fun status(): ParkingLotStatus = statusAt(Clock.System.now())
 }
 
 @Serializable
+@JsExport
 data class ParkingLotState(
     @SerialName("last-updated")
     val lastUpdated: Instant,
@@ -187,6 +201,7 @@ fun Map<ParkingLotID, ParkingLot>.split(): Pair<Map<ParkingLotID, ParkingLotMeta
 }
 
 @Serializable
+@JsExport
 data class ParkingLot(
     val metadata: ParkingLotMetadata,
     val state: ParkingLotState,

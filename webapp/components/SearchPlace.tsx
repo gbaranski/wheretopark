@@ -4,13 +4,13 @@ import Autocomplete from '@mui/material/Autocomplete';
 import Typography from '@mui/material/Typography';
 import throttle from 'lodash/throttle';
 import { MAPBOX_ACCESS_TOKEN } from '../environment';
-import { Box, Button, CircularProgress, Grid, Stack } from '@mui/material';
+import { Box, Button, CircularProgress, Grid } from '@mui/material';
 import mbxGeocoding, { GeocodeFeature, GeocodeRequest, GeocodeResponse } from '@mapbox/mapbox-sdk/services/geocoding';
 import { LocationOn, MyLocation } from '@mui/icons-material';
-import { Location } from '../lib/parkingLot'
+import { Coordinate } from '../lib/types'
 
 type Props = {
-  onSelect: (option: Location | null) => void;
+  onSelect: (option: Coordinate | null) => void;
   buttonNeighbour: React.FC
 };
 
@@ -51,7 +51,7 @@ const SearchPlace = ({ onSelect, buttonNeighbour }: Props) => {
 
   const selectCurrentPosition = () => {
     navigator.geolocation.getCurrentPosition((position) => {
-      onSelect({ latitude: position.coords.latitude, longitude: position.coords.longitude });
+      onSelect(new Coordinate(position.coords.latitude, position.coords.longitude));
     }, (error) => {
       alert("Could not retrieve current position");
       console.error("getCurrentPosition error", error)
@@ -75,7 +75,7 @@ const SearchPlace = ({ onSelect, buttonNeighbour }: Props) => {
         onChange={(event: any, newValue: GeocodeFeature | null) => {
           setOptions(newValue ? [newValue, ...options] : options);
           setSelected(newValue);
-          onSelect(newValue ? { latitude: newValue.center[1], longitude: newValue.center[0] } as Location : null);
+          onSelect(newValue ? new Coordinate(newValue.center[1], newValue.center[0]) : null);
         }}
         onInputChange={(event, newInputValue) => {
           setInputValue(newInputValue);

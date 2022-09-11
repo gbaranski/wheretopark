@@ -12,6 +12,12 @@ repositories {
 kotlin {
     jvm()
 
+    js(IR) {
+        nodejs {}
+        browser {}
+        binaries.library()
+    }
+
     android()
 
     listOf(
@@ -59,6 +65,13 @@ kotlin {
         }
         val androidTest by getting {
             dependencies {}
+        }
+        val jsMain by getting {
+            dependencies {
+                implementation("io.ktor:ktor-client-js:$ktorVersion")
+                implementation(npm("@js-joda/timezone", "2.12.2"))
+                implementation("org.jetbrains.kotlin-wrappers:kotlin-js:1.0.0-pre.383")
+            }
         }
         val iosX64Main by getting
         val iosArm64Main by getting

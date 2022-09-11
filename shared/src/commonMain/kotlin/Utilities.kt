@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalJsExport::class)
+
 package app.wheretopark.shared
 
 import io.ktor.http.*
@@ -11,6 +13,8 @@ import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
+import kotlin.js.ExperimentalJsExport
+import kotlin.js.JsExport
 
 private val BITS = intArrayOf(16, 8, 4, 2, 1)
 
@@ -51,6 +55,7 @@ private val BASE32_CHARS = charArrayOf(
 )
 
 @Serializable
+@JsExport
 data class Coordinate(
     val latitude: Double,
     val longitude: Double,

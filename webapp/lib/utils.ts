@@ -2,12 +2,10 @@ export function capitalizeFirstLetter(s: string) {
     return s.charAt(0).toUpperCase() + s.slice(1);
 }
 
-
-
 import { getDistance, convertDistance  } from 'geolib';
-import { Location } from './parkingLot';
+import { Coordinate } from './types';
 
-export const prettyDistance = (from: Location, to: Location) => {
+export const prettyDistance = (from: Coordinate, to: Coordinate) => {
     console.log({from, to});
     const distance = getDistance(from, to);
     if (distance < 1000) {

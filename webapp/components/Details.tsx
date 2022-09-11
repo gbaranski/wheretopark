@@ -1,13 +1,56 @@
-import { Accordion, AccordionDetails, AccordionSummary, Avatar, Box, ButtonGroup, Collapse, Divider, Grid, IconButton, Link, List, ListItem, ListItemButton, ListItemIcon, ListItemText, makeStyles, rgbToHex, SxProps, Typography } from "@mui/material"
-import { ParkingLot } from "../lib/parkingLot"
-import { AccessTimeOutlined, ArrowBack, Call, CallOutlined, Directions, DirectionsCarOutlined, ExpandLess, ExpandMore, Favorite, Group, MailOutline, PlaceOutlined, Public, PublicOutlined, Scale, Share, Star, StarBorder, StarHalf, UpdateOutlined } from "@mui/icons-material"
-import { DateTime, Duration } from 'luxon'
-import { useState } from "react"
-import { capitalizeFirstLetter } from "../lib/utils"
-import { formatDistance, formatISO, parseISO } from "date-fns"
+import {
+    Avatar,
+    Box,
+    Collapse,
+    Divider,
+    IconButton,
+    Link,
+    List,
+    ListItem,
+    ListItemButton,
+    ListItemIcon,
+    ListItemText,
+    SxProps,
+    Typography
+} from "@mui/material"
+import {
+    ParkingLot,
+    ParkingLotID,
+    toRecord,
+    fetchParkingLots,
+    toArray,
+    ParkingLotRule,
+    ParkingLotPricingRule,
+    ParkingLotResource,
+    parseParkingLots,
+    instantToJSDate, durationToISO
+} from "../lib/types"
+import {
+    AccessTimeOutlined,
+    ArrowBack,
+    Call,
+    Directions,
+    DirectionsCarOutlined,
+    ExpandLess,
+    ExpandMore,
+    Favorite,
+    PlaceOutlined,
+    Public,
+    PublicOutlined,
+    Share,
+    Star,
+    StarHalf,
+    UpdateOutlined
+} from "@mui/icons-material"
+import {Duration} from 'luxon'
+import {useState} from "react"
+import {capitalizeFirstLetter} from "../lib/utils"
+import {formatDistance} from "date-fns"
+import {app} from "wheretopark-shared";
+import ParkingSpotType = app.wheretopark.shared.ParkingSpotType;
 
 type Props = {
-    parkingLot: ParkingLot
+    parkingLot: [ParkingLotID, ParkingLot]
     onDismiss: () => void
 }
 
@@ -15,18 +58,13 @@ const starStyle: SxProps = {
     color: "rgb(249, 176, 11)",
 };
 
-const ParkingLotDetails = ({ parkingLot, onDismiss }: Props) => {
+const ParkingLotDetails = ({parkingLot: [id, parkingLot], onDismiss}: Props) => {
     const openDirections = () => {
-        const { latitude, longitude } = parkingLot.metadata.location;
+        const {latitude, longitude} = parkingLot.metadata.location;
         window.open(`https://www.google.com/maps/search/?api=1&query=${latitude}%2C${longitude}`);
     }
     const openWebsite = () => {
-        const website = parkingLot.metadata.websites[0];
-        if (!website) {
-            // TODO: Handle it better
-            return alert("No website associated");
-        }
-        window.open(parkingLot.metadata.websites[0]!);
+        alert("TODO!");
     }
     const addToFavourites = () => {
         alert("TODO!");
@@ -39,152 +77,131 @@ const ParkingLotDetails = ({ parkingLot, onDismiss }: Props) => {
     }
 
     const [hoursOpen, setHoursOpen] = useState(false);
-    const lastUpdated = formatDistance(parseISO(parkingLot.state.lastUpdated), new Date(), { addSuffix: true })
+    const lastUpdated = formatDistance(instantToJSDate(parkingLot.state.lastUpdated), new Date(), {addSuffix: true})
 
     return (
-        <div>
+        <>
             <Box paddingX={3} paddingY={1}>
-                <Typography variant="h5" >
+                <Typography variant="h5">
                     {parkingLot.metadata.name}
                 </Typography>
-                <Typography variant="body2">
-                    <Box display="inline-block">
+
+                <Box display="inline-block">
+                    <Typography variant="body2" component={'span'}>
                         4.6
-                        <span style={{ marginLeft: 5, marginRight: 5, verticalAlign: 'text-top' }}>
-                            <Star fontSize="inherit" sx={starStyle} />
-                            <Star fontSize="inherit" sx={starStyle} />
-                            <Star fontSize="inherit" sx={starStyle} />
-                            <Star fontSize="inherit" sx={starStyle} />
-                            <StarHalf fontSize="inherit" sx={starStyle} />
+                        <span style={{marginLeft: 5, marginRight: 5, verticalAlign: 'text-top'}}>
+                            <Star fontSize="inherit" sx={starStyle}/>
+                            <Star fontSize="inherit" sx={starStyle}/>
+                            <Star fontSize="inherit" sx={starStyle}/>
+                            <Star fontSize="inherit" sx={starStyle}/>
+                            <StarHalf fontSize="inherit" sx={starStyle}/>
                         </span>
                         <Link href="#" underline="hover">154 reviews</Link>
-                    </Box>
-                </Typography>
+                    </Typography>
+                </Box>
             </Box>
-            <Divider />
+            <Divider/>
             <Box display="flex" flexDirection="row" justifyContent="space-evenly" marginY={1}>
                 <IconButton aria-label="show directions" onClick={openDirections}>
                     <Avatar>
-                        <Directions />
+                        <Directions/>
                     </Avatar>
                 </IconButton>
                 <IconButton aria-label="call" onClick={call}>
                     <Avatar>
-                        <Call />
+                        <Call/>
                     </Avatar>
                 </IconButton>
                 <IconButton aria-label="open website" onClick={openWebsite}>
                     <Avatar>
-                        <Public />
+                        <Public/>
                     </Avatar>
                 </IconButton>
                 <IconButton aria-label="add to favourites" onClick={addToFavourites}>
                     <Avatar>
-                        <Favorite />
+                        <Favorite/>
                     </Avatar>
                 </IconButton>
                 <IconButton aria-label="share" onClick={share}>
                     <Avatar>
-                        <Share />
+                        <Share/>
                     </Avatar>
                 </IconButton>
             </Box>
-            <Divider />
+            <Divider/>
             <List>
                 <ListItem>
                     <ListItemIcon>
-                        <PlaceOutlined />
+                        <PlaceOutlined/>
                     </ListItemIcon>
                     <ListItemText>
                         {parkingLot.metadata.address}
                     </ListItemText>
                 </ListItem>
+                {Object.entries(toRecord<ParkingSpotType, number>(parkingLot.state.availableSpots)).map(([type, count]) => (
+                    <ListItem>
+                        <ListItemIcon>
+                            <DirectionsCarOutlined/>
+                        </ListItemIcon>
+                        <ListItemText primary={`${count} available ${type.toLowerCase()} spots`}/>
+                    </ListItem>
+                ))}
                 <ListItem>
                     <ListItemIcon>
-                        <DirectionsCarOutlined />
+                        <UpdateOutlined/>
                     </ListItemIcon>
-                    <ListItemText primary={`${parkingLot.state.availableSpots} available spots`} />
-                </ListItem>
-                <ListItem>
-                    <ListItemIcon>
-                        <UpdateOutlined />
-                    </ListItemIcon>
-                    <ListItemText primary={`Last updated ${lastUpdated}`} />
+                    <ListItemText primary={`Last updated ${lastUpdated}`}/>
                 </ListItem>
                 <ListItemButton onClick={() => setHoursOpen(!hoursOpen)}>
                     <ListItemIcon>
-                        <AccessTimeOutlined />
+                        <AccessTimeOutlined/>
                     </ListItemIcon>
-                    <ListItemText >
+                    <ListItemText>
                         <Typography display="inline" color="red">Closed</Typography>
                         <Typography display="inline"> ⋅ Opens at 12PM</Typography>
                     </ListItemText>
-                    {hoursOpen ? <ExpandLess /> : <ExpandMore />}
+                    {hoursOpen ? <ExpandLess/> : <ExpandMore/>}
                 </ListItemButton>
-                <Collapse in={hoursOpen} sx={{ pl: 9, pr: 5 }}>
-                    {parkingLot.metadata.rules.map((rule) => (
+                <Collapse in={hoursOpen} sx={{pl: 9, pr: 5}}>
+                    {toArray<ParkingLotRule>(parkingLot.metadata.rules).map((rule) => (
                         <div>
-                            <Typography variant="h6">{capitalizeFirstLetter(rule.weekdays.start.toString())} - {capitalizeFirstLetter(rule.weekdays.end.toString())}</Typography>
+                            <Typography
+                                variant="h6">{capitalizeFirstLetter(rule.weekdays?.start.toString() ?? "Monday")} - {capitalizeFirstLetter(rule.weekdays?.end.toString() ?? "Sunday")}</Typography>
                             {rule.hours &&
-                                <Typography variant="subtitle2">{rule.hours.start}-{rule.hours.end}</Typography>
+                                <Typography
+                                    variant="subtitle2">{rule.hours.start.toString()}-{rule.hours.end.toString()}</Typography>
                             }
-                            {rule.pricing.map((pricing) => (
+                            {toArray<ParkingLotPricingRule>(rule.pricing).map((pricing) => (
                                 <div>
                                     <Box display="flex" flex-directions="row" justifyContent="space-between">
-                                        <Typography display="inline" align="left">{pricing.repeating && "Each "}{Duration.fromISO(pricing.duration).toHuman()}</Typography>
-                                        <Typography display="inline" align="right">{pricing.price}{parkingLot.metadata.currency}</Typography>
+                                        <Typography display="inline"
+                                                    align="left">{pricing.repeating && "Each "}{Duration.fromISO(durationToISO(pricing.duration)).toHuman()}</Typography>
+                                        <Typography display="inline"
+                                                    align="right">{pricing.price}{parkingLot.metadata.currency}</Typography>
                                     </Box>
-                                    <Divider />
+                                    <Divider/>
                                 </div>
                             ))}
-
                         </div>
                     ))}
                 </Collapse>
-                <ListItem>
-                    <ListItemIcon>
-                        <PublicOutlined />
-                    </ListItemIcon>
-                    <ListItemText >
-                        {parkingLot.metadata.websites.map((url, index) => (
-                            <Link href={url.toString()} underline="hover">
-                                {`${url.toString()}`}{index != parkingLot.metadata.websites.length - 1 && ", "}
+                {toArray<ParkingLotResource>(parkingLot.metadata.resources).map((resource) => (
+                    <ListItem>
+                        <ListItemIcon>
+                            <PublicOutlined/>
+                        </ListItemIcon>
+                        <ListItemText>
+                            <Link href={resource.url.toString()} underline="hover">
+                                {resource.url}
                             </Link>
-                        ))}
-                    </ListItemText>
-                </ListItem>
-
-                <ListItem>
-                    <ListItemIcon>
-                        <CallOutlined />
-                    </ListItemIcon>
-                    <ListItemText >
-                        {parkingLot.metadata.phoneNumbers.map((phoneNumber, index) => (
-                            <Link href={`tel:${phoneNumber}`} underline="hover">
-                                {phoneNumber}{index != parkingLot.metadata.phoneNumbers.length - 1 && ", "}
-                            </Link>
-                        ))}
-                    </ListItemText>
-                </ListItem>
-
-                <ListItem>
-                    <ListItemIcon>
-                        <MailOutline />
-                    </ListItemIcon>
-                    <ListItemText >
-                        {parkingLot.metadata.emails.map((email, index) => (
-                            <Link href={`mailto:${email}`} underline="hover">
-                                {email}{index != parkingLot.metadata.emails.length - 1 && ", "}
-                            </Link>
-                        ))}
-                    </ListItemText>
-                </ListItem>
-
+                        </ListItemText>
+                    </ListItem>
+                ))}
             </List>
             <IconButton aria-label="hide details" onClick={onDismiss}>
-                <ArrowBack />
+                <ArrowBack/>
             </IconButton>
-        </div>
+        </>
     )
 }
 

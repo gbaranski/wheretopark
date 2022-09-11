@@ -1,32 +1,30 @@
-import { MapsHomeWork } from '@mui/icons-material';
-import { useEffect, useState } from 'react';
 import ReactMapGL, { MapProvider, Marker, useMap, ViewState } from 'react-map-gl';
 import { MAPBOX_ACCESS_TOKEN } from '../environment';
-import { ID, ParkingLot } from '../lib/parkingLot';
+import { ParkingLotID, ParkingLot } from '../lib/types';
 
 type MapMarkerProps = {
-  parkingLot: ParkingLot,
+  parkingLot: [ParkingLotID, ParkingLot],
   onClick: () => void,
 }
 
 const MapMarker = ({ parkingLot, onClick }: MapMarkerProps) => (
   <Marker
-    key={parkingLot.id}
-    longitude={parkingLot.metadata.location.longitude}
-    latitude={parkingLot.metadata.location.latitude}
+    key={parkingLot[0]}
+    longitude={parkingLot[1].metadata.location.longitude}
+    latitude={parkingLot[1].metadata.location.latitude}
     anchor="bottom"
     onClick={onClick}
   >
-    <img src="parking-lot-marker.png" width={48} />
+    <img alt="marker" src="/parking-lot-marker.png" width={48} />
   </Marker>
 )
 
 export type MapView = ViewState & { width: number; height: number; };
 
 type MapProps = {
-  parkingLots: ParkingLot[],
+  parkingLots: Record<ParkingLotID, ParkingLot>,
   mapView: MapView,
-  selectParkingLot: (id: ID | undefined) => void
+  selectParkingLot: (id: ParkingLotID | undefined) => void
 }
 
 const Map = ({ parkingLots, selectParkingLot, mapView }: MapProps) => {
@@ -44,8 +42,8 @@ const Map = ({ parkingLots, selectParkingLot, mapView }: MapProps) => {
       style={{ width: "fit" }}
       mapStyle="mapbox://styles/mapbox/navigation-day-v1"
     >
-      {parkingLots.map((parkingLot) => (
-        <MapMarker key={parkingLot.id} parkingLot={parkingLot} onClick={() => selectParkingLot(parkingLot.id)} />
+      {Object.entries(parkingLots).map((parkingLot) => (
+        <MapMarker key={parkingLot[0]} parkingLot={parkingLot} onClick={() => selectParkingLot(parkingLot[0])} />
       ))}
     </ReactMapGL>
   );

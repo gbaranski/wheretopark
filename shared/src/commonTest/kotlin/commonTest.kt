@@ -41,7 +41,7 @@ class ParkingLotStatusTest {
         // If you don't know what happens, look at August 2022, and how weekdays perfectly matches
         val date = LocalDate(2022, 8, weekday.isoDayNumber)
         val time = LocalTime(hour, minute, 0)
-        return metadata.status(LocalDateTime(date, time).toInstant(TimeZone.UTC))
+        return metadata.statusAt(LocalDateTime(date, time).toInstant(TimeZone.UTC))
     }
 
     @Test
