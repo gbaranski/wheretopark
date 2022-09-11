@@ -60,14 +60,12 @@ class TristarGdyniaProvider: Provider() {
         val vendorMetadatas = client.get(METADATA_URL).body<MetadataResponse>()
         return vendorMetadatas.parkingLots.map {
             val configuration = configuration.parkingLots[it.id] ?: return@map null
-            val (longitude, latitude) = it.location.coordinates
-            val location = Coordinate(latitude, longitude)
-            val id = location.hash()
+            val id = it.location.coordinates.hash()
             ids[it.id] = id
             val metadata = ParkingLotMetadata(
                 name = it.name,
                 address = it.address,
-                location = location,
+                location = it.location.coordinates,
                 resources = configuration.resources,
                 totalSpots = mapOf(
                     Pair(ParkingSpotType.CAR, configuration.totalSpots)
