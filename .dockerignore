@@ -3,6 +3,6 @@ Dockerfile
 README.md
 .git
 
-webapp/node_modules
+**/*/node_modules
 webapp/npm-debug.log
 webapp/.next
