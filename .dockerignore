@@ -1,0 +1,8 @@
+Dockerfile
+.dockerignore
+README.md
+.git
+
+webapp/node_modules
+webapp/npm-debug.log
+webapp/.next
