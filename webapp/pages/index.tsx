@@ -43,7 +43,7 @@ const Home = ({ parkingLots: parkingLotsJSON }: { parkingLots: any }) => {
       </div>
       <div className={styles.split} id={styles.slave}>
         <div style={{padding: 15}}>
-          <Image alt="logo" src="/wheretopark.svg" style={{ padding: 20 }} width={100} height={14} layout={'responsive'}/>
+          <Image alt="logo" src="/wheretopark.svg" width={100} height={14} layout={'responsive'}/>
         </div>
         <div style={{ display: selectedParkingLotID ? 'none' : 'block' }}>
           <List parkingLots={parkingLots} onSelect={setSelectedParkingLotID} />

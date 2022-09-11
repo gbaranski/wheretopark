@@ -15,6 +15,7 @@ import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlin.js.ExperimentalJsExport
 import kotlin.js.JsExport
+import kotlin.math.*
 
 private val BITS = intArrayOf(16, 8, 4, 2, 1)
 
@@ -54,53 +55,78 @@ private val BASE32_CHARS = charArrayOf(
     'z'
 )
 
+fun toRadians(v: Double) = v * PI / 180.0
+private const val earthRadiusMeters: Double = 6371000.0
+
+
 @Serializable
 @JsExport
 data class Coordinate(
     val latitude: Double,
     val longitude: Double,
 ) {
+    /**
+     * Haversine formula. Giving great-circle distances between two points on a sphere from their longitudes and latitudes.
+     * It is a special case of a more general formula in spherical trigonometry, the law of haversines, relating the
+     * sides and angles of spherical "triangles".
+     *
+     * https://rosettacode.org/wiki/Haversine_formula#Java
+     *
+     * @return Distance in meters
+     */
+    fun distanceTo(to: Coordinate): Double {
+        val dLat = toRadians(to.latitude - this.latitude);
+        val dLon = toRadians(to.latitude - this.latitude);
+        val originLat = toRadians(this.latitude);
+        val destinationLat = toRadians(to.latitude);
+
+        val a = sin(dLat / 2).pow(2) + sin(dLon / 2).pow(2) * cos(originLat) * cos(destinationLat);
+
+        val c = 2 * asin(sqrt(a));
+        return earthRadiusMeters * c;
+    }
+
     fun hash(length: Int = 12): String {
-            if (length < 1 || length > 12) {
-                throw IllegalArgumentException("length must be between 1 and 12")
-            }
-            val latInterval = doubleArrayOf(-90.0, 90.0)
-            val lonInterval = doubleArrayOf(-180.0, 180.0)
+        if (length < 1 || length > 12) {
+            throw IllegalArgumentException("length must be between 1 and 12")
+        }
+        val latInterval = doubleArrayOf(-90.0, 90.0)
+        val lonInterval = doubleArrayOf(-180.0, 180.0)
 
-            val geohash = StringBuilder()
-            var isEven = true
-            var bit = 0
-            var ch = 0
+        val geohash = StringBuilder()
+        var isEven = true
+        var bit = 0
+        var ch = 0
 
-            while (geohash.length < length) {
-                if (isEven) {
-                    val mid = (lonInterval[0] + lonInterval[1]) / 2
-                    if (longitude > mid) {
-                        ch = ch or BITS[bit]
-                        lonInterval[0] = mid
-                    } else {
-                        lonInterval[1] = mid
-                    }
+        while (geohash.length < length) {
+            if (isEven) {
+                val mid = (lonInterval[0] + lonInterval[1]) / 2
+                if (longitude > mid) {
+                    ch = ch or BITS[bit]
+                    lonInterval[0] = mid
                 } else {
-                    val mid: Double = (latInterval[0] + latInterval[1]) / 2
-                    if (latitude > mid) {
-                        ch = ch or BITS[bit]
-                        latInterval[0] = mid
-                    } else {
-                        latInterval[1] = mid
-                    }
+                    lonInterval[1] = mid
                 }
-
-                isEven = !isEven
-
-                if (bit < 4) {
-                    bit++
+            } else {
+                val mid: Double = (latInterval[0] + latInterval[1]) / 2
+                if (latitude > mid) {
+                    ch = ch or BITS[bit]
+                    latInterval[0] = mid
                 } else {
-                    geohash.append(BASE32_CHARS[ch])
-                    bit = 0
-                    ch = 0
+                    latInterval[1] = mid
                 }
             }
-            return geohash.toString()
+
+            isEven = !isEven
+
+            if (bit < 4) {
+                bit++
+            } else {
+                geohash.append(BASE32_CHARS[ch])
+                bit = 0
+                ch = 0
+            }
+        }
+        return geohash.toString()
     }
 }
