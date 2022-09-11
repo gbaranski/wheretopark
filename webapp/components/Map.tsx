@@ -1,6 +1,7 @@
 import ReactMapGL, { MapProvider, Marker, useMap, ViewState } from 'react-map-gl';
 import { MAPBOX_ACCESS_TOKEN } from '../environment';
 import { ParkingLotID, ParkingLot } from '../lib/types';
+import Image from 'next/image'
 
 type MapMarkerProps = {
   parkingLot: [ParkingLotID, ParkingLot],
@@ -15,7 +16,7 @@ const MapMarker = ({ parkingLot, onClick }: MapMarkerProps) => (
     anchor="bottom"
     onClick={onClick}
   >
-    <img alt="marker" src="/parking-lot-marker.png" width={48} />
+    <Image alt="marker" src="/parking-lot-marker.png" width={48} height={48} />
   </Marker>
 )
 

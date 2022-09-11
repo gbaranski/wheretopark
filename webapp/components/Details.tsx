@@ -139,7 +139,7 @@ const ParkingLotDetails = ({parkingLot: [id, parkingLot], onDismiss}: Props) => 
                     </ListItemText>
                 </ListItem>
                 {Object.entries(toRecord<ParkingSpotType, number>(parkingLot.state.availableSpots)).map(([type, count]) => (
-                    <ListItem>
+                    <ListItem key={type}>
                         <ListItemIcon>
                             <DirectionsCarOutlined/>
                         </ListItemIcon>
@@ -164,7 +164,7 @@ const ParkingLotDetails = ({parkingLot: [id, parkingLot], onDismiss}: Props) => 
                 </ListItemButton>
                 <Collapse in={hoursOpen} sx={{pl: 9, pr: 5}}>
                     {toArray<ParkingLotRule>(parkingLot.metadata.rules).map((rule) => (
-                        <div>
+                        <>
                             <Typography
                                 variant="h6">{capitalizeFirstLetter(rule.weekdays?.start.toString() ?? "Monday")} - {capitalizeFirstLetter(rule.weekdays?.end.toString() ?? "Sunday")}</Typography>
                             {rule.hours &&
@@ -172,7 +172,7 @@ const ParkingLotDetails = ({parkingLot: [id, parkingLot], onDismiss}: Props) => 
                                     variant="subtitle2">{rule.hours.start.toString()}-{rule.hours.end.toString()}</Typography>
                             }
                             {toArray<ParkingLotPricingRule>(rule.pricing).map((pricing) => (
-                                <div>
+                                <>
                                     <Box display="flex" flex-directions="row" justifyContent="space-between">
                                         <Typography display="inline"
                                                     align="left">{pricing.repeating && "Each "}{Duration.fromISO(durationToISO(pricing.duration)).toHuman()}</Typography>
@@ -180,18 +180,18 @@ const ParkingLotDetails = ({parkingLot: [id, parkingLot], onDismiss}: Props) => 
                                                     align="right">{pricing.price}{parkingLot.metadata.currency}</Typography>
                                     </Box>
                                     <Divider/>
-                                </div>
+                                </>
                             ))}
-                        </div>
+                        </>
                     ))}
                 </Collapse>
                 {toArray<ParkingLotResource>(parkingLot.metadata.resources).map((resource) => (
-                    <ListItem>
+                    <ListItem key={resource.url}>
                         <ListItemIcon>
                             <PublicOutlined/>
                         </ListItemIcon>
                         <ListItemText>
-                            <Link href={resource.url.toString()} underline="hover">
+                            <Link href={resource.url} underline="hover">
                                 {resource.url}
                             </Link>
                         </ListItemText>

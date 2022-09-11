@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react'
-import type { GetServerSidePropsContext } from 'next'
 import Map, { MapView } from '../components/Map'
 import Details from '../components/Details'
 import { ParkingLotID, parseParkingLots, fetchParkingLots } from '../lib/types'
 import styles from '../styles/Home.module.css'
 import List from '../components/List'
+import Image from 'next/image'
 
 const Home = ({ parkingLots: parkingLotsJSON }: { parkingLots: any }) => {
   console.log("about to parse parking lots")
@@ -42,7 +42,9 @@ const Home = ({ parkingLots: parkingLotsJSON }: { parkingLots: any }) => {
         <Map parkingLots={parkingLots} mapView={mapView} selectParkingLot={setSelectedParkingLotID} />
       </div>
       <div className={styles.split} id={styles.slave}>
-        <img alt="logo" src="/wheretopark.svg" style={{ display: 'block', marginLeft: 'auto', marginRight: 'auto', width: '50%', padding: 20 }} />
+        <div style={{padding: 15}}>
+          <Image alt="logo" src="/wheretopark.svg" style={{ padding: 20 }} width={100} height={14} layout={'responsive'}/>
+        </div>
         <div style={{ display: selectedParkingLotID ? 'none' : 'block' }}>
           <List parkingLots={parkingLots} onSelect={setSelectedParkingLotID} />
         </div>

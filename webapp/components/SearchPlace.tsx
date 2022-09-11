@@ -47,7 +47,7 @@ const SearchPlace = ({ onSelect, buttonNeighbour }: Props) => {
       setOptions(response.features)
       setLoading(false)
     });
-  }, [inputValue])
+  }, [inputValue, fetch])
 
   const selectCurrentPosition = () => {
     navigator.geolocation.getCurrentPosition((position) => {
