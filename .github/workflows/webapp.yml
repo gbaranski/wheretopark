@@ -41,8 +41,13 @@ jobs:
       - name: Build shared library for JS
         run: |
           ./gradlew :shared:jsNodeProductionLibraryDistribution
+          mdkir -p $HOME/build
+          cp -r build/js $HOME/build/js
       - name: Build and push image
         uses: docker/build-push-action@v3
+        run: |
+          mkdir build
+          cp -r $HOME/build/js build/js
         with:
           push: true
           file: webapp/Dockerfile
