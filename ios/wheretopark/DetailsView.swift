@@ -10,7 +10,7 @@ import MapKit
 import PhoneNumberKit
 import shared
 
-struct ParkingLotView: View {
+struct DetailsView: View {
     let parkingLot: ParkingLot
     var closeAction: (() -> Void)? = nil
     
@@ -91,9 +91,9 @@ struct ParkingLotView: View {
                     
                 }.frame(maxWidth: .infinity)
                 Text("Pricing").font(.title2).fontWeight(.bold)
-                ParkingLotPricingView(metadata: parkingLot.metadata)
+                DetailsPricingView(metadata: parkingLot.metadata)
                 Text("Additional info").font(.title2).fontWeight(.bold)
-                ParkingLotAdditionalInfoView(metadata: parkingLot.metadata)
+                DetailsAdditionalInfoView(metadata: parkingLot.metadata)
             }
         }
     }
@@ -109,7 +109,7 @@ struct ParkingLotView: View {
     }
 }
 
-struct ParkingLotPricingView: View {
+struct DetailsPricingView: View {
     let metadata: ParkingLotMetadata
     
     var body: some View {
@@ -145,7 +145,7 @@ struct ParkingLotPricingView: View {
     
 }
 
-struct ParkingLotAdditionalInfoView: View {
+struct DetailsAdditionalInfoView: View {
     let metadata: ParkingLotMetadata
     
     var body: some View {
@@ -179,8 +179,8 @@ struct ParkingLotAdditionalInfoView: View {
 }
 
 
-struct ParkingLotView_Previews: PreviewProvider {
+struct DetailsView_Previews: PreviewProvider {
     static var previews: some View {
-        ParkingLotView(parkingLot: ParkingLot.companion.galeriaBaltycka, closeAction: {}).padding()
+        DetailsView(parkingLot: ParkingLot.companion.galeriaBaltycka, closeAction: {}).padding()
     }
 }

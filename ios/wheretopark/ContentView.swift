@@ -76,7 +76,7 @@ struct ContentView: View {
         ) {
             if let parkingLotID = appState.selectedParkingLotID {
                 let parkingLot = appState.parkingLots[parkingLotID]!
-                ParkingLotView(
+                DetailsView(
                     parkingLot: parkingLot,
                     closeAction: {
                         appState.selectedParkingLotID = nil
