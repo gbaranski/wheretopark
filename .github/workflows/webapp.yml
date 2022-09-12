@@ -49,6 +49,7 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           push: true
+          context: .
           file: webapp/Dockerfile
           tags: ghcr.io/wheretopark/webapp:latest
           platforms: "linux/amd64,linux/arm64"
