@@ -5,6 +5,7 @@ import List from '../components/List'
 import Image from 'next/image'
 import dynamic from 'next/dynamic'
 import {CircularProgress, Stack} from "@mui/material";
+import Link from "next/link";
 
 type HomeProps = {
     parkingLots: Record<ParkingLotID, ParkingLot>
@@ -29,7 +30,12 @@ export const Home = ({parkingLots, selectedParkingLotID}: HomeProps) => {
         <>
             <div className={styles.split} id={styles.master}>
                 <div style={{padding: 15}}>
-                    <Image alt="logo" src="/wheretopark.svg" width={100} height={14} layout={'responsive'}/>
+                    <Link href={`/`}>
+                        <a>
+                            <Image alt="logo" src="/wheretopark.svg" width={100} height={14} layout={'responsive'}
+                                   objectFit="contain" />
+                        </a>
+                    </Link>
                 </div>
                 <div style={{display: selectedParkingLotID ? 'none' : 'block'}}>
                     <List parkingLots={parkingLots}/>
