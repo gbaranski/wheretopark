@@ -125,7 +125,9 @@ const SearchPlace = ({ onSelect, buttonNeighbour }: Props) => {
           );
         }}
       />
-      <Box sx={{ 
+      <Box sx={{
+          width: '100%',
+          marginRight: 5,
         display: "inline-flex",
         flexDirection: "row",
         justifyContent: "space-between"
