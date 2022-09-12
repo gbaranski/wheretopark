@@ -2,21 +2,21 @@ import {Box, List, ListItem, ListItemButton, ListItemText, NativeSelect, Typogra
 import {useState} from "react";
 import {ParkingLot, ParkingLotID, Coordinate} from "../lib/types"
 import SearchPlace from "./SearchPlace";
-import {getDistance} from 'geolib';
 import {prettyDistance} from "../lib/utils";
+import Link from "next/link";
 
-const ParkingLotListItem = ({
-                                parkingLot,
-                                origin,
-                                onSelect
-                            }: { parkingLot: [ParkingLotID, ParkingLot], origin: Coordinate | null, onSelect: () => void }) => (
-    <ListItem key={parkingLot[0]}>
-        <ListItemButton onClick={onSelect}>
-            <ListItemText
-                primary={parkingLot[1].metadata.name}
-                secondary={`${parkingLot[1].state.availableSpots} available spots ${origin ? `| ${prettyDistance(origin, parkingLot[1].metadata.location)} away` : ""}`}
-            />
-        </ListItemButton>
+type ListItemProps = { parkingLot: [ParkingLotID, ParkingLot], origin: Coordinate | null }
+
+const ParkingLotListItem = ({parkingLot: [id, parkingLot], origin}: ListItemProps) => (
+    <ListItem key={id}>
+        <Link href={`/parking-lot/${id}`} passHref={true}>
+            <ListItemButton>
+                <ListItemText
+                    primary={parkingLot.metadata.name}
+                    secondary={`${parkingLot.state.availableSpots} available spots ${origin ? `| ${prettyDistance(origin, parkingLot.metadata.location)} away` : ""}`}
+                />
+            </ListItemButton>
+        </Link>
     </ListItem>
 )
 
@@ -25,10 +25,11 @@ enum SortMethod {
     Distance = "distance",
 }
 
-const ParkingLotList = ({
-                            parkingLots,
-                            onSelect
-                        }: { parkingLots: Record<ParkingLotID, ParkingLot>, onSelect: (id: ParkingLotID) => void }) => {
+type Props = {
+    parkingLots: Record<ParkingLotID, ParkingLot>
+}
+
+const ParkingLotList = ({parkingLots}: Props) => {
     const [sortMethod, setSortMethod] = useState<SortMethod>(SortMethod.Name);
     const [origin, setOrigin] = useState<Coordinate | null>(null)
     const parkingLotsEntries = Object.entries(parkingLots)
@@ -72,7 +73,6 @@ const ParkingLotList = ({
                 {Object.entries(parkingLots).map((parkingLot) => ParkingLotListItem({
                     parkingLot,
                     origin,
-                    onSelect: () => onSelect(parkingLot[0])
                 }))}
             </List>
         </div>
