@@ -8,22 +8,23 @@
 }
 
 #master {
-  width: 75%;
-  right: 0;
-}
-
-#slave {
   background-color: rgb(255, 253, 246);
-  width: 25%;
+  width: 400px;
   left: 0;
 }
 
-@media only screen and (min-width: 600px) {
-  #slave {
-    width: 400px;
+#slave {
+  width: calc(100% - 400px);
+  right: 0;
+}
+
+@media only screen and (max-width: 400px) {
+  #master {
+    width: 100%;
   }
 
-  #master {
-    width: calc(100% - 400px);
+  #slave {
+    width: 0%;
+    display: none;
   }
 }

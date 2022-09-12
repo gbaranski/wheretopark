@@ -28,9 +28,6 @@ export const Home = ({parkingLots, selectedParkingLotID}: HomeProps) => {
     return (
         <>
             <div className={styles.split} id={styles.master}>
-                <Map parkingLots={parkingLots} selectedParkingLot={selectedParkingLot}/>
-            </div>
-            <div className={styles.split} id={styles.slave}>
                 <div style={{padding: 15}}>
                     <Image alt="logo" src="/wheretopark.svg" width={100} height={14} layout={'responsive'}/>
                 </div>
@@ -40,6 +37,9 @@ export const Home = ({parkingLots, selectedParkingLotID}: HomeProps) => {
                 {selectedParkingLotID &&
                     <Details parkingLot={[selectedParkingLotID, parkingLots[selectedParkingLotID]]!}/>
                 }
+            </div>
+            <div className={styles.split} id={styles.slave}>
+                <Map parkingLots={parkingLots} selectedParkingLot={selectedParkingLot}/>
             </div>
         </>
     )
