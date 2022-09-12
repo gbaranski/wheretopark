@@ -17,6 +17,7 @@ FROM node:18-alpine AS runner
 WORKDIR /app
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
+RUN apk --no-cache add curl
 
 COPY --from=builder /app/next.config.js ./next.config.js
 COPY --from=builder /app/public ./public
