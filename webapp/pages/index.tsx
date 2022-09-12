@@ -8,8 +8,13 @@ import Image from 'next/image'
 import {app} from "wheretopark-shared";
 import AccessType = app.wheretopark.shared.AccessType;
 import {GetServerSideProps, GetServerSidePropsContext} from "next";
+import getConfig from "next/config";
 
-const Home = ({parkingLots: parkingLotsJSON}: { parkingLots: any }) => {
+type HomeProps = {
+    parkingLots: string
+}
+
+const Home = ({parkingLots: parkingLotsJSON}: HomeProps) => {
     const parkingLots = parseParkingLots(JSON.stringify(parkingLotsJSON))
     const [selectedParkingLotID, setSelectedParkingLotID] = useState<ParkingLotID | undefined>(undefined)
     const [mapView, setMapView] = useState<MapView>({
@@ -59,8 +64,10 @@ const Home = ({parkingLots: parkingLotsJSON}: { parkingLots: any }) => {
     )
 }
 
-const authorizationClient = new AuthorizationClient(process.env.AUTHORIZATION_URL!, process.env.CLIENT_ID!, process.env.CLIENT_SECRET!)
-const storekeeperClient = new StorekeeperClient(process.env.STOREKEEPER_URL!, [AccessType.ReadMetadata, AccessType.ReadState], authorizationClient)
+const {serverRuntimeConfig} = getConfig();
+console.log({serverRuntimeConfig});
+const authorizationClient = new AuthorizationClient(serverRuntimeConfig.AUTHORIZATION_URL, serverRuntimeConfig.CLIENT_ID, serverRuntimeConfig.CLIENT_SECRET!)
+const storekeeperClient = new StorekeeperClient(serverRuntimeConfig.STOREKEEPER_URL, [AccessType.ReadMetadata, AccessType.ReadState], authorizationClient)
 
 export async function getServerSideProps({req, res}: GetServerSidePropsContext) {
     const parkingLots = await storekeeperClient.parkingLots()
@@ -68,8 +75,11 @@ export async function getServerSideProps({req, res}: GetServerSidePropsContext) 
         'Cache-Control',
         'public, s-maxage=10, stale-while-revalidate=59'
     )
+    const props: HomeProps = {
+        parkingLots: JSON.parse(parkingLots),
+    }
     return {
-        props: {parkingLots: JSON.parse(parkingLots)}, // will be passed to the page component as props
+        props, // will be passed to the page component as props
     }
 }
 

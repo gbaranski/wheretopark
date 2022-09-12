@@ -8,11 +8,15 @@ import { Box, Button, CircularProgress, Grid } from '@mui/material';
 import mbxGeocoding, { GeocodeFeature, GeocodeRequest, GeocodeResponse } from '@mapbox/mapbox-sdk/services/geocoding';
 import { LocationOn, MyLocation } from '@mui/icons-material';
 import { Coordinate } from '../lib/types'
+import getConfig from "next/config";
 
 type Props = {
   onSelect: (option: Coordinate | null) => void;
   buttonNeighbour: React.FC
 };
+
+
+const { publicRuntimeConfig } = getConfig();
 
 const SearchPlace = ({ onSelect, buttonNeighbour }: Props) => {
   const [selected, setSelected] = React.useState<GeocodeFeature | null>(null);
@@ -28,7 +32,7 @@ const SearchPlace = ({ onSelect, buttonNeighbour }: Props) => {
           callback: (response: GeocodeResponse) => void,
         ) => {
           const geocodingClient = mbxGeocoding({
-            accessToken: MAPBOX_ACCESS_TOKEN,
+            accessToken: publicRuntimeConfig.MAPBOX_ACCESS_TOKEN,
           });
           geocodingClient.forwardGeocode(request).send().then((response) => {
             callback(response.body)
