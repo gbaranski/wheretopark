@@ -1,7 +1,7 @@
 import {parseParkingLots} from '../lib/types'
 import {storekeeperClient} from '../lib/client'
 import {GetServerSidePropsContext} from "next";
-import {Home} from "./Home";
+import {Home} from "../components/Home";
 
 type IndexProps = {
     parkingLots: any,

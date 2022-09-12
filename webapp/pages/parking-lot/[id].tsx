@@ -1,7 +1,7 @@
 import {GetServerSidePropsContext, GetServerSidePropsResult} from "next";
 import {storekeeperClient} from "../../lib/client";
 import {ParkingLotID, parseParkingLots} from "../../lib/types";
-import {Home} from "../Home";
+import {Home} from "../../components/Home";
 
 type Props = {
     id: ParkingLotID

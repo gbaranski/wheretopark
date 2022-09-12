@@ -1,7 +1,7 @@
-import Details from '../components/Details'
+import Details from './Details'
 import {ParkingLot, ParkingLotID} from '../lib/types'
 import styles from '../styles/Home.module.css'
-import List from '../components/List'
+import List from './List'
 import Image from 'next/image'
 import dynamic from 'next/dynamic'
 import {CircularProgress, Stack} from "@mui/material";
@@ -19,7 +19,7 @@ const MapLoading = () => (
 
 )
 
-const Map = dynamic(() => import("../components/Map"), {
+const Map = dynamic(() => import("./Map"), {
     loading: MapLoading,
     ssr: false
 });
@@ -51,3 +51,4 @@ export const Home = ({parkingLots, selectedParkingLotID}: HomeProps) => {
     )
 }
 
+export default Home
