@@ -12,7 +12,6 @@ export import ParkingLotResource = S.app.wheretopark.shared.ParkingLotResource
 export import parseParkingLots = S.app.wheretopark.shared.parseParkingLots
 export import StorekeeperClient = S.app.wheretopark.shared.JSStorekeeperClient
 export import AuthorizationClient = S.app.wheretopark.shared.JSAuthorizationClient
-export import fetchParkingLots = S.app.wheretopark.shared.fetchParkingLots
 export import toRecord = S.app.wheretopark.shared.toRecord
 export import toArray = S.app.wheretopark.shared.toArray
 export import instantToJSDate = S.app.wheretopark.shared.instantToJSDate

@@ -1,7 +1,7 @@
 import {useEffect, useState} from 'react'
 import Map, {MapView} from '../components/Map'
 import Details from '../components/Details'
-import {ParkingLotID, parseParkingLots, fetchParkingLots, AuthorizationClient, StorekeeperClient} from '../lib/types'
+import {ParkingLotID, parseParkingLots, AuthorizationClient, StorekeeperClient} from '../lib/types'
 import styles from '../styles/Home.module.css'
 import List from '../components/List'
 import Image from 'next/image'

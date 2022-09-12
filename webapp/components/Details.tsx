@@ -17,7 +17,6 @@ import {
     ParkingLot,
     ParkingLotID,
     toRecord,
-    fetchParkingLots,
     toArray,
     ParkingLotRule,
     ParkingLotPricingRule,
