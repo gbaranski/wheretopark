@@ -16,7 +16,8 @@ import kotlin.time.Duration
 import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.seconds
 
-const val METADATA_URL = "https://ckan.multimediagdansk.pl/dataset/cb1e2708-aec1-4b21-9c8c-db2626ae31a6/resource/d361dff3-202b-402d-92a5-445d8ba6fd7f/download/parking-lots.json"
+const val METADATA_URL =
+    "https://ckan.multimediagdansk.pl/dataset/cb1e2708-aec1-4b21-9c8c-db2626ae31a6/resource/d361dff3-202b-402d-92a5-445d8ba6fd7f/download/parking-lots.json"
 const val STATE_URL = "https://ckan2.multimediagdansk.pl/parkingLots"
 
 @Serializable
@@ -34,7 +35,7 @@ data class Configuration(
     val parkingLots: Map<String, ParkingLotConfiguration>,
 )
 
-class TristarGdanskProvider: Provider() {
+class TristarGdanskProvider : Provider() {
     override val name: String
         get() = "tristar/gdansk"
     override val metadataInterval: Duration
@@ -51,10 +52,12 @@ class TristarGdanskProvider: Provider() {
             })
         }
     }
+
     // Mapping of vendor and storekeeper ID's
     private val ids = mutableMapOf<String, ParkingLotID>()
 
-    private val configuration = Yaml().decodeFromString<Configuration>(this.javaClass.getResource("/configuration-gdansk.yaml")!!.readText())
+    private val configuration =
+        Yaml().decodeFromString<Configuration>(this.javaClass.getResource("/configuration-gdansk.yaml")!!.readText())
 
     override suspend fun metadatas(): Map<ParkingLotID, ParkingLotMetadata> {
         val vendorMetadatas = client.get(METADATA_URL).body<MetadataResponse>()
@@ -76,8 +79,8 @@ class TristarGdanskProvider: Provider() {
             )
             id to metadata
         }
-        .filterNotNull()
-        .toMap()
+            .filterNotNull()
+            .toMap()
     }
 
     override suspend fun states(): Map<ParkingLotID, ParkingLotState> {
@@ -92,7 +95,7 @@ class TristarGdanskProvider: Provider() {
             )
             id to state
         }
-        .filterNotNull()
-        .toMap()
+            .filterNotNull()
+            .toMap()
     }
 }

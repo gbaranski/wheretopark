@@ -5,8 +5,8 @@ import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import io.ktor.client.plugins.auth.*
 import io.ktor.client.plugins.auth.providers.*
-import io.ktor.serialization.kotlinx.json.*
 import io.ktor.client.plugins.contentnegotiation.*
+import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.testing.*
 import kotlinx.serialization.json.Json
 import org.junit.Test
@@ -47,9 +47,9 @@ class ServerTest {
     }
 
     private val parkingLots = mapOf(
-            (ParkingLot.galeriaBaltycka.metadata.location.hash() to ParkingLot.galeriaBaltycka),
-            (ParkingLot.forumGdansk.metadata.location.hash() to ParkingLot.forumGdansk)
-        )
+        (ParkingLot.galeriaBaltycka.metadata.location.hash() to ParkingLot.galeriaBaltycka),
+        (ParkingLot.forumGdansk.metadata.location.hash() to ParkingLot.forumGdansk)
+    )
 
     private val metadatas = parkingLots.split().first
     private val states = parkingLots.split().second

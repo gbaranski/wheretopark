@@ -1,8 +1,7 @@
-import {GetServerSideProps, GetServerSidePropsContext, GetServerSidePropsResult} from "next";
+import {GetServerSidePropsContext, GetServerSidePropsResult} from "next";
 import {storekeeperClient} from "../../lib/client";
-import {ParkingLot, ParkingLotID, parseParkingLots} from "../../lib/types";
-import Details from "../../components/Details";
-import { Home } from "../Home";
+import {ParkingLotID, parseParkingLots} from "../../lib/types";
+import {Home} from "../Home";
 
 type Props = {
     id: ParkingLotID
@@ -12,7 +11,7 @@ type Props = {
 export default ({parkingLots: parkingLotsJSON, id}: Props) => {
     const parkingLots = parseParkingLots(JSON.stringify(parkingLotsJSON));
     return (
-        <Home parkingLots={parkingLots} selectedParkingLotID={id} />
+        <Home parkingLots={parkingLots} selectedParkingLotID={id}/>
     )
 
 }

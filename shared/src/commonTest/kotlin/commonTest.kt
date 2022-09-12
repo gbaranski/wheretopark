@@ -6,7 +6,6 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
 class ParkingLotStatusTest {
     private fun create(vararg rules: Pair<ParkingLotWeekdays?, ParkingLotHours?>) =
@@ -65,7 +64,7 @@ class ParkingLotStatusTest {
 class ParkingLotWeekdaysTest {
     @Test
     fun valid() {
-        val weekdays = ParkingLotWeekdays(start=DayOfWeek.MONDAY, end=DayOfWeek.FRIDAY)
+        val weekdays = ParkingLotWeekdays(start = DayOfWeek.MONDAY, end = DayOfWeek.FRIDAY)
         val string = Json.encodeToString(weekdays)
         println(string)
         require(Json.decodeFromString<ParkingLotWeekdays>(string) == weekdays)

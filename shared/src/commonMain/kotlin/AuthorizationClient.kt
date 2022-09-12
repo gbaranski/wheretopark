@@ -13,7 +13,6 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import kotlin.js.ExperimentalJsExport
 import kotlin.js.JsExport
-import kotlin.js.JsName
 
 @JsExport
 enum class AccessType(val code: String) {
@@ -25,7 +24,7 @@ enum class AccessType(val code: String) {
 
 fun Set<AccessType>.encode() = this.joinToString(" ") { it.code }
 fun decodeAccessScope(scope: String) = scope.split(" ").map { s ->
-    AccessType.values().find{ it.code == s }!!
+    AccessType.values().find { it.code == s }!!
 }.toSet()
 
 @Serializable

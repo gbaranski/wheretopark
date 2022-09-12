@@ -8,7 +8,7 @@ android {
     compileSdk = 32
 
     defaultConfig {
-        applicationId =  "app.wheretopark.android"
+        applicationId = "app.wheretopark.android"
         minSdk = 26
         targetSdk = 32
         versionCode = 1

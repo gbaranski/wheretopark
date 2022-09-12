@@ -4,7 +4,7 @@ import app.wheretopark.shared.ParkingLotID
 import app.wheretopark.shared.ParkingLotMetadata
 import app.wheretopark.shared.ParkingLotState
 
-class MemoryStore: Store {
+class MemoryStore : Store {
     private val states = mutableMapOf<ParkingLotID, ParkingLotState>()
     private val metadatas = mutableMapOf<ParkingLotID, ParkingLotMetadata>()
 

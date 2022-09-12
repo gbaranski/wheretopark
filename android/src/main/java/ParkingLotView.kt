@@ -1,6 +1,5 @@
 package app.wheretopark.android
 
-import app.wheretopark.shared.*
 import android.content.Intent
 import android.net.Uri
 import android.text.format.DateUtils
@@ -19,6 +18,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import app.wheretopark.shared.ParkingLot
+import app.wheretopark.shared.ParkingLotMetadata
 import java.util.*
 
 
@@ -29,7 +30,7 @@ fun ParkingLotView(parkingLot: ParkingLot) {
 
 
     fun addToFavourites() {
-        Toast.makeText(context,"Added to favourites", Toast.LENGTH_SHORT).show()
+        Toast.makeText(context, "Added to favourites", Toast.LENGTH_SHORT).show()
         // TODO: Add to favourties
     }
 
@@ -46,7 +47,8 @@ fun ParkingLotView(parkingLot: ParkingLot) {
                 Image(
                     painterResource(id = R.drawable.ic_baseline_directions_24),
                     contentDescription = "Navigate button",
-                    modifier = Modifier.size(20.dp))
+                    modifier = Modifier.size(20.dp)
+                )
 
                 Text(text = "Navigate", Modifier.padding(start = 10.dp))
             }
@@ -69,18 +71,26 @@ fun ParkingLotView(parkingLot: ParkingLot) {
                     onDismissRequest = { miscMenuExpanded = false }
                 ) {
                     DropdownMenuItem(onClick = { addToFavourites() }) {
-                        Text("Add to favourites",
+                        Text(
+                            "Add to favourites",
                             Modifier
                                 .weight(1f)
-                                .padding(end = 5.dp))
-                        Icon(Icons.Default.Favorite, contentDescription = "add to favourites", modifier = Modifier.size(24f.dp))
+                                .padding(end = 5.dp)
+                        )
+                        Icon(
+                            Icons.Default.Favorite,
+                            contentDescription = "add to favourites",
+                            modifier = Modifier.size(24f.dp)
+                        )
                     }
                 }
             }
         }
-        Row(modifier = Modifier
-            .fillMaxWidth()
-            .height(IntrinsicSize.Min), horizontalArrangement = Arrangement.Center) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(IntrinsicSize.Min), horizontalArrangement = Arrangement.Center
+        ) {
             Column(modifier = Modifier.weight(0.2f)) {
                 Text("AVAILABILITY", fontWeight = FontWeight.ExtraBold, color = MaterialTheme.colors.secondaryVariant)
                 Text("${parkingLot.state.availableSpots} cars", fontWeight = FontWeight.Bold)
@@ -91,7 +101,8 @@ fun ParkingLotView(parkingLot: ParkingLot) {
             }
             Column(modifier = Modifier.weight(0.2f)) {
                 val now = Date()
-                val interval = DateUtils.getRelativeTimeSpanString(parkingLot.state.lastUpdated.toEpochMilliseconds(), now.time, 0)
+                val interval =
+                    DateUtils.getRelativeTimeSpanString(parkingLot.state.lastUpdated.toEpochMilliseconds(), now.time, 0)
                 Text("UPDATED", fontWeight = FontWeight.ExtraBold, color = MaterialTheme.colors.secondaryVariant)
                 Text("$interval", fontWeight = FontWeight.Bold)
             }
@@ -177,7 +188,11 @@ fun ParkingLotViewBottomSheet(parkingLotViewModel: ParkingLotViewModel, content:
                             horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Text(parkingLot!!.metadata.name, fontWeight = FontWeight.Bold, style = MaterialTheme.typography.h4)
+                            Text(
+                                parkingLot!!.metadata.name,
+                                fontWeight = FontWeight.Bold,
+                                style = MaterialTheme.typography.h4
+                            )
                             Button(onClick = { parkingLotViewModel.selectedParkingLotID = null }) {
                                 Icon(Icons.Default.Close, contentDescription = "close view")
                             }

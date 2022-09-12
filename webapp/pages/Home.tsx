@@ -1,5 +1,5 @@
 import Details from '../components/Details'
-import {ParkingLotID, ParkingLot} from '../lib/types'
+import {ParkingLot, ParkingLotID} from '../lib/types'
 import styles from '../styles/Home.module.css'
 import List from '../components/List'
 import Image from 'next/image'
@@ -33,7 +33,7 @@ export const Home = ({parkingLots, selectedParkingLotID}: HomeProps) => {
                     <Link href={`/`}>
                         <a>
                             <Image alt="logo" src="/wheretopark.svg" width={100} height={14} layout={'responsive'}
-                                   objectFit="contain" />
+                                   objectFit="contain"/>
                         </a>
                     </Link>
                 </div>

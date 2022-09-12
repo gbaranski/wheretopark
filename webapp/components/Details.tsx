@@ -14,15 +14,15 @@ import {
     Typography
 } from "@mui/material"
 import {
+    durationToISO,
+    instantToJSDate,
     ParkingLot,
     ParkingLotID,
-    toRecord,
-    toArray,
-    ParkingLotRule,
     ParkingLotPricingRule,
     ParkingLotResource,
-    parseParkingLots,
-    instantToJSDate, durationToISO, ParkingSpotType
+    ParkingLotRule,
+    toArray,
+    toRecord
 } from "../lib/types"
 import {
     AccessTimeOutlined,

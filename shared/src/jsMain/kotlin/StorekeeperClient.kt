@@ -5,7 +5,6 @@ package app.wheretopark.shared
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.promise
-import kotlinx.js.Record
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import kotlin.js.Promise

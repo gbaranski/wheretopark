@@ -1,6 +1,6 @@
 import {Box, List, ListItem, ListItemButton, ListItemText, NativeSelect, Typography} from "@mui/material"
 import {useState} from "react";
-import {ParkingLot, ParkingLotID, Coordinate} from "../lib/types"
+import {Coordinate, ParkingLot, ParkingLotID} from "../lib/types"
 import SearchPlace from "./SearchPlace";
 import {prettyDistance} from "../lib/utils";
 import Link from "next/link";

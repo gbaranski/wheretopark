@@ -1,5 +1,5 @@
 import ReactMapGL, {Marker} from 'react-map-gl';
-import {ParkingLotID, ParkingLot} from '../lib/types';
+import {ParkingLot, ParkingLotID} from '../lib/types';
 import getConfig from "next/config";
 
 import Image from 'next/image'

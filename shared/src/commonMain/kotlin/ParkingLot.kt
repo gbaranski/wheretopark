@@ -2,7 +2,6 @@
 
 package app.wheretopark.shared
 
-import io.ktor.http.*
 import kotlinx.datetime.*
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerialName

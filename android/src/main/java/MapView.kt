@@ -1,10 +1,11 @@
 package app.wheretopark.android
 
-import app.wheretopark.shared.*
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import app.wheretopark.shared.ParkingLot
+import app.wheretopark.shared.ParkingLotID
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
@@ -24,13 +25,14 @@ fun MapView(parkingLotViewModel: ParkingLotViewModel) {
     val properties by remember {
         mutableStateOf(
             MapProperties(
-            mapStyleOptions = MapStyleOptions.loadRawResourceStyle(context, R.raw.map_style)
-        )
+                mapStyleOptions = MapStyleOptions.loadRawResourceStyle(context, R.raw.map_style)
+            )
         )
     }
 
     LaunchedEffect(parkingLotViewModel.selectedParkingLotID, block = {
-        val parkingLot = parkingLotViewModel.parkingLots[parkingLotViewModel.selectedParkingLotID] ?: return@LaunchedEffect
+        val parkingLot =
+            parkingLotViewModel.parkingLots[parkingLotViewModel.selectedParkingLotID] ?: return@LaunchedEffect
         cameraPositionState.position = CameraPosition.fromLatLngZoom(
             LatLng(
                 parkingLot.metadata.location.latitude,
@@ -54,7 +56,12 @@ fun MapView(parkingLotViewModel: ParkingLotViewModel) {
 }
 
 @Composable
-fun MapMarkerView(iconGenerator: IconGenerator, parkingLot: ParkingLot, parkingLotID: ParkingLotID, parkingLotViewModel: ParkingLotViewModel) {
+fun MapMarkerView(
+    iconGenerator: IconGenerator,
+    parkingLot: ParkingLot,
+    parkingLotID: ParkingLotID,
+    parkingLotViewModel: ParkingLotViewModel
+) {
     val position = LatLng(
         parkingLot.metadata.location.latitude,
         parkingLot.metadata.location.longitude

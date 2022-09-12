@@ -2,8 +2,8 @@ export function capitalizeFirstLetter(s: string) {
     return s.charAt(0).toUpperCase() + s.slice(1);
 }
 
-import { convertDistance  } from 'geolib';
-import { Coordinate } from './types';
+import {convertDistance} from 'geolib';
+import {Coordinate} from './types';
 
 export const prettyDistance = (from: Coordinate, to: Coordinate) => {
     console.log({from, to});

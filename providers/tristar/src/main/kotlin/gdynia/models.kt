@@ -2,7 +2,6 @@ package app.wheretopark.providers.tristar.gdynia
 
 import app.wheretopark.shared.Coordinate
 import kotlinx.datetime.Instant
-import kotlinx.datetime.toJavaInstant
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerialName
@@ -13,7 +12,6 @@ import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
-import java.io.Serial
 
 @Serializable
 data class Location(
@@ -24,6 +22,7 @@ data class Location(
 
 object CoordinateAsGeoJSONSerializer : KSerializer<Coordinate> {
     private val delegateSerializer = DoubleArraySerializer()
+
     @OptIn(ExperimentalSerializationApi::class)
     override val descriptor = SerialDescriptor("Coordinate", delegateSerializer.descriptor)
 

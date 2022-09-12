@@ -2,21 +2,13 @@
 
 package app.wheretopark.shared
 
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.promise
 import kotlinx.datetime.Instant
-import kotlinx.datetime.toDateTimePeriod
 import kotlinx.datetime.toJSDate
 import kotlinx.js.Record
 import kotlinx.js.set
 import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import kotlin.js.Date
-import kotlin.js.Promise
 import kotlin.time.Duration
-import kotlin.time.Duration.Companion.seconds
 
 @JsExport
 fun <K : Any, V : Any> Map<K, V>.toRecord(): Record<K, V> {
@@ -26,7 +18,7 @@ fun <K : Any, V : Any> Map<K, V>.toRecord(): Record<K, V> {
 }
 
 @JsExport
-fun <T: Any> List<T>.toArray(): Array<T> = this.toTypedArray()
+fun <T : Any> List<T>.toArray(): Array<T> = this.toTypedArray()
 
 
 @JsExport
