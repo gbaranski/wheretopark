@@ -8,7 +8,7 @@ type Props = {
     parkingLots: any,
 }
 
-export default ({parkingLots: parkingLotsJSON, id}: Props) => {
+export const ParkingLotByID = ({parkingLots: parkingLotsJSON, id}: Props) => {
     const parkingLots = parseParkingLots(JSON.stringify(parkingLotsJSON));
     return (
         <Home parkingLots={parkingLots} selectedParkingLotID={id}/>
@@ -31,3 +31,5 @@ export async function getServerSideProps(context: GetServerSidePropsContext): Pr
         props, // will be passed to the page component as props
     }
 }
+
+export default ParkingLotByID

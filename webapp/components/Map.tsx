@@ -26,7 +26,7 @@ type MapProps = {
 
 const {publicRuntimeConfig} = getConfig();
 
-export default ({parkingLots, selectedParkingLot}: MapProps) => {
+export const Map = ({parkingLots, selectedParkingLot}: MapProps) => {
     return (
         <ReactMapGL
             mapboxAccessToken={publicRuntimeConfig.MAPBOX_ACCESS_TOKEN}
@@ -44,3 +44,5 @@ export default ({parkingLots, selectedParkingLot}: MapProps) => {
         </ReactMapGL>
     );
 }
+
+export default Map;
