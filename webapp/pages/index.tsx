@@ -65,7 +65,6 @@ const Home = ({parkingLots: parkingLotsJSON}: HomeProps) => {
 }
 
 const {serverRuntimeConfig} = getConfig();
-console.log({serverRuntimeConfig});
 const authorizationClient = new AuthorizationClient(serverRuntimeConfig.AUTHORIZATION_URL, serverRuntimeConfig.CLIENT_ID, serverRuntimeConfig.CLIENT_SECRET!)
 const storekeeperClient = new StorekeeperClient(serverRuntimeConfig.STOREKEEPER_URL, [AccessType.ReadMetadata, AccessType.ReadState], authorizationClient)
 
