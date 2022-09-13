@@ -9,8 +9,10 @@ import SwiftUI
 import MapKit
 import PhoneNumberKit
 import shared
+import MessageUI
 
 struct DetailsView: View {
+    let id: ParkingLotID
     let parkingLot: ParkingLot
     var closeAction: (() -> Void)? = nil
     
@@ -94,6 +96,12 @@ struct DetailsView: View {
                 DetailsPricingView(metadata: parkingLot.metadata)
                 Text("Additional info").font(.title2).fontWeight(.bold)
                 DetailsAdditionalInfoView(metadata: parkingLot.metadata)
+                DetailsSendFeedbackView(id: id, metadata: parkingLot.metadata, takeSnapshot: { self.snapshot() })
+                    .frame(
+                        maxWidth: .infinity,
+                        maxHeight: .infinity,
+                        alignment: .center
+                    )
             }
         }
     }
@@ -178,9 +186,47 @@ struct DetailsAdditionalInfoView: View {
     }
 }
 
+struct DetailsSendFeedbackView: View {
+    let id: ParkingLotID
+    let metadata: ParkingLotMetadata
+    let takeSnapshot: () -> UIImage
+    
+    @State var result: Result<MFMailComposeResult, Error>? = nil
+    @State var lastSnapshot: UIImage? = nil
+    private var isShowingMailView: Binding<Bool> {
+        Binding {
+            return lastSnapshot != nil
+        } set: { isShowing in
+            if (!isShowing) {
+                lastSnapshot = nil
+            } else {
+                fatalError("unexpected isShowing to be true")
+            }
+        }
+        
+    }
+    
+    var body: some View {
+        
+        Button(action: {
+            self.lastSnapshot = takeSnapshot()
+        }) {
+            Text("Send a feedback")
+        }
+        .disabled(!MFMailComposeViewController.canSendMail())
+        .sheet(isPresented: isShowingMailView) {
+            MailView(
+                parkingLotID: id,
+                image: lastSnapshot!,
+                result: self.$result
+            )
+        }
+    }
+}
+
 
 struct DetailsView_Previews: PreviewProvider {
     static var previews: some View {
-        DetailsView(parkingLot: ParkingLot.companion.galeriaBaltycka, closeAction: {}).padding()
+        DetailsView(id: ParkingLot.companion.galeriaBaltycka.metadata.location.hash(length: 12), parkingLot: ParkingLot.companion.galeriaBaltycka, closeAction: {}).padding()
     }
 }
