@@ -11,6 +11,7 @@ import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
+import kotlin.coroutines.cancellation.CancellationException
 import kotlin.js.ExperimentalJsExport
 import kotlin.js.JsExport
 
@@ -69,6 +70,10 @@ class AuthorizationClient(
         clientSecret
     )
 
+    @Throws(
+        RedirectResponseException::class, ClientRequestException::class, ServerResponseException::class,
+        CancellationException::class
+    )
     suspend fun token(scope: Set<AccessType>) = http.post("/oauth/token") {
         url {
             parameters.append("client_id", clientID)
