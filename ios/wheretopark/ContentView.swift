@@ -11,21 +11,34 @@ import MapKit
 import CoreLocation
 import UIKit
 
-extension UISheetPresentationController.Detent {
-    open class func small() -> UISheetPresentationController.Detent {
-         ._detent(withIdentifier: "small", constant: 80.0)
-    }
-    
-    open class func compact() -> UISheetPresentationController.Detent {
-         ._detent(withIdentifier: "compact", constant: 300.0)
-    }
-}
-
 extension UISheetPresentationController.Detent.Identifier {
     public static let small: UISheetPresentationController.Detent.Identifier = UISheetPresentationController.Detent.Identifier(rawValue: "small")
     
     public static let compact: UISheetPresentationController.Detent.Identifier = UISheetPresentationController.Detent.Identifier(rawValue: "compact")
 }
+
+extension UISheetPresentationController.Detent {
+    class func small() -> UISheetPresentationController.Detent {
+        if #available(iOS 16.0, *) {
+            return .custom(identifier: .small) { context in
+                return 80
+            }
+        } else {
+            return ._detent(withIdentifier: "small", constant: 80.0)
+        }
+    }
+    
+    class func compact() -> UISheetPresentationController.Detent {
+        if #available(iOS 16.0, *) {
+            return .custom(identifier: .compact) { context in
+                return 300
+            }
+        } else {
+            return ._detent(withIdentifier: "small", constant: 80.0)
+        }
+    }
+}
+
 
 struct ContentView: View {
     @EnvironmentObject var appState: AppState
