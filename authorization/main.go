@@ -9,7 +9,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/caarlos0/env"
+	"github.com/caarlos0/env/v6"
 	"github.com/gin-gonic/gin"
 
 	"github.com/go-oauth2/oauth2/v4"
@@ -55,10 +55,12 @@ func contains(s []string, str string) bool {
 }
 
 func main() {
-	var config config
+	config := config{}
 	if err := env.Parse(&config); err != nil {
 		fmt.Printf("%+v\n", err)
 	}
+	log.Printf("config=%+v\n", config)
+	log.Printf("port=%d\n", config.Port)
 	manager := manage.NewDefaultManager()
 	// TODO: remove the token store
 	manager.MustTokenStorage(store.NewMemoryTokenStore())
