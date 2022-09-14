@@ -1,4 +1,5 @@
 @file:OptIn(ExperimentalJsExport::class)
+@file:Suppress("NON_EXPORTABLE_TYPE")
 
 package app.wheretopark.shared
 
