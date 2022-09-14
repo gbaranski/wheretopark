@@ -6,7 +6,6 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
 class ParkingLotStatusTest {
     private fun create(vararg rules: Pair<ParkingLotWeekdays?, ParkingLotHours?>) =
@@ -15,7 +14,7 @@ class ParkingLotStatusTest {
             address = "",
             location = Coordinate(latitude = 0.0, longitude = 0.0),
             resources = listOf(),
-            totalSpots = 0u,
+            totalSpots = mapOf(),
             features = listOf(),
             currency = "",
             rules = rules.map { (weekdays, hours) ->
@@ -41,7 +40,7 @@ class ParkingLotStatusTest {
         // If you don't know what happens, look at August 2022, and how weekdays perfectly matches
         val date = LocalDate(2022, 8, weekday.isoDayNumber)
         val time = LocalTime(hour, minute, 0)
-        return metadata.status(LocalDateTime(date, time).toInstant(TimeZone.UTC))
+        return metadata.statusAt(LocalDateTime(date, time).toInstant(TimeZone.UTC))
     }
 
     @Test
@@ -65,7 +64,7 @@ class ParkingLotStatusTest {
 class ParkingLotWeekdaysTest {
     @Test
     fun valid() {
-        val weekdays = ParkingLotWeekdays(start=DayOfWeek.MONDAY, end=DayOfWeek.FRIDAY)
+        val weekdays = ParkingLotWeekdays(start = DayOfWeek.MONDAY, end = DayOfWeek.FRIDAY)
         val string = Json.encodeToString(weekdays)
         println(string)
         require(Json.decodeFromString<ParkingLotWeekdays>(string) == weekdays)

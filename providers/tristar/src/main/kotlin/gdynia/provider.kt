@@ -34,7 +34,7 @@ data class Configuration(
     val parkingLots: Map<UInt, ParkingLotConfiguration>,
 )
 
-class TristarGdyniaProvider: Provider() {
+class TristarGdyniaProvider : Provider() {
     override val name: String
         get() = "tristar/gdynia"
     override val metadataInterval: Duration
@@ -51,23 +51,23 @@ class TristarGdyniaProvider: Provider() {
             })
         }
     }
+
     // Mapping of vendor and storekeeper ID's
     private val ids = mutableMapOf<UInt, ParkingLotID>()
 
-    private val configuration = Yaml().decodeFromString<Configuration>(this.javaClass.getResource("/configuration-gdynia.yaml")!!.readText())
+    private val configuration =
+        Yaml().decodeFromString<Configuration>(this.javaClass.getResource("/configuration-gdynia.yaml")!!.readText())
 
     override suspend fun metadatas(): Map<ParkingLotID, ParkingLotMetadata> {
         val vendorMetadatas = client.get(METADATA_URL).body<MetadataResponse>()
         return vendorMetadatas.parkingLots.map {
             val configuration = configuration.parkingLots[it.id] ?: return@map null
-            val (longitude, latitude) = it.location.coordinates
-            val location = Coordinate(latitude, longitude)
-            val id = location.hash()
+            val id = it.location.coordinates.hash()
             ids[it.id] = id
             val metadata = ParkingLotMetadata(
                 name = it.name,
                 address = it.address,
-                location = location,
+                location = it.location.coordinates,
                 resources = configuration.resources,
                 totalSpots = mapOf(
                     Pair(ParkingSpotType.CAR, configuration.totalSpots)

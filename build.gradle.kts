@@ -5,7 +5,7 @@ plugins {
     id("com.android.application") version "7.2.2" apply false
     id("com.android.library") version "7.2.2" apply false
     id("com.google.cloud.tools.jib") version "3.2.1" apply false
-    
+
 }
 
 group = "app.wheretopark"

@@ -10,6 +10,7 @@ import io.ktor.client.request.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.json.Json
+import kotlin.coroutines.cancellation.CancellationException
 
 const val DEFAULT_STOREKEEPER_URL = "https://storekeeper.wheretopark.app"
 
@@ -54,19 +55,68 @@ class StorekeeperClient(
         },
     )
 
+    private suspend inline fun <reified T> getNullable(url: String): T? = try {
+        http.get(url).body()
+    } catch (e: ClientRequestException) {
+        if (e.response.status == HttpStatusCode.NotFound) null
+        else throw e
+    }
+
+    @Throws(
+        RedirectResponseException::class, ClientRequestException::class, ServerResponseException::class,
+        CancellationException::class
+    )
+    suspend fun parkingLots(): Map<ParkingLotID, ParkingLot> = http.get("/parking-lot").body()
+
+    @Throws(
+        RedirectResponseException::class, ClientRequestException::class, ServerResponseException::class,
+        CancellationException::class
+    )
+    suspend fun parkingLot(id: ParkingLotID): ParkingLot? = getNullable("/parking-lot/$id")
+    @Throws(
+        RedirectResponseException::class, ClientRequestException::class, ServerResponseException::class,
+        CancellationException::class
+    )
+    suspend fun postParkingLots(parkingLots: Map<ParkingLotID, ParkingLot>) = http.post("/parking-lot") {
+        contentType(ContentType.Application.Json)
+        setBody(parkingLots)
+    }
+
+    @Throws(
+        RedirectResponseException::class, ClientRequestException::class, ServerResponseException::class,
+        CancellationException::class
+    )
+    suspend fun metadata(id: ParkingLotID): ParkingLotMetadata? = getNullable("/parking-lot/$id/metadata")
+    @Throws(
+        RedirectResponseException::class, ClientRequestException::class, ServerResponseException::class,
+        CancellationException::class
+    )
     suspend fun metadatas(): Map<ParkingLotID, ParkingLotMetadata> = http.get("/parking-lot/metadata").body()
+    @Throws(
+        RedirectResponseException::class, ClientRequestException::class, ServerResponseException::class,
+        CancellationException::class
+    )
+    suspend fun postMetadatas(metadatas: Map<ParkingLotID, ParkingLotMetadata>) = http.post("/parking-lot/metadata") {
+        contentType(ContentType.Application.Json)
+        setBody(metadatas)
+    }
 
-    suspend fun postMetadatas(metadatas: Map<ParkingLotID, ParkingLotMetadata>) =
-        http.post("/parking-lot/metadata") {
-            contentType(ContentType.Application.Json)
-            setBody(metadatas)
-        }
-
+    @Throws(
+        RedirectResponseException::class, ClientRequestException::class, ServerResponseException::class,
+        CancellationException::class
+    )
+    suspend fun state(id: ParkingLotID): ParkingLotState? = getNullable("/parking-lot/$id/state")
+    @Throws(
+        RedirectResponseException::class, ClientRequestException::class, ServerResponseException::class,
+        CancellationException::class
+    )
     suspend fun states(): Map<ParkingLotID, ParkingLotState> = http.get("/parking-lot/state").body()
-
-    suspend fun postStates(states: Map<ParkingLotID, ParkingLotState>) =
-        http.post("/parking-lot/state") {
-            contentType(ContentType.Application.Json)
-            setBody(states)
-        }
+    @Throws(
+        RedirectResponseException::class, ClientRequestException::class, ServerResponseException::class,
+        CancellationException::class
+    )
+    suspend fun postStates(states: Map<ParkingLotID, ParkingLotState>) = http.post("/parking-lot/state") {
+        contentType(ContentType.Application.Json)
+        setBody(states)
+    }
 }

@@ -269,7 +269,7 @@ parking-lots:
             price: 10
 
   "19":
-    resources: []
+    resources: [ ]
     features:
       - UNCOVERED
     total-spots: 60
@@ -282,7 +282,7 @@ parking-lots:
 
   # TODO: Verify
   "21":
-    resources: []
+    resources: [ ]
     features:
       - UNCOVERED
     total-spots: 340

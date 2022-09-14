@@ -4,8 +4,14 @@ import (
 	"context"
 	"encoding/base64"
 	"fmt"
+	"log"
+	"net/http"
+	"strconv"
+	"strings"
+
 	"github.com/caarlos0/env/v6"
 	"github.com/gin-gonic/gin"
+
 	"github.com/go-oauth2/oauth2/v4"
 	"github.com/go-oauth2/oauth2/v4/errors"
 	"github.com/go-oauth2/oauth2/v4/manage"
@@ -14,10 +20,6 @@ import (
 	"github.com/go-oauth2/oauth2/v4/store"
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/google/uuid"
-	"log"
-	"net/http"
-	"strconv"
-	"strings"
 )
 
 type config struct {
@@ -53,10 +55,12 @@ func contains(s []string, str string) bool {
 }
 
 func main() {
-	var config config
+	config := config{}
 	if err := env.Parse(&config); err != nil {
 		fmt.Printf("%+v\n", err)
 	}
+	log.Printf("config=%+v\n", config)
+	log.Printf("port=%d\n", config.Port)
 	manager := manage.NewDefaultManager()
 	// TODO: remove the token store
 	manager.MustTokenStorage(store.NewMemoryTokenStore())
@@ -184,18 +188,4 @@ func (a *JWTAccessGenerate) Token(ctx context.Context, data *oauth2.GenerateBasi
 	}
 
 	return access, refresh, nil
-}
-
-func (a *JWTAccessGenerate) isEs() bool {
-	return strings.HasPrefix(a.SignedMethod.Alg(), "ES")
-}
-
-func (a *JWTAccessGenerate) isRsOrPS() bool {
-	isRs := strings.HasPrefix(a.SignedMethod.Alg(), "RS")
-	isPs := strings.HasPrefix(a.SignedMethod.Alg(), "PS")
-	return isRs || isPs
-}
-
-func (a *JWTAccessGenerate) isHs() bool {
-	return strings.HasPrefix(a.SignedMethod.Alg(), "HS")
 }

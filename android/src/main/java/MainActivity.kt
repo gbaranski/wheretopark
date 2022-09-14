@@ -8,7 +8,9 @@ import androidx.compose.runtime.*
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import app.wheretopark.android.ui.theme.WheretoparkTheme
-import app.wheretopark.shared.*
+import app.wheretopark.shared.ParkingLot
+import app.wheretopark.shared.ParkingLotID
+import app.wheretopark.shared.StorekeeperClient
 import kotlinx.coroutines.launch
 
 
@@ -39,7 +41,7 @@ fun MainView(parkingLotViewModel: ParkingLotViewModel) {
 
 }
 
-class ParkingLotViewModel: ViewModel() {
+class ParkingLotViewModel : ViewModel() {
     val parkingLots = mutableStateMapOf<ParkingLotID, ParkingLot>()
     var selectedParkingLotID by mutableStateOf<ParkingLotID?>(null)
     private val storekeeperClient = StorekeeperClient()
@@ -51,7 +53,7 @@ class ParkingLotViewModel: ViewModel() {
             val metadatas = storekeeperClient.metadatas()
             metadatas.map { (id, metadata) ->
                 id to ParkingLot(metadata = metadata, state = states[id]!!)
-            }.forEach{ (id, parkingLot) ->
+            }.forEach { (id, parkingLot) ->
                 parkingLots[id] = parkingLot
             }
             println("retrieved ${parkingLots.count()} parking lots")

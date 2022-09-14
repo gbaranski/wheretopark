@@ -15,14 +15,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
-import app.wheretopark.shared.*
+import app.wheretopark.shared.ParkingLot
 
 @Composable
 fun ListView(parkingLotViewModel: ParkingLotViewModel) {
     val scrollState = ScrollState(initial = 0)
 
     Column(modifier = Modifier.verticalScroll(scrollState)) {
-        parkingLotViewModel.parkingLots.forEach{ (id, parkingLot) ->
+        parkingLotViewModel.parkingLots.forEach { (id, parkingLot) ->
             RowView(
                 parkingLot = parkingLot,
                 onClick = {

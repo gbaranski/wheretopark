@@ -41,13 +41,13 @@ abstract class Provider {
 
 
 private fun getStorekeeperURL(): String {
-    val url = System.getenv("STOREKEEPER_URL")
+    val url = System.getenv("STOREKEEPER_URL") ?: DEFAULT_STOREKEEPER_URL
     println("using `$url` as Storekeeper service URL")
     return url
 }
 
 private fun getAuthorizationURL(): String {
-    val url = System.getenv("AUTHORIZATION_URL")
+    val url = System.getenv("AUTHORIZATION_URL") ?: DEFAULT_AUTHORIZATION_URL
     println("using `$url` as Authorization service URL")
     return url
 }

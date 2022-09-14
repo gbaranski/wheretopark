@@ -9,11 +9,12 @@ import SwiftUI
 import MapKit
 import PhoneNumberKit
 import shared
+import MessageUI
 
-struct ParkingLotView: View {
-    @EnvironmentObject var appState: AppState
+struct DetailsView: View {
     let id: ParkingLotID
     let parkingLot: ParkingLot
+    @EnvironmentObject var appState: AppState
     private var isFavourite: Binding<Bool> { Binding (
         get: {
             let exists = appState.favouritesStore.exists(id: id)
@@ -112,9 +113,15 @@ struct ParkingLotView: View {
                     
                 }.frame(maxWidth: .infinity)
                 Text("Pricing").font(.title2).fontWeight(.bold)
-                ParkingLotPricingView(metadata: parkingLot.metadata)
+                DetailsPricingView(metadata: parkingLot.metadata)
                 Text("Additional info").font(.title2).fontWeight(.bold)
-                ParkingLotAdditionalInfoView(metadata: parkingLot.metadata)
+                DetailsAdditionalInfoView(metadata: parkingLot.metadata)
+                DetailsSendFeedbackView(id: id, metadata: parkingLot.metadata, takeSnapshot: { self.snapshot() })
+                    .frame(
+                        maxWidth: .infinity,
+                        maxHeight: .infinity,
+                        alignment: .center
+                    )
             }
         }
     }
@@ -126,7 +133,7 @@ struct ParkingLotView: View {
     }
 }
 
-struct ParkingLotPricingView: View {
+struct DetailsPricingView: View {
     let metadata: ParkingLotMetadata
     
     var body: some View {
@@ -162,7 +169,7 @@ struct ParkingLotPricingView: View {
     
 }
 
-struct ParkingLotAdditionalInfoView: View {
+struct DetailsAdditionalInfoView: View {
     let metadata: ParkingLotMetadata
     
     var body: some View {
@@ -195,9 +202,47 @@ struct ParkingLotAdditionalInfoView: View {
     }
 }
 
+struct DetailsSendFeedbackView: View {
+    let id: ParkingLotID
+    let metadata: ParkingLotMetadata
+    let takeSnapshot: () -> UIImage
+    
+    @State var result: Result<MFMailComposeResult, Error>? = nil
+    @State var lastSnapshot: UIImage? = nil
+    private var isShowingMailView: Binding<Bool> {
+        Binding {
+            return lastSnapshot != nil
+        } set: { isShowing in
+            if (!isShowing) {
+                lastSnapshot = nil
+            } else {
+                fatalError("unexpected isShowing to be true")
+            }
+        }
+        
+    }
+    
+    var body: some View {
+        
+        Button(action: {
+            self.lastSnapshot = takeSnapshot()
+        }) {
+            Text("Send a feedback")
+        }
+        .disabled(!MFMailComposeViewController.canSendMail())
+        .sheet(isPresented: isShowingMailView) {
+            MailView(
+                parkingLotID: id,
+                image: lastSnapshot!,
+                result: self.$result
+            )
+        }
+    }
+}
 
-struct ParkingLotView_Previews: PreviewProvider {
+
+struct DetailsView_Previews: PreviewProvider {
     static var previews: some View {
-        ParkingLotView(id: ParkingLot.companion.galeriaBaltycka.metadata.location.hash(length: 12), parkingLot: ParkingLot.companion.galeriaBaltycka, closeAction: {}).padding()
+        DetailsView(id: ParkingLot.companion.galeriaBaltycka.metadata.location.hash(length: 12), parkingLot: ParkingLot.companion.galeriaBaltycka, closeAction: {}).padding()
     }
 }
