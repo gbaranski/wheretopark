@@ -15,15 +15,14 @@
 		681513E128B6D20A00172310 /* ListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 681513D528B6D20A00172310 /* ListView.swift */; };
 		681513E228B6D20A00172310 /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 681513D628B6D20A00172310 /* LocationManager.swift */; };
 		681513E428B6D20A00172310 /* MapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 681513D928B6D20A00172310 /* MapView.swift */; };
-		681513E628B6D27300172310 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 681513E528B6D27300172310 /* Assets.xcassets */; };
 		6885B39428B6D0A300860E55 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6885B39328B6D0A300860E55 /* ContentView.swift */; };
 		6885B3A328B6D0A400860E55 /* iosTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6885B3A228B6D0A400860E55 /* iosTests.swift */; };
 		6885B3AD28B6D0A400860E55 /* iosUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6885B3AC28B6D0A400860E55 /* iosUITests.swift */; };
 		6885B3AF28B6D0A400860E55 /* iosUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6885B3AE28B6D0A400860E55 /* iosUITestsLaunchTests.swift */; };
-		689874A428B6D59400BFA839 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6885B39828B6D0A400860E55 /* Preview Assets.xcassets */; };
 		689874AF28B6DC0000BFA839 /* PhoneNumberKit in Frameworks */ = {isa = PBXBuildFile; productRef = 689874AE28B6DC0000BFA839 /* PhoneNumberKit */; };
 		689874B328B6DD1000BFA839 /* BottomSheet in Frameworks */ = {isa = PBXBuildFile; productRef = 689874B228B6DD1000BFA839 /* BottomSheet */; };
 		689C7D0528CBD190002EE10C /* AppEnvironment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 689C7D0428CBD190002EE10C /* AppEnvironment.swift */; };
+		68A5B4F728D16117000343D8 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 68A5B4F628D16117000343D8 /* Assets.xcassets */; };
 		68E03A8B28CFFE0B00D70F29 /* MailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68E03A8A28CFFE0B00D70F29 /* MailView.swift */; };
 /* End PBXBuildFile section */
 
@@ -53,19 +52,17 @@
 		681513D428B6D20A00172310 /* wheretoparkApp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = wheretoparkApp.swift; sourceTree = "<group>"; };
 		681513D528B6D20A00172310 /* ListView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ListView.swift; sourceTree = "<group>"; };
 		681513D628B6D20A00172310 /* LocationManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
-		681513D728B6D20A00172310 /* Preview Content */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "Preview Content"; sourceTree = "<group>"; };
 		681513D828B6D20A00172310 /* Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Bridging-Header.h"; sourceTree = "<group>"; };
 		681513D928B6D20A00172310 /* MapView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MapView.swift; sourceTree = "<group>"; };
-		681513E528B6D27300172310 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		6885B38E28B6D0A300860E55 /* wheretopark.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = wheretopark.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6885B39328B6D0A300860E55 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
-		6885B39828B6D0A400860E55 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		6885B39E28B6D0A400860E55 /* wheretoparkTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = wheretoparkTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		6885B3A228B6D0A400860E55 /* iosTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iosTests.swift; sourceTree = "<group>"; };
 		6885B3A828B6D0A400860E55 /* wheretoparkUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = wheretoparkUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		6885B3AC28B6D0A400860E55 /* iosUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iosUITests.swift; sourceTree = "<group>"; };
 		6885B3AE28B6D0A400860E55 /* iosUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iosUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		689C7D0428CBD190002EE10C /* AppEnvironment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppEnvironment.swift; sourceTree = "<group>"; };
+		68A5B4F628D16117000343D8 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		68E03A8A28CFFE0B00D70F29 /* MailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MailView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -120,6 +117,7 @@
 		6885B39028B6D0A300860E55 /* wheretopark */ = {
 			isa = PBXGroup;
 			children = (
+				68A5B4F628D16117000343D8 /* Assets.xcassets */,
 				681513CE28B6D20900172310 /* AppState.swift */,
 				681513D828B6D20A00172310 /* Bridging-Header.h */,
 				689C7D0428CBD190002EE10C /* AppEnvironment.swift */,
@@ -128,24 +126,13 @@
 				681513D928B6D20A00172310 /* MapView.swift */,
 				681513D328B6D20900172310 /* ParkingLot.swift */,
 				681513D028B6D20900172310 /* DetailsView.swift */,
-				681513D728B6D20A00172310 /* Preview Content */,
 				681513D128B6D20900172310 /* UISheetPresentationControllerDetent+Private.h */,
 				681513D228B6D20900172310 /* Utilities.swift */,
 				681513D428B6D20A00172310 /* wheretoparkApp.swift */,
 				6885B39328B6D0A300860E55 /* ContentView.swift */,
-				6885B39728B6D0A400860E55 /* Preview Content */,
-				681513E528B6D27300172310 /* Assets.xcassets */,
 				68E03A8A28CFFE0B00D70F29 /* MailView.swift */,
 			);
 			path = wheretopark;
-			sourceTree = "<group>";
-		};
-		6885B39728B6D0A400860E55 /* Preview Content */ = {
-			isa = PBXGroup;
-			children = (
-				6885B39828B6D0A400860E55 /* Preview Assets.xcassets */,
-			);
-			path = "Preview Content";
 			sourceTree = "<group>";
 		};
 		6885B3A128B6D0A400860E55 /* wheretoparkTests */ = {
@@ -285,8 +272,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				689874A428B6D59400BFA839 /* Preview Assets.xcassets in Resources */,
-				681513E628B6D27300172310 /* Assets.xcassets in Resources */,
+				68A5B4F728D16117000343D8 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -496,11 +482,11 @@
 		6885B3B328B6D0A400860E55 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"wheretopark/Preview Content\"";
 				DEVELOPMENT_TEAM = Y9G849JS52;
 				ENABLE_PREVIEWS = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(SRCROOT)/../shared/build/xcode-frameworks/$(CONFIGURATION)/$(SDK_NAME)";
@@ -526,18 +512,17 @@
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "wheretopark/Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
 		6885B3B428B6D0A400860E55 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"wheretopark/Preview Content\"";
 				DEVELOPMENT_TEAM = Y9G849JS52;
 				ENABLE_PREVIEWS = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(SRCROOT)/../shared/build/xcode-frameworks/$(CONFIGURATION)/$(SDK_NAME)";
@@ -563,7 +548,6 @@
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "wheretopark/Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};
