@@ -7,6 +7,8 @@ import kotlin.js.ExperimentalJsExport
 import kotlin.js.JsExport
 import kotlin.math.*
 
+typealias LanguageCode = String
+
 private val BITS = intArrayOf(16, 8, 4, 2, 1)
 
 // note: no a,i,l, and o

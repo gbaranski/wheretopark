@@ -154,6 +154,7 @@ data class ParkingLotMetadata(
     @SerialName("total-spots")
     val totalSpots: Map<ParkingSpotType, UInt>,
     val features: List<ParkingLotFeature>,
+    val comment: Map<LanguageCode, String> = mapOf(),
     val currency: String,
     val rules: List<ParkingLotRule>,
 ) {
@@ -259,7 +260,7 @@ data class ParkingLot(
                             ),
                         )
                     )
-                )
+                ),
             )
 
         )
