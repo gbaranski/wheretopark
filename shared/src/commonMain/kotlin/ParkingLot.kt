@@ -139,9 +139,9 @@ object ParkingLotResourceSerializer : KSerializer<ParkingLotResource> {
 @JsExport
 enum class ParkingSpotType {
     CAR,
+    CAR_HANDICAP,
+    CAR_ELECTRIC,
     MOTORCYCLE,
-    HANDICAP,
-    ELECTRIC,
 }
 
 @Serializable
