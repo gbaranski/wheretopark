@@ -63,7 +63,6 @@
 		6885B3AE28B6D0A400860E55 /* iosUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iosUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		689C7D0428CBD190002EE10C /* AppEnvironment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppEnvironment.swift; sourceTree = "<group>"; };
 		68A5B4F628D16117000343D8 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		68A5B4FD28D1FBE1000343D8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		68C45B2528D31DE900469180 /* BottomSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomSheet.swift; sourceTree = "<group>"; };
 		68E03A8A28CFFE0B00D70F29 /* MailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MailView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -118,7 +117,6 @@
 		6885B39028B6D0A300860E55 /* wheretopark */ = {
 			isa = PBXGroup;
 			children = (
-				68A5B4FD28D1FBE1000343D8 /* Info.plist */,
 				68A5B4F628D16117000343D8 /* Assets.xcassets */,
 				681513CE28B6D20900172310 /* AppState.swift */,
 				681513D828B6D20A00172310 /* Bridging-Header.h */,
