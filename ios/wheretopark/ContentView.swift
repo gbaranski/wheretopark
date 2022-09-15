@@ -67,6 +67,17 @@ struct ContentView: View {
                         closeAction: {
                             appState.selectedParkingLotID = nil
                         },
+                        beforeShare: { callback in
+                            NotificationCenter.default.addObserver(forName: .secondarySheetDismiss, object: nil, queue: .main) {_ in
+                                callback()
+                            }
+                            primaryBottomSheetVisible = false
+                            secondaryBottomSheetVisible = false
+                        },
+                        afterShare: {
+                            print("after share")
+                            secondaryBottomSheetVisible = true
+                        }
                     )
                     .padding([.top, .horizontal])
                 }

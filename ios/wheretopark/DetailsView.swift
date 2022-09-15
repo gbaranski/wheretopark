@@ -15,6 +15,8 @@ struct DetailsView: View {
     let id: ParkingLotID
     let parkingLot: ParkingLot
     var closeAction: (() -> Void)? = nil
+    let beforeShare: (@escaping () -> Void) -> Void
+    let afterShare: () -> Void
     
     var body: some View {
         ScrollView(showsIndicators: false) {
@@ -51,6 +53,16 @@ struct DetailsView: View {
                     Menu {
                         Button(action: {}) {
                             Label("Add to favourites", systemImage: "star")
+                        }
+                        Button(action: {
+                            beforeShare() {
+                                let url = URL(string: UtilitiesKt.getShareURL(id: id))
+                                showShareSheet(url: url!) {
+                                    afterShare()
+                                }
+                            }
+                        }) {
+                          Label("Share", systemImage: "square.and.arrow.up")
                         }
                     } label: {
                         Button(action: addToFavourites) {
@@ -227,6 +239,14 @@ struct DetailsSendFeedbackView: View {
 
 struct DetailsView_Previews: PreviewProvider {
     static var previews: some View {
-        DetailsView(id: ParkingLot.companion.galeriaBaltycka.metadata.location.hash(length: 12), parkingLot: ParkingLot.companion.galeriaBaltycka, closeAction: {}).padding()
+        DetailsView(
+            id: ParkingLot.companion.galeriaBaltycka.metadata.location.hash(length: 12),
+            parkingLot: ParkingLot.companion.galeriaBaltycka,
+            closeAction: {},
+            beforeShare: {callback in
+                callback()
+            },
+            afterShare: {}
+        ).padding()
     }
 }
