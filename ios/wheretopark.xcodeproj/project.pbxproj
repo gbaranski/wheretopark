@@ -20,9 +20,9 @@
 		6885B3AD28B6D0A400860E55 /* iosUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6885B3AC28B6D0A400860E55 /* iosUITests.swift */; };
 		6885B3AF28B6D0A400860E55 /* iosUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6885B3AE28B6D0A400860E55 /* iosUITestsLaunchTests.swift */; };
 		689874AF28B6DC0000BFA839 /* PhoneNumberKit in Frameworks */ = {isa = PBXBuildFile; productRef = 689874AE28B6DC0000BFA839 /* PhoneNumberKit */; };
-		689874B328B6DD1000BFA839 /* BottomSheet in Frameworks */ = {isa = PBXBuildFile; productRef = 689874B228B6DD1000BFA839 /* BottomSheet */; };
 		689C7D0528CBD190002EE10C /* AppEnvironment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 689C7D0428CBD190002EE10C /* AppEnvironment.swift */; };
 		68A5B4F728D16117000343D8 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 68A5B4F628D16117000343D8 /* Assets.xcassets */; };
+		68C45B2628D31DE900469180 /* BottomSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68C45B2528D31DE900469180 /* BottomSheet.swift */; };
 		68E03A8B28CFFE0B00D70F29 /* MailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68E03A8A28CFFE0B00D70F29 /* MailView.swift */; };
 /* End PBXBuildFile section */
 
@@ -63,6 +63,8 @@
 		6885B3AE28B6D0A400860E55 /* iosUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iosUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		689C7D0428CBD190002EE10C /* AppEnvironment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppEnvironment.swift; sourceTree = "<group>"; };
 		68A5B4F628D16117000343D8 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		68A5B4FD28D1FBE1000343D8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		68C45B2528D31DE900469180 /* BottomSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomSheet.swift; sourceTree = "<group>"; };
 		68E03A8A28CFFE0B00D70F29 /* MailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MailView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -72,7 +74,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				689874AF28B6DC0000BFA839 /* PhoneNumberKit in Frameworks */,
-				689874B328B6DD1000BFA839 /* BottomSheet in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -117,6 +118,7 @@
 		6885B39028B6D0A300860E55 /* wheretopark */ = {
 			isa = PBXGroup;
 			children = (
+				68A5B4FD28D1FBE1000343D8 /* Info.plist */,
 				68A5B4F628D16117000343D8 /* Assets.xcassets */,
 				681513CE28B6D20900172310 /* AppState.swift */,
 				681513D828B6D20A00172310 /* Bridging-Header.h */,
@@ -131,6 +133,7 @@
 				681513D428B6D20A00172310 /* wheretoparkApp.swift */,
 				6885B39328B6D0A300860E55 /* ContentView.swift */,
 				68E03A8A28CFFE0B00D70F29 /* MailView.swift */,
+				68C45B2528D31DE900469180 /* BottomSheet.swift */,
 			);
 			path = wheretopark;
 			sourceTree = "<group>";
@@ -178,7 +181,6 @@
 			name = wheretopark;
 			packageProductDependencies = (
 				689874AE28B6DC0000BFA839 /* PhoneNumberKit */,
-				689874B228B6DD1000BFA839 /* BottomSheet */,
 			);
 			productName = ios;
 			productReference = 6885B38E28B6D0A300860E55 /* wheretopark.app */;
@@ -254,7 +256,6 @@
 			mainGroup = 6885B38528B6D0A300860E55;
 			packageReferences = (
 				689874AD28B6DC0000BFA839 /* XCRemoteSwiftPackageReference "PhoneNumberKit" */,
-				689874B028B6DC2000BFA839 /* XCRemoteSwiftPackageReference "BottomSheet" */,
 			);
 			productRefGroup = 6885B38F28B6D0A300860E55 /* Products */;
 			projectDirPath = "";
@@ -328,6 +329,7 @@
 				681513E028B6D20A00172310 /* wheretoparkApp.swift in Sources */,
 				681513E428B6D20A00172310 /* MapView.swift in Sources */,
 				681513E228B6D20A00172310 /* LocationManager.swift in Sources */,
+				68C45B2628D31DE900469180 /* BottomSheet.swift in Sources */,
 				689C7D0528CBD190002EE10C /* AppEnvironment.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -497,6 +499,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -533,6 +536,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -677,14 +681,6 @@
 				minimumVersion = 3.0.0;
 			};
 		};
-		689874B028B6DC2000BFA839 /* XCRemoteSwiftPackageReference "BottomSheet" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/adamfootdev/BottomSheet";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 0.2.4;
-			};
-		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -692,11 +688,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 689874AD28B6DC0000BFA839 /* XCRemoteSwiftPackageReference "PhoneNumberKit" */;
 			productName = PhoneNumberKit;
-		};
-		689874B228B6DD1000BFA839 /* BottomSheet */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 689874B028B6DC2000BFA839 /* XCRemoteSwiftPackageReference "BottomSheet" */;
-			productName = BottomSheet;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

@@ -6,37 +6,13 @@
 //
 
 import SwiftUI
-import BottomSheet
 import MapKit
 import CoreLocation
 import UIKit
 
-extension UISheetPresentationController.Detent.Identifier {
-    public static let small: UISheetPresentationController.Detent.Identifier = UISheetPresentationController.Detent.Identifier(rawValue: "small")
-    
-    public static let compact: UISheetPresentationController.Detent.Identifier = UISheetPresentationController.Detent.Identifier(rawValue: "compact")
-}
-
-extension UISheetPresentationController.Detent {
-    class func small() -> UISheetPresentationController.Detent {
-        if #available(iOS 16.0, *) {
-            return .custom(identifier: .small) { context in
-                return 80
-            }
-        } else {
-            return ._detent(withIdentifier: "small", constant: 80.0)
-        }
-    }
-    
-    class func compact() -> UISheetPresentationController.Detent {
-        if #available(iOS 16.0, *) {
-            return .custom(identifier: .compact) { context in
-                return 300
-            }
-        } else {
-            return ._detent(withIdentifier: "small", constant: 80.0)
-        }
-    }
+extension NSNotification.Name {
+    static let primarySheetDismiss = NSNotification.Name("com.wheretopark.app.sheet.primary.dismiss")
+    static let secondarySheetDismiss = NSNotification.Name("com.wheretopark.app.sheet.secondary.dismiss")
 }
 
 
@@ -46,6 +22,7 @@ struct ContentView: View {
     @State var primaryBottomSheetVisible = false
     @State var primaryBottomSheetDetent: UISheetPresentationController.Detent.Identifier? = .compact
     
+    @State var secondaryBottomSheetVisible = false
     @State var secondaryBottomSheetDetent: UISheetPresentationController.Detent.Identifier? = .compact
     
     @State var searchText: String = ""
@@ -56,14 +33,10 @@ struct ContentView: View {
                 .edgesIgnoringSafeArea(.all)
                 .navigationBarHidden(true)
         }
-        .alert(isPresented: $appState.fetchFailed, error: appState.fetchError, actions: {})
         .bottomSheet(
             isPresented: $primaryBottomSheetVisible,
-            detents: [.small(), .compact(), .large()],
-            largestUndimmedDetentIdentifier: .large,
-            prefersGrabberVisible: true,
             selectedDetentIdentifier: $primaryBottomSheetDetent,
-            isModalInPresentation: true
+            onDismiss: { NotificationCenter.default.post(name: .primarySheetDismiss, object: nil) }
         ) {
             VStack {
                 HStack {
@@ -79,34 +52,40 @@ struct ContentView: View {
                 ListView(query: $searchText)
                     .environmentObject(appState)
             }
+            .interactiveDismissDisabled(true)
         }
         .bottomSheet(
-            item: $appState.selectedParkingLotID,
-            detents: [.small(), .compact(), .large()],
-            largestUndimmedDetentIdentifier: .large,
-            prefersGrabberVisible: true,
-            selectedDetentIdentifier: $secondaryBottomSheetDetent
+            isPresented: $secondaryBottomSheetVisible,
+            selectedDetentIdentifier: $secondaryBottomSheetDetent,
+            onDismiss: { NotificationCenter.default.post(name: .secondarySheetDismiss, object: nil) }
         ) {
             if let parkingLotID = appState.selectedParkingLotID {
                 let parkingLot = appState.parkingLots[parkingLotID]!
-                DetailsView(
-                    id: parkingLotID,
-                    parkingLot: parkingLot,
-                    closeAction: {
-                        appState.selectedParkingLotID = nil
-                    }
-                ).padding([.top, .horizontal])
-            }
+                    DetailsView(
+                        id: parkingLotID,
+                        parkingLot: parkingLot,
+                        closeAction: {
+                            appState.selectedParkingLotID = nil
+                        },
+                    )
+                    .padding([.top, .horizontal])
+                }
         }
+        .alert(isPresented: $appState.fetchFailed, error: appState.fetchError, actions: {})
         .onChange(of: appState.parkingLots) { _ in
             primaryBottomSheetVisible = true
         }
-        .onChange(of: appState.selectedParkingLotID) { newState in
-            if newState == nil {
-                primaryBottomSheetDetent = .compact
+        .onChange(of: appState.selectedParkingLotID) { id in
+            if id != nil {
+                primaryBottomSheetVisible = false
+                NotificationCenter.default.addObserver(forName: .primarySheetDismiss, object: nil, queue: .main) {_ in
+                    secondaryBottomSheetVisible = true
+                }
             } else {
-                secondaryBottomSheetDetent = .compact
-                primaryBottomSheetDetent = .small
+                secondaryBottomSheetVisible = false
+                NotificationCenter.default.addObserver(forName: .secondarySheetDismiss, object: nil, queue: .main) {_ in
+                    primaryBottomSheetVisible = true
+                }
             }
         }
         .task({ await appState.fetchParkingLots() })
