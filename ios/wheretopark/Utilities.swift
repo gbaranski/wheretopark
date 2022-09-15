@@ -35,28 +35,17 @@ extension View {
     }
 }
 
-// UIActivityViewController can be customised.
-// For examples, see https://www.hackingwithswift.com/articles/118/uiactivityviewcontroller-by-example
-func showShareSheet(url: URL, completion: (() -> Void)? = nil) {
-    let activityVC = UIActivityViewController(activityItems: [url], applicationActivities: nil)
-    activityVC.completionWithItemsHandler = {(activityType: UIActivity.ActivityType?, completed:Bool, returnedItems:[Any]?, error: Error?) in
-        completion?()
+struct SharingViewController: UIViewControllerRepresentable {
+    @Binding var isPresenting: Bool
+    var content: () -> UIViewController
+
+    func makeUIViewController(context: Context) -> UIViewController {
+        UIViewController()
     }
-    UIApplication.shared.currentUIWindow()?.rootViewController?.present(activityVC, animated: true, completion: nil)
-}
 
-// utility extension to easily get the window
-public extension UIApplication {
-    func currentUIWindow() -> UIWindow? {
-        let connectedScenes = UIApplication.shared.connectedScenes
-            .filter { $0.activationState == .foregroundActive }
-            .compactMap { $0 as? UIWindowScene }
-        
-        let window = connectedScenes.first?
-            .windows
-            .first { $0.isKeyWindow }
-
-        return window
-        
+    func updateUIViewController(_ uiViewController: UIViewController, context: Context) {
+        if isPresenting {
+            uiViewController.present(content(), animated: true, completion: nil)
+        }
     }
 }

@@ -10,12 +10,6 @@ import MapKit
 import CoreLocation
 import UIKit
 
-extension NSNotification.Name {
-    static let primarySheetDismiss = NSNotification.Name("com.wheretopark.app.sheet.primary.dismiss")
-    static let secondarySheetDismiss = NSNotification.Name("com.wheretopark.app.sheet.secondary.dismiss")
-}
-
-
 struct ContentView: View {
     @EnvironmentObject var appState: AppState
 
@@ -35,8 +29,7 @@ struct ContentView: View {
         }
         .bottomSheet(
             isPresented: $primaryBottomSheetVisible,
-            selectedDetentIdentifier: $primaryBottomSheetDetent,
-            onDismiss: { NotificationCenter.default.post(name: .primarySheetDismiss, object: nil) }
+            selectedDetentIdentifier: $primaryBottomSheetDetent
         ) {
             VStack {
                 HStack {
@@ -56,27 +49,15 @@ struct ContentView: View {
         }
         .bottomSheet(
             isPresented: $secondaryBottomSheetVisible,
-            selectedDetentIdentifier: $secondaryBottomSheetDetent,
-            onDismiss: { NotificationCenter.default.post(name: .secondarySheetDismiss, object: nil) }
+            selectedDetentIdentifier: $secondaryBottomSheetDetent
         ) {
             if let parkingLotID = appState.selectedParkingLotID {
                 let parkingLot = appState.parkingLots[parkingLotID]!
                     DetailsView(
                         id: parkingLotID,
                         parkingLot: parkingLot,
-                        closeAction: {
+                        onDismiss: {
                             appState.selectedParkingLotID = nil
-                        },
-                        beforeShare: { callback in
-                            NotificationCenter.default.addObserver(forName: .secondarySheetDismiss, object: nil, queue: .main) {_ in
-                                callback()
-                            }
-                            primaryBottomSheetVisible = false
-                            secondaryBottomSheetVisible = false
-                        },
-                        afterShare: {
-                            print("after share")
-                            secondaryBottomSheetVisible = true
                         }
                     )
                     .padding([.top, .horizontal])
@@ -88,15 +69,12 @@ struct ContentView: View {
         }
         .onChange(of: appState.selectedParkingLotID) { id in
             if id != nil {
-                primaryBottomSheetVisible = false
-                NotificationCenter.default.addObserver(forName: .primarySheetDismiss, object: nil, queue: .main) {_ in
-                    secondaryBottomSheetVisible = true
-                }
+                primaryBottomSheetDetent = .small
+                secondaryBottomSheetDetent = .compact
+                secondaryBottomSheetVisible = true
             } else {
                 secondaryBottomSheetVisible = false
-                NotificationCenter.default.addObserver(forName: .secondarySheetDismiss, object: nil, queue: .main) {_ in
-                    primaryBottomSheetVisible = true
-                }
+                primaryBottomSheetDetent = .compact
             }
         }
         .task({ await appState.fetchParkingLots() })
