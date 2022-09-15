@@ -1,7 +1,7 @@
 package app.wheretopark.providers.tristar.gdynia
 
 import app.wheretopark.shared.Coordinate
-import kotlinx.datetime.Instant
+import kotlinx.datetime.*
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerialName
@@ -16,8 +16,7 @@ import kotlinx.serialization.encoding.Encoder
 @Serializable
 data class Location(
     val type: String,
-    @Serializable(with = CoordinateAsGeoJSONSerializer::class)
-    val coordinates: Coordinate,
+    @Serializable(with = CoordinateAsGeoJSONSerializer::class) val coordinates: Coordinate,
 )
 
 object CoordinateAsGeoJSONSerializer : KSerializer<Coordinate> {
@@ -28,8 +27,7 @@ object CoordinateAsGeoJSONSerializer : KSerializer<Coordinate> {
 
     override fun serialize(encoder: Encoder, value: Coordinate) {
         val data = doubleArrayOf(
-            value.longitude,
-            value.latitude
+            value.longitude, value.latitude
         )
         encoder.encodeSerializableValue(delegateSerializer, data)
     }
@@ -49,28 +47,23 @@ data class Metadata(
     val address: String,
     val streetEntrance: String,
     // Did they really misspell pricing with "princing"?
-    @SerialName("princing")
-    val pricing: String,
+    @SerialName("princing") val pricing: String,
     val location: Location,
-    @Serializable(with = InstantAsRfc3339Serializer::class)
-    val lastUpdate: Instant,
+    @Serializable(with = InstantAsRfc3339Serializer::class) val lastUpdate: Instant,
 )
 
 @Serializable
 data class MetadataResponse(
-    @SerialName("parkings")
-    val parkingLots: List<Metadata>
+    @SerialName("parkings") val parkingLots: List<Metadata>
 )
 
 @Serializable
 data class State(
     val id: UInt,
-    @SerialName("parkingId")
-    val parkingID: UInt,
+    @SerialName("parkingId") val parkingID: UInt,
     val capacity: UInt,
     val freePlaces: UInt,
-    @Serializable(with = InstantAsRfc3339Serializer::class)
-    val insertTime: Instant
+    @Serializable(with = InstantAsRfc3339Serializer::class) val insertTime: Instant
 )
 
 typealias StateResponse = List<State>
@@ -85,6 +78,6 @@ object InstantAsRfc3339Serializer : KSerializer<Instant> {
 
     override fun deserialize(decoder: Decoder): Instant {
         val string = decoder.decodeString().replace(' ', 'T').plus('Z')
-        return Instant.parse(string)
+        return Instant.parse(string).toLocalDateTime(TimeZone.UTC).toInstant(TimeZone.of("Europe/Warsaw"))
     }
 }
