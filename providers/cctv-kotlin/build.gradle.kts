@@ -21,6 +21,11 @@ dependencies {
     implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
     implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
+    implementation("com.charleskorn.kaml:kaml:0.47.0") // Get the latest version number from https://github.com/charleskorn/kaml/releases/latest
+    implementation("org.bytedeco:javacv:1.5.7")
+    implementation("org.bytedeco:opencv-platform:4.5.5-1.5.7")
+    implementation("org.bytedeco:ffmpeg-platform:5.0-1.5.7")
+
 
     testImplementation(kotlin("test"))
 }
