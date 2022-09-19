@@ -6,39 +6,9 @@
 //
 
 import SwiftUI
-import BottomSheet
 import MapKit
 import CoreLocation
 import UIKit
-
-extension UISheetPresentationController.Detent.Identifier {
-    public static let small: UISheetPresentationController.Detent.Identifier = UISheetPresentationController.Detent.Identifier(rawValue: "small")
-    
-    public static let compact: UISheetPresentationController.Detent.Identifier = UISheetPresentationController.Detent.Identifier(rawValue: "compact")
-}
-
-extension UISheetPresentationController.Detent {
-    class func small() -> UISheetPresentationController.Detent {
-        if #available(iOS 16.0, *) {
-            return .custom(identifier: .small) { context in
-                return 80
-            }
-        } else {
-            return ._detent(withIdentifier: "small", constant: 80.0)
-        }
-    }
-    
-    class func compact() -> UISheetPresentationController.Detent {
-        if #available(iOS 16.0, *) {
-            return .custom(identifier: .compact) { context in
-                return 300
-            }
-        } else {
-            return ._detent(withIdentifier: "small", constant: 80.0)
-        }
-    }
-}
-
 
 struct ContentView: View {
     @EnvironmentObject var appState: AppState
@@ -46,6 +16,7 @@ struct ContentView: View {
     @State var primaryBottomSheetVisible = false
     @State var primaryBottomSheetDetent: UISheetPresentationController.Detent.Identifier? = .compact
     
+    @State var secondaryBottomSheetVisible = false
     @State var secondaryBottomSheetDetent: UISheetPresentationController.Detent.Identifier? = .compact
     
     @State var searchText: String = ""
@@ -56,14 +27,9 @@ struct ContentView: View {
                 .edgesIgnoringSafeArea(.all)
                 .navigationBarHidden(true)
         }
-        .alert(isPresented: $appState.fetchFailed, error: appState.fetchError, actions: {})
         .bottomSheet(
             isPresented: $primaryBottomSheetVisible,
-            detents: [.small(), .compact(), .large()],
-            largestUndimmedDetentIdentifier: .large,
-            prefersGrabberVisible: true,
-            selectedDetentIdentifier: $primaryBottomSheetDetent,
-            isModalInPresentation: true
+            selectedDetentIdentifier: $primaryBottomSheetDetent
         ) {
             VStack {
                 HStack {
@@ -79,12 +45,10 @@ struct ContentView: View {
                 ListView(query: $searchText)
                     .environmentObject(appState)
             }
+            .interactiveDismissDisabled(true)
         }
         .bottomSheet(
-            item: $appState.selectedParkingLotID,
-            detents: [.small(), .compact(), .large()],
-            largestUndimmedDetentIdentifier: .large,
-            prefersGrabberVisible: true,
+            isPresented: $secondaryBottomSheetVisible,
             selectedDetentIdentifier: $secondaryBottomSheetDetent
         ) {
             if let parkingLotID = appState.selectedParkingLotID {
@@ -92,21 +56,24 @@ struct ContentView: View {
                 DetailsView(
                     id: parkingLotID,
                     parkingLot: parkingLot,
-                    closeAction: {
+                    onDismiss: {
                         appState.selectedParkingLotID = nil
                     }
                 ).padding([.top, .horizontal]).environmentObject(appState)
             }
         }
+        .alert(isPresented: $appState.fetchFailed, error: appState.fetchError, actions: {})
         .onChange(of: appState.parkingLots) { _ in
             primaryBottomSheetVisible = true
         }
-        .onChange(of: appState.selectedParkingLotID) { newState in
-            if newState == nil {
-                primaryBottomSheetDetent = .compact
-            } else {
-                secondaryBottomSheetDetent = .compact
+        .onChange(of: appState.selectedParkingLotID) { id in
+            if id != nil {
                 primaryBottomSheetDetent = .small
+                secondaryBottomSheetDetent = .compact
+                secondaryBottomSheetVisible = true
+            } else {
+                secondaryBottomSheetVisible = false
+                primaryBottomSheetDetent = .compact
             }
         }
         .task({ await appState.fetchParkingLots() })

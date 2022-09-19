@@ -2,12 +2,20 @@
 
 package app.wheretopark.shared
 
+import io.ktor.http.*
 import kotlinx.serialization.Serializable
 import kotlin.js.ExperimentalJsExport
 import kotlin.js.JsExport
 import kotlin.math.*
 
 typealias LanguageCode = String
+
+const val BASE_WEBAPP_URL = "https://web.wheretopark.app"
+
+fun getShareURL(id: ParkingLotID): String {
+    val url = URLBuilder(BASE_WEBAPP_URL).appendPathSegments("parking-lot", id)
+    return url.buildString()
+}
 
 private val BITS = intArrayOf(16, 8, 4, 2, 1)
 

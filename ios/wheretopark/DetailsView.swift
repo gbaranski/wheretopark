@@ -27,16 +27,17 @@ struct DetailsView: View {
         }
         )
     }
-    var closeAction: (() -> Void)? = nil
+    var onDismiss: (() -> Void)? = nil
+    @State private var isSharing = false
     
     var body: some View {
         ScrollView(showsIndicators: false) {
             VStack(alignment: .leading, spacing: 10) {
-                if let closeAction = closeAction {
+                if let onDismiss = onDismiss {
                     HStack {
                         Text(parkingLot.metadata.name).font(.title).fontWeight(.bold).multilineTextAlignment(.leading)
                         Spacer()
-                        Button(action: closeAction) {
+                        Button(action: onDismiss) {
                             ZStack {
                                 Circle()
                                     .frame(width: 30, height: 30)
@@ -71,6 +72,11 @@ struct DetailsView: View {
                                 isFavourite.wrappedValue ? "Remove from favourites" : "Add to favourites",
                                 systemImage: isFavourite.wrappedValue ? "star.fill" : "star"
                             )
+                        }
+                        Button(action: {
+                            isSharing = true
+                        }) {
+                          Label("Share", systemImage: "square.and.arrow.up")
                         }
                     } label: {
                         Button(action: {}) {
@@ -123,7 +129,18 @@ struct DetailsView: View {
                         alignment: .center
                     )
             }
-        }
+        }.background(SharingViewController(isPresenting: $isSharing) {
+            let url = URL(string: UtilitiesKt.getShareURL(id: id))
+            let av = UIActivityViewController(activityItems: [url!], applicationActivities: nil)
+            // for iPad
+            if UIDevice.current.userInterfaceIdiom == .pad {
+               av.popoverPresentationController?.sourceView = UIView()
+            }
+            av.completionWithItemsHandler = { _, _, _, _ in
+                   isSharing = false // required for re-open !!!
+               }
+            return av
+        })
     }
     
     func navigate() {
@@ -243,6 +260,10 @@ struct DetailsSendFeedbackView: View {
 
 struct DetailsView_Previews: PreviewProvider {
     static var previews: some View {
-        DetailsView(id: ParkingLot.companion.galeriaBaltycka.metadata.location.hash(length: 12), parkingLot: ParkingLot.companion.galeriaBaltycka, closeAction: {}).padding()
+        DetailsView(
+            id: ParkingLot.companion.galeriaBaltycka.metadata.location.hash(length: 12),
+            parkingLot: ParkingLot.companion.galeriaBaltycka,
+            onDismiss: {}
+        ).padding()
     }
 }
