@@ -14,21 +14,18 @@ import MessageUI
 struct DetailsView: View {
     let id: ParkingLotID
     let parkingLot: ParkingLot
-    @EnvironmentObject var appState: AppState
-    private var isFavourite: Binding<Bool> { Binding (
-        get: {
-            let exists = appState.favouritesStore.exists(id: id)
-            print("get \(id): \(exists)")
-            return exists
-        },
-        set: {
-            print("set \(id): \($0)")
-            $0 ? appState.favouritesStore.add(id: id) : appState.favouritesStore.remove(id: id)
-        }
-        )
-    }
     var onDismiss: (() -> Void)? = nil
+    
+    @ObservedObject var favourite: FavouriteManager
     @State private var isSharing = false
+    
+    init(id: ParkingLotID, parkingLot: ParkingLot, onDismiss: (() -> Void)? = nil) {
+        self.id = id
+        self.parkingLot = parkingLot
+        self.favourite = FavouriteManager(id: id)
+        self.onDismiss = onDismiss
+    }
+    
     
     var body: some View {
         ScrollView(showsIndicators: false) {
@@ -65,12 +62,12 @@ struct DetailsView: View {
                     Menu {
                         Button(
                             action: {
-                                isFavourite.wrappedValue.toggle()
+                                favourite.isFavourite ? favourite.remove() : favourite.add()
                             }
                         ) {
                             Label(
-                                isFavourite.wrappedValue ? "Remove from favourites" : "Add to favourites",
-                                systemImage: isFavourite.wrappedValue ? "star.fill" : "star"
+                                favourite.isFavourite ? "Remove from favourites" : "Add to favourites",
+                                systemImage: favourite.isFavourite ? "star.fill" : "star"
                             )
                         }
                         Button(action: {

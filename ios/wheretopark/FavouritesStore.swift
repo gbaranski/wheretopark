@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftUI
 
 class FavouritesStore {
     let store = NSUbiquitousKeyValueStore.default
@@ -36,5 +37,31 @@ class FavouritesStore {
         var favourites = all()
         favourites.removeAll{ $0 == id }
         store.set(favourites, forKey: key)
+        store.synchronize()
+    }
+}
+
+
+class FavouriteManager: ObservableObject {
+    static let store = FavouritesStore()
+    let id: ParkingLotID
+    
+    @Published var isFavourite: Bool
+    
+    init(id: ParkingLotID) {
+        self.id = id
+        self.isFavourite = Self.store.exists(id: id)
+    }
+    
+    func add() {
+        Self.store.add(id: id)
+        self.isFavourite = true
+        self.objectWillChange.send()
+    }
+    
+    func remove() {
+        Self.store.remove(id: id)
+        self.isFavourite = false
+        self.objectWillChange.send()
     }
 }
