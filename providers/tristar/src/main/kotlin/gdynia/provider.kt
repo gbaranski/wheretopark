@@ -13,7 +13,6 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import kotlin.time.Duration
-import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.seconds
 
 const val METADATA_URL = "http://api.zdiz.gdynia.pl/ri/rest/parkings"
@@ -38,7 +37,7 @@ class TristarGdyniaProvider : Provider() {
     override val name: String
         get() = "tristar/gdynia"
     override val metadataInterval: Duration
-        get() = 1.days
+        get() = 30.seconds
     override val stateInterval: Duration
         get() = 30.seconds
 
