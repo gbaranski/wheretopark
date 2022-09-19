@@ -56,6 +56,7 @@ class RedisStore(
     }
 
     private suspend inline fun <reified T> updateMany(namespace: String, values: Map<ParkingLotID, T>) {
+        if (values.isEmpty()) return
         val pairs = values.map { (id, value) ->
             "${namespace}:${id}" to serialization.encodeToString(value)
         }
