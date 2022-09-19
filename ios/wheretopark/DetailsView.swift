@@ -15,7 +15,17 @@ struct DetailsView: View {
     let id: ParkingLotID
     let parkingLot: ParkingLot
     var onDismiss: (() -> Void)? = nil
+    
+    @ObservedObject var favourite: FavouriteManager
     @State private var isSharing = false
+    
+    init(id: ParkingLotID, parkingLot: ParkingLot, onDismiss: (() -> Void)? = nil) {
+        self.id = id
+        self.parkingLot = parkingLot
+        self.favourite = FavouriteManager(id: id)
+        self.onDismiss = onDismiss
+    }
+    
     
     var body: some View {
         ScrollView(showsIndicators: false) {
@@ -50,8 +60,15 @@ struct DetailsView: View {
                     .frame(maxWidth: .infinity)
                     
                     Menu {
-                        Button(action: {}) {
-                            Label("Add to favourites", systemImage: "star")
+                        Button(
+                            action: {
+                                favourite.isFavourite ? favourite.remove() : favourite.add()
+                            }
+                        ) {
+                            Label(
+                                favourite.isFavourite ? "Remove from favourites" : "Add to favourites",
+                                systemImage: favourite.isFavourite ? "star.fill" : "star"
+                            )
                         }
                         Button(action: {
                             isSharing = true
@@ -59,7 +76,7 @@ struct DetailsView: View {
                           Label("Share", systemImage: "square.and.arrow.up")
                         }
                     } label: {
-                        Button(action: addToFavourites) {
+                        Button(action: {}) {
                             Label("More", systemImage: "ellipsis")
                         }
                         .controlSize(.large)
@@ -121,10 +138,6 @@ struct DetailsView: View {
                }
             return av
         })
-    }
-    
-    func addToFavourites() {
-        
     }
     
     func navigate() {

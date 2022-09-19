@@ -22,6 +22,7 @@
 		689874AF28B6DC0000BFA839 /* PhoneNumberKit in Frameworks */ = {isa = PBXBuildFile; productRef = 689874AE28B6DC0000BFA839 /* PhoneNumberKit */; };
 		689C7D0528CBD190002EE10C /* AppEnvironment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 689C7D0428CBD190002EE10C /* AppEnvironment.swift */; };
 		68A5B4F728D16117000343D8 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 68A5B4F628D16117000343D8 /* Assets.xcassets */; };
+		68A5B4FC28D16B32000343D8 /* FavouritesStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68A5B4FB28D16B32000343D8 /* FavouritesStore.swift */; };
 		68C45B2628D31DE900469180 /* BottomSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68C45B2528D31DE900469180 /* BottomSheet.swift */; };
 		68E03A8B28CFFE0B00D70F29 /* MailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68E03A8A28CFFE0B00D70F29 /* MailView.swift */; };
 /* End PBXBuildFile section */
@@ -63,7 +64,9 @@
 		6885B3AE28B6D0A400860E55 /* iosUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iosUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		689C7D0428CBD190002EE10C /* AppEnvironment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppEnvironment.swift; sourceTree = "<group>"; };
 		68A5B4F628D16117000343D8 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		68A5B4FB28D16B32000343D8 /* FavouritesStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FavouritesStore.swift; sourceTree = "<group>"; };
 		68C45B2528D31DE900469180 /* BottomSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomSheet.swift; sourceTree = "<group>"; };
+		68D6199028D8ACFD001962C0 /* wheretopark.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = wheretopark.entitlements; sourceTree = "<group>"; };
 		68E03A8A28CFFE0B00D70F29 /* MailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MailView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -117,7 +120,9 @@
 		6885B39028B6D0A300860E55 /* wheretopark */ = {
 			isa = PBXGroup;
 			children = (
+				68D6199028D8ACFD001962C0 /* wheretopark.entitlements */,
 				68A5B4F628D16117000343D8 /* Assets.xcassets */,
+				68A5B4FB28D16B32000343D8 /* FavouritesStore.swift */,
 				681513CE28B6D20900172310 /* AppState.swift */,
 				681513D828B6D20A00172310 /* Bridging-Header.h */,
 				689C7D0428CBD190002EE10C /* AppEnvironment.swift */,
@@ -322,6 +327,7 @@
 				681513DB28B6D20A00172310 /* AppState.swift in Sources */,
 				681513DD28B6D20A00172310 /* DetailsView.swift in Sources */,
 				68E03A8B28CFFE0B00D70F29 /* MailView.swift in Sources */,
+				68A5B4FC28D16B32000343D8 /* FavouritesStore.swift in Sources */,
 				6885B39428B6D0A300860E55 /* ContentView.swift in Sources */,
 				681513DE28B6D20A00172310 /* Utilities.swift in Sources */,
 				681513E028B6D20A00172310 /* wheretoparkApp.swift in Sources */,
@@ -485,6 +491,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
+				CODE_SIGN_ENTITLEMENTS = wheretopark/wheretopark.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = Y9G849JS52;
@@ -522,6 +529,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
+				CODE_SIGN_ENTITLEMENTS = wheretopark/wheretopark.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = Y9G849JS52;
@@ -550,6 +558,7 @@
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "wheretopark/Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};
