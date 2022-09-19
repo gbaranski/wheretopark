@@ -138,13 +138,7 @@ struct MapViewRepresentable: UIViewRepresentable {
             let annotation = view.annotations
                 .compactMap{ $0 as? ParkingLotAnnotation }
                 .first{ $0.id == selectedParkingLotID }!
-            let userLocationAnnotation = view.annotations.first{ $0 is MKUserLocation }!
-            let isAnnotationInVisibleRect = view.annotations(in: view.visibleMapRect).compactMap{ $0 as? ParkingLotAnnotation }.contains{ $0.id == selectedParkingLotID }
-            if isAnnotationInVisibleRect {
-                view.showAnnotations([annotation], animated: true)
-            } else {
-                view.showAnnotations([annotation, userLocationAnnotation], animated: true)
-            }
+            view.showAnnotations([annotation], animated: true)
             view.selectAnnotation(annotation, animated: true)
         } else {
             view.selectedAnnotations.forEach{ view.deselectAnnotation($0, animated: true) }
