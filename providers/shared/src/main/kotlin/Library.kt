@@ -26,13 +26,26 @@ abstract class Provider {
     }
 
     suspend fun start(storekeeperClient: StorekeeperClient) = coroutineScope {
-        metadata(storekeeperClient)
+        println("starting $name")
         launch {
-            delay(metadataInterval)
-            runEvery(metadataInterval) { metadata(storekeeperClient) }
+            runEvery(metadataInterval) {
+                try {
+                    metadata(storekeeperClient)
+                } catch (e: Exception) {
+                    println("$name failed to process metadata: $e")
+                }
+            }
         }
+        println("exit 0")
         launch {
-            runEvery(stateInterval) { state(storekeeperClient) }
+            runEvery(stateInterval) {
+                println("trying to retrieve state")
+                try {
+                    state(storekeeperClient)
+                } catch (e: Exception) {
+                    println("$name failed to process state: $e")
+                }
+            }
         }
     }
 
