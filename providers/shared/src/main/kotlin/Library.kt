@@ -36,10 +36,8 @@ abstract class Provider {
                 }
             }
         }
-        println("exit 0")
         launch {
             runEvery(stateInterval) {
-                println("trying to retrieve state")
                 try {
                     state(storekeeperClient)
                 } catch (e: Exception) {
