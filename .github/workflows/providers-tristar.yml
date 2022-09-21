@@ -16,7 +16,7 @@ on:
       - master
     paths:
       - "providers/tristar/**"
-      - "providers/lib/**"
+      - "providers/shared/**"
       - "shared/**"
 
 jobs:
