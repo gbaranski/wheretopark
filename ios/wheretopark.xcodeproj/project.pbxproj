@@ -503,7 +503,7 @@
 				FRAMEWORK_SEARCH_PATHS = "$(SRCROOT)/../shared/build/xcode-frameworks/$(CONFIGURATION)/$(SDK_NAME)";
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.navigation";
-				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Location access is required to provide better suggestions.";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Location access is required to show current location on map, and display relative distance.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -542,7 +542,7 @@
 				FRAMEWORK_SEARCH_PATHS = "$(SRCROOT)/../shared/build/xcode-frameworks/$(CONFIGURATION)/$(SDK_NAME)";
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.navigation";
-				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Location access is required to provide better suggestions.";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Location access is required to show current location on map, and display relative distance.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
