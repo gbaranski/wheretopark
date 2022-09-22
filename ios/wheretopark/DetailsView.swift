@@ -111,6 +111,7 @@ struct DetailsView: View {
                         Divider()
                         VStack(alignment: .leading) {
                             let formatter = RelativeDateTimeFormatter()
+                            let _ = formatter.locale = Locale(identifier: "en")
                             let lastUpdated = Date(timeIntervalSince1970: TimeInterval(parkingLot.state.lastUpdated.epochSeconds))
                             let lastUpdatedString = formatter.localizedString(for: lastUpdated, relativeTo: Date.now)
                             Text("UPDATED").fontWeight(.black).font(.caption).foregroundColor(.secondary)
