@@ -31,12 +31,16 @@ enum class ParkingLotFeature {
 }
 
 
+fun DayOfWeek.human() = name.lowercase().replaceFirstChar { it.uppercase() }
+
 @Serializable(with = ParkingLotWeekdaysSerializer::class)
 @JsExport
 data class ParkingLotWeekdays(
     val start: DayOfWeek,
     val end: DayOfWeek
-)
+) {
+    fun human() = "${start.human()}-${end.human()}"
+}
 
 object ParkingLotWeekdaysSerializer : KSerializer<ParkingLotWeekdays> {
     override val descriptor = PrimitiveSerialDescriptor("ParkingLotWeekdays", PrimitiveKind.STRING)
@@ -60,7 +64,9 @@ object ParkingLotWeekdaysSerializer : KSerializer<ParkingLotWeekdays> {
 data class ParkingLotHours(
     val start: LocalTime,
     val end: LocalTime
-)
+) {
+    fun human() = "${start}-${end}"
+}
 
 object ParkingLotHoursSerializer : KSerializer<ParkingLotHours> {
     override val descriptor = PrimitiveSerialDescriptor("ParkingLotHours", PrimitiveKind.STRING)
@@ -78,6 +84,8 @@ object ParkingLotHoursSerializer : KSerializer<ParkingLotHours> {
     }
 }
 
+
+fun Duration.human() = this.toString()
 
 @Serializable
 @JsExport
