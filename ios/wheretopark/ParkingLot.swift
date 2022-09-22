@@ -30,3 +30,15 @@ extension ParkingLotResource {
         URLComponents(string: self.url)!
     }
 }
+
+
+extension ParkingLotPricingRule {
+    var durationString: String {
+        let duration: Duration = .nanoseconds(self.duration)
+        return duration.formatted(
+            .units(allowed: [.hours, .minutes, .seconds, .milliseconds],
+                   width: .wide)
+            .locale(Locale(identifier: "en"))
+        )
+    }
+}

@@ -157,29 +157,29 @@ struct DetailsPricingView: View {
     var body: some View {
         Group {
             ForEach(Array(metadata.rules.enumerated()), id: \.1) { i, rule in
-//                if let weekdays: ParkingLotWeekdays = rule.weekdays {
-//                    Text(weekdays.intervalString).font(.body).fontWeight(.bold)
-//                }
-//                if let hours: ParkingLotHours = rule.hours {
-//                    Text(hours.intervalString).font(.caption).fontWeight(.bold)
-//                }
-//                ForEach(rule.pricing, id: \.self) { price in
-//                    let priceString = price.price.formatted(.currency(code: metadata.currency))
-//                    HStack {
-//                        if price.repeating {
-//                            Text("Each additional \(price.durationString)")
-//                        } else {
-//                            Text("\(price.durationString)")
-//                        }
-//                        Spacer()
-//                        if price.price == 0 {
-//                            Text("Free").bold()
-//                        } else {
-//                            Text(priceString)
-//                        }
-//                    }
-//                    Divider()
-//                }
+                if let weekdays: ParkingLotWeekdays = rule.weekdays {
+                    Text(weekdays.human()).font(.body).fontWeight(.bold)
+                }
+                if let hours: ParkingLotHours = rule.hours {
+                    Text(hours.human()).font(.caption).fontWeight(.bold)
+                }
+                ForEach(rule.pricing, id: \.self) { price in
+                    let priceString = price.price.formatted(.currency(code: metadata.currency))
+                    HStack {
+                        if price.repeating {
+                            Text("Each additional \(price.durationString)")
+                        } else {
+                            Text("\(price.durationString)")
+                        }
+                        Spacer()
+                        if price.price == 0 {
+                            Text("Free").bold()
+                        } else {
+                            Text(priceString)
+                        }
+                    }
+                    Divider()
+                }
             }
         }
     }
