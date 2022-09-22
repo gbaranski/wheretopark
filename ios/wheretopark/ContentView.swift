@@ -51,16 +51,13 @@ struct ContentView: View {
             isPresented: $secondaryBottomSheetVisible,
             selectedDetentIdentifier: $secondaryBottomSheetDetent
         ) {
-            if let parkingLotID = appState.selectedParkingLotID {
-                let parkingLot = appState.parkingLots[parkingLotID]!
-                DetailsView(
-                    id: parkingLotID,
-                    parkingLot: parkingLot,
-                    onDismiss: {
-                        appState.selectedParkingLotID = nil
-                    }
-                ).padding([.top, .horizontal]).environmentObject(appState)
-            }
+            DetailsView(
+                onDismiss: {
+                    appState.selectedParkingLotID = nil
+                }
+            )
+            .padding([.top, .horizontal])
+            .environmentObject(appState)
         }
         .alert(isPresented: $appState.fetchFailed, error: appState.fetchError, actions: {})
         .onChange(of: appState.parkingLots) { _ in

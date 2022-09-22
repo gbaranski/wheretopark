@@ -35,6 +35,29 @@ typealias ParkingLotID = String
     
     @Published private(set) var parkingLots = [ParkingLotID : ParkingLot]()
     @Published var selectedParkingLotID: ParkingLotID? = nil
+    var isSelected: Binding<Bool> {
+        Binding {
+            self.selectedParkingLotID != nil
+        } set: { value in
+            if !value {
+                self.selectedParkingLotID = nil
+            } else {
+                fatalError("unexpected value \(String(describing: value))")
+            }
+        }
+    }
+    var selectedParkingLot: Binding<ParkingLot?> {
+        Binding {
+            self.selectedParkingLotID != nil ? self.parkingLots[self.selectedParkingLotID!] : nil
+        } set: { value in
+            if value == nil {
+                self.selectedParkingLotID = nil
+            } else {
+                fatalError("unexpected value \(String(describing: value))")
+            }
+        }
+        
+    }
     
     
     struct FetchError: LocalizedError {
@@ -50,8 +73,13 @@ typealias ParkingLotID = String
         do {
             let metadatas = try await storekeeperClient.metadatas()
             let states = try await storekeeperClient.states()
-            self.parkingLots = Dictionary(uniqueKeysWithValues: metadatas.map{ id, metadata in
-                (id, ParkingLot(metadata: metadata, state: states[id]!))
+            self.parkingLots = Dictionary(uniqueKeysWithValues: metadatas.compactMap{ id, metadata in
+                let state = states[id]
+                if state == nil {
+                    return nil
+                } else {
+                    return (id, ParkingLot(metadata: metadata, state: state!))
+                }
             })
         } catch {
             print("error \(error)")

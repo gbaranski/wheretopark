@@ -12,119 +12,123 @@ import shared
 import MessageUI
 
 struct DetailsView: View {
-    let id: ParkingLotID
-    let parkingLot: ParkingLot
+    @EnvironmentObject var appState: AppState
     var onDismiss: (() -> Void)? = nil
     
-    @ObservedObject var favourite: FavouriteManager
-    @State private var isSharing = false
-    
-    init(id: ParkingLotID, parkingLot: ParkingLot, onDismiss: (() -> Void)? = nil) {
-        self.id = id
-        self.parkingLot = parkingLot
-        self.favourite = FavouriteManager(id: id)
-        self.onDismiss = onDismiss
+    let favouriteStore = FavouritesStore()
+    var isFavourite: Binding<Bool> {
+        Binding {
+            self.favouriteStore.exists(id: id)
+        } set: { value, tx in
+            value ? self.favouriteStore.add(id: id) : self.favouriteStore.remove(id: id)
+        }
+    }
+    var id: ParkingLotID {
+        get { appState.selectedParkingLotID! }
+    }
+    var parkingLot: ParkingLot {
+        get { appState.selectedParkingLot.wrappedValue! }
     }
     
+    @State private var isSharing = false
     
     var body: some View {
         ScrollView(showsIndicators: false) {
             VStack(alignment: .leading, spacing: 10) {
-                if let onDismiss = onDismiss {
+                if appState.isSelected.wrappedValue {
                     HStack {
                         Text(parkingLot.metadata.name).font(.title).fontWeight(.bold).multilineTextAlignment(.leading)
-                        Spacer()
-                        Button(action: onDismiss) {
-                            ZStack {
-                                Circle()
-                                    .frame(width: 30, height: 30)
-                                    .foregroundColor(Color(.secondarySystemFill))
-                                Image(systemName: "xmark")
-                                    .font(Font.body.weight(.bold))
-                                    .foregroundColor(.secondary)
-                                    .imageScale(.medium)
-                                    .frame(width: 44, height: 44)
+                        if let onDismiss = onDismiss {
+                            Spacer()
+                            Button(action: onDismiss) {
+                                ZStack {
+                                    Circle()
+                                        .frame(width: 30, height: 30)
+                                        .foregroundColor(Color(.secondarySystemFill))
+                                    Image(systemName: "xmark")
+                                        .font(Font.body.weight(.bold))
+                                        .foregroundColor(.secondary)
+                                        .imageScale(.medium)
+                                        .frame(width: 44, height: 44)
+                                }
                             }
                         }
-                            
                     }
-                } else {
-                    Text(parkingLot.metadata.name).font(.title).fontWeight(.bold).multilineTextAlignment(.leading)
-                }
-                HStack {
-                    Button(action: navigate) {
-                        Label("Navigate", systemImage: "car.fill").frame(maxWidth: .infinity)
-                    }
-                    .controlSize(.large)
-                    .buttonStyle(.borderedProminent)
-                    .frame(maxWidth: .infinity)
-                    
-                    Menu {
-                        Button(
-                            action: {
-                                favourite.isFavourite ? favourite.remove() : favourite.add()
-                            }
-                        ) {
-                            Label(
-                                favourite.isFavourite ? "Remove from favourites" : "Add to favourites",
-                                systemImage: favourite.isFavourite ? "star.fill" : "star"
-                            )
-                        }
-                        Button(action: {
-                            isSharing = true
-                        }) {
-                          Label("Share", systemImage: "square.and.arrow.up")
-                        }
-                    } label: {
-                        Button(action: {}) {
-                            Label("More", systemImage: "ellipsis")
+                    HStack {
+                        Button(action: navigate) {
+                            Label("Navigate", systemImage: "car.fill").frame(maxWidth: .infinity)
                         }
                         .controlSize(.large)
-                        .buttonStyle(.bordered)
-                    }
-                }
-                HStack{
-                    VStack(alignment: .leading) {
-                        Text("AVAILABILITY").fontWeight(.black).font(.caption).foregroundColor(.secondary)
-                        Text("\(parkingLot.state.availableSpots[ParkingSpotType.car] ?? 0) cars").fontWeight(.heavy).foregroundColor(.yellow)
-                    }
-                    Divider()
-                    VStack(alignment: .leading) {
-                        Text("HOURS").fontWeight(.black).font(.caption).foregroundColor(.secondary)
-                        let status = parkingLot.metadata.status()
-                        switch status {
-                        case .opensSoon:
-                            Text("Opens soon").fontWeight(.heavy).foregroundColor(.yellow)
-                        case .open:
-                            Text("Open").fontWeight(.heavy).foregroundColor(.green)
-                        case .closesSoon:
-                            Text("Closes soon").fontWeight(.heavy).foregroundColor(.yellow)
-                        case .closed:
-                            Text("Closed").fontWeight(.heavy).foregroundColor(.red)
-                        default:
-                            fatalError("unknown status \(status)")
+                        .buttonStyle(.borderedProminent)
+                        .frame(maxWidth: .infinity)
+                        
+                        Menu {
+                            Button(
+                                action: {
+                                    isFavourite.wrappedValue = !isFavourite.wrappedValue
+                                }
+                            ) {
+                                Label(
+                                    isFavourite.wrappedValue ? "Remove from favourites" : "Add to favourites",
+                                    systemImage: isFavourite.wrappedValue ? "star.fill" : "star"
+                                )
+                            }
+                            Button(action: {
+                                isSharing = true
+                            }) {
+                              Label("Share", systemImage: "square.and.arrow.up")
+                            }
+                        } label: {
+                            Button(action: {}) {
+                                Label("More", systemImage: "ellipsis")
+                            }
+                            .controlSize(.large)
+                            .buttonStyle(.bordered)
                         }
                     }
-                    Divider()
-                    VStack(alignment: .leading) {
-                        let formatter = RelativeDateTimeFormatter()
-                        let lastUpdated = Date(timeIntervalSince1970: TimeInterval(parkingLot.state.lastUpdated.epochSeconds))
-                        let lastUpdatedString = formatter.localizedString(for: lastUpdated, relativeTo: Date.now)
-                        Text("UPDATED").fontWeight(.black).font(.caption).foregroundColor(.secondary)
-                        Text("\(lastUpdatedString)").fontWeight(.bold)
-                    }
-                    
-                }.frame(maxWidth: .infinity)
-                Text("Pricing").font(.title2).fontWeight(.bold)
-                DetailsPricingView(metadata: parkingLot.metadata)
-                Text("Additional info").font(.title2).fontWeight(.bold)
-                DetailsAdditionalInfoView(metadata: parkingLot.metadata)
-                DetailsSendFeedbackView(id: id, metadata: parkingLot.metadata, takeSnapshot: { self.snapshot() })
-                    .frame(
-                        maxWidth: .infinity,
-                        maxHeight: .infinity,
-                        alignment: .center
-                    )
+                    HStack{
+                        VStack(alignment: .leading) {
+                            Text("AVAILABILITY").fontWeight(.black).font(.caption).foregroundColor(.secondary)
+                            Text("\(parkingLot.state.availableSpots[ParkingSpotType.car] ?? 0) cars").fontWeight(.heavy).foregroundColor(.yellow)
+                        }
+                        Divider()
+                        VStack(alignment: .leading) {
+                            Text("HOURS").fontWeight(.black).font(.caption).foregroundColor(.secondary)
+                            let status = parkingLot.metadata.status()
+                            switch status {
+                            case .opensSoon:
+                                Text("Opens soon").fontWeight(.heavy).foregroundColor(.yellow)
+                            case .open:
+                                Text("Open").fontWeight(.heavy).foregroundColor(.green)
+                            case .closesSoon:
+                                Text("Closes soon").fontWeight(.heavy).foregroundColor(.yellow)
+                            case .closed:
+                                Text("Closed").fontWeight(.heavy).foregroundColor(.red)
+                            default:
+                                fatalError("unknown status \(status)")
+                            }
+                        }
+                        Divider()
+                        VStack(alignment: .leading) {
+                            let formatter = RelativeDateTimeFormatter()
+                            let lastUpdated = Date(timeIntervalSince1970: TimeInterval(parkingLot.state.lastUpdated.epochSeconds))
+                            let lastUpdatedString = formatter.localizedString(for: lastUpdated, relativeTo: Date.now)
+                            Text("UPDATED").fontWeight(.black).font(.caption).foregroundColor(.secondary)
+                            Text("\(lastUpdatedString)").fontWeight(.bold)
+                        }
+                        
+                    }.frame(maxWidth: .infinity)
+                    Text("Pricing").font(.title2).fontWeight(.bold)
+                    DetailsPricingView(metadata: parkingLot.metadata)
+                    Text("Additional info").font(.title2).fontWeight(.bold)
+                    DetailsAdditionalInfoView(id: id, metadata: parkingLot.metadata)
+                    DetailsSendFeedbackView(id: id, metadata: parkingLot.metadata, takeSnapshot: { self.snapshot() })
+                        .frame(
+                            maxWidth: .infinity,
+                            maxHeight: .infinity,
+                            alignment: .center
+                        )
+                }
             }
         }.background(SharingViewController(isPresenting: $isSharing) {
             let url = URL(string: UtilitiesKt.getShareURL(id: id))
@@ -184,6 +188,7 @@ struct DetailsPricingView: View {
 }
 
 struct DetailsAdditionalInfoView: View {
+    let id: ParkingLotID
     let metadata: ParkingLotMetadata
     
     var body: some View {
@@ -258,9 +263,8 @@ struct DetailsSendFeedbackView: View {
 struct DetailsView_Previews: PreviewProvider {
     static var previews: some View {
         DetailsView(
-            id: ParkingLot.companion.galeriaBaltycka.metadata.location.hash(length: 12),
-            parkingLot: ParkingLot.companion.galeriaBaltycka,
-            onDismiss: {}
+//            id: Binding.constant(ParkingLot.companion.galeriaBaltycka.metadata.location.hash(length: 12)),
+//            parkingLot: Binding.constant(ParkingLot.companion.galeriaBaltycka),
         ).padding()
     }
 }
