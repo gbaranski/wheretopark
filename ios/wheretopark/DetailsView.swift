@@ -218,6 +218,11 @@ struct DetailsAdditionalInfoView: View {
                 }
             }
             Divider()
+            VStack(alignment: .leading) {
+                Text("Unique ID").foregroundColor(.secondary)
+                Text("\(id)").textSelection(.enabled)
+            }
+            Divider()
         }
     }
 }
