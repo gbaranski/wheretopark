@@ -24,6 +24,7 @@
 		68A5B4F728D16117000343D8 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 68A5B4F628D16117000343D8 /* Assets.xcassets */; };
 		68A5B4FC28D16B32000343D8 /* FavouritesStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68A5B4FB28D16B32000343D8 /* FavouritesStore.swift */; };
 		68C45B2628D31DE900469180 /* BottomSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68C45B2528D31DE900469180 /* BottomSheet.swift */; };
+		68E00A3B28DD1F980091A864 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 68E00A3A28DD1F980091A864 /* LaunchScreen.storyboard */; };
 		68E03A8B28CFFE0B00D70F29 /* MailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68E03A8A28CFFE0B00D70F29 /* MailView.swift */; };
 /* End PBXBuildFile section */
 
@@ -67,6 +68,7 @@
 		68A5B4FB28D16B32000343D8 /* FavouritesStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FavouritesStore.swift; sourceTree = "<group>"; };
 		68C45B2528D31DE900469180 /* BottomSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomSheet.swift; sourceTree = "<group>"; };
 		68D6199028D8ACFD001962C0 /* wheretopark.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = wheretopark.entitlements; sourceTree = "<group>"; };
+		68E00A3A28DD1F980091A864 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		68E03A8A28CFFE0B00D70F29 /* MailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MailView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -137,6 +139,7 @@
 				6885B39328B6D0A300860E55 /* ContentView.swift */,
 				68E03A8A28CFFE0B00D70F29 /* MailView.swift */,
 				68C45B2528D31DE900469180 /* BottomSheet.swift */,
+				68E00A3A28DD1F980091A864 /* LaunchScreen.storyboard */,
 			);
 			path = wheretopark;
 			sourceTree = "<group>";
@@ -277,6 +280,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				68A5B4F728D16117000343D8 /* Assets.xcassets in Resources */,
+				68E00A3B28DD1F980091A864 /* LaunchScreen.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -510,13 +514,13 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 0.1.0;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-framework",
 					shared,
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = app.wheretopark.ios;
+				PRODUCT_BUNDLE_IDENTIFIER = app.wheretopark;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "wheretopark/Bridging-Header.h";
@@ -549,13 +553,13 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 0.1.0;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-framework",
 					shared,
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = app.wheretopark.ios;
+				PRODUCT_BUNDLE_IDENTIFIER = app.wheretopark;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "wheretopark/Bridging-Header.h";
