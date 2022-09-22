@@ -139,7 +139,7 @@ struct MapViewRepresentable: UIViewRepresentable {
                 .compactMap{ $0 as? ParkingLotAnnotation }
                 .first{ $0.id == selectedParkingLotID }!
             view.showAnnotations([annotation], animated: true)
-            view.selectAnnotation(annotation, animated: true)
+//            view.selectAnnotation(annotation, animated: true)
         } else {
             view.selectedAnnotations.forEach{ view.deselectAnnotation($0, animated: true) }
         }
