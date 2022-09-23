@@ -123,7 +123,7 @@ struct DetailsView: View {
                     DetailsPricingView(metadata: parkingLot.metadata)
                     Text("Additional info").font(.title2).fontWeight(.bold)
                     DetailsAdditionalInfoView(id: id, metadata: parkingLot.metadata)
-                    DetailsSendFeedbackView(id: id, metadata: parkingLot.metadata, takeSnapshot: { self.snapshot() })
+                    DetailsSendFeedbackView(id: id, metadata: parkingLot.metadata, takeSnapshot: { self.environmentObject(appState).snapshot() })
                         .frame(
                             maxWidth: .infinity,
                             maxHeight: .infinity,
