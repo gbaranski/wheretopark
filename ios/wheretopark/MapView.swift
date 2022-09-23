@@ -86,15 +86,14 @@ struct MapViewRepresentable: UIViewRepresentable {
     let map = MKMapView()
     
     private enum MapDefaults {
-        static let latitude = 45.872
-        static let longitude = -1.248
-        static let zoom = 100.0
-        static let zoomWhileSelected = 0.01
+        static let latitude = 54.3920
+        static let longitude = 18.5407
+        static let zoom = 0.4
     }
     
     func makeUIView(context: Context) -> MKMapView {
         map.delegate = context.coordinator
-        let region = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: 0, longitude: 0), span: MKCoordinateSpan(latitudeDelta: 100.0, longitudeDelta: 100.0))
+        let region = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: MapDefaults.latitude, longitude: MapDefaults.longitude), span: MKCoordinateSpan(latitudeDelta: MapDefaults.zoom, longitudeDelta: MapDefaults.zoom))
         self.map.setRegion(region, animated: true)
         self.map.showsTraffic = true
         self.map.showsBuildings = true
@@ -257,7 +256,7 @@ class ParkingLotAnnotation: NSObject, MKAnnotation {
         if status == .closed || status == .opensSoon {
             return status.name.capitalizingFirstLetter()
         } else {
-            return "\(parkingLot.state.availableSpots) available parking spots"
+            return "\(parkingLot.state.availableSpots[ParkingSpotType.car]!) available parking spots"
         }
     }
     
