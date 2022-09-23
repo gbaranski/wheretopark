@@ -26,26 +26,19 @@ struct ContentView: View {
             MapView()
                 .edgesIgnoringSafeArea(.all)
                 .navigationBarHidden(true)
+                .onAppear {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                        primaryBottomSheetVisible = true
+                    }
+                }
         }
         .bottomSheet(
             isPresented: $primaryBottomSheetVisible,
             selectedDetentIdentifier: $primaryBottomSheetDetent
         ) {
-            VStack {
-                HStack {
-                    Image(systemName: "magnifyingglass")
-                    TextField("Search", text: $searchText)
-                }
-                .foregroundColor(Color(UIColor.secondaryLabel))
-                .padding(.vertical, 8)
-                .padding(.horizontal, 5)
-                .background(RoundedRectangle(cornerRadius: 10).fill(Color(UIColor.quaternaryLabel)))
-                .padding(.top)
-                .padding(.horizontal)
-                ListView(query: $searchText)
-                    .environmentObject(appState)
-            }
-            .interactiveDismissDisabled(true)
+            ListView()
+                .environmentObject(appState)
+                .interactiveDismissDisabled(true)
         }
         .bottomSheet(
             isPresented: $secondaryBottomSheetVisible,
@@ -60,9 +53,6 @@ struct ContentView: View {
             .environmentObject(appState)
         }
         .alert(isPresented: $appState.fetchFailed, error: appState.fetchError, actions: {})
-        .onChange(of: appState.parkingLots) { _ in
-            primaryBottomSheetVisible = true
-        }
         .onChange(of: appState.selectedParkingLotID) { id in
             if id != nil {
                 primaryBottomSheetDetent = .small
