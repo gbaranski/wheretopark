@@ -14,19 +14,15 @@ typealias ParkingLotID = String
 
 @MainActor class AppState: ObservableObject {
     let environment = AppEnvironment()
-    var authorizationClient: AuthorizationClient {
-        get {
-            AuthorizationClient(baseURL: AppEnvironment.authorizationURL.absoluteString, clientID: AppEnvironment.clientID, clientSecret: AppEnvironment.clientSecret)
-        }
-    }
-    var storekeeperClient: StorekeeperClient {
-        get {
-            return StorekeeperClient(
-                baseURL: AppEnvironment.storekeeperURL.absoluteString,
-                authorizationClient: authorizationClient,
-                accessScope: Set([AccessType.readmetadata, AccessType.readstate])
-            )
-        }
+    let authorizationClient: AuthorizationClient
+    let storekeeperClient: StorekeeperClient
+    init() {
+        self.authorizationClient = AuthorizationClient(baseURL: AppEnvironment.authorizationURL.absoluteString, clientID: AppEnvironment.clientID, clientSecret: AppEnvironment.clientSecret)
+        self.storekeeperClient = StorekeeperClient(
+            baseURL: AppEnvironment.storekeeperURL.absoluteString,
+            authorizationClient: authorizationClient,
+            accessScope: Set([AccessType.readmetadata, AccessType.readstate])
+        )
     }
     @Published private(set) var isPerformingTask = false
     @Published private(set) var fetchError: FetchError? = nil
