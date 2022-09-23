@@ -8,16 +8,40 @@
 import Foundation
 
 public struct AppEnvironment {
-    let clientID: String
-    let clientSecret: String
-    let storekeeperURL: URL
-    let authorizationURL: URL
-    
-    public init() {
-        let e = ProcessInfo.processInfo.environment
-        clientID = e["CLIENT_ID"]!
-        clientSecret = e["CLIENT_SECRET"]!
-        storekeeperURL = URL(string: e["STOREKEEPER_URL"]!)!
-        authorizationURL = URL(string: e["AUTHORIZATION_URL"]!)!
+    enum Keys {
+        static let clientID = "CLIENT_ID"
+        static let clientSecret = "CLIENT_SECRET"
+        static let authorizationURL = "AUTHORIZATION_URL"
+        static let storekeeperURL = "STOREKEEPER_URL"
     }
+    private static let infoDictionary: [String : Any] = {
+        guard let dict = Bundle.main.infoDictionary else {
+            fatalError("plist file not found")
+        }
+        return dict
+    }()
+    static let clientID: String = {
+        guard let string = AppEnvironment.infoDictionary[Keys.clientID] as? String else {
+            fatalError("client id is not set")
+        }
+        return string
+    }()
+    static let clientSecret: String = {
+        guard let string = AppEnvironment.infoDictionary[Keys.clientSecret] as? String else {
+            fatalError("client secret is not set")
+        }
+        return string
+    }()
+    static let authorizationURL: URL = {
+        guard let string = AppEnvironment.infoDictionary[Keys.authorizationURL] as? String else {
+            fatalError("authorization url is not set")
+        }
+        return URL(string: string)!
+    }()
+    static let storekeeperURL: URL = {
+        guard let string = AppEnvironment.infoDictionary[Keys.storekeeperURL] as? String else {
+            fatalError("storekeeper url is not set")
+        }
+        return URL(string: string)!
+    }()
 }

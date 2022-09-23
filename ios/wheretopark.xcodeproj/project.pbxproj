@@ -69,6 +69,9 @@
 		68C45B2528D31DE900469180 /* BottomSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomSheet.swift; sourceTree = "<group>"; };
 		68D6199028D8ACFD001962C0 /* wheretopark.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = wheretopark.entitlements; sourceTree = "<group>"; };
 		68E00A3A28DD1F980091A864 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
+		68E00A3C28DD29B60091A864 /* Development.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Development.xcconfig; sourceTree = "<group>"; };
+		68E00A3D28DD2AE50091A864 /* Production.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Production.xcconfig; sourceTree = "<group>"; };
+		68E00A3E28DD31E50091A864 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		68E03A8A28CFFE0B00D70F29 /* MailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MailView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -122,6 +125,7 @@
 		6885B39028B6D0A300860E55 /* wheretopark */ = {
 			isa = PBXGroup;
 			children = (
+				68E00A3E28DD31E50091A864 /* Info.plist */,
 				68D6199028D8ACFD001962C0 /* wheretopark.entitlements */,
 				68A5B4F628D16117000343D8 /* Assets.xcassets */,
 				68A5B4FB28D16B32000343D8 /* FavouritesStore.swift */,
@@ -140,6 +144,8 @@
 				68E03A8A28CFFE0B00D70F29 /* MailView.swift */,
 				68C45B2528D31DE900469180 /* BottomSheet.swift */,
 				68E00A3A28DD1F980091A864 /* LaunchScreen.storyboard */,
+				68E00A3C28DD29B60091A864 /* Development.xcconfig */,
+				68E00A3D28DD2AE50091A864 /* Production.xcconfig */,
 			);
 			path = wheretopark;
 			sourceTree = "<group>";
@@ -377,6 +383,7 @@
 /* Begin XCBuildConfiguration section */
 		6885B3B028B6D0A400860E55 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 68E00A3C28DD29B60091A864 /* Development.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -437,6 +444,7 @@
 		};
 		6885B3B128B6D0A400860E55 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 68E00A3D28DD2AE50091A864 /* Production.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -502,6 +510,8 @@
 				ENABLE_PREVIEWS = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(SRCROOT)/../shared/build/xcode-frameworks/$(CONFIGURATION)/$(SDK_NAME)";
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = wheretopark/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = DevToPark;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.navigation";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Location access is required to show current location on map, and display relative distance.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -541,6 +551,8 @@
 				ENABLE_PREVIEWS = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(SRCROOT)/../shared/build/xcode-frameworks/$(CONFIGURATION)/$(SDK_NAME)";
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = wheretopark/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = WhereToPark;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.navigation";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Location access is required to show current location on map, and display relative distance.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;

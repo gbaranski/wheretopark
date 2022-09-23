@@ -70,28 +70,6 @@
             ReferencedContainer = "container:wheretopark.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
-      <EnvironmentVariables>
-         <EnvironmentVariable
-            key = "CLIENT_ID"
-            value = "9f75e24c-55d5-425e-8186-d8a75c4e3e85"
-            isEnabled = "YES">
-         </EnvironmentVariable>
-         <EnvironmentVariable
-            key = "CLIENT_SECRET"
-            value = "b7271ed3-78ac-436f-8bbc-0222b2b26f9b"
-            isEnabled = "YES">
-         </EnvironmentVariable>
-         <EnvironmentVariable
-            key = "STOREKEEPER_URL"
-            value = "https://storekeeper.wheretopark.app"
-            isEnabled = "YES">
-         </EnvironmentVariable>
-         <EnvironmentVariable
-            key = "AUTHORIZATION_URL"
-            value = "https://authorization.wheretopark.app"
-            isEnabled = "YES">
-         </EnvironmentVariable>
-      </EnvironmentVariables>
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Release"
