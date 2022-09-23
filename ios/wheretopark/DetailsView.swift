@@ -15,24 +15,20 @@ struct DetailsView: View {
     @EnvironmentObject var appState: AppState
     var onDismiss: (() -> Void)? = nil
     
-    let favouriteStore = FavouritesStore()
-    var isFavourite: Binding<Bool> {
-        Binding {
-            self.favouriteStore.exists(id: id)
-        } set: { value, tx in
-            value ? self.favouriteStore.add(id: id) : self.favouriteStore.remove(id: id)
-        }
-    }
     var id: ParkingLotID {
         get { appState.selectedParkingLotID! }
     }
     var parkingLot: ParkingLot {
         get { appState.selectedParkingLot.wrappedValue! }
     }
-    
     @State private var isSharing = false
+    @ObservedObject var favouriteManager: FavouriteManager
+    var isFavourite: Bool {
+        get { favouriteManager.isFavourite }
+    }
     
     var body: some View {
+        
         ScrollView(showsIndicators: false) {
             VStack(alignment: .leading, spacing: 10) {
                 if appState.isSelected.wrappedValue {
@@ -65,12 +61,12 @@ struct DetailsView: View {
                         Menu {
                             Button(
                                 action: {
-                                    isFavourite.wrappedValue = !isFavourite.wrappedValue
+                                    isFavourite ? favouriteManager.remove() : favouriteManager.add()
                                 }
                             ) {
                                 Label(
-                                    isFavourite.wrappedValue ? "Remove from favourites" : "Add to favourites",
-                                    systemImage: isFavourite.wrappedValue ? "star.fill" : "star"
+                                    isFavourite ? "Remove from favourites" : "Add to favourites",
+                                    systemImage: isFavourite ? "star.fill" : "star"
                                 )
                             }
                             Button(action: {
@@ -266,11 +262,11 @@ struct DetailsSendFeedbackView: View {
 }
 
 
-struct DetailsView_Previews: PreviewProvider {
-    static var previews: some View {
-        DetailsView(
-//            id: Binding.constant(ParkingLot.companion.galeriaBaltycka.metadata.location.hash(length: 12)),
-//            parkingLot: Binding.constant(ParkingLot.companion.galeriaBaltycka),
-        ).padding()
-    }
-}
+//struct DetailsView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        DetailsView(
+////            id: Binding.constant(ParkingLot.companion.galeriaBaltycka.metadata.location.hash(length: 12)),
+////            parkingLot: Binding.constant(ParkingLot.companion.galeriaBaltycka),
+//        ).padding()
+//    }
+//}

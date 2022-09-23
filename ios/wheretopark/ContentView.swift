@@ -13,6 +13,7 @@ import UIKit
 struct ContentView: View {
     @EnvironmentObject var appState: AppState
 
+    
     @State var primaryBottomSheetVisible = false
     @State var primaryBottomSheetDetent: UISheetPresentationController.Detent.Identifier? = .compact
     
@@ -34,11 +35,11 @@ struct ContentView: View {
         }
         .bottomSheet(
             isPresented: $primaryBottomSheetVisible,
-            selectedDetentIdentifier: $primaryBottomSheetDetent
+            selectedDetentIdentifier: $primaryBottomSheetDetent,
+            isModalInPresentation: true
         ) {
             ListView()
                 .environmentObject(appState)
-                .interactiveDismissDisabled(true)
         }
         .bottomSheet(
             isPresented: $secondaryBottomSheetVisible,
@@ -47,7 +48,8 @@ struct ContentView: View {
             DetailsView(
                 onDismiss: {
                     appState.selectedParkingLotID = nil
-                }
+                },
+                favouriteManager: FavouriteManager(id: $appState.selectedParkingLotID)
             )
             .padding([.top, .horizontal])
             .environmentObject(appState)
