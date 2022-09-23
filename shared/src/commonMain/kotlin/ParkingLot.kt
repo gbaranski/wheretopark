@@ -94,7 +94,9 @@ data class ParkingLotPricingRule(
     val duration: Duration,
     val price: Double,
     val repeating: Boolean = false
-)
+) {
+    fun durationComponents() = duration.components()
+}
 
 object DurationSerializer : KSerializer<Duration> {
     override val descriptor = PrimitiveSerialDescriptor("Duration", PrimitiveKind.STRING)

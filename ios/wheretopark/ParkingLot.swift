@@ -34,11 +34,16 @@ extension ParkingLotResource {
 
 extension ParkingLotPricingRule {
     var durationString: String {
-        let duration: Duration = .nanoseconds(self.duration)
-        return duration.formatted(
-            .units(allowed: [.hours, .minutes, .seconds, .milliseconds],
-                   width: .wide)
-            .locale(Locale(identifier: "en"))
+        let components = self.durationComponents()
+        let duration = DateComponents(
+            day: Int(components.days),
+            hour: Int(components.hours),
+            minute: Int(components.minutes),
+            second: Int(components.seconds),
+            nanosecond: Int(components.nanoseconds)
         )
+        let durationFormatter = DateComponentsFormatter()
+        durationFormatter.unitsStyle = .full
+        return durationFormatter.string(from: duration)!
     }
 }

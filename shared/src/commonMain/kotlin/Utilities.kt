@@ -7,6 +7,7 @@ import kotlinx.serialization.Serializable
 import kotlin.js.ExperimentalJsExport
 import kotlin.js.JsExport
 import kotlin.math.*
+import kotlin.time.Duration
 
 typealias LanguageCode = String
 
@@ -15,6 +16,24 @@ const val BASE_WEBAPP_URL = "https://web.wheretopark.app"
 fun getShareURL(id: ParkingLotID): String {
     val url = URLBuilder(BASE_WEBAPP_URL).appendPathSegments("parking-lot", id)
     return url.buildString()
+}
+
+data class DurationComponents(
+    val days: Long,
+    val hours: Int,
+    val minutes: Int,
+    val seconds: Int,
+    val nanoseconds: Int
+)
+
+fun Duration.components() = toComponents { days, hours, minutes, seconds, nanoseconds ->
+    DurationComponents(
+        days = days,
+        hours = hours,
+        minutes = minutes,
+        seconds = seconds,
+        nanoseconds = nanoseconds
+    )
 }
 
 private val BITS = intArrayOf(16, 8, 4, 2, 1)
