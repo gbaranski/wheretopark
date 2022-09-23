@@ -15,50 +15,66 @@ let trackingModeProperties = [
     MKUserTrackingMode.followWithHeading: ("Following user with heading", "location.north.line.fill")
 ]
 
-struct MapView: View {
-    @State var userTrackingMode: MKUserTrackingMode = .follow
-    @EnvironmentObject var appState: AppState
-    
+struct MapViewButtons: View {
+    @Binding var userTrackingMode: MKUserTrackingMode
     @Environment(\.colorScheme) private var colorScheme
+    @EnvironmentObject var appState: AppState
+    @EnvironmentObject var locationManager: LocationManager
     
     var body: some View {
-            ZStack(alignment: .topTrailing) {
-                MapViewRepresentable(
-                    userTrackingMode: $userTrackingMode
-                )
-                VStack {
-                    Button(action: {
-                        if userTrackingMode == .none {
-                            userTrackingMode = .follow
-                        } else if userTrackingMode == .follow {
-                            userTrackingMode = .followWithHeading
-                        } else if userTrackingMode == .followWithHeading {
-                            userTrackingMode = .none
-                        }
-                    }) {
-                        let (title, icon) = trackingModeProperties[userTrackingMode]!
-                        Label(title, systemImage: icon).labelStyle(.iconOnly)
-                    }
-                    .foregroundColor(.gray)
-                    .padding(.top, 15)
-                    
-                    Divider()
-                        .frame(maxWidth: 44)
-                        .background(.gray)
-                        .padding(.vertical, 15)
-                    
-                    Button(action: { Task { await appState.fetchParkingLots() } }) {
-                        Label("Refresh", systemImage: "arrow.clockwise").labelStyle(.iconOnly)
-                    }
-                    .disabled(appState.isPerformingTask)
-                    .foregroundColor(.gray)
-                    .padding(.bottom, 15)
+        VStack {
+            Button(action: {
+                if !locationManager.locationStatus.available {
+                    locationManager.requestAuthorization()
+                } else if userTrackingMode == .none {
+                    userTrackingMode = .follow
+                } else if userTrackingMode == .follow {
+                    userTrackingMode = .followWithHeading
+                } else if userTrackingMode == .followWithHeading {
+                    userTrackingMode = .none
                 }
-                .background(colorScheme == .dark ? Color(red: 37 / 255, green: 39 / 255, blue: 42 / 255) : Color.white)
-                .cornerRadius(10)
-                .padding(.top, 50)
-                .padding(20)
+            }) {
+                if locationManager.locationStatus.available {
+                    let (title, icon) = trackingModeProperties[userTrackingMode]!
+                    Label(title, systemImage: icon).labelStyle(.iconOnly)
+                } else {
+                    Label("Obtain permission", systemImage: "location.slash").labelStyle(.iconOnly)
+                }
             }
+            .foregroundColor(.gray)
+            .padding(.top, 15)
+            
+            Divider()
+                .frame(maxWidth: 44)
+                .background(.gray)
+                .padding(.vertical, 15)
+            
+            Button(action: { Task { await appState.fetchParkingLots() } }) {
+                Label("Refresh", systemImage: "arrow.clockwise").labelStyle(.iconOnly)
+            }
+            .disabled(appState.isPerformingTask)
+            .foregroundColor(.gray)
+            .padding(.bottom, 15)
+        }
+        .background(colorScheme == .dark ? Color(red: 37 / 255, green: 39 / 255, blue: 42 / 255) : Color.white)
+        .cornerRadius(10)
+        .padding(.top, 50)
+        .padding(20)
+    }
+}
+
+struct MapView: View {
+    @State var userTrackingMode: MKUserTrackingMode = .follow
+    
+    var body: some View {
+        ZStack(alignment: .topTrailing) {
+            MapViewRepresentable(
+                userTrackingMode: $userTrackingMode
+            )
+            MapViewButtons(
+                userTrackingMode: $userTrackingMode
+            )
+        }
     }
 }
 
@@ -151,7 +167,10 @@ struct MapViewRepresentable: UIViewRepresentable {
     }
     
     func didChangeUserTrackingMode(userTrackingMode: MKUserTrackingMode) {
-        self.userTrackingMode = userTrackingMode
+        print("change tracking mode from \(self.userTrackingMode.rawValue) to \(userTrackingMode.rawValue)")
+        DispatchQueue.main.async {
+            self.userTrackingMode = userTrackingMode
+        }
     }
     
     func makeCoordinator() -> MapViewCoordinator{

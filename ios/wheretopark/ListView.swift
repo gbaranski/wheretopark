@@ -14,6 +14,7 @@ struct ListView: View {
     @State var query: String = ""
     @State var showLoadingText = false
     @EnvironmentObject var appState: AppState
+    @EnvironmentObject var locationManager: LocationManager
     
     @Sendable private func delayLoadingText() async {
         try? await Task.sleep(nanoseconds: 2_000_000_000)
@@ -28,7 +29,7 @@ struct ListView: View {
                 .task(delayLoadingText)
         } else {
             let processedParkingLots = appState.parkingLots.sorted(by: {
-                if let userLocation: CLLocation = appState.locationManager.lastLocation {
+                if let userLocation: CLLocation = locationManager.lastLocation {
                     return $0.value.metadata.location.distance(from: userLocation) < $1.value.metadata.location.distance(from: userLocation)
                 } else {
                     return $0.key > $1.key
@@ -56,7 +57,7 @@ struct ListView: View {
                             Label("\(parkingLot.state.availableSpots[ParkingSpotType.car] ?? 0) available parking spots", systemImage: "parkingsign.circle")
                                 .foregroundColor(.secondary)
                                 .font(.subheadline)
-                            if let userLocation: CLLocation = appState.locationManager.lastLocation {
+                            if let userLocation: CLLocation = locationManager.lastLocation {
                                 let distance = parkingLot.metadata.location.distance(from: userLocation)
                                 let distanceString = MKDistanceFormatter().string(fromDistance: distance)
                                 Label("\(distanceString) away", systemImage: "point.topleft.down.curvedto.point.bottomright.up")

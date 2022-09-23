@@ -12,8 +12,8 @@ import UIKit
 
 struct ContentView: View {
     @EnvironmentObject var appState: AppState
+    @EnvironmentObject var locationManager: LocationManager
 
-    
     @State var primaryBottomSheetVisible = false
     @State var primaryBottomSheetDetent: UISheetPresentationController.Detent.Identifier? = .compact
     
@@ -27,11 +27,11 @@ struct ContentView: View {
             MapView()
                 .edgesIgnoringSafeArea(.all)
                 .navigationBarHidden(true)
-                .onAppear {
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                        primaryBottomSheetVisible = true
-                    }
-                }
+        }
+        .onAppear {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                primaryBottomSheetVisible = true
+            }
         }
         .bottomSheet(
             isPresented: $primaryBottomSheetVisible,
@@ -40,6 +40,7 @@ struct ContentView: View {
         ) {
             ListView()
                 .environmentObject(appState)
+                .environmentObject(locationManager)
         }
         .bottomSheet(
             isPresented: $secondaryBottomSheetVisible,

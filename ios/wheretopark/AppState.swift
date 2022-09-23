@@ -28,7 +28,6 @@ typealias ParkingLotID = String
             )
         }
     }
-    @Published private(set) var locationManager = LocationManager()
     @Published private(set) var isPerformingTask = false
     @Published private(set) var fetchError: FetchError? = nil
     @Published var fetchFailed = false

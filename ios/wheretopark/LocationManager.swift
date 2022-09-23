@@ -7,6 +7,13 @@
 
 import Foundation
 import CoreLocation
+import SwiftUI
+
+extension CLAuthorizationStatus? {
+    var available: Bool {
+        self == .authorizedAlways || self == .authorizedWhenInUse
+    }
+}
 
 class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     private let locationManager = CLLocationManager()
@@ -17,12 +24,14 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
         super.init()
         locationManager.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
-        locationManager.requestWhenInUseAuthorization()
-        locationManager.requestLocation()
         locationManager.startUpdatingLocation()
     }
-
-   
+    
+    
+    func requestAuthorization() {
+        print("requesting authorization")
+        locationManager.requestWhenInUseAuthorization()
+    }
     
     var statusString: String {
         guard let status = locationStatus else {
