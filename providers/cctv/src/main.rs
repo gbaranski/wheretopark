@@ -10,7 +10,6 @@ use miette::Context;
 use miette::Report;
 use miette::{IntoDiagnostic, Result};
 use tokio::time::Instant;
-use tokio_graceful_shutdown::Toplevel;
 
 use wheretopark::parking_lot::Metadata;
 use wheretopark::parking_lot::SpotType;
