@@ -9,7 +9,6 @@ use chrono::NaiveDateTime;
 use chrono::Utc;
 use miette::{Context, IntoDiagnostic};
 use miette::Result;
-use tokio_graceful_shutdown::SubsystemHandle;
 use tracing::Instrument;
 use url::Url;
 
