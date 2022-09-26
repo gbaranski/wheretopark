@@ -23,9 +23,14 @@ const val STATE_URL = "https://ckan2.multimediagdansk.pl/parkingLots"
 data class ParkingLotConfiguration(
     val resources: List<ParkingLotResource>,
     @SerialName("total-spots")
-    val totalSpots: UInt,
+    val totalSpots: Map<ParkingSpotType, UInt>,
+    @SerialName("max-height")
+    val maxHeight: Int? = null,
     val features: List<ParkingLotFeature>,
-    val rules: List<ParkingLotRule>
+    @SerialName("payment-methods")
+    val paymentMethods: List<PaymentMethod>,
+    val comment: Map<LanguageCode, String> = mapOf(),
+    val rules: List<ParkingLotRule>,
 )
 
 @Serializable
@@ -60,7 +65,7 @@ class TristarGdanskProvider : Provider() {
 
     override suspend fun metadatas(): Map<ParkingLotID, ParkingLotMetadata> {
         val vendorMetadatas = client.get(METADATA_URL).body<MetadataResponse>()
-        return vendorMetadatas.parkingLots.map { it ->
+        return vendorMetadatas.parkingLots.map {
             val configuration = configuration.parkingLots[it.id] ?: return@map null
             val id = it.location.hash()
             ids[it.id] = id
@@ -69,11 +74,11 @@ class TristarGdanskProvider : Provider() {
                 address = it.address,
                 location = it.location,
                 resources = configuration.resources,
-                totalSpots = mapOf(
-                    Pair(ParkingSpotType.CAR, configuration.totalSpots)
-                ),
+                totalSpots = configuration.totalSpots,
                 features = configuration.features,
                 currency = "PLN",
+                paymentMethods = configuration.paymentMethods,
+                comment = configuration.comment,
                 rules = configuration.rules,
             )
             id to metadata

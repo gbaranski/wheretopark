@@ -30,7 +30,11 @@ class ParkingLotStatusTest {
         val metadata = create(
             Pair(
                 ParkingLotWeekdays(start = DayOfWeek.MONDAY, end = DayOfWeek.SATURDAY),
-                ParkingLotHours(start = LocalTime(8, 0, 0, 0), end = LocalTime(22, 0, 0, 0))
+                ParkingLotHours(start = LocalTime(8, 0, 0, 0), end = LocalTime(12, 0, 0, 0))
+            ),
+            Pair(
+                ParkingLotWeekdays(start = DayOfWeek.MONDAY, end = DayOfWeek.SATURDAY),
+                ParkingLotHours(start = LocalTime(13, 0, 0, 0), end = LocalTime(22, 0, 0, 0))
             ),
             Pair(
                 ParkingLotWeekdays(start = DayOfWeek.SUNDAY, end = DayOfWeek.SUNDAY),

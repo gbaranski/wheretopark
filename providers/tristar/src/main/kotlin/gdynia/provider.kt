@@ -22,8 +22,13 @@ const val STATE_URL = "http://api.zdiz.gdynia.pl/ri/rest/parking_places"
 data class ParkingLotConfiguration(
     val resources: List<ParkingLotResource>,
     @SerialName("total-spots")
-    val totalSpots: UInt,
+    val totalSpots: Map<ParkingSpotType, UInt>,
+    @SerialName("max-height")
+    val maxHeight: Int? = null,
     val features: List<ParkingLotFeature>,
+    @SerialName("payment-methods")
+    val paymentMethods: List<PaymentMethod>,
+    val comment: Map<LanguageCode, String> = mapOf(),
     val rules: List<ParkingLotRule>
 )
 
@@ -68,10 +73,10 @@ class TristarGdyniaProvider : Provider() {
                 address = it.address,
                 location = it.location.coordinates,
                 resources = configuration.resources,
-                totalSpots = mapOf(
-                    Pair(ParkingSpotType.CAR, configuration.totalSpots)
-                ),
+                totalSpots = configuration.totalSpots,
                 features = configuration.features,
+                paymentMethods = configuration.paymentMethods,
+                comment = configuration.comment,
                 currency = "PLN",
                 rules = configuration.rules,
             )

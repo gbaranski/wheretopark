@@ -3,7 +3,10 @@
 
 package app.wheretopark.shared
 
-import kotlinx.datetime.*
+import kotlinx.datetime.Clock
+import kotlinx.datetime.DayOfWeek
+import kotlinx.datetime.Instant
+import kotlinx.datetime.LocalTime
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -28,8 +31,18 @@ enum class ParkingLotFeature {
     UNCOVERED,
     COVERED,
     UNDERGROUND,
+    GUARDED,
 }
 
+
+@Serializable
+@JsExport
+enum class PaymentMethod {
+    CASH,
+    CARD,
+    CONTACTLESS,
+    MOBILE,
+}
 
 fun DayOfWeek.human() = name.lowercase().replaceFirstChar { it.uppercase() }
 
@@ -107,8 +120,11 @@ object DurationSerializer : KSerializer<Duration> {
 @Serializable
 @JsExport
 data class ParkingLotRule(
-    val weekdays: ParkingLotWeekdays? = null,
-    val hours: ParkingLotHours? = null,
+    // https://schema.org/openingHours
+    // https://wiki.openstreetmap.org/wiki/Key:opening_hours
+    val hours: String,
+    // If not empty, then include only those from this list
+    val includes: Set<ParkingSpotType> = emptySet(),
     val pricing: List<ParkingLotPricingRule>,
 )
 
@@ -149,7 +165,7 @@ object ParkingLotResourceSerializer : KSerializer<ParkingLotResource> {
 @JsExport
 enum class ParkingSpotType {
     CAR,
-    CAR_HANDICAP,
+    CAR_DISABLED,
     CAR_ELECTRIC,
     MOTORCYCLE,
 }
@@ -163,38 +179,21 @@ data class ParkingLotMetadata(
     val resources: List<ParkingLotResource>,
     @SerialName("total-spots")
     val totalSpots: Map<ParkingSpotType, UInt>,
+
+    // Max width in centimeters
+    @SerialName("max-width")
+    val maxWidth: Int? = null,
+    // Max height in centimeters
+    @SerialName("max-height")
+    val maxHeight: Int? = null,
+
     val features: List<ParkingLotFeature>,
-    val comment: Map<LanguageCode, String> = mapOf(),
+    @SerialName("payment-methods")
+    val paymentMethods: List<PaymentMethod>,
+    val comment: Map<LanguageCode, String>,
     val currency: String,
     val rules: List<ParkingLotRule>,
-) {
-    fun statusAt(at: Instant): ParkingLotStatus {
-        val dateTime = at.toLocalDateTime(TimeZone.UTC)
-        val weekday = dateTime.dayOfWeek
-        val rule = rules.sortedBy { it.weekdays != null }.find {
-            weekday >= (it.weekdays?.start ?: DayOfWeek.MONDAY) && weekday <= (it.weekdays?.end ?: DayOfWeek.SUNDAY)
-        } ?: return ParkingLotStatus.CLOSED
-        if (rule.hours == null) return ParkingLotStatus.OPEN
-        val startDateTime = rule.hours.start.atDate(dateTime.date)
-        val endDateTime = if (rule.hours.end < rule.hours.start) {
-            rule.hours.end.atDate(dateTime.date.plus(DatePeriod(days = 1)))
-        } else {
-            rule.hours.end.atDate(dateTime.date)
-        }
-        val toStart = dateTime.toInstant(TimeZone.UTC).periodUntil(startDateTime.toInstant(TimeZone.UTC), TimeZone.UTC)
-        val toEnd = dateTime.toInstant(TimeZone.UTC).periodUntil(endDateTime.toInstant(TimeZone.UTC), TimeZone.UTC)
-        val isOpen = dateTime >= startDateTime && dateTime < endDateTime
-        return if (isOpen) {
-            if (toEnd.hours == 0) ParkingLotStatus.CLOSES_SOON else ParkingLotStatus.OPEN
-        } else if (toStart.hours == 0) {
-            ParkingLotStatus.OPENS_SOON
-        } else {
-            ParkingLotStatus.CLOSED
-        }
-    }
-
-    fun status(): ParkingLotStatus = statusAt(Clock.System.now())
-}
+)
 
 @Serializable
 @JsExport
@@ -242,10 +241,27 @@ data class ParkingLot(
                     ParkingLotFeature.UNCOVERED,
                 ),
                 currency = "PLN",
+                paymentMethods = listOf(
+                    PaymentMethod.CASH,
+                    PaymentMethod.CARD,
+                    PaymentMethod.CONTACTLESS,
+                ),
+                comment = mapOf(
+                    "pl" to
+                            "Dla klientow\n" +
+                            "   - kina Helios, 3 godziny parkowania bezpłatne.\n" +
+                            "   - City Fit i Media Markt, 2 godziny parkowania bezpłatne. \n" +
+                            "Abonament miesięczny jest dostępny, po więcej informacji: https://forumgdansk.pl/pl/przydatne-informacje/parking\n\n" +
+                            "Biuro parkingu znajduje się na poziomie +2.\n" +
+                            "Na parkingu znajdują się miejsca parkingowe dla osób niepełnosprawnych oraz rodzin z dziećmi.\n" +
+                            "W godzinach 22:00 – 8:00 wejście na parking możliwe jest wejściem „nocnym” od strony ul. 3 Maja\n" +
+                            "KASY ZNAJDUJĄ SIĘ NA KAŻDYM POZIOMIE PARKIGU PRZY WINDACH\n" +
+                            "Płatności mobilne są realizowane bezdotykowo poprzez aplikację NaviPay (pobierz na Android lub IOS).\n" +
+                            "W przypadku zgubienia biletu parkingowego kopię biletu można wydrukować w kasie parkingowej."
+                ),
                 rules = listOf(
                     ParkingLotRule(
-                        weekdays = null,
-                        hours = null,
+                        hours = "24/7",
                         pricing = listOf(
                             ParkingLotPricingRule(
                                 duration = 30.minutes,
@@ -299,10 +315,33 @@ data class ParkingLot(
                 ),
                 features = listOf(ParkingLotFeature.COVERED, ParkingLotFeature.UNCOVERED),
                 currency = "PLN",
+                paymentMethods = listOf(
+                    PaymentMethod.CASH,
+                    PaymentMethod.CARD,
+                    PaymentMethod.CONTACTLESS,
+                ),
+                comment = mapOf(
+                    "pl" to
+                            "Na dwóch najwyższych kondygnacjach budynku centrum handlowego oferujemy dwupoziomowy parking i 1100 miejsc postojowych. \n" +
+                            "Wjazd do centrum handlowego odbywa się z ronda od strony ulicy Dmowskiego w Gdańsku. \n" +
+                            "Komunikację między poziomami parkingowymi a poziomami handlowymi centrum handlowego zapewniają schody ruchome i windy szybkobieżne.\n" +
+                            "Prosimy o zachowanie biletu parkingowego i opłacenie należności za postój w kasie automatycznej, znajdującej się przy wyjściu z parkingu.",
+                    "en" to
+                            "We have prepared a two-level car park with 1,100 parking spaces (including those for disabled people) for our clients.\n" +
+                            "It is situated on the two top floors of the building. \n" +
+                            "You can get there driving from the roundabout from the direction of Dmowskiego Street. \n" +
+                            "Both levels of the car park can be reached by a spiral parking ramp. \n" +
+                            "Escalators and high-speed lifts will take you from the car park decks to the Gallery's floors and back.",
+                    "ru" to
+                            "We have prepared a two-level car park with 1,100 parking spaces (including those for disabled people) for our clients.\n" +
+                            "It is situated on the two top floors of the building. \n" +
+                            "You can get there driving from the roundabout from the direction of Dmowskiego Street. \n" +
+                            "Both levels of the car park can be reached by a spiral parking ramp. \n" +
+                            "Escalators and high-speed lifts will take you from the car park decks to the Gallery's floors and back."
+                ),
                 rules = listOf(
                     ParkingLotRule(
-                        weekdays = ParkingLotWeekdays(start = DayOfWeek.MONDAY, end = DayOfWeek.SATURDAY),
-                        hours = ParkingLotHours(start = LocalTime(8, 0, 0), end = LocalTime(22, 0, 0)),
+                        hours = "Mo-Sa 08:00-22:00; Su 09:00-21:00",
                         pricing = listOf(
                             ParkingLotPricingRule(
                                 duration = 1.hours,
@@ -327,33 +366,6 @@ data class ParkingLot(
                             ),
                         )
                     ),
-                    ParkingLotRule(
-                        weekdays = ParkingLotWeekdays(start = DayOfWeek.SUNDAY, end = DayOfWeek.SUNDAY),
-                        hours = ParkingLotHours(start = LocalTime(9, 0, 0), end = LocalTime(21, 0, 0)),
-                        pricing = listOf(
-                            ParkingLotPricingRule(
-                                duration = 1.hours,
-                                price = 0.0,
-                            ),
-                            ParkingLotPricingRule(
-                                duration = 2.hours,
-                                price = 2.0,
-                            ),
-                            ParkingLotPricingRule(
-                                duration = 3.hours,
-                                price = 5.0,
-                            ),
-                            ParkingLotPricingRule(
-                                duration = 1.days,
-                                price = 25.0,
-                            ),
-                            ParkingLotPricingRule(
-                                duration = 1.hours,
-                                price = 4.0,
-                                repeating = true,
-                            ),
-                        )
-                    )
                 )
             )
         )

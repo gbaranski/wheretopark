@@ -4,7 +4,7 @@ use std::collections::HashMap;
 use url::Url;
 use wheretopark::LanguageCode;
 
-use wheretopark::parking_lot::Currency;
+use wheretopark::parking_lot::{Currency, PaymentMethod};
 use wheretopark::parking_lot::Feature;
 use wheretopark::parking_lot::{Coordinate, Rule};
 
@@ -21,6 +21,12 @@ pub struct ParkingLot {
     pub address: String,
     pub location: Coordinate,
     pub resources: Vec<Url>,
+    #[serde(default)]
+    pub max_width: Option<i32>,
+    #[serde(default)]
+    pub max_height: Option<i32>,
+    #[serde(default)]
+    pub payment_methods: Vec<PaymentMethod>,
     pub features: Vec<Feature>,
     pub rules: Vec<Rule>,
     #[serde(default)]
