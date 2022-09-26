@@ -4,13 +4,34 @@ parking-lots:
       - mailto:galeria@galeriabaltycka.pl
       - tel:+48-58-521-85-52
       - https://www.galeriabaltycka.pl/o-centrum/dojazd-parkingi/parkingi/
-    total-spots: 1100
+    total-spots:
+      CAR: 1100
+    max-height: 1.9
     features:
       - COVERED
       - UNCOVERED
+    payment-methods:
+      - CASH
+      - CARD
+      - CONTACTLESS
+    comment:
+      pl: |
+        Na dwóch najwyższych kondygnacjach budynku centrum handlowego oferujemy dwupoziomowy parking i 1100 miejsc postojowych. 
+        Wjazd do centrum handlowego odbywa się z ronda od strony ulicy Dmowskiego w Gdańsku. 
+        Komunikację między poziomami parkingowymi a poziomami handlowymi centrum handlowego zapewniają schody ruchome i windy szybkobieżne.
+        Prosimy o zachowanie biletu parkingowego i opłacenie należności za postój w kasie automatycznej, znajdującej się przy wyjściu z parkingu.
+      en: |
+        We have prepared a two-level car park with 1,100 parking spaces (including those for disabled people) for our clients.
+        It is situated on the two top floors of the building. 
+        You can get there driving from the roundabout from the direction of Dmowskiego Street. 
+        Both levels of the car park can be reached by a spiral parking ramp. 
+        Escalators and high-speed lifts will take you from the car park decks to the Gallery's floors and back.
+      ru: |
+        На двух верхних этажах здания торгового центра расположен двухуровневый паркинг на 1100 парковочных мест.
+        В торговый центр можно попасть с кругового перекрестка со стороны улицы Дмовскего в Гданьске.
+        Сообщение между уровнями паркинга и торговыми уровнями центра обеспечивают эскалаторы и скоростные лифты.
     rules:
-      - weekdays: MONDAY-SATURDAY
-        hours: 08:00-22:00
+      - hours: Mo-Sa 08:00-22:00; Su 09:00-21:00
         pricing:
           - duration: PT1H
             price: 0
@@ -23,41 +44,30 @@ parking-lots:
           - duration: PT1H
             price: 4
             repeating: true
-      - weekdays: SUNDAY-SUNDAY
-        hours: 09:00-21:00
-        pricing:
-          - duration: PT1H
-            price: 0
-          - duration: PT2H
-            price: 2
-          - duration: PT3H
-            price: 3
-          - duration: P1D
-            price: 25
-          - duration: PT1H
-            price: 4
-            repeating: true
-
   "2":
     resources:
       - mailto:biuro@gchmanhattan.pl
       - tel:+48-58-767-70-16
       - https://gchmanhattan.pl/o-centrum/
+    total-spots:
+      CAR: 360
     features:
       - UNDERGROUND
-    total-spots: 360
-    # TODO: Add Sunday rule, in Poland on Sundays, this Gallery are only open sometimes
+    # TODO: Find out available payment methods
+    payment-methods:
+    comment:
+      pl: |
+        Dwupoziomowy parking rotacyjny
     rules:
-      - weekdays: MONDAY-FRIDAY
-        hours: 09:00-21:00
+      - hours: Mo-Fr 09:00-21:00
         pricing:
           - duration: PT30M
             price: 0
           - duration: PT1H
             price: 4
             repeating: true
-      - weekdays: SATURDAY-SATURDAY
-        hours: 09:00-21:00
+      # Hours for so called "Niedziela Handlowa"
+      - hours: Jan 30,Apr 10,Apr 24,June 26,Aug 28,Dec 11,Dec 18 10:00-20:00
         pricing:
           - duration: PT30M
             price: 0
@@ -71,12 +81,41 @@ parking-lots:
       - tel:+48-22-354-83-80
       - https://www.apcoa.pl/parking-w/gdansk-1/polsat-plus-arena-gdansk-p4-ul-pok-lechii-gdansk/
       - https://www.apcoa.pl/parking-w/gdansk-1/polsat-plus-arena-gdansk-p3-ul-pok-lechii-gdansk/
+    total-spots:
+      CAR: 2440
+      CAR_DISABLED: 60
+    max-height: -1
     features:
       - UNCOVERED
-    total-spots: 1914
+    payment-methods:
+      - CASH
+      - CARD
+      - CONTACTLESS
+    comment:
+      pl: |
+        Parking naziemny zlokalizowany przy stadionie Energa w Gdańsku.
+        Do dyspozycji klientów jest dostępnych 2500 miejsc parkingowych, w tym 40 bezpłatnych dla osób niepełnosprawnych.
+        Parking jest podzielony na 3 segmenty: 
+          - P5 - od strony Fun Areny, 
+          - P3 i P4 - od ulicy Pokoleń Lechii Gdańsk oraz
+          - P1 - parking szlabanowy VIP.
+        Segmenty P3, P4 i P5 są wyposażone w 12 parkometrów nowej generacji, w których można dokonać płatności nie tylko bilonem, ale również kartą.
+        Parking P5 jest wyposażony w 1 wjazd i 1 wyjazd oraz w 2 kasy automatyczne.
+
+        W dniach imprez masowych można płacić aplikacją FLOW. Ceny zależne od rodzaju imprezy, np. 5/10/20 PLN za czas trwania imprezy.
+      en: |
+        Above-ground car park located by the Energa stadium in Gdańsk.
+        There are about 2500 parking spaces for clients, including 40 free spaces for disabled persons. 
+        The car park is divided into 3 sections: 
+          - P5 - from the Fun Arena side, 
+          - P3 and P4 - from Pokoleń Lechii Gdańsk street side 
+          - P1 - VIP barrier car park. 
+        Sections P3, P4 and P5 are equipped with 12 new-generation parking meters, which accept payments not only in coins, but also by card. 
+        P5 section has 1 entry and 1 exit as well as 2 automatic cash registers.
+        
+        On the days of mass events, you can pay with the FLOW application. Prices depend on the type of event, e.g. 5/10/20 PLN for the duration of the event.
     rules:
-      - weekdays: null
-        hours: null
+      - hours: 24/7
         pricing:
           - duration: PT30M
             price: 1
@@ -85,18 +124,30 @@ parking-lots:
           - duration: PT1H
             price: 4
             repeating: true
+      - hours: 24/7
+        includes:
+          - CAR_DISABLED
+        pricing:
+          - duration: PT1H
+            price: 0
+            repeating: true
 
   "4":
     resources:
       - mailto:parkingi@apcoa.pl
       - tel:+48-22-354-83-80
       - https://www.apcoa.pl/parking-w/gdansk-1/amber-expo-gdansk-ul-zaglowa-11/
+    total-spots:
+      CAR: 510
+    max-height: -1
     features:
       - UNCOVERED
-    total-spots: 510
+    payment-methods:
+      - CASH
+      - CARD
+      - CONTACTLESS
     rules:
-      - weekdays: null
-        hours: null
+      - hours: 24/7
         pricing:
           # You may take this every 4 hours
           - duration: PT30M
@@ -112,12 +163,22 @@ parking-lots:
       - mailto:info@madison.gda.pl
       - tel:+48-58-766-75-39
       - https://madison.gda.pl/pl/parking
+      - https://madison.gda.pl/pl/parking/regulamin-parkingu
+    total-spots:
+      CAR: 111
+      CAR_DISABLED: 4
+      MOTORCYCLE: 2
     features:
       - UNDERGROUND
-    total-spots: 117
+    # TODO: Find out available payment methods
+    payment-methods:
+    comment:
+      pl: |
+        DODATKOWA GODZINA PARKOWANIA GRATIS - za zakupy na kwotę min. 50 zł (szczegóły w pkt. III ust. 4 [Regulaminu Parkingu](https://madison.gda.pl/pl/parking/regulamin-parkingu)).
+        
+        W niedziele i świeta wyjście z parkingu przez Centrum Medyczne Rajska
     rules:
-      - weekdays: MONDAY-FRIDAY
-        hours: 08:00-22:00
+      - hours: Mo-Fr 08:00-22:00
         pricing:
           - duration: PT1H
             price: 0
@@ -128,8 +189,7 @@ parking-lots:
           - duration: PT1H
             price: 8
             repeating: true
-      - weekdays: SATURDAY-SATURDAY
-        hours: 08:00-22:00
+      - hours: Sa 08:00-22:00
         pricing:
           - duration: PT1H
             price: 0
@@ -140,21 +200,14 @@ parking-lots:
           - duration: PT1H
             price: 8
             repeating: true
-      - weekdays: SATURDAY-SATURDAY
-        hours: 08:00-22:00
+      # Make sure it also matches holidays
+      - hours: Su 08:00-22:00
         pricing:
-          - duration: PT1H
-            price: 0
-          - duration: PT2H
-            price: 0
-          - duration: PT3H
-            price: 5
           - duration: PT1H
             price: 5
             repeating: true
       # Night pricing
-      - weekdays: null
-        hours: 22:00-08:00
+      - hours: Mo-Su 22:00-08:00
         pricing:
           - duration: PT1H
             price: 0
@@ -167,12 +220,20 @@ parking-lots:
       - mailto:e.gazda@amuz.gda.pl
       - tel:+48-58-300-92-06
       - https://www.amuz.gda.pl/akademia/infrastruktura/parking,108
+    total-spots:
+      CAR: 215
     features:
       - UNCOVERED
-    total-spots: 215 # TODO: Not sure??
+    # TODO: Find out available payment methods
+    payment-methods:
+    comment:
+      pl: |
+        goście nocujący w Domu Muzyka oraz goście hotelowi nocujący w Domu Sonata, klienci Restauracji Domu Muzyka – bezpłatnie
+        autokar z wycieczką nocującą w Domu Muzyka lub w Domu Sonata lub nocujący tylko kierowca autokaru – opłata indywidualna ustalana przez kierownika Domu Muzyka/Domu Sonata
+        
+        Dla studentów i pracowników aMuz są dostępne specjalne abonamenty, więcej informacji na https://www.amuz.gda.pl/akademia/infrastruktura/parking,108
     rules:
-      - weekdays: null
-        hours: null
+      - hours: 24/7
         pricing:
           - duration: PT30M
             price: 0
@@ -183,12 +244,21 @@ parking-lots:
   "14":
     resources:
       - https://ecs.gda.pl/title,Parking_,pid,601.htm
+      - tel:+48-58-772-40-00
+      - mailto:ecs@ecs.gda.pl
+    total-spots:
+      CAR: 287
     features:
-      - UNCOVERED
-    total-spots: 287
+      - UNDERGROUND
+    payment-methods:
+      - CASH
+    comment:
+      pl: |
+        Zakup biletu wstępu na wystawę stałą: 4 godziny parkowania w cenie biletu / zabierz ze sobą bilet parkingowy, a kupując bilet na wystawę okaż bilet parkingowy w kasie (zrób to nim upłynie 30 minut od chwili zaparkowania)
+      en: |
+        ATTENTION! Ticket to the permanent exhibition | 4 hours parking included in ticket price. Take your parking ticket with you, and when buying your ticket for the permanent exhibition, present your parking ticket at the ticket office (do it before the 30 minutes have passed from the moment you parked)
     rules:
-      - weekdays: null
-        hours: 06:00-22:00
+      - hours: Mo-Su 06:00-22:00
         pricing:
           - duration: PT30M
             price: 0
@@ -207,13 +277,21 @@ parking-lots:
       - mailto:bartlomiej.jablonski@carpark.com.pl
       - tel:+48-661-552-882
       - https://galeriametropolia.pl/parking/
+    total-spots:
+      CAR: 1500
     features:
       - UNCOVERED
       - COVERED
-    total-spots: 1500
+    # TODO: Find out available payment methods
+    payment-methods:
+    comment:
+      pl: |
+        Klienci kina Helios - pierwsze 3h bezpłatnie (bilet parkingowy należy okazać w kasie kina)
+        
+        Miejsca abonamentowe znajduję się na poziomie +3 (zadaszone) oraz na parkingu zewnętrznym.
+        Parking na poziomie 0 nie oferuje możliwości miejsc abonamentowych.
     rules:
-      - weekdays: null
-        hours: null
+      - hours: 24/7
         pricing:
           - duration: PT1H
             price: 0
@@ -221,9 +299,10 @@ parking-lots:
             price: 3
           - duration: PT3H
             price: 7
-          # TODO: Make that available only on the UNCOVERED parking lot
           - duration: PT24H
             price: 17
+          - duration: P1M
+            price: 150
           - duration: PT1H
             price: 5
             repeating: true
@@ -233,13 +312,32 @@ parking-lots:
       - mailto:parking@forumgdansk.pl
       - tel:+48-661-551-882
       - https://forumgdansk.pl/pl/przydatne-informacje/parking
+    total-spots:
+      CAR: 1008
+    max-height: 2
     features:
       - COVERED
       - UNCOVERED
-    total-spots: 1008
+    comment:
+      pl: |
+        Dla klientow
+          - kina Helios, 3 godziny parkowania bezpłatne.
+          - City Fit i Media Markt, 2 godziny parkowania bezpłatne. 
+        
+        Abonament miesięczny jest dostępny, po więcej informacji: https://forumgdansk.pl/pl/przydatne-informacje/parking
+        
+        Biuro parkingu znajduje się na poziomie +2.
+        Na parkingu znajdują się miejsca parkingowe dla osób niepełnosprawnych oraz rodzin z dziećmi.
+        
+        W godzinach 22:00 – 8:00 wejście na parking możliwe jest wejściem „nocnym” od strony ul. 3 Maja
+        
+        KASY ZNAJDUJĄ SIĘ NA KAŻDYM POZIOMIE PARKIGU PRZY WINDACH
+        
+        Płatności mobilne są realizowane bezdotykowo poprzez aplikację NaviPay (pobierz na Android lub IOS).
+        
+        W przypadku zgubienia biletu parkingowego kopię biletu można wydrukować w kasie parkingowej.
     rules:
-      - weekdays: null
-        hours: null
+      - hours: 24/7
         pricing:
           - duration: PT30M
             price: 0
@@ -250,7 +348,7 @@ parking-lots:
           - duration: PT3H
             price: 13
           - duration: PT1H
-            price: 10
+            price: 4
             repeating: true
 
   "18":
@@ -258,37 +356,109 @@ parking-lots:
       - mailto:parkingi@apcoa.pl
       - tel:+48-22-354-83-80
       - https://www.apcoa.pl/parking-w/gdansk-1/gdansk-ul-blekitna/
+    total-spots:
+      CAR: 197
+    max-height: -1
     features:
       - UNCOVERED
-    total-spots: 197
+    payment-methods:
+      - CASH
+      - CARD
+      - CONTACTLESS
+    comment:
+      pl: |
+        Po wcześniejszym zgłoszeniu obsłudze przez kierującego takiej potrzeby pierwszy kwadrans będzie bezpłatny. 
+        Po godzinie 17:00 do dnia następnego do godziny 9:00 za pozostawienie samochodu na parkingu nie trzeba będzie płacić.
+        Z konieczności wniesienia opłaty za wjazd na parkingi nadmorskie zwolnione będą osoby niepełnosprawne, posiadające  identyfikatora „N+” wydany przez Gdański Zarząd Dróg i Zieleni lub odpowiadający mu dokument wydany przez innego zarządcę drogi. 
+        Bezpłatny będzie również postój pojazdów elektrycznych i PHEV w rozumieniu Ustawy o elektromobilności i paliwach alternatywnych. 
+        W tym przypadku podstawą będzie niebieska naklejka na szybie pojazdu z symbolem EE, karta zerowej stawki opłat na pojazdy PHEV a także zielona tablica rejestracyjna lub wskazanie gniazdka do ładowania samochodu pracownikowi obsługi przy wjeździe na parking.
     rules:
-      - weekdays: MONDAY-SUNDAY
-        hours: 09:00-19:00
+      - hours: Mo-Su 09:00-19:00
         pricing:
           - duration: P1D
             price: 10
+      - hours: 24/7
+        pricing:
+          - duration: P1H
+            price: 0
+            repeating: true
+      - hours: 24/7
+        pricing:
+          - duration: P1H
+            includes:
+              - CAR_ELECTRIC
+              - CAR_DISABLED
+            price: 0
+            repeating: true
 
   "19":
-    resources: [ ]
+    resources:
+      - https://www.apcoa.pl/parking-w/gdansk-1/gdansk-ul-kapliczna/
+      - https://gzdiz.gda.pl/aktualnosci/parkingi-nadmorskie-w-sezonie-letnim-2021,a,4773
+    total-spots:
+      CAR: 60
+    max-height: -1
     features:
       - UNCOVERED
-    total-spots: 60
+    payment-methods:
+      - CASH
+      - CARD
+      - CONTACTLESS
+    comment:
+      pl: |
+        Po wcześniejszym zgłoszeniu obsłudze przez kierującego takiej potrzeby pierwszy kwadrans będzie bezpłatny. 
+        Po godzinie 17:00 do dnia następnego do godziny 9:00 za pozostawienie samochodu na parkingu nie trzeba będzie płacić.
+        Z konieczności wniesienia opłaty za wjazd na parkingi nadmorskie zwolnione będą osoby niepełnosprawne, posiadające  identyfikatora „N+” wydany przez Gdański Zarząd Dróg i Zieleni lub odpowiadający mu dokument wydany przez innego zarządcę drogi. 
+        Bezpłatny będzie również postój pojazdów elektrycznych i PHEV w rozumieniu Ustawy o elektromobilności i paliwach alternatywnych. 
+        W tym przypadku podstawą będzie niebieska naklejka na szybie pojazdu z symbolem EE, karta zerowej stawki opłat na pojazdy PHEV a także zielona tablica rejestracyjna lub wskazanie gniazdka do ładowania samochodu pracownikowi obsługi przy wjeździe na parking.
     rules:
-      - weekdays: MONDAY-SUNDAY
-        hours: 09:00-19:00
+      - hours: Mo-Su 09:00-19:00
         pricing:
           - duration: P1D
             price: 10
+      - hours: 24/7
+        pricing:
+          - duration: P1H
+            price: 0
+            repeating: true
+      - hours: 24/7
+        pricing:
+          - duration: P1H
+            includes:
+              - CAR_ELECTRIC
+              - CAR_DISABLED
+            price: 0
+            repeating: true
 
-  # TODO: Verify
   "21":
-    resources: [ ]
+    resources:
+      - https://gzdiz.gda.pl/aktualnosci/parkingi-nadmorskie-w-sezonie-letnim-2021,a,4773
     features:
       - UNCOVERED
-    total-spots: 340
+    total-spots:
+      CAR: 340
+    comment:
+      pl: |
+        Po wcześniejszym zgłoszeniu obsłudze przez kierującego takiej potrzeby pierwszy kwadrans będzie bezpłatny. 
+        Po godzinie 17:00 do dnia następnego do godziny 9:00 za pozostawienie samochodu na parkingu nie trzeba będzie płacić.
+        Z konieczności wniesienia opłaty za wjazd na parkingi nadmorskie zwolnione będą osoby niepełnosprawne, posiadające  identyfikatora „N+” wydany przez Gdański Zarząd Dróg i Zieleni lub odpowiadający mu dokument wydany przez innego zarządcę drogi. 
+        Bezpłatny będzie również postój pojazdów elektrycznych i PHEV w rozumieniu Ustawy o elektromobilności i paliwach alternatywnych. 
+        W tym przypadku podstawą będzie niebieska naklejka na szybie pojazdu z symbolem EE, karta zerowej stawki opłat na pojazdy PHEV a także zielona tablica rejestracyjna lub wskazanie gniazdka do ładowania samochodu pracownikowi obsługi przy wjeździe na parking.
     rules:
-      - weekdays: MONDAY-SUNDAY
-        hours: 09:00-19:00
+      - hours: Mo-Su 09:00-19:00
         pricing:
           - duration: P1D
             price: 10
+      - hours: 24/7
+        pricing:
+          - duration: P1H
+            price: 0
+            repeating: true
+      - hours: 24/7
+        pricing:
+          - duration: P1H
+            includes:
+              - CAR_ELECTRIC
+              - CAR_DISABLED
+            price: 0
+            repeating: true

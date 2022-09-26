@@ -40,8 +40,7 @@ parking-lots:
   #     - points: [[1073, 553], [1147, 542], [1138, 462], [1077, 464]]
   #     - points: [[1149, 542], [1203, 535], [1184, 460], [1137, 464]]
   #     - points: [[1207, 533], [1251, 525], [1226, 458], [1186, 461]]
-  -
-    name: Parking przy Krytej Pływalni
+  - name: Parking przy Krytej Pływalni
     address: Jana Pawła II, 57-300 Kłodzko
     location:
       latitude: 50.4369156
@@ -50,31 +49,22 @@ parking-lots:
       - https://www.basenklodzko.pl/files/regulamin_parkingu_kryta_plywalnia.pdf
       - mailto:basen@basenklodzko.pl
       - tel:+48-725-112-666
+    max-width: 210
+    max-height: -1
     features:
       - UNCOVERED
     currency: PLN
+    payment-methods:
+      - CASH
+      - CARD
+      - CONTACTLESS
     rules:
-      - weekdays: MONDAY-FRIDAY
-        hours: 07:00-20:30
+      - hours: Mo-Su 07:00-20:30
         pricing:
           - duration: PT1H
             price: 3
             repeating: true
-      - weekdays: MONDAY-FRIDAY
-        hours: 20:30-07:00
-        pricing:
-          - duration: PT1H
-            price: 0
-            repeating: true
-
-      - weekdays: SATURDAY-SUNDAY
-        hours: 07:00-20:30
-        pricing:
-          - duration: PT1H
-            price: 3
-            repeating: true
-      - weekdays: SATURDAY-SUNDAY
-        hours: 20:30-07:00
+      - hours: Mo-Su 20:30-07:00
         pricing:
           - duration: PT1H
             price: 0
@@ -138,8 +128,7 @@ parking-lots:
       - points: [[336, 472], [347, 463], [373, 475], [352, 488]]
       - points: [[356, 464], [365, 456], [393, 460], [372, 474]]
 
-  -
-    name: Parking przy twierdzy w Kłodzku
+  - name: Parking przy twierdzy w Kłodzku
     address: Zofii Stryjeńskiej 9, 57-304 Kłodzko
     location:
       latitude: 50.4391208
@@ -150,12 +139,13 @@ parking-lots:
       - mailto:twierdza@twierdza.klodzko.pl
       - tel:+48-74-867-34-68
       - tel:+48-74-647-21-30
+    max-height: -1
     features:
       - UNCOVERED
     currency: PLN
+    payment-methods:
     rules:
-      - weekdays: null
-        hours: null
+      - hours: 24/7
         pricing:
           - duration: PT1H
             price: 0
