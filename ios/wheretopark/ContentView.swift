@@ -10,6 +10,50 @@ import MapKit
 import CoreLocation
 import UIKit
 
+struct PrimarySheetView: View {
+    @EnvironmentObject var appState: AppState
+    @EnvironmentObject var locationManager: LocationManager
+    
+    var body: some View {
+        if appState.fetchFailed {
+            Text("Error: \(appState.fetchError?.localizedDescription ?? "")")
+            SendFeedback(
+                message: {
+                    """
+                    Hi, I could not open up the application.
+                    Error: \(appState.fetchError?.localizedDescription ?? "Unknown")
+                    """
+                },
+                attachment: nil
+            )
+        } else if appState.parkingLots.isEmpty {
+            LoadingView(description: "Loading parking lot data")
+        } else {
+            ListView()
+                .environmentObject(appState)
+                .environmentObject(locationManager)
+        }
+    }
+}
+
+struct SecondarySheetView: View {
+    @EnvironmentObject var appState: AppState
+    
+    var body: some View {
+        if appState.selectedParkingLotID != nil && appState.selectedParkingLot.wrappedValue != nil {
+            DetailsView(
+                id: appState.selectedParkingLotID!,
+                parkingLot: appState.selectedParkingLot.wrappedValue!,
+                onDismiss: {
+                    appState.selectedParkingLotID = nil
+                }
+            )
+            .padding([.top, .horizontal])
+            .environmentObject(appState)
+        }
+    }
+}
+
 struct ContentView: View {
     @EnvironmentObject var appState: AppState
     @EnvironmentObject var locationManager: LocationManager
@@ -38,7 +82,7 @@ struct ContentView: View {
             selectedDetentIdentifier: $primaryBottomSheetDetent,
             isModalInPresentation: true
         ) {
-            ListView()
+            PrimarySheetView()
                 .environmentObject(appState)
                 .environmentObject(locationManager)
         }
@@ -46,14 +90,8 @@ struct ContentView: View {
             isPresented: $secondaryBottomSheetVisible,
             selectedDetentIdentifier: $secondaryBottomSheetDetent
         ) {
-            DetailsView(
-                onDismiss: {
-                    appState.selectedParkingLotID = nil
-                },
-                favouriteManager: FavouriteManager(id: $appState.selectedParkingLotID)
-            )
-            .padding([.top, .horizontal])
-            .environmentObject(appState)
+            SecondarySheetView()
+                .environmentObject(appState)
         }
         .onChange(of: appState.selectedParkingLotID) { id in
             if id != nil {
