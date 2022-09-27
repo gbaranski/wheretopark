@@ -1,20 +1,19 @@
 version: "3.8"
 services:
   authorization:
-    ports:
-      - "5002:80"
     build:
       context: .
       dockerfile: authorization/Dockerfile
+    ports:
+      - "5001:80"
     environment:
       PORT: 80
+      GIN_MODE: release
+      JWT_SECRET: ${JWT_SECRET?JWT_SECRET not set}
       APPLICATION_CLIENT_ID: ${APPLICATION_CLIENT_ID?APPLICATION_CLIENT_ID not set}
       APPLICATION_CLIENT_SECRET: ${APPLICATION_CLIENT_SECRET?APPLICATION_CLIENT_SECRET not set}
       PROVIDER_CLIENT_ID: ${PROVIDER_CLIENT_ID?PROVIDER_CLIENT_ID not set}
       PROVIDER_CLIENT_SECRET: ${PROVIDER_CLIENT_SECRET?PROVIDER_CLIENT_SECRET not set}
-      JWT_SECRET: ${JWT_SECRET}
-    networks:
-      - net
     healthcheck:
       test: curl --fail http://localhost/health-check || exit 1
       interval: 5s
@@ -22,15 +21,13 @@ services:
       retries: 10
 
   storekeeper:
-    image: wheretopark-storekeeper
+    image: ghcr.io/wheretopark/storekeeper:latest
     ports:
-      - "5001:80"
+      - "5002:80"
     environment:
       PORT: 80
       STORE_URI: redis://redis
-      JWT_SECRET: ${JWT_SECRET}
-    networks:
-      - net
+      JWT_SECRET: ${JWT_SECRET?JWT_SECRET not set}
     depends_on:
       - redis
     healthcheck:
@@ -40,9 +37,7 @@ services:
       retries: 10
 
   providers-tristar:
-    image: wheretopark-provider-tristar
-    networks:
-      - net
+    image: ghcr.io/wheretopark/providers-tristar:latest
     environment:
       STOREKEEPER_URL: http://storekeeper
       AUTHORIZATION_URL: http://authorization
@@ -54,8 +49,3 @@ services:
 
   redis:
     image: redis
-    networks:
-      - net
-
-networks:
-  net:
