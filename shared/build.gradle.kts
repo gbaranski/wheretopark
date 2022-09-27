@@ -51,7 +51,9 @@ kotlin {
             }
         }
         val jvmMain by getting {
-            dependencies {}
+            dependencies {
+                implementation("io.leonard:opening-hours-evaluator:1.3.0")
+            }
         }
         val jvmTest by getting {
             dependencies {
