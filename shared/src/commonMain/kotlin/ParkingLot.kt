@@ -213,6 +213,7 @@ fun Map<ParkingLotID, ParkingLot>.split(): Pair<Map<ParkingLotID, ParkingLotMeta
 data class ParkingLot(
     val metadata: ParkingLotMetadata,
     val state: ParkingLotState,
+    val status: ParkingLotStatus,
 ) {
     companion object {
         val forumGdansk = ParkingLot(
@@ -286,8 +287,8 @@ data class ParkingLot(
                         )
                     )
                 ),
-            )
-
+            ),
+            status = ParkingLotStatus.OPEN,
         )
 
         val galeriaBaltycka = ParkingLot(
@@ -367,7 +368,8 @@ data class ParkingLot(
                         )
                     ),
                 )
-            )
+            ),
+            status = ParkingLotStatus.OPEN,
         )
     }
 }

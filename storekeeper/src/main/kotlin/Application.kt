@@ -17,6 +17,7 @@ import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import status
 import statusAt
 import java.net.URI
 import java.time.LocalDateTime
@@ -99,7 +100,7 @@ fun Application.configure(store: Store, config: Config) {
                     val states = store.getStates()
                     val parkingLots = metadatas.map { (id, metadata) ->
                         states[id]?.let {
-                            id to ParkingLot(metadata, it)
+                            id to ParkingLot(metadata, it, status = metadata.status())
                         }
                     }.filterNotNull().toMap()
                     call.respond(parkingLots)
@@ -153,7 +154,7 @@ fun Application.configure(store: Store, config: Config) {
                         val id = call.parameters["id"] ?: throw BadRequestException("Missing ID")
                         val metadata = store.getMetadata(id) ?: throw NotFoundException("Metadata not found for $id")
                         val state = store.getState(id) ?: throw NotFoundException("State not found for $id")
-                        call.respond(ParkingLot(metadata, state))
+                        call.respond(ParkingLot(metadata, state, metadata.status()))
                     }
                     get("/metadata") {
                         if (!validateScope(call, AccessType.ReadMetadata)) return@get
