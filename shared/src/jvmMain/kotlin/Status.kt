@@ -4,6 +4,12 @@ import ch.poole.openinghoursparser.OpeningHoursParser
 import io.leonard.OpeningHoursEvaluator
 import kotlinx.datetime.toJavaZoneId
 import java.time.LocalDateTime
+import java.time.ZoneId
+
+fun ParkingLotMetadata.status(): ParkingLotStatus {
+    val now = LocalDateTime.now(ZoneId.of("UTC"))
+    return statusAt(now)
+}
 
 fun ParkingLotMetadata.statusAt(dateTime: LocalDateTime): ParkingLotStatus {
     val zonedDateTime = dateTime.atZone(timezone.toJavaZoneId()).toLocalDateTime()
