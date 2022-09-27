@@ -44,13 +44,13 @@ class FavouritesStore {
 
 class FavouriteManager: ObservableObject {
     static let store = FavouritesStore()
-    @Binding var id: ParkingLotID?
+    let id: ParkingLotID?
     
     @Published var isFavourite: Bool
     
-    init(id: Binding<ParkingLotID?>) {
-        self._id = id
-        self.isFavourite = (id.wrappedValue != nil) ? Self.store.exists(id: id.wrappedValue!) : false
+    init(id: ParkingLotID) {
+        self.id = id
+        self.isFavourite = Self.store.exists(id: id)
     }
     
     func add() {

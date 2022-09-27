@@ -12,120 +12,119 @@ import shared
 import MessageUI
 
 struct DetailsView: View {
-    @EnvironmentObject var appState: AppState
+    let id: ParkingLotID
+    let parkingLot: ParkingLot
     var onDismiss: (() -> Void)? = nil
     
-    var id: ParkingLotID {
-        get { appState.selectedParkingLotID! }
-    }
-    var parkingLot: ParkingLot {
-        get { appState.selectedParkingLot.wrappedValue! }
-    }
     @State private var isSharing = false
     @ObservedObject var favouriteManager: FavouriteManager
     var isFavourite: Bool {
         get { favouriteManager.isFavourite }
     }
     
+    init(id: ParkingLotID, parkingLot: ParkingLot, onDismiss: (() -> Void)? = nil) {
+        self.id = id
+        self.parkingLot = parkingLot
+        self.onDismiss = onDismiss
+        self.favouriteManager = FavouriteManager(id: id)
+    }
+    
     var body: some View {
-        
         ScrollView(showsIndicators: false) {
             VStack(alignment: .leading, spacing: 10) {
-                if appState.isSelected.wrappedValue {
-                    HStack {
-                        Text(parkingLot.metadata.name).font(.title).fontWeight(.bold).multilineTextAlignment(.leading)
-                        if let onDismiss = onDismiss {
-                            Spacer()
-                            Button(action: onDismiss) {
-                                ZStack {
-                                    Circle()
-                                        .frame(width: 30, height: 30)
-                                        .foregroundColor(Color(.secondarySystemFill))
-                                    Image(systemName: "xmark")
-                                        .font(Font.body.weight(.bold))
-                                        .foregroundColor(.secondary)
-                                        .imageScale(.medium)
-                                        .frame(width: 44, height: 44)
-                                }
+                HStack {
+                    Text(parkingLot.metadata.name).font(.title).fontWeight(.bold).multilineTextAlignment(.leading)
+                    if let onDismiss = onDismiss {
+                        Spacer()
+                        Button(action: onDismiss) {
+                            ZStack {
+                                Circle()
+                                    .frame(width: 30, height: 30)
+                                    .foregroundColor(Color(.secondarySystemFill))
+                                Image(systemName: "xmark")
+                                    .font(Font.body.weight(.bold))
+                                    .foregroundColor(.secondary)
+                                    .imageScale(.medium)
+                                    .frame(width: 44, height: 44)
                             }
                         }
                     }
-                    HStack {
-                        Button(action: navigate) {
-                            Label("Navigate", systemImage: "car.fill").frame(maxWidth: .infinity)
+                }
+                HStack {
+                    Button(action: navigate) {
+                        Label("Navigate", systemImage: "car.fill").frame(maxWidth: .infinity)
+                    }
+                    .controlSize(.large)
+                    .buttonStyle(.borderedProminent)
+                    .frame(maxWidth: .infinity)
+                    
+                    Menu {
+                        Button(
+                            action: {
+                                isFavourite ? favouriteManager.remove() : favouriteManager.add()
+                            }
+                        ) {
+                            Label(
+                                isFavourite ? "Remove from favourites" : "Add to favourites",
+                                systemImage: isFavourite ? "star.fill" : "star"
+                            )
+                        }
+                        Button(action: {
+                            isSharing = true
+                        }) {
+                          Label("Share", systemImage: "square.and.arrow.up")
+                        }
+                    } label: {
+                        Button(action: {}) {
+                            Label("More", systemImage: "ellipsis")
                         }
                         .controlSize(.large)
-                        .buttonStyle(.borderedProminent)
-                        .frame(maxWidth: .infinity)
-                        
-                        Menu {
-                            Button(
-                                action: {
-                                    isFavourite ? favouriteManager.remove() : favouriteManager.add()
-                                }
-                            ) {
-                                Label(
-                                    isFavourite ? "Remove from favourites" : "Add to favourites",
-                                    systemImage: isFavourite ? "star.fill" : "star"
-                                )
-                            }
-                            Button(action: {
-                                isSharing = true
-                            }) {
-                              Label("Share", systemImage: "square.and.arrow.up")
-                            }
-                        } label: {
-                            Button(action: {}) {
-                                Label("More", systemImage: "ellipsis")
-                            }
-                            .controlSize(.large)
-                            .buttonStyle(.bordered)
+                        .buttonStyle(.bordered)
+                    }
+                }
+                HStack{
+                    VStack(alignment: .leading) {
+                        Text("AVAILABILITY").fontWeight(.black).font(.caption).foregroundColor(.secondary)
+                        Text("\(parkingLot.state.availableSpots[ParkingSpotType.car] ?? 0) cars").fontWeight(.heavy).foregroundColor(.yellow)
+                    }
+                    Divider()
+                    VStack(alignment: .leading) {
+                        Text("HOURS").fontWeight(.black).font(.caption).foregroundColor(.secondary)
+                        let status = parkingLot.status
+                        switch status {
+                        case .opensSoon:
+                            Text("Opens soon").fontWeight(.heavy).foregroundColor(.yellow)
+                        case .open:
+                            Text("Open").fontWeight(.heavy).foregroundColor(.green)
+                        case .closesSoon:
+                            Text("Closes soon").fontWeight(.heavy).foregroundColor(.yellow)
+                        case .closed:
+                            Text("Closed").fontWeight(.heavy).foregroundColor(.red)
+                        default:
+                            fatalError("unknown status \(status)")
                         }
                     }
-                    HStack{
-                        VStack(alignment: .leading) {
-                            Text("AVAILABILITY").fontWeight(.black).font(.caption).foregroundColor(.secondary)
-                            Text("\(parkingLot.state.availableSpots[ParkingSpotType.car] ?? 0) cars").fontWeight(.heavy).foregroundColor(.yellow)
-                        }
-                        Divider()
-                        VStack(alignment: .leading) {
-                            Text("HOURS").fontWeight(.black).font(.caption).foregroundColor(.secondary)
-                            let status = parkingLot.status
-                            switch status {
-                            case .opensSoon:
-                                Text("Opens soon").fontWeight(.heavy).foregroundColor(.yellow)
-                            case .open:
-                                Text("Open").fontWeight(.heavy).foregroundColor(.green)
-                            case .closesSoon:
-                                Text("Closes soon").fontWeight(.heavy).foregroundColor(.yellow)
-                            case .closed:
-                                Text("Closed").fontWeight(.heavy).foregroundColor(.red)
-                            default:
-                                fatalError("unknown status \(status)")
-                            }
-                        }
-                        Divider()
-                        VStack(alignment: .leading) {
-                            let formatter = RelativeDateTimeFormatter()
-                            let _ = formatter.locale = Locale(identifier: "en")
-                            let lastUpdated = Date(timeIntervalSince1970: TimeInterval(parkingLot.state.lastUpdated.epochSeconds))
-                            let lastUpdatedString = formatter.localizedString(for: lastUpdated, relativeTo: Date.now)
-                            Text("UPDATED").fontWeight(.black).font(.caption).foregroundColor(.secondary)
-                            Text("\(lastUpdatedString)").fontWeight(.bold)
-                        }
-                        
-                    }.frame(maxWidth: .infinity)
-                    Text("Pricing").font(.title2).fontWeight(.bold)
-                    DetailsPricingView(metadata: parkingLot.metadata)
-                    Text("Additional info").font(.title2).fontWeight(.bold)
-                    DetailsAdditionalInfoView(id: id, metadata: parkingLot.metadata)
-                    DetailsSendFeedbackView(id: id, metadata: parkingLot.metadata, takeSnapshot: { self.environmentObject(appState).snapshot() })
-                        .frame(
-                            maxWidth: .infinity,
-                            maxHeight: .infinity,
-                            alignment: .center
-                        )
-                }
+                    Divider()
+                    VStack(alignment: .leading) {
+                        let formatter = RelativeDateTimeFormatter()
+                        let _ = formatter.locale = Locale(identifier: "en")
+                        let lastUpdated = Date(timeIntervalSince1970: TimeInterval(parkingLot.state.lastUpdated.epochSeconds))
+                        let lastUpdatedString = formatter.localizedString(for: lastUpdated, relativeTo: Date.now)
+                        Text("UPDATED").fontWeight(.black).font(.caption).foregroundColor(.secondary)
+                        Text("\(lastUpdatedString)").fontWeight(.bold)
+                    }
+                    
+                }.frame(maxWidth: .infinity)
+                Text("Pricing").font(.title2).fontWeight(.bold)
+                DetailsPricingView(metadata: parkingLot.metadata)
+                Text("Additional info").font(.title2).fontWeight(.bold)
+                DetailsAdditionalInfoView(id: id, metadata: parkingLot.metadata)
+                DetailsSendFeedbackView(id: id, metadata: parkingLot.metadata, takeSnapshot: { self.snapshot() })
+                    .frame(
+                        maxWidth: .infinity,
+                        maxHeight: .infinity,
+                        alignment: .center
+                    )
             }
         }.background(SharingViewController(isPresenting: $isSharing) {
             let url = URL(string: UtilitiesKt.getShareURL(id: id))
@@ -175,8 +174,6 @@ struct DetailsPricingView: View {
             }
         }
     }
-    
-    
 }
 
 struct DetailsAdditionalInfoView: View {

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		68119F4F28E358A500E5B5C3 /* LoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68119F4E28E358A500E5B5C3 /* LoadingView.swift */; };
 		681513DB28B6D20A00172310 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 681513CE28B6D20900172310 /* AppState.swift */; };
 		681513DD28B6D20A00172310 /* DetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 681513D028B6D20900172310 /* DetailsView.swift */; };
 		681513DE28B6D20A00172310 /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 681513D228B6D20900172310 /* Utilities.swift */; };
@@ -46,6 +47,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		68119F4E28E358A500E5B5C3 /* LoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingView.swift; sourceTree = "<group>"; };
 		681513CE28B6D20900172310 /* AppState.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
 		681513D028B6D20900172310 /* DetailsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailsView.swift; sourceTree = "<group>"; };
 		681513D128B6D20900172310 /* UISheetPresentationControllerDetent+Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UISheetPresentationControllerDetent+Private.h"; sourceTree = "<group>"; };
@@ -146,6 +148,7 @@
 				68E00A3A28DD1F980091A864 /* LaunchScreen.storyboard */,
 				68E00A3C28DD29B60091A864 /* Development.xcconfig */,
 				68E00A3D28DD2AE50091A864 /* Production.xcconfig */,
+				68119F4E28E358A500E5B5C3 /* LoadingView.swift */,
 			);
 			path = wheretopark;
 			sourceTree = "<group>";
@@ -337,6 +340,7 @@
 				681513DB28B6D20A00172310 /* AppState.swift in Sources */,
 				681513DD28B6D20A00172310 /* DetailsView.swift in Sources */,
 				68E03A8B28CFFE0B00D70F29 /* MailView.swift in Sources */,
+				68119F4F28E358A500E5B5C3 /* LoadingView.swift in Sources */,
 				68A5B4FC28D16B32000343D8 /* FavouritesStore.swift in Sources */,
 				6885B39428B6D0A300860E55 /* ContentView.swift in Sources */,
 				681513DE28B6D20A00172310 /* Utilities.swift in Sources */,
