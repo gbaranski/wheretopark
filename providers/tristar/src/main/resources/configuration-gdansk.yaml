@@ -6,7 +6,7 @@ parking-lots:
       - https://www.galeriabaltycka.pl/o-centrum/dojazd-parkingi/parkingi/
     total-spots:
       CAR: 1100
-    max-height: 1.9
+    max-height: 190
     features:
       - COVERED
       - UNCOVERED
@@ -54,7 +54,7 @@ parking-lots:
     features:
       - UNDERGROUND
     # TODO: Find out available payment methods
-    payment-methods:
+    payment-methods: []
     comment:
       pl: |
         Dwupoziomowy parking rotacyjny
@@ -67,7 +67,7 @@ parking-lots:
             price: 4
             repeating: true
       # Hours for so called "Niedziela Handlowa"
-      - hours: Jan 30,Apr 10,Apr 24,June 26,Aug 28,Dec 11,Dec 18 10:00-20:00
+      - hours: Jan 30,Apr 10,Apr 24,Jun 26,Aug 28,Dec 11,Dec 18 10:00-20:00
         pricing:
           - duration: PT30M
             price: 0
@@ -171,7 +171,7 @@ parking-lots:
     features:
       - UNDERGROUND
     # TODO: Find out available payment methods
-    payment-methods:
+    payment-methods: []
     comment:
       pl: |
         DODATKOWA GODZINA PARKOWANIA GRATIS - za zakupy na kwotę min. 50 zł (szczegóły w pkt. III ust. 4 [Regulaminu Parkingu](https://madison.gda.pl/pl/parking/regulamin-parkingu)).
@@ -225,7 +225,7 @@ parking-lots:
     features:
       - UNCOVERED
     # TODO: Find out available payment methods
-    payment-methods:
+    payment-methods: []
     comment:
       pl: |
         goście nocujący w Domu Muzyka oraz goście hotelowi nocujący w Domu Sonata, klienci Restauracji Domu Muzyka – bezpłatnie
@@ -283,7 +283,7 @@ parking-lots:
       - UNCOVERED
       - COVERED
     # TODO: Find out available payment methods
-    payment-methods:
+    payment-methods: []
     comment:
       pl: |
         Klienci kina Helios - pierwsze 3h bezpłatnie (bilet parkingowy należy okazać w kasie kina)
@@ -301,8 +301,8 @@ parking-lots:
             price: 7
           - duration: PT24H
             price: 17
-          - duration: P1M
-            price: 150
+#          - duration: P1M
+#            price: 150
           - duration: PT1H
             price: 5
             repeating: true
@@ -314,7 +314,7 @@ parking-lots:
       - https://forumgdansk.pl/pl/przydatne-informacje/parking
     total-spots:
       CAR: 1008
-    max-height: 2
+    max-height: 200
     features:
       - COVERED
       - UNCOVERED
@@ -379,15 +379,15 @@ parking-lots:
             price: 10
       - hours: 24/7
         pricing:
-          - duration: P1H
+          - duration: PT1H
             price: 0
             repeating: true
       - hours: 24/7
+        includes:
+          - CAR_ELECTRIC
+          - CAR_DISABLED
         pricing:
-          - duration: P1H
-            includes:
-              - CAR_ELECTRIC
-              - CAR_DISABLED
+          - duration: PT1H
             price: 0
             repeating: true
 
@@ -418,15 +418,15 @@ parking-lots:
             price: 10
       - hours: 24/7
         pricing:
-          - duration: P1H
+          - duration: PT1H
             price: 0
             repeating: true
       - hours: 24/7
+        includes:
+          - CAR_ELECTRIC
+          - CAR_DISABLED
         pricing:
-          - duration: P1H
-            includes:
-              - CAR_ELECTRIC
-              - CAR_DISABLED
+          - duration: PT1H
             price: 0
             repeating: true
 
@@ -451,14 +451,14 @@ parking-lots:
             price: 10
       - hours: 24/7
         pricing:
-          - duration: P1H
+          - duration: PT1H
             price: 0
             repeating: true
       - hours: 24/7
+        includes:
+          - CAR_ELECTRIC
+          - CAR_DISABLED
         pricing:
-          - duration: P1H
-            includes:
-              - CAR_ELECTRIC
-              - CAR_DISABLED
+          - duration: PT1H
             price: 0
             repeating: true
