@@ -3,10 +3,7 @@
 
 package app.wheretopark.shared
 
-import kotlinx.datetime.Clock
-import kotlinx.datetime.DayOfWeek
-import kotlinx.datetime.Instant
-import kotlinx.datetime.LocalTime
+import kotlinx.datetime.*
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -114,7 +111,7 @@ data class ParkingLotPricingRule(
 object DurationSerializer : KSerializer<Duration> {
     override val descriptor = PrimitiveSerialDescriptor("Duration", PrimitiveKind.STRING)
     override fun serialize(encoder: Encoder, value: Duration) = encoder.encodeString(value.toIsoString())
-    override fun deserialize(decoder: Decoder) = Duration.parse(decoder.decodeString())
+    override fun deserialize(decoder: Decoder) = Duration.parseIsoString(decoder.decodeString())
 }
 
 @Serializable
@@ -192,6 +189,7 @@ data class ParkingLotMetadata(
     val paymentMethods: List<PaymentMethod>,
     val comment: Map<LanguageCode, String>,
     val currency: String,
+    val timezone: TimeZone,
     val rules: List<ParkingLotRule>,
 )
 
@@ -259,6 +257,7 @@ data class ParkingLot(
                             "Płatności mobilne są realizowane bezdotykowo poprzez aplikację NaviPay (pobierz na Android lub IOS).\n" +
                             "W przypadku zgubienia biletu parkingowego kopię biletu można wydrukować w kasie parkingowej."
                 ),
+                timezone = TimeZone.of("Europe/Warsaw"),
                 rules = listOf(
                     ParkingLotRule(
                         hours = "24/7",
@@ -339,6 +338,7 @@ data class ParkingLot(
                             "Both levels of the car park can be reached by a spiral parking ramp. \n" +
                             "Escalators and high-speed lifts will take you from the car park decks to the Gallery's floors and back."
                 ),
+                timezone = TimeZone.of("Europe/Warsaw"),
                 rules = listOf(
                     ParkingLotRule(
                         hours = "Mo-Sa 08:00-22:00; Su 09:00-21:00",
