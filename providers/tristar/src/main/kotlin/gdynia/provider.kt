@@ -12,6 +12,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
+import kotlinx.datetime.*
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
@@ -78,6 +79,7 @@ class TristarGdyniaProvider : Provider() {
                 paymentMethods = configuration.paymentMethods,
                 comment = configuration.comment,
                 currency = "PLN",
+                timezone = TimeZone.of("Europe/Warsaw"),
                 rules = configuration.rules,
             )
             id to metadata

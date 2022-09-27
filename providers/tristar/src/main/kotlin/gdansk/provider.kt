@@ -8,10 +8,12 @@ import io.ktor.client.call.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.request.*
 import io.ktor.serialization.kotlinx.json.*
+import kotlinx.datetime.TimeZone
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
+import java.util.*
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
@@ -28,7 +30,7 @@ data class ParkingLotConfiguration(
     val maxHeight: Int? = null,
     val features: List<ParkingLotFeature>,
     @SerialName("payment-methods")
-    val paymentMethods: List<PaymentMethod>,
+    val paymentMethods: List<PaymentMethod> = listOf(),
     val comment: Map<LanguageCode, String> = mapOf(),
     val rules: List<ParkingLotRule>,
 )
@@ -79,6 +81,7 @@ class TristarGdanskProvider : Provider() {
                 currency = "PLN",
                 paymentMethods = configuration.paymentMethods,
                 comment = configuration.comment,
+                timezone = TimeZone.of("Europe/Warsaw"),
                 rules = configuration.rules,
             )
             id to metadata
