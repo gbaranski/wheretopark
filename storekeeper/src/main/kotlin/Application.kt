@@ -17,7 +17,10 @@ import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import statusAt
 import java.net.URI
+import java.time.LocalDateTime
+import java.time.ZoneId
 
 data class Config(
     val jwtSecret: String,
@@ -134,6 +137,15 @@ fun Application.configure(store: Store, config: Config) {
                         call.respondText("updated ${newStates.count()} states", status = HttpStatusCode.Accepted)
                     }
                 }
+                get("/status") {
+                    if (!validateScope(call, AccessType.ReadStatus)) return@get
+                    val metadatas = store.getMetadatas()
+                    val now = LocalDateTime.now(ZoneId.of("UTC"))
+                    val statuses = metadatas.map { (id, metadata) ->
+                        id to metadata.statusAt(now)
+                    }.toMap()
+                    call.respond(statuses)
+                }
                 route("/{id}") {
                     get {
                         if (!validateScope(call, AccessType.ReadMetadata)) return@get
@@ -154,6 +166,14 @@ fun Application.configure(store: Store, config: Config) {
                         val id = call.parameters["id"] ?: throw BadRequestException("Missing ID")
                         val state = store.getState(id) ?: throw NotFoundException("State not found for $id")
                         call.respond(state)
+                    }
+                    get("/status") {
+                        if (!validateScope(call, AccessType.ReadStatus)) return@get
+                        val id = call.parameters["id"] ?: throw BadRequestException("Missing ID")
+                        val metadata = store.getMetadata(id) ?: throw NotFoundException("Metadata not found for $id")
+                        val now = LocalDateTime.now(ZoneId.of("UTC"))
+                        val status = metadata.statusAt(now)
+                        call.respond(status)
                     }
                 }
             }

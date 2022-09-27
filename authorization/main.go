@@ -35,10 +35,12 @@ var (
 	ApplicationAccessTypes = []string{
 		"read:metadata",
 		"read:state",
+		"read:status",
 	}
 	ProviderAccessTypes = []string{
 		"read:metadata",
 		"read:state",
+		"read:status",
 		"write:metadata",
 		"write:state",
 	}
@@ -163,7 +165,7 @@ func NewJWTAccessGenerate(key []byte, method jwt.SigningMethod) *JWTAccessGenera
 }
 
 // Token based on the UUID generated token
-func (a *JWTAccessGenerate) Token(ctx context.Context, data *oauth2.GenerateBasic, isGenRefresh bool) (string, string, error) {
+func (a *JWTAccessGenerate) Token(_ context.Context, data *oauth2.GenerateBasic, isGenRefresh bool) (string, string, error) {
 	log.Printf("scope=%s\n", data.TokenInfo.GetScope())
 
 	claims := JWTAccessClaims{

@@ -21,6 +21,7 @@ enum class AccessType(val code: String) {
     WriteMetadata("write:metadata"),
     ReadState("read:state"),
     WriteState("write:state"),
+    ReadStatus("read:status"),
 }
 
 fun Set<AccessType>.encode() = this.joinToString(" ") { it.code }
