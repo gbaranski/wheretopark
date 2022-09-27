@@ -11,11 +11,12 @@ import UIKit
 import MessageUI
 
 struct MailView: UIViewControllerRepresentable {
-    let parkingLotID: String
-    let image: UIImage
+    let message: () -> String
+    let attachment: (() -> UIImage)?
+    @Binding var result: Result<MFMailComposeResult, Error>?
+    
     let email: String = "contact@wheretopark.app"
     @Environment(\.presentationMode) var presentation
-    @Binding var result: Result<MFMailComposeResult, Error>?
 
     class Coordinator: NSObject, MFMailComposeViewControllerDelegate {
 
@@ -51,17 +52,10 @@ struct MailView: UIViewControllerRepresentable {
         let vc = MFMailComposeViewController()
         vc.setToRecipients([email])
         vc.setSubject("User feedback")
-//        let imageString = image.pngData()!.base64EncodedString(options: .lineLength64Characters)
-        vc.setMessageBody(
-            """
-            <p>Hi, I've got a problem with parking lot of ID: \(parkingLotID)</p>
-            <br/>
-            <p>My problem is: (describe your problem here)</p>
-            """,
-//            <img src='data:image/png;base64,\(imageString)' width='\(image.size.width)' height='\(image.size.height)'>
-            isHTML: true
-        )
-        vc.addAttachmentData(image.pngData()!, mimeType: "image/png", fileName: "screenshot.png")
+        vc.setMessageBody(message(), isHTML: true)
+        if let attachment = attachment?() {
+            vc.addAttachmentData(attachment.pngData()!, mimeType: "image/png", fileName: "screenshot.png")
+        }
         vc.mailComposeDelegate = context.coordinator
         return vc
     }
@@ -69,5 +63,30 @@ struct MailView: UIViewControllerRepresentable {
     func updateUIViewController(_ uiViewController: MFMailComposeViewController,
                                 context: UIViewControllerRepresentableContext<MailView>) {
 
+    }
+}
+
+
+struct SendFeedback: View {
+    let message: () -> String
+    let attachment: (() -> UIImage)?
+    
+    @State private var result: Result<MFMailComposeResult, Error>? = nil
+    @State private var isShowingMailView = false
+
+    var body: some View {
+        Button(action: {
+            self.isShowingMailView = true
+        }) {
+            Text("Send a feedback")
+        }
+        .disabled(!MFMailComposeViewController.canSendMail())
+        .sheet(isPresented: $isShowingMailView) {
+            MailView(
+                message: message,
+                attachment: attachment,
+                result: self.$result
+            )
+        }
     }
 }

@@ -90,7 +90,7 @@ struct DetailsView: View {
                         Divider()
                         VStack(alignment: .leading) {
                             Text("HOURS").fontWeight(.black).font(.caption).foregroundColor(.secondary)
-                            let status = parkingLot.metadata.status()
+                            let status = parkingLot.status
                             switch status {
                             case .opensSoon:
                                 Text("Opens soon").fontWeight(.heavy).foregroundColor(.yellow)
@@ -154,12 +154,7 @@ struct DetailsPricingView: View {
     var body: some View {
         Group {
             ForEach(Array(metadata.rules.enumerated()), id: \.1) { i, rule in
-                if let weekdays: ParkingLotWeekdays = rule.weekdays {
-                    Text(weekdays.human()).font(.body).fontWeight(.bold)
-                }
-                if let hours: ParkingLotHours = rule.hours {
-                    Text(hours.human()).font(.caption).fontWeight(.bold)
-                }
+                Text(rule.hours).font(.body).fontWeight(.bold)
                 ForEach(rule.pricing, id: \.self) { price in
                     let priceString = price.price.formatted(.currency(code: metadata.currency))
                     HStack {
@@ -228,36 +223,19 @@ struct DetailsSendFeedbackView: View {
     let metadata: ParkingLotMetadata
     let takeSnapshot: () -> UIImage
     
-    @State var result: Result<MFMailComposeResult, Error>? = nil
-    @State var lastSnapshot: UIImage? = nil
-    private var isShowingMailView: Binding<Bool> {
-        Binding {
-            return lastSnapshot != nil
-        } set: { isShowing in
-            if (!isShowing) {
-                lastSnapshot = nil
-            } else {
-                fatalError("unexpected isShowing to be true")
-            }
-        }
-        
-    }
-    
     var body: some View {
-        
-        Button(action: {
-            self.lastSnapshot = takeSnapshot()
-        }) {
-            Text("Send a feedback")
-        }
-        .disabled(!MFMailComposeViewController.canSendMail())
-        .sheet(isPresented: isShowingMailView) {
-            MailView(
-                parkingLotID: id,
-                image: lastSnapshot!,
-                result: self.$result
-            )
-        }
+        SendFeedback(
+            message: {
+                """
+                <p>Hi, I've got a problem with parking lot of ID: \(id)</p>
+                <br/>
+                <p>My problem is: (describe your problem here)</p>
+                """
+            },
+            attachment: {
+                takeSnapshot()
+            }
+        )
     }
 }
 

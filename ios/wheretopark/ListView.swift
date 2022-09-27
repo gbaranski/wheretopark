@@ -23,7 +23,16 @@ struct ListView: View {
     
     var body: some View {
         if appState.fetchFailed {
-            Text("Unable to fetch remote data. Contact contact@wheretopark.app")
+            Text("Error: \(appState.fetchError?.localizedDescription ?? "")")
+            SendFeedback(
+                message: {
+                    """
+                    Hi, I could not open up the application.
+                    Error: \(appState.fetchError?.localizedDescription ?? "Unknown")
+                    """
+                },
+                attachment: nil
+            )
         } else if appState.parkingLots.isEmpty {
             ProgressView(showLoadingText ? "Loading parking lot data" : "")
                 .task(delayLoadingText)
