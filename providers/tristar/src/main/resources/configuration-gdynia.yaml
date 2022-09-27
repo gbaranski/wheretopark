@@ -180,7 +180,7 @@ parking-lots:
       - CONTACTLESS
       - MOBILE
     rules:
-      - hours: Mo-Su 08:00-20:00; 24 Dec,25 Dec 08:00-14:00
+      - hours: Mo-Su 08:00-20:00, Dec 24-25 08:00-14:00
         pricing:
           - duration: PT1H
             price: 3.90
@@ -191,7 +191,7 @@ parking-lots:
           - duration: PT1H
             price: 3.90
             repeating: true
-      - hours: Mo-Su 20:00-08:00; 24 Dec,25 Dec 14:00-08:00
+      - hours: Mo-Su 20:00-08:00, Dec 24-25 14:00-08:00
         pricing:
           - duration: PT1H
             price: 0
