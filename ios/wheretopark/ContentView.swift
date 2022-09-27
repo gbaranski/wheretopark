@@ -55,7 +55,6 @@ struct ContentView: View {
             .padding([.top, .horizontal])
             .environmentObject(appState)
         }
-        .alert(isPresented: $appState.fetchFailed, error: appState.fetchError, actions: {})
         .onChange(of: appState.selectedParkingLotID) { id in
             if id != nil {
                 primaryBottomSheetDetent = .small

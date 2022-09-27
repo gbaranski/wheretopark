@@ -66,16 +66,9 @@ typealias ParkingLotID = String
         isPerformingTask = true
         defer { isPerformingTask = false }
         do {
-            let metadatas = try await storekeeperClient.metadatas()
-            let states = try await storekeeperClient.states()
-            self.parkingLots = Dictionary(uniqueKeysWithValues: metadatas.compactMap{ id, metadata in
-                let state = states[id]
-                if state == nil {
-                    return nil
-                } else {
-                    return (id, ParkingLot(metadata: metadata, state: state!))
-                }
-            })
+            self.parkingLots = try await storekeeperClient.parkingLots()
+            self.fetchError = nil
+            self.fetchFailed = false
         } catch {
             print("error \(error)")
             self.fetchError = FetchError(
