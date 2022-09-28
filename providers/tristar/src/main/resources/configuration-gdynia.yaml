@@ -43,7 +43,7 @@ parking-lots:
             price: 0
             repeating: true
       - hours: 24/7
-        includes:
+        applies:
           - CAR_ELECTRIC
           - CAR_DISABLED
         pricing:
@@ -95,7 +95,7 @@ parking-lots:
             price: 0
             repeating: true
       - hours: 24/7
-        includes:
+        applies:
           - CAR_ELECTRIC
           - CAR_DISABLED
         pricing:
@@ -148,7 +148,7 @@ parking-lots:
             price: 0
             repeating: true
       - hours: 24/7
-        includes:
+        applies:
           - CAR_ELECTRIC
           - CAR_DISABLED
         pricing:

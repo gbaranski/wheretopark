@@ -125,7 +125,7 @@ parking-lots:
             price: 4
             repeating: true
       - hours: 24/7
-        includes:
+        applies:
           - CAR_DISABLED
         pricing:
           - duration: PT1H
@@ -377,13 +377,13 @@ parking-lots:
         pricing:
           - duration: P1D
             price: 10
-      - hours: 24/7
+      - hours: Mo-Su 19:00-09:00
         pricing:
           - duration: PT1H
             price: 0
             repeating: true
       - hours: 24/7
-        includes:
+        applies:
           - CAR_ELECTRIC
           - CAR_DISABLED
         pricing:
@@ -416,13 +416,13 @@ parking-lots:
         pricing:
           - duration: P1D
             price: 10
-      - hours: 24/7
+      - hours: Mo-Su 19:00-09:00
         pricing:
           - duration: PT1H
             price: 0
             repeating: true
       - hours: 24/7
-        includes:
+        applies:
           - CAR_ELECTRIC
           - CAR_DISABLED
         pricing:
@@ -449,13 +449,13 @@ parking-lots:
         pricing:
           - duration: P1D
             price: 10
-      - hours: 24/7
+      - hours: Mo-Su 19:00-09:00
         pricing:
           - duration: PT1H
             price: 0
             repeating: true
       - hours: 24/7
-        includes:
+        applies:
           - CAR_ELECTRIC
           - CAR_DISABLED
         pricing:
