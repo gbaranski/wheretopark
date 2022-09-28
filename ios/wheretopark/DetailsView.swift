@@ -116,7 +116,7 @@ struct DetailsView: View {
                     
                 }.frame(maxWidth: .infinity)
                 Text("Pricing").font(.title2).fontWeight(.bold)
-                DetailsPricingView(metadata: parkingLot.metadata)
+                DetailsRulesView(metadata: parkingLot.metadata)
                 Text("Additional info").font(.title2).fontWeight(.bold)
                 DetailsAdditionalInfoView(id: id, metadata: parkingLot.metadata)
                 DetailsSendFeedbackView(id: id, metadata: parkingLot.metadata, takeSnapshot: { self.snapshot() })
@@ -147,33 +147,80 @@ struct DetailsView: View {
     }
 }
 
-struct DetailsPricingView: View {
+struct DetailsRulesView: View {
     let metadata: ParkingLotMetadata
     
     var body: some View {
         Group {
             ForEach(Array(metadata.rules.enumerated()), id: \.1) { i, rule in
-                Text(rule.hours).font(.body).fontWeight(.bold)
-                ForEach(rule.pricing, id: \.self) { price in
-                    let priceString = price.price.formatted(.currency(code: metadata.currency))
-                    HStack {
-                        if price.repeating {
-                            Text("Each additional \(price.durationString)")
-                        } else {
-                            Text("\(price.durationString)")
-                        }
-                        Spacer()
-                        if price.price == 0 {
-                            Text("Free").bold()
-                        } else {
-                            Text(priceString)
-                        }
-                    }
-                    Divider()
-                }
+                DetailsRuleView(rule: rule, currency: metadata.currency)
             }
         }
     }
+}
+
+struct DetailsRuleView: View {
+    let rule: ParkingLotRule
+    let currency: String
+    
+    var body: some View {
+        HStack(alignment: .center) {
+            VStack(alignment: .leading) {
+                ForEach(Array(rule.expandHours().enumerated()), id: \.1) { i, hours in
+                    Text(hours.trimmingCharacters(in: .whitespacesAndNewlines)).font(.body).fontWeight(.bold)
+                }
+            }
+            HStack {
+                ForEach(Array((rule.applies ?? []).enumerated()), id: \.1) { i, spotType in
+                    switch(spotType) {
+                    case .car:
+                        Image(systemName: "car.fill")
+                    case .carDisabled:
+                        Text("♿️")
+                    case .carElectric:
+                        Image(systemName: "bolt.car.fill")
+                    case .motorcycle:
+                        Image(systemName: "bicycle")
+                    default:
+                        Image(systemName: "questionmark.diamond")
+                    }
+                    if i != (rule.applies?.count ?? 0) - 1 {
+                        Divider()
+                    }
+                }
+            }.frame(
+                maxWidth: .infinity,
+                alignment: .topTrailing
+            )
+        }
+        DetailsRulePricingView(rule: rule, currency: currency)
+    }
+}
+
+struct DetailsRulePricingView: View {
+    let rule: ParkingLotRule
+    let currency: String
+    
+    var body: some View {
+        ForEach(rule.pricing, id: \.self) { price in
+            let priceString = price.price.formatted(.currency(code: currency))
+            HStack {
+                if price.repeating {
+                    Text("Each additional \(price.durationString)")
+                } else {
+                    Text("\(price.durationString)")
+                }
+                Spacer()
+                if price.price == 0 {
+                    Text("Free").bold()
+                } else {
+                    Text(priceString)
+                }
+            }
+            Divider()
+        }
+    }
+    
 }
 
 struct DetailsAdditionalInfoView: View {
@@ -237,11 +284,11 @@ struct DetailsSendFeedbackView: View {
 }
 
 
-//struct DetailsView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        DetailsView(
-////            id: Binding.constant(ParkingLot.companion.galeriaBaltycka.metadata.location.hash(length: 12)),
-////            parkingLot: Binding.constant(ParkingLot.companion.galeriaBaltycka),
-//        ).padding()
-//    }
-//}
+struct DetailsView_Previews: PreviewProvider {
+    static var previews: some View {
+        DetailsView(
+            id: ParkingLot.companion.galeriaBaltycka.metadata.location.hash(length: 12),
+            parkingLot: ParkingLot.companion.galeriaBaltycka
+        ).padding([.horizontal])
+    }
+}
