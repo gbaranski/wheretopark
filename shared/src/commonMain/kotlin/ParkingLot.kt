@@ -43,58 +43,6 @@ enum class PaymentMethod {
 
 fun DayOfWeek.human() = name.lowercase().replaceFirstChar { it.uppercase() }
 
-@Serializable(with = ParkingLotWeekdaysSerializer::class)
-@JsExport
-data class ParkingLotWeekdays(
-    val start: DayOfWeek,
-    val end: DayOfWeek
-) {
-    fun human() = "${start.human()}-${end.human()}"
-}
-
-object ParkingLotWeekdaysSerializer : KSerializer<ParkingLotWeekdays> {
-    override val descriptor = PrimitiveSerialDescriptor("ParkingLotWeekdays", PrimitiveKind.STRING)
-    private const val delimiter = '-'
-    override fun serialize(encoder: Encoder, value: ParkingLotWeekdays) {
-        val string = "${value.start}${delimiter}${value.end}"
-        encoder.encodeString(string)
-    }
-
-    override fun deserialize(decoder: Decoder): ParkingLotWeekdays {
-        val string = decoder.decodeString()
-        val split = string.split(delimiter, limit = 2)
-        val start = DayOfWeek.valueOf(split[0])
-        val end = DayOfWeek.valueOf(split[1])
-        return ParkingLotWeekdays(start, end)
-    }
-}
-
-@Serializable(with = ParkingLotHoursSerializer::class)
-@JsExport
-data class ParkingLotHours(
-    val start: LocalTime,
-    val end: LocalTime
-) {
-    fun human() = "${start}-${end}"
-}
-
-object ParkingLotHoursSerializer : KSerializer<ParkingLotHours> {
-    override val descriptor = PrimitiveSerialDescriptor("ParkingLotHours", PrimitiveKind.STRING)
-    override fun serialize(encoder: Encoder, value: ParkingLotHours) {
-        val string = "${value.start}-${value.end}"
-        encoder.encodeString(string)
-    }
-
-    override fun deserialize(decoder: Decoder): ParkingLotHours {
-        val string = decoder.decodeString()
-        val split = string.split('-', limit = 2)
-        val start = LocalTime.parse(split[0])
-        val end = LocalTime.parse(split[1])
-        return ParkingLotHours(start, end)
-    }
-}
-
-
 fun Duration.human() = this.toString()
 
 @Serializable
@@ -120,10 +68,14 @@ data class ParkingLotRule(
     // https://schema.org/openingHours
     // https://wiki.openstreetmap.org/wiki/Key:opening_hours
     val hours: String,
-    // If not empty, then include only those from this list
-    val includes: Set<ParkingSpotType> = emptySet(),
+    // If not null, then applies to only those from this list
+    val applies: Set<ParkingSpotType>? = null,
     val pricing: List<ParkingLotPricingRule>,
-)
+) {
+    fun expandHours(): List<String> {
+        return hours.split(';')
+    }
+}
 
 @Serializable
 @JsExport
@@ -343,6 +295,10 @@ data class ParkingLot(
                 rules = listOf(
                     ParkingLotRule(
                         hours = "Mo-Sa 08:00-22:00; Su 09:00-21:00",
+                        applies = setOf(
+                            ParkingSpotType.CAR_DISABLED,
+                            ParkingSpotType.CAR_ELECTRIC
+                        ),
                         pricing = listOf(
                             ParkingLotPricingRule(
                                 duration = 1.hours,
