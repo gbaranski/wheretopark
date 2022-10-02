@@ -7,15 +7,15 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import app.wheretopark.shared.ParkingLot
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 
 @Composable
 fun ListView(parkingLotViewModel: ParkingLotViewModel) {
@@ -51,14 +51,14 @@ fun RowView(parkingLot: ParkingLot, onClick: () -> Unit) {
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun ListViewBottomSheet(parkingLotViewModel: ParkingLotViewModel, content: @Composable () -> Unit) {
+fun ListBottomSheet(parkingLotViewModel: ParkingLotViewModel, content: @Composable () -> Unit) {
     val scaffoldState = rememberBottomSheetScaffoldState()
     val searchTextState = remember { mutableStateOf(TextFieldValue("")) }
+    val coroutineScope = rememberCoroutineScope()
+    val configuration = LocalConfiguration.current
 
     LaunchedEffect(parkingLotViewModel.selectedParkingLotID, block = {
-        if (parkingLotViewModel.selectedParkingLotID == null) {
-            scaffoldState.bottomSheetState.expand()
-        } else {
+        if (parkingLotViewModel.selectedParkingLotID != null) {
             scaffoldState.bottomSheetState.collapse()
         }
     })
@@ -69,12 +69,18 @@ fun ListViewBottomSheet(parkingLotViewModel: ParkingLotViewModel, content: @Comp
                 Modifier.align(Alignment.CenterHorizontally).padding(top = 10.dp)
             )
             Column(modifier = Modifier.padding(10.dp)) {
-                SearchView(state = searchTextState)
+                SearchView(state = searchTextState, onTextFieldFocus = { state ->
+                    if (state.hasFocus) {
+                        coroutineScope.launch {
+                            scaffoldState.bottomSheetState.expand()
+                        }
+                    }
+                })
                 ListView(parkingLotViewModel)
             }
         },
         scaffoldState = scaffoldState,
-        sheetPeekHeight = 90.dp,
+        sheetPeekHeight = (configuration.screenHeightDp * 0.4).dp,
     ) {
         content()
     }

@@ -3,28 +3,29 @@ package app.wheretopark.android
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.material.ExperimentalMaterialApi
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.*
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import app.wheretopark.android.ui.theme.WheretoparkTheme
-import app.wheretopark.shared.ParkingLot
-import app.wheretopark.shared.ParkingLotID
-import app.wheretopark.shared.StorekeeperClient
+import app.wheretopark.shared.*
 import kotlinx.coroutines.launch
 
 
 class MainActivity : ComponentActivity() {
+    @RequiresApi(33)
     override fun onCreate(savedInstanceState: Bundle?) {
-        val parkingLotViewModel = ParkingLotViewModel()
         super.onCreate(savedInstanceState)
+        val clientID = getString(R.string.client_id)
+        val clientSecret = getString(R.string.client_secret)
+        val parkingLotViewModel = ParkingLotViewModel(clientID, clientSecret)
         setContent {
             MainView(parkingLotViewModel)
         }
     }
 }
 
-@OptIn(ExperimentalMaterialApi::class)
+@RequiresApi(33)
 @Composable
 fun MainView(parkingLotViewModel: ParkingLotViewModel) {
     WheretoparkTheme {
@@ -32,8 +33,8 @@ fun MainView(parkingLotViewModel: ParkingLotViewModel) {
             parkingLotViewModel.fetchParkingLots()
         })
 
-        ParkingLotViewBottomSheet(parkingLotViewModel) {
-            ListViewBottomSheet(parkingLotViewModel) {
+        DetailsBottomSheet(parkingLotViewModel) {
+            ListBottomSheet(parkingLotViewModel) {
                 MapView(parkingLotViewModel)
             }
         }
@@ -41,22 +42,26 @@ fun MainView(parkingLotViewModel: ParkingLotViewModel) {
 
 }
 
-class ParkingLotViewModel : ViewModel() {
+class ParkingLotViewModel(clientID: String, clientSecret: String) : ViewModel() {
     val parkingLots = mutableStateMapOf<ParkingLotID, ParkingLot>()
     var selectedParkingLotID by mutableStateOf<ParkingLotID?>(null)
-    private val storekeeperClient = StorekeeperClient()
+    private val authorizationClient = AuthorizationClient(clientID = clientID, clientSecret = clientSecret)
+    private val storekeeperClient = StorekeeperClient(
+        authorizationClient = authorizationClient,
+        accessScope = setOf(
+            AccessType.ReadMetadata, AccessType.ReadState, AccessType.ReadStatus
+        )
+    )
 
     fun fetchParkingLots() {
         println("fetching parking lots")
         viewModelScope.launch {
-            val states = storekeeperClient.states()
-            val metadatas = storekeeperClient.metadatas()
-            metadatas.map { (id, metadata) ->
-                id to ParkingLot(metadata = metadata, state = states[id]!!)
-            }.forEach { (id, parkingLot) ->
-                parkingLots[id] = parkingLot
+            val newParkingLots = storekeeperClient.parkingLots()
+            println("retrieved ${newParkingLots.count()} parking lots")
+            parkingLots.clear()
+            newParkingLots.forEach { (key, value) ->
+                parkingLots[key] = value
             }
-            println("retrieved ${parkingLots.count()} parking lots")
         }
     }
 }

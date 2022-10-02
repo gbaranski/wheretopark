@@ -1,18 +1,20 @@
 package app.wheretopark.android
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.OutlinedTextField
-import androidx.compose.material.TextFieldDefaults
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusState
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.TextStyle
@@ -21,13 +23,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun SearchView(state: MutableState<TextFieldValue>) {
+fun SearchView(state: MutableState<TextFieldValue>, onTextFieldFocus: (FocusState) -> Unit) {
     OutlinedTextField(
         value = state.value,
         onValueChange = { value ->
             state.value = value
         },
         modifier = Modifier
+            .onFocusChanged(onTextFieldFocus)
             .fillMaxWidth(),
         textStyle = TextStyle(color = Color.White, fontSize = 18.sp),
         leadingIcon = {
@@ -69,5 +72,19 @@ fun SearchView(state: MutableState<TextFieldValue>) {
             unfocusedIndicatorColor = Color.Transparent,
             disabledIndicatorColor = Color.Transparent
         )
+    )
+}
+
+@Composable
+internal fun BottomSheetHandle(
+    modifier: Modifier = Modifier
+) {
+    Box(
+        modifier
+            .size(40.dp, 2.dp)
+            .background(
+                color = MaterialTheme.colors.onSurface.copy(alpha = 0.5f),
+                shape = CircleShape
+            )
     )
 }

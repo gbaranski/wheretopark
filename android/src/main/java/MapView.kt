@@ -1,11 +1,15 @@
 package app.wheretopark.android
 
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import app.wheretopark.shared.ParkingLot
 import app.wheretopark.shared.ParkingLotID
+import com.google.android.gms.maps.CameraUpdate
+import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
@@ -33,17 +37,19 @@ fun MapView(parkingLotViewModel: ParkingLotViewModel) {
     LaunchedEffect(parkingLotViewModel.selectedParkingLotID, block = {
         val parkingLot =
             parkingLotViewModel.parkingLots[parkingLotViewModel.selectedParkingLotID] ?: return@LaunchedEffect
-        cameraPositionState.position = CameraPosition.fromLatLngZoom(
+        val cameraPosition = CameraPosition.fromLatLngZoom(
             LatLng(
                 parkingLot.metadata.location.latitude,
                 parkingLot.metadata.location.longitude,
             ),
             15f,
         )
+        val cameraUpdate = CameraUpdateFactory.newCameraPosition(cameraPosition)
+        cameraPositionState.animate(cameraUpdate, 1000)
     })
 
     GoogleMap(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxWidth().fillMaxHeight(0.6F),
         cameraPositionState = cameraPositionState,
         uiSettings = uiSettings,
         properties = properties

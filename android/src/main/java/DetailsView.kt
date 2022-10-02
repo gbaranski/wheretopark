@@ -24,14 +24,13 @@ import java.util.*
 
 
 @Composable
-fun ParkingLotView(parkingLot: ParkingLot) {
+fun DetailsView(parkingLot: ParkingLot) {
     val context = LocalContext.current
     var miscMenuExpanded by remember { mutableStateOf(false) }
 
 
     fun addToFavourites() {
         Toast.makeText(context, "Added to favourites", Toast.LENGTH_SHORT).show()
-        // TODO: Add to favourties
     }
 
     fun openGoogleMaps() {
@@ -109,22 +108,15 @@ fun ParkingLotView(parkingLot: ParkingLot) {
         }
         Divider(modifier = Modifier.padding(10.dp))
         Text("Pricing", style = MaterialTheme.typography.h5, fontWeight = FontWeight.Bold)
-        ParkingLotRulesView(metadata = parkingLot.metadata)
+        RulesView(metadata = parkingLot.metadata)
     }
 }
 
 @Composable
-fun ParkingLotRulesView(metadata: ParkingLotMetadata) {
+fun RulesView(metadata: ParkingLotMetadata) {
     metadata.rules.map { rule ->
-        rule.weekdays?.also { weekdays ->
-            val start = weekdays.start.name.lowercase().replaceFirstChar { it.uppercaseChar() }
-            val end = weekdays.end.name.lowercase().replaceFirstChar { it.uppercaseChar() }
-            val interval = "${start}-${end}"
-            Text(interval, style = MaterialTheme.typography.subtitle1, fontWeight = FontWeight.Bold)
-        }
-        rule.hours?.also {
-            val interval = "${it.start}-${it.end}"
-            Text(interval, style = MaterialTheme.typography.subtitle2, fontWeight = FontWeight.Bold)
+        rule.expandHours().map { hours ->
+            Text(hours, style = MaterialTheme.typography.subtitle1, fontWeight = FontWeight.Bold)
         }
         rule.pricing.map { pricing ->
             val currency = Currency.getInstance("PLN")
@@ -150,7 +142,7 @@ fun ParkingLotRulesView(metadata: ParkingLotMetadata) {
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun ParkingLotViewBottomSheet(parkingLotViewModel: ParkingLotViewModel, content: @Composable () -> Unit) {
+fun DetailsBottomSheet(parkingLotViewModel: ParkingLotViewModel, content: @Composable () -> Unit) {
     val scaffoldState = rememberBottomSheetScaffoldState()
     var parkingLot by remember {
         mutableStateOf<ParkingLot?>(null)
@@ -166,8 +158,8 @@ fun ParkingLotViewBottomSheet(parkingLotViewModel: ParkingLotViewModel, content:
         }
     }
 
-    LaunchedEffect(scaffoldState.bottomSheetState.targetValue) {
-        if (scaffoldState.bottomSheetState.targetValue == BottomSheetValue.Collapsed) {
+    LaunchedEffect(scaffoldState.bottomSheetState.isCollapsed) {
+        if (scaffoldState.bottomSheetState.isCollapsed) {
             parkingLotViewModel.selectedParkingLotID = null
         }
     }
@@ -197,7 +189,7 @@ fun ParkingLotViewBottomSheet(parkingLotViewModel: ParkingLotViewModel, content:
                                 Icon(Icons.Default.Close, contentDescription = "close view")
                             }
                         }
-                        ParkingLotView(parkingLot!!)
+                        DetailsView(parkingLot!!)
                     }
                 } else {
                     Text("Loading...")
