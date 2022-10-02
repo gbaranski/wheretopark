@@ -18,7 +18,9 @@ const Index = ({parkingLots: parkingLotsJSON}: IndexProps) => {
 
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
+    console.log("about to fetch parking lots")
     const parkingLots = await storekeeperClient.parkingLots()
+    console.log({parkingLots})
     context.res.setHeader(
         'Cache-Control',
         'public, s-maxage=10, stale-while-revalidate=59'

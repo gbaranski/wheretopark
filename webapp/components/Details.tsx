@@ -3,6 +3,7 @@ import {
     Box,
     Collapse,
     Divider,
+    Grid,
     IconButton,
     Link,
     List,
@@ -21,26 +22,33 @@ import {
     ParkingLotPricingRule,
     ParkingLotResource,
     ParkingLotRule,
+    ParkingSpotType,
     toArray,
     toRecord
 } from "../lib/types"
 import {
+    Accessible,
     AccessTimeOutlined,
     ArrowBack,
     Call,
     Directions,
+    DirectionsCar,
     DirectionsCarOutlined,
+    ElectricCar,
     ExpandLess,
     ExpandMore,
     Favorite,
     PlaceOutlined,
     Public,
     PublicOutlined,
+    QuestionMark,
     Share,
     Star,
     StarHalf,
+    TwoWheeler,
     UpdateOutlined
 } from "@mui/icons-material"
+import * as MuiIcon from "@mui/icons-material";
 import {Duration} from 'luxon'
 import {useState} from "react"
 import {capitalizeFirstLetter} from "../lib/utils"
@@ -74,6 +82,21 @@ const PricingRules = ({i, pricing, currency}: { i: number, currency: string, pri
     )
 }
 
+const spotIconName = (type: ParkingSpotType): keyof typeof MuiIcon => {
+    switch(type) {
+        case ParkingSpotType.CAR:
+            return "DirectionsCar";
+        case ParkingSpotType.CAR_DISABLED:
+            return "Accessible";
+        case ParkingSpotType.CAR_ELECTRIC:
+            return "ElectricCar";
+        case ParkingSpotType.MOTORCYCLE:
+            return "TwoWheeler";
+        default:
+            return "QuestionMark";
+    }
+}
+
 const Rules = ({parkingLot}: { parkingLot: ParkingLot }) => {
     const [hoursOpen, setHoursOpen] = useState(false);
     return (
@@ -91,12 +114,26 @@ const Rules = ({parkingLot}: { parkingLot: ParkingLot }) => {
             <Collapse in={hoursOpen} sx={{pl: 9, pr: 5}}>
                 {toArray<ParkingLotRule>(parkingLot.metadata.rules).map((rule, i) => (
                     <div key={i}>
-                        <Typography
-                            variant="h6">{capitalizeFirstLetter(rule.weekdays?.start.toString() ?? "Monday")} - {capitalizeFirstLetter(rule.weekdays?.end.toString() ?? "Sunday")}</Typography>
-                        {rule.hours &&
-                            <Typography
-                                variant="subtitle2">{rule.hours.start.toString()}-{rule.hours.end.toString()}</Typography>
-                        }
+                        <Grid container direction="row" alignItems="center">
+                            <Grid item xs>
+                                {toArray<string>(rule.expandHours()).map((hours, i) => (
+                                    <Typography variant="h6" key={i}>
+                                        {hours}
+                                    </Typography>
+                                ))}
+                            </Grid>
+                            <Grid item direction="row" alignItems="center">
+                                {rule.applies && toArray<ParkingSpotType>(rule.applies).map((type, i) => {
+                                    const iconName = spotIconName(type);
+                                    const Icon = MuiIcon[iconName];
+                                    return (
+                                        // <Box sx={{ display: 'inline-flex', alignItems: 'center'}}>
+                                            <Icon key={i}/>
+                                        // </Box>
+                                    )
+                                })}
+                            </Grid>
+                        </Grid>
                         <PricingRules i={i} pricing={toArray(rule.pricing)} currency={parkingLot.metadata.currency}/>
                     </div>
                 ))}

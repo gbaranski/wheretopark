@@ -71,7 +71,7 @@ kotlin {
         val jsMain by getting {
             dependencies {
                 implementation("io.ktor:ktor-client-js:$ktorVersion")
-                implementation(npm("@js-joda/timezone", "2.12.2"))
+                implementation(npm("@js-joda/timezone", "2.14.0"))
                 implementation("org.jetbrains.kotlin-wrappers:kotlin-js:1.0.0-pre.383")
             }
         }

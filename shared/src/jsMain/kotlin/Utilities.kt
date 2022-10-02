@@ -32,3 +32,9 @@ fun instantToJSDate(from: Instant) = from.toJSDate()
 
 @JsExport
 fun durationToISO(duration: Duration) = duration.toIsoString()
+
+@JsModule("@js-joda/timezone")
+@JsNonModule
+external object JsJodaTimeZoneModule
+
+private val jsJodaTz = JsJodaTimeZoneModule

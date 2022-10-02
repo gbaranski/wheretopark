@@ -13,6 +13,7 @@
     "@emotion/styled": "^11.10.0",
     "@fontsource/roboto": "^4.5.7",
     "@js-joda/core": "^5.3.1",
+    "@js-joda/timezone": "^2.14.0",
     "@mapbox/mapbox-sdk": "^0.13.4",
     "@mui/icons-material": "^5.8.4",
     "@mui/material": "^5.9.2",
