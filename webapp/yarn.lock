@@ -187,6 +187,11 @@
     minimatch "^3.1.2"
     strip-json-comments "^3.1.1"
 
+"@fontsource/josefin-sans@^4.5.11":
+  version "4.5.11"
+  resolved "https://registry.yarnpkg.com/@fontsource/josefin-sans/-/josefin-sans-4.5.11.tgz#46d6fc02d1fed992c68df599132871f65fc412d5"
+  integrity sha512-3JvalsdOJc1XfERcarGsVMFOnPcWTQgMVzptnpg8pT27Al4g16Nj7S0nA4VSkIkyYoPArHGas2n7b1vu3pBHnA==
+
 "@fontsource/roboto@^4.5.7":
   version "4.5.7"
   resolved "https://registry.yarnpkg.com/@fontsource/roboto/-/roboto-4.5.7.tgz#292740a52fa2bac61b89f92e1c588037defe65cb"

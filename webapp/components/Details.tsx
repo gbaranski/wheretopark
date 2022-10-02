@@ -122,7 +122,7 @@ const Rules = ({parkingLot}: { parkingLot: ParkingLot }) => {
                                     </Typography>
                                 ))}
                             </Grid>
-                            <Grid item direction="row" alignItems="center">
+                            <Grid item alignItems="center">
                                 {rule.applies && toArray<ParkingSpotType>(rule.applies).map((type, i) => {
                                     const iconName = spotIconName(type);
                                     const Icon = MuiIcon[iconName];

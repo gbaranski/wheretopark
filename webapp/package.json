@@ -11,6 +11,7 @@
   "dependencies": {
     "@emotion/react": "^11.10.0",
     "@emotion/styled": "^11.10.0",
+    "@fontsource/josefin-sans": "^4.5.11",
     "@fontsource/roboto": "^4.5.7",
     "@js-joda/core": "^5.3.1",
     "@js-joda/timezone": "^2.14.0",

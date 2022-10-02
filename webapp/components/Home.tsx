@@ -4,8 +4,9 @@ import styles from '../styles/Home.module.css'
 import List from './List'
 import Image from 'next/image'
 import dynamic from 'next/dynamic'
-import {CircularProgress, Stack} from "@mui/material";
-import Link from "next/link";
+import {Button, CircularProgress, Stack, Typography} from "@mui/material";
+import NextLink from "next/link";
+import "@fontsource/josefin-sans"
 
 type HomeProps = {
     parkingLots: Record<ParkingLotID, ParkingLot>
@@ -29,14 +30,13 @@ export const Home = ({parkingLots, selectedParkingLotID}: HomeProps) => {
     return (
         <>
             <div className={styles.split} id={styles.master}>
-                <div style={{padding: 15}}>
-                    <Link href={`/`}>
-                        <a>
-                            <Image alt="logo" src="/wheretopark.svg" width={100} height={14} layout={'responsive'}
-                                   objectFit="contain"/>
-                        </a>
-                    </Link>
-                </div>
+                <Button component={"a"} LinkComponent={NextLink} href="/">
+                    <Typography fontSize={46} padding={1} fontFamily="Josefin Sans" fontWeight={600}  style={{textAlign: 'center'}}>
+                        <span style={{color: "#313131"}}>where</span>
+                        <span style={{color: "#a28a2b"}}>to</span>
+                        <span style={{color: "#313131"}}>park</span>
+                    </Typography>
+                </Button>
                 <div style={{display: selectedParkingLotID ? 'none' : 'block'}}>
                     <List parkingLots={parkingLots}/>
                 </div>
