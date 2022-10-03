@@ -67,11 +67,9 @@ struct ContentView: View {
     @State var searchText: String = ""
     
     var body: some View {
-        NavigationView {
-            MapView()
-                .edgesIgnoringSafeArea(.all)
-                .navigationBarHidden(true)
-        }
+        MapView()
+            .edgesIgnoringSafeArea(.all)
+            .navigationBarHidden(true)
         .onAppear {
             DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
                 primaryBottomSheetVisible = true
