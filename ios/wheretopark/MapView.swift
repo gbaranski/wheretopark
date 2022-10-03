@@ -185,7 +185,7 @@ struct MapViewRepresentable: UIViewRepresentable {
         
         func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
             // TODO: Move it somewhere else
-            let color = UIColor(red: 247 / 255, green: 181 / 255, blue: 0 / 255, alpha: 1.0)
+            let color = UIColor(Color.blue)
             switch annotation {
             case let parkingLotAnnotation as ParkingLotAnnotation:
                 var annotationView = mapView.dequeueReusableAnnotationView(withIdentifier: parkingLotAnnotation.id) as? MKMarkerAnnotationView
