@@ -20,11 +20,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import app.wheretopark.shared.ParkingLot
 import app.wheretopark.shared.ParkingLotMetadata
+import androidx.compose.material.Icon
+import androidx.compose.ui.text.style.TextOverflow
 import java.util.*
 
 
 @Composable
-fun DetailsView(parkingLot: ParkingLot) {
+fun DetailsView(parkingLot: ParkingLot, onDismiss: () -> Unit) {
     val context = LocalContext.current
     var miscMenuExpanded by remember { mutableStateOf(false) }
 
@@ -41,6 +43,20 @@ fun DetailsView(parkingLot: ParkingLot) {
     }
 
     Column {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                parkingLot.metadata.name,
+                fontWeight = FontWeight.Bold,
+                style = MaterialTheme.typography.h5,
+            )
+            Button(onClick = onDismiss) {
+                Icon(Icons.Default.Close, contentDescription = "close view")
+            }
+        }
         Row(modifier = Modifier.fillMaxWidth()) {
             Button(modifier = Modifier.weight(0.8f), onClick = { openGoogleMaps() }) {
                 Image(
@@ -174,25 +190,11 @@ fun DetailsBottomSheet(parkingLotViewModel: ParkingLotViewModel, content: @Compo
             )
             Column(modifier = Modifier.padding(10.dp)) {
                 if (parkingLot != null) {
-                    Column {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text(
-                                parkingLot!!.metadata.name,
-                                fontWeight = FontWeight.Bold,
-                                style = MaterialTheme.typography.h4
-                            )
-                            Button(onClick = { parkingLotViewModel.selectedParkingLotID = null }) {
-                                Icon(Icons.Default.Close, contentDescription = "close view")
-                            }
-                        }
-                        DetailsView(parkingLot!!)
-                    }
+                    DetailsView(parkingLot!!, onDismiss = {
+                        parkingLotViewModel.selectedParkingLotID = null
+                    })
                 } else {
-                    Text("Loading...")
+                    CircularProgressIndicator()
                 }
             }
         },
