@@ -20,7 +20,6 @@ const Index = ({parkingLots: parkingLotsJSON}: IndexProps) => {
 export async function getStaticProps(context: GetStaticPropsContext): Promise<GetStaticPropsResult<IndexProps>> {
     console.log("about to fetch parking lots")
     const parkingLots = await storekeeperClient.parkingLots()
-    console.log({parkingLots})
     const props: IndexProps = {
         parkingLots: JSON.parse(parkingLots),
     }
