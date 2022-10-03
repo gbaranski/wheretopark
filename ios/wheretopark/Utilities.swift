@@ -49,3 +49,14 @@ struct SharingViewController: UIViewControllerRepresentable {
         }
     }
 }
+
+func availabilityColor(available: UInt, total: UInt) -> Color {
+    let percent = Double(available) / Double(total)
+    if percent > 0.5 {
+        return .green
+    } else if percent > 0.3 {
+        return .yellow
+    } else {
+        return .red
+    }
+}
