@@ -47,3 +47,12 @@ extension ParkingLotPricingRule {
         return durationFormatter.string(from: duration)!
     }
 }
+
+
+extension ParkingLotMetadata {
+    var commentForLocale: String? {
+        let languageCode = Locale.current.language.languageCode?.identifier ?? "en"
+        let comment = comment[languageCode] ?? comment ["en"]
+        return comment
+    }
+}
