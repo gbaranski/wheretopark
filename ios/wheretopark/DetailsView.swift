@@ -85,7 +85,13 @@ struct DetailsView: View {
                 HStack{
                     VStack(alignment: .leading) {
                         Text("AVAILABILITY").fontWeight(.black).font(.caption).foregroundColor(.secondary)
-                        Text("\(parkingLot.state.availableSpots[ParkingSpotType.car] ?? 0) cars").fontWeight(.heavy).foregroundColor(.yellow)
+                        Group {
+                            let availableSpots = parkingLot.state.availableSpots[ParkingSpotType.car] ?? 0
+                            let totalSpots = parkingLot.metadata.totalSpots[ParkingSpotType.car] ?? 0
+                            let color = availabilityColor(available: availableSpots.uintValue, total: totalSpots.uintValue)
+                            Text("\(availableSpots)").fontWeight(.heavy).foregroundColor(color) +
+                            Text(" / \(totalSpots) cars").fontWeight(.heavy).foregroundColor(color).font(.caption)
+                        }
                     }
                     Divider()
                     VStack(alignment: .leading) {
@@ -118,7 +124,7 @@ struct DetailsView: View {
                 Text("Pricing").font(.title2).fontWeight(.bold)
                 DetailsRulesView(metadata: parkingLot.metadata)
                 Text("Additional info").font(.title2).fontWeight(.bold)
-                DetailsAdditionalInfoView(id: id, metadata: parkingLot.metadata)
+                DetailsAdditionalInfo(id: id, metadata: parkingLot.metadata)
                 DetailsSendFeedbackView(id: id, metadata: parkingLot.metadata, takeSnapshot: { self.snapshot() })
                     .frame(
                         maxWidth: .infinity,
@@ -223,41 +229,49 @@ struct DetailsRulePricingView: View {
     
 }
 
-struct DetailsAdditionalInfoView: View {
+struct DetailsAdditionalInfoField<ContentView: View>: View {
+    let name: String
+    @ViewBuilder let contentView: () -> ContentView
+    
+    var body: some View {
+        VStack(alignment: .leading) {
+            Text(name).foregroundColor(.secondary)
+            contentView()
+            Divider()
+        }
+    }
+}
+
+struct DetailsAdditionalInfo: View {
     let id: ParkingLotID
     let metadata: ParkingLotMetadata
     
     var body: some View {
         Group {
-            VStack(alignment: .leading) {
-                Text("Parking lot").foregroundColor(.secondary)
+            DetailsAdditionalInfoField(name: "Parking lot") {
                 Text("\(metadata.totalSpots[ParkingSpotType.car] ?? 0) total spaces")
             }
-            Divider()
-            VStack(alignment: .leading) {
-                Text("Address").foregroundColor(.secondary)
+            DetailsAdditionalInfoField(name: "Address") {
                 Text("\(metadata.address)")
             }
-            Divider()
-            VStack(alignment: .leading) {
-                Text("Coordinates").foregroundColor(.secondary)
+            DetailsAdditionalInfoField(name: "Coordinates") {
                 Text("\(metadata.location.latitude), \(metadata.location.longitude)")
             }
             ForEach(metadata.resources, id: \.self) { resource in
-                Divider()
-                VStack(alignment: .leading) {
-                    Text(resource.label()).foregroundColor(.secondary)
+                DetailsAdditionalInfoField(name: resource.label()) {
                     Link(
                         "\(resource.components.host ?? "")\(resource.components.scheme == "tel" ? resource.components.path.replacingOccurrences(of: "-", with: " ") : resource.components.path)",
                         destination: resource.components.url!).truncationMode(.tail).lineLimit(1)
                 }
             }
-            Divider()
-            VStack(alignment: .leading) {
-                Text("Unique ID").foregroundColor(.secondary)
+            if let comment = metadata.commentForLocale {
+                DetailsAdditionalInfoField(name: "Comment") {
+                    Text(comment)
+                }
+            }
+            DetailsAdditionalInfoField(name: "Unique ID") {
                 Text("\(id)").textSelection(.enabled)
             }
-            Divider()
         }
     }
 }
