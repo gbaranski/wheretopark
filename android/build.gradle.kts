@@ -69,10 +69,13 @@ dependencies {
     androidTestImplementation("androidx.test.ext:junit:1.1.3")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.4.0")
 
-    implementation("com.google.maps.android:maps-compose:2.2.0")
-    implementation("com.google.maps.android:android-maps-utils:2.3.0")
-    implementation("com.google.maps.android:maps-utils-ktx:3.4.0")
+    implementation("com.google.accompanist:accompanist-permissions:0.25.1")
+
     implementation("com.google.android.gms:play-services-maps:18.1.0")
+    implementation("com.google.maps.android:maps-compose:2.7.2")
+    implementation("com.google.maps.android:maps-compose-widgets:2.7.2")
+    implementation("com.google.maps.android:android-maps-utils:2.4.0")
+//    implementation("com.google.maps.android:maps-utils-ktx:3.4.0")
 
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.3")
 

@@ -2,11 +2,12 @@ package app.wheretopark.android
 
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -66,7 +67,9 @@ fun ListBottomSheet(parkingLotViewModel: ParkingLotViewModel, content: @Composab
     BottomSheetScaffold(
         sheetContent = {
             BottomSheetHandle(
-                Modifier.align(Alignment.CenterHorizontally).padding(top = 10.dp)
+                Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(top = 10.dp)
             )
             Column(modifier = Modifier.padding(10.dp)) {
                 SearchView(state = searchTextState, onTextFieldFocus = { state ->
@@ -76,7 +79,16 @@ fun ListBottomSheet(parkingLotViewModel: ParkingLotViewModel, content: @Composab
                         }
                     }
                 })
-                ListView(parkingLotViewModel)
+                if (parkingLotViewModel.isProcessing.value) {
+                    Box(
+                        contentAlignment = Alignment.Center,
+                        modifier = Modifier.fillMaxWidth().padding(top = 36.dp)
+                    ) {
+                        CircularProgressIndicator()
+                    }
+                } else {
+                    ListView(parkingLotViewModel)
+                }
             }
         },
         scaffoldState = scaffoldState,

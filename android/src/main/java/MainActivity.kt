@@ -1,14 +1,21 @@
 package app.wheretopark.android
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import app.wheretopark.android.ui.theme.WheretoparkTheme
 import app.wheretopark.shared.*
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
 
@@ -35,7 +42,13 @@ fun MainView(parkingLotViewModel: ParkingLotViewModel) {
 
         DetailsBottomSheet(parkingLotViewModel) {
             ListBottomSheet(parkingLotViewModel) {
-                MapView(parkingLotViewModel)
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .fillMaxHeight(0.6F),
+                ) {
+                    MapView(parkingLotViewModel)
+                }
             }
         }
     }
@@ -43,9 +56,11 @@ fun MainView(parkingLotViewModel: ParkingLotViewModel) {
 }
 
 class ParkingLotViewModel(clientID: String, clientSecret: String) : ViewModel() {
+    var isProcessing = mutableStateOf(false)
     val parkingLots = mutableStateMapOf<ParkingLotID, ParkingLot>()
     var selectedParkingLotID by mutableStateOf<ParkingLotID?>(null)
-    private val authorizationClient = AuthorizationClient(clientID = clientID, clientSecret = clientSecret)
+    private val authorizationClient =
+        AuthorizationClient(clientID = clientID, clientSecret = clientSecret)
     private val storekeeperClient = StorekeeperClient(
         authorizationClient = authorizationClient,
         accessScope = setOf(
@@ -55,12 +70,17 @@ class ParkingLotViewModel(clientID: String, clientSecret: String) : ViewModel() 
 
     fun fetchParkingLots() {
         println("fetching parking lots")
+        isProcessing.value = true
         viewModelScope.launch {
-            val newParkingLots = storekeeperClient.parkingLots()
-            println("retrieved ${newParkingLots.count()} parking lots")
-            parkingLots.clear()
-            newParkingLots.forEach { (key, value) ->
-                parkingLots[key] = value
+            try {
+                val newParkingLots = storekeeperClient.parkingLots()
+                println("retrieved ${newParkingLots.count()} parking lots")
+                parkingLots.clear()
+                newParkingLots.forEach { (key, value) ->
+                    parkingLots[key] = value
+                }
+            } finally {
+                isProcessing.value = false
             }
         }
     }

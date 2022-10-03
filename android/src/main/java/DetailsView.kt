@@ -21,7 +21,6 @@ import androidx.compose.ui.unit.dp
 import app.wheretopark.shared.ParkingLot
 import app.wheretopark.shared.ParkingLotMetadata
 import androidx.compose.material.Icon
-import androidx.compose.ui.text.style.TextOverflow
 import java.util.*
 
 
