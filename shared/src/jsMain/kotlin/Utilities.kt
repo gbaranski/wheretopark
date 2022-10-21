@@ -7,6 +7,7 @@ import kotlinx.datetime.toJSDate
 import kotlinx.js.Record
 import kotlinx.js.set
 import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import kotlin.time.Duration
 
@@ -20,21 +21,20 @@ fun <K : Any, V : Any> Map<K, V>.toRecord(): Record<K, V> {
 @JsExport
 fun <T : Any> List<T>.toArray(): Array<T> = this.toTypedArray()
 
-
+@JsExport
+fun encodeParkingLot(parkingLot: ParkingLot): String = Json.encodeToString(parkingLot)
+@JsExport
+fun encodeParkingLots(parkingLots: Map<ParkingLotID, ParkingLot>): String = Json.encodeToString(parkingLots)
 @JsExport
 fun parseParkingLot(json: String) = Json.decodeFromString<ParkingLot>(json)
-
 @JsExport
 fun parseParkingLots(json: String) = Json.decodeFromString<Map<ParkingLotID, ParkingLot>>(json).toRecord()
-
 @JsExport
 fun instantToJSDate(from: Instant) = from.toJSDate()
-
 @JsExport
 fun durationToISO(duration: Duration) = duration.toIsoString()
 
 @JsModule("@js-joda/timezone")
 @JsNonModule
 external object JsJodaTimeZoneModule
-
 private val jsJodaTz = JsJodaTimeZoneModule

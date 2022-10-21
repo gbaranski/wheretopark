@@ -1,4 +1,4 @@
-import {parseParkingLots} from '../lib/types'
+import {encodeParkingLots, parseParkingLots} from '../lib/types'
 import {storekeeperClient} from '../lib/client'
 import {GetStaticPropsContext, GetStaticPropsResult} from "next";
 import {Home} from "../components/Home";
@@ -17,9 +17,8 @@ const Index = ({parkingLots: parkingLotsJSON}: IndexProps) => {
 }
 
 
-export async function getStaticProps(context: GetStaticPropsContext): Promise<GetStaticPropsResult<IndexProps>> {
-    console.log("about to fetch parking lots")
-    const parkingLots = await storekeeperClient.parkingLots()
+export async function getStaticProps(): Promise<GetStaticPropsResult<IndexProps>> {
+    const parkingLots = encodeParkingLots(await storekeeperClient.parkingLots());
     const props: IndexProps = {
         parkingLots: JSON.parse(parkingLots),
     }

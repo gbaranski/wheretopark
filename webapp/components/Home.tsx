@@ -7,6 +7,8 @@ import dynamic from 'next/dynamic'
 import {Button, CircularProgress, Stack, Typography} from "@mui/material";
 import NextLink from "next/link";
 import "@fontsource/josefin-sans"
+import { useState } from 'react'
+import { useRouter } from 'next/router'
 
 type HomeProps = {
     parkingLots: Record<ParkingLotID, ParkingLot>
@@ -26,22 +28,30 @@ const Map = dynamic(() => import("./Map"), {
 });
 
 export const Home = ({parkingLots, selectedParkingLotID}: HomeProps) => {
-    const selectedParkingLot = selectedParkingLotID ? parkingLots[selectedParkingLotID] : null;
+    const [selectedParkingLot, setSelectedParkingLot] = useState<[ParkingLotID, ParkingLot] | null>(selectedParkingLotID ? [selectedParkingLotID!, parkingLots[selectedParkingLotID]] : null);
+    const router = useRouter()
     return (
         <>
             <div className={styles.split} id={styles.master}>
-                <Button component={"a"} LinkComponent={NextLink} href="/">
+                <Button component={"a"} LinkComponent={NextLink} href="/" onClick={(e: any) => {
+                    e.preventDefault();
+                    setSelectedParkingLot(null);
+                    router.push("/");
+                }}>
                     <Typography fontSize={46} padding={1} fontFamily="Josefin Sans" fontWeight={600}  style={{textAlign: 'center'}}>
                         <span style={{color: "#313131"}}>where</span>
                         <span style={{color: "#a28a2b"}}>to</span>
                         <span style={{color: "#313131"}}>park</span>
                     </Typography>
                 </Button>
-                <div style={{display: selectedParkingLotID ? 'none' : 'block'}}>
-                    <List parkingLots={parkingLots}/>
+                <div style={{display: selectedParkingLot ? 'none' : 'block'}}>
+                    <List parkingLots={parkingLots} onSelect={(parkingLot) => {
+                        setSelectedParkingLot(parkingLot);
+                        router.push(`/parking-lot/${parkingLot[0]}`);
+                    }}/>
                 </div>
-                {selectedParkingLotID &&
-                    <Details parkingLot={[selectedParkingLotID, parkingLots[selectedParkingLotID]]!}/>
+                {selectedParkingLot &&
+                    <Details parkingLot={selectedParkingLot}/>
                 }
             </div>
             <div className={styles.split} id={styles.slave}>

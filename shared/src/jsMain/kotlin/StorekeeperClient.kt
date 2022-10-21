@@ -17,13 +17,11 @@ class JSStorekeeperClient(
 ) {
     private val client = StorekeeperClient(url, authorizationClient.client, scope.toSet())
 
-    fun parkingLots(): Promise<String> = GlobalScope.promise {
-        val parkingLots = client.parkingLots()
-        Json.encodeToString(parkingLots)
+    fun parkingLots(): Promise<Map<ParkingLotID, ParkingLot>> = GlobalScope.promise {
+        client.parkingLots()
     }
 
-    fun parkingLot(id: ParkingLotID): Promise<String?> = GlobalScope.promise {
-        val parkingLot = client.parkingLot(id)
-        parkingLot?.let { Json.encodeToString(it) }
+    fun parkingLot(id: ParkingLotID): Promise<ParkingLot?> = GlobalScope.promise {
+        client.parkingLot(id)
     }
 }
