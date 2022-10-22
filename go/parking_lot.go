@@ -13,7 +13,7 @@ type LanguageCode = string
 type PricingRule struct {
 	Duration  string  `json:"duration"`
 	Price     float32 `json:"price"`
-	Repeating *bool   `json:"repeating,omitempty"`
+	Repeating bool    `json:"repeating,omitempty"`
 }
 
 type Rule struct {
@@ -29,7 +29,7 @@ type Metadata struct {
 	Name           string                  `json:"name"`
 	Address        string                  `json:"address"`
 	Location       geojson.Feature         `json:"location"`
-	Resources      map[string]string       `json:"resources"`
+	Resources      []string                `json:"resources"`
 	TotalSpots     map[SpotType]uint       `json:"total-spots"`
 	MaxWidth       *int                    `json:"max-width,omitempty"`
 	MaxHeight      *int                    `json:"max-height,omitempty"`
