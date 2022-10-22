@@ -3,6 +3,7 @@ package wheretopark
 import (
 	"fmt"
 
+	"github.com/goccy/go-json"
 	"github.com/surrealdb/surrealdb.go"
 )
 
@@ -75,6 +76,67 @@ func (c *Client) delete(thing string) error {
 	return err
 }
 
+func metadataReference(id ID) string {
+	return fmt.Sprintf("metadatas:%s", id)
+}
+
+func toMap(v any) (map[string]any, error) {
+	bytes, err := json.Marshal(v)
+	if err != nil {
+		return nil, err
+	}
+	var value map[string]any
+	err = json.Unmarshal(bytes, &value)
+	if err != nil {
+		return nil, err
+	}
+	return value, nil
+}
+
+func mapTo[T any](v map[string]any) (*T, error) {
+	bytes, err := json.Marshal(v)
+	if err != nil {
+		return nil, err
+	}
+	var value T
+	err = json.Unmarshal(bytes, &value)
+	if err != nil {
+		return nil, err
+	}
+	return &value, nil
+}
+
+func (c *Client) SetMetadata(id ID, metadata Metadata) error {
+	data, err := toMap(metadata)
+	if err != nil {
+		return err
+	}
+	return c.set(metadataReference(id), data)
+}
+
+func (c *Client) ExistsMetadata(id ID) (bool, error) {
+	return c.exists(metadataReference(id))
+}
+
+func (c *Client) GetMetadata(id ID) (*Metadata, error) {
+	v, err := c.get(metadataReference(id))
+	if err != nil {
+		return nil, err
+	}
+	if v == nil {
+		return nil, nil
+	}
+	metadata, err := mapTo[Metadata](v)
+	if err != nil {
+		return nil, err
+	}
+	return metadata, nil
+}
+
+func (c *Client) DeleteMetadata(id ID) error {
+	return c.delete(metadataReference(id))
+}
+
 func stateReference(id ID) string {
 	return fmt.Sprintf("states:%s", id)
 }
@@ -86,7 +148,7 @@ func (c *Client) SetState(id ID, state State) error {
 	})
 }
 
-func (c *Client) StateExists(id ID) (bool, error) {
+func (c *Client) ExistsState(id ID) (bool, error) {
 	return c.exists(stateReference(id))
 }
 
