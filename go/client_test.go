@@ -60,7 +60,11 @@ func TestState(t *testing.T) {
 		},
 	}
 	id := RandomID()
-	err := client.AddState(id, state)
+	err := client.SetState(id, state)
+	if err != nil {
+		log.Fatal(err)
+	}
+	err = client.SetState(id, state)
 	if err != nil {
 		log.Fatal(err)
 	}

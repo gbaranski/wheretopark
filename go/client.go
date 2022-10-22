@@ -33,8 +33,8 @@ func (c *Client) SignInWithPassword(user, password string) error {
 	return err
 }
 
-func (c *Client) add(thing string, data map[string]any) error {
-	_, err := c.database.Create(thing, data)
+func (c *Client) set(thing string, data map[string]any) error {
+	_, err := c.database.Update(thing, data)
 	return err
 }
 
@@ -79,8 +79,8 @@ func stateReference(id ID) string {
 	return fmt.Sprintf("states:%s", id)
 }
 
-func (c *Client) AddState(id ID, state State) error {
-	return c.add(stateReference(id), map[string]any{
+func (c *Client) SetState(id ID, state State) error {
+	return c.set(stateReference(id), map[string]any{
 		"last-updated":    state.LastUpdated,
 		"available-spots": state.AvailableSpots,
 	})
