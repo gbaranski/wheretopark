@@ -41,13 +41,35 @@ func (c *Client) AddState(id ID, state State) error {
 	return err
 }
 
+func (c *Client) StateExists(id ID) (bool, error) {
+	raw, err := c.database.Query("SELECT true as exists FROM $what", map[string]any{"what": fmt.Sprintf("states:%s", id)})
+	if err != nil {
+		return false, err
+	}
+	responses := raw.([]any)
+	response := responses[0].(map[string]any)
+	results := response["result"].([]any)
+	if len(results) == 0 {
+		return false, nil
+	}
+	result := results[0].(map[string]any)
+	exists := result["exists"].(bool)
+	return exists, nil
+}
+
 func (c *Client) GetState(id ID) (*State, error) {
+	exists, err := c.StateExists(id)
+	if err != nil {
+		return nil, err
+	}
+	if !exists {
+		return nil, nil
+	}
 	state, err := c.database.Select(fmt.Sprintf("states:%s", id))
 	if err != nil {
 		return nil, err
 	}
 	v := state.(map[string]any)
-	fmt.Printf("v: %+v", v)
 	availableSpotsRaw := v["available-spots"].(map[string]any)
 	availableSpots := make(map[SpotType]uint)
 	for key, value := range availableSpotsRaw {
@@ -57,5 +79,9 @@ func (c *Client) GetState(id ID) (*State, error) {
 		LastUpdated:    v["last-updated"].(string),
 		AvailableSpots: availableSpots,
 	}, nil
-	// return err
+}
+
+func (c *Client) DeleteState(id ID) error {
+	_, err := c.database.Delete(fmt.Sprintf("states:%s", id))
+	return err
 }

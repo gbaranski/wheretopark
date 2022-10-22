@@ -51,7 +51,7 @@ func client() *wheretopark.Client {
 	return client
 }
 
-func TestCreate(t *testing.T) {
+func TestState(t *testing.T) {
 	client := client()
 	state := wheretopark.State{
 		LastUpdated: "2022-10-21T23:09:47+0000",
@@ -70,4 +70,29 @@ func TestCreate(t *testing.T) {
 		log.Fatal(err)
 	}
 	assert.Equal(t, state, *obtainedState, "obtained state doesn't match with state that was added")
+
+	err = client.DeleteState(id)
+	if err != nil {
+		log.Fatal(err)
+	}
+	err = client.DeleteState(id)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	exists, err := client.StateExists(id)
+	if err != nil {
+		log.Fatal(err)
+	}
+	if exists {
+		log.Fatalf("client should report that %s does not exist\n", id)
+	}
+	obtainedState, err = client.GetState(id)
+	if err != nil {
+		log.Fatal(err)
+	}
+	if obtainedState != nil {
+		log.Fatalf("state %s should have been deleted", id)
+	}
+
 }
