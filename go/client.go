@@ -77,7 +77,7 @@ func (c *Client) delete(thing string) error {
 }
 
 func metadataReference(id ID) string {
-	return fmt.Sprintf("metadatas:%s", id)
+	return fmt.Sprintf("metadata:%s", id)
 }
 
 func toMap(v any) (map[string]any, error) {
@@ -138,7 +138,7 @@ func (c *Client) DeleteMetadata(id ID) error {
 }
 
 func stateReference(id ID) string {
-	return fmt.Sprintf("states:%s", id)
+	return fmt.Sprintf("state:%s", id)
 }
 
 func (c *Client) SetState(id ID, state State) error {

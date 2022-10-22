@@ -1,5 +1,7 @@
 package wheretopark
 
+import "log"
+
 type Provider interface {
 	GetMetadata() (map[ID]Metadata, error)
 	GetState() (map[ID]State, error)
@@ -16,6 +18,7 @@ func RunProvider(client *Client, provider Provider) error {
 		if err != nil {
 			return err
 		}
+		log.Printf("updated metadata of %s\n", id)
 	}
 
 	states, err := provider.GetState()
@@ -27,6 +30,7 @@ func RunProvider(client *Client, provider Provider) error {
 		if err != nil {
 			return err
 		}
+		log.Printf("updated state of %s\n", id)
 	}
 
 	return nil
