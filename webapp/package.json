@@ -1,46 +1,43 @@
 {
-  "name": "wheretopark-webapp",
-  "version": "0.2.0",
-  "private": true,
-  "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
-  },
-  "dependencies": {
-    "@babel/core": "^7.19.6",
-    "@emotion/react": "^11.10.4",
-    "@emotion/styled": "^11.10.4",
-    "@fontsource/josefin-sans": "^4.5.11",
-    "@fontsource/roboto": "^4.5.8",
-    "@mapbox/mapbox-sdk": "^0.13.6",
-    "@mui/icons-material": "^5.10.9",
-    "@mui/material": "^5.10.10",
-    "abort-controller": "^3.0.0",
-    "date-fns": "^2.29.3",
-    "geolib": "^3.3.3",
-    "lodash": "^4.17.21",
-    "luxon": "^3.0.4",
-    "mapbox-gl": "^2.10.0",
-    "next": "12.3.1",
-    "node-fetch": "2.6.7",
-    "react": "18.2.0",
-    "react-dom": "18.2.0",
-    "react-map-gl": "^7.0.19",
-    "sharp": "^0.31.1",
-    "wheretopark-shared": "../build/js/packages/wheretopark-shared"
-  },
-  "devDependencies": {
-    "@types/lodash": "^4.14.186",
-    "@types/luxon": "^3.0.2",
-    "@types/mapbox__mapbox-gl-geocoder": "^4.7.3",
-    "@types/mapbox__mapbox-sdk": "^0.13.4",
-    "@types/node": "18.11.3",
-    "@types/react": "18.0.21",
-    "@types/react-dom": "18.0.6",
-    "eslint": "8.25.0",
-    "eslint-config-next": "12.3.1",
-    "typescript": "4.8.4"
-  }
+		"name": "wheretopark-webapp",
+		"version": "0.3.0",
+		"type": "module",
+		"private": true,
+		"scripts": {
+				"dev": "vite dev",
+				"build": "vite build",
+				"preview": "vite preview",
+				"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
+				"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
+				"lint": "prettier --plugin-search-dir . --check . && eslint .",
+				"format": "prettier --plugin-search-dir . --write ."
+		},
+		"devDependencies": {
+				"@sveltejs/adapter-auto": "next",
+				"@sveltejs/kit": "next",
+				"@types/mapbox-gl": "^2.7.6",
+				"@types/node": "^18.11.3",
+				"@typescript-eslint/eslint-plugin": "^5.27.0",
+				"@typescript-eslint/parser": "^5.27.0",
+				"carbon-components-svelte": "^0.70.12",
+				"carbon-icons-svelte": "^11.4.0",
+				"eslint": "^8.16.0",
+				"eslint-config-prettier": "^8.3.0",
+				"eslint-plugin-svelte3": "^4.0.0",
+				"prettier": "^2.6.2",
+				"prettier-plugin-svelte": "^2.7.0",
+				"svelte": "^3.44.0",
+				"svelte-check": "^2.7.1",
+				"svelte-preprocess": "^4.10.6",
+				"tslib": "^2.3.1",
+				"typescript": "^4.7.4",
+				"vite": "^3.1.0"
+		},
+		"dependencies": {
+				"@svelteuidev/composables": "^0.7.5",
+				"@svelteuidev/core": "^0.7.5",
+				"@types/geojson": "^7946.0.10",
+				"geojson": "^0.5.0",
+				"mapbox-gl": "^2.10.0"
+		}
 }

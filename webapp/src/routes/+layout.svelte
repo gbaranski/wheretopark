@@ -1,3 +1,19 @@
+<script lang="ts">
+	import type { LayoutData } from "./$types";
+    import Map from '../components/Map.svelte'
+
+    export let data: LayoutData;
+</script>
+
+<div class="split master">
+    <slot></slot>
+</div>
+
+<div class="split slave">
+    <Map parkingLots={data.parkingLots}/>
+</div>
+
+<style>
 .split {
     height: 100%;
     position: fixed;
@@ -7,24 +23,25 @@
     overflow-x: hidden;
 }
 
-#master {
+.master {
     background-color: rgb(255, 253, 246);
     width: 400px;
     left: 0;
 }
 
-#slave {
+.slave {
     width: calc(100% - 400px);
     right: 0;
 }
 
 @media only screen and (max-width: 400px) {
-    #master {
+    .master {
         width: 100%;
     }
 
-    #slave {
+    .slave {
         width: 0;
         display: none;
     }
 }
+</style>
