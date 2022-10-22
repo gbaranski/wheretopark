@@ -1,6 +1,7 @@
 package wheretopark
 
 import (
+	"github.com/mmcloughlin/geohash"
 	geojson "github.com/paulmach/go.geojson"
 )
 
@@ -49,4 +50,8 @@ type State struct {
 type ParkingLot struct {
 	Metadata Metadata `json:"metadata"`
 	State    State    `json:"state"`
+}
+
+func CoordinateToID(latitude, longitude float64) ID {
+	return geohash.Encode(latitude, longitude)
 }

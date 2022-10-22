@@ -3,8 +3,8 @@ package gdansk
 import "github.com/go-resty/resty/v2"
 
 type Coordinate struct {
-	Latitude  float32 `json:"latitude"`
-	Longitude float32 `json:"longitude"`
+	Latitude  float64 `json:"latitude"`
+	Longitude float64 `json:"longitude"`
 }
 
 type Metadata struct {
@@ -17,7 +17,7 @@ type Metadata struct {
 }
 
 type State struct {
-	ID             string `json:"id"`
+	ID             string `json:"parkingId"`
 	AvailableSpots uint   `json:"availableSpots"`
 	LastUpdate     string `json:"lastUpdate"`
 }
@@ -34,7 +34,7 @@ const (
 
 var client = resty.New()
 
-func Metadatas() (*Response[Metadata], error) {
+func GetMetadata() (*Response[Metadata], error) {
 	resp, err := client.R().SetResult(&Response[Metadata]{}).Get(METADATA_URL)
 	if err != nil {
 		return nil, err
@@ -43,7 +43,7 @@ func Metadatas() (*Response[Metadata], error) {
 	return response, nil
 }
 
-func States() (*Response[State], error) {
+func GetState() (*Response[State], error) {
 	resp, err := client.R().SetResult(&Response[State]{}).Get(STATE_URL)
 	if err != nil {
 		return nil, err

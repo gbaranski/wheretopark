@@ -174,3 +174,7 @@ func (c *Client) GetState(id ID) (*State, error) {
 func (c *Client) DeleteState(id ID) error {
 	return c.delete(stateReference(id))
 }
+
+func (c *Client) Close() {
+	c.database.Close()
+}

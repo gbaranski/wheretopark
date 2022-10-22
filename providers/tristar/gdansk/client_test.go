@@ -7,7 +7,7 @@ import (
 )
 
 func TestMetadatas(t *testing.T) {
-	metadatas, err := gdansk.Metadatas()
+	metadatas, err := gdansk.GetMetadata()
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -15,7 +15,7 @@ func TestMetadatas(t *testing.T) {
 }
 
 func TestStates(t *testing.T) {
-	states, err := gdansk.States()
+	states, err := gdansk.GetState()
 	if err != nil {
 		t.Fatal(err)
 	}
