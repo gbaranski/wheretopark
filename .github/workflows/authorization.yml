@@ -11,13 +11,13 @@ name: Authorization CI/CD
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - master
-    paths:
-      - "authorization/**"
-      - "go.mod"
-      - "go.mod"
+  # push:
+  #   branches:
+  #     - master
+  #   paths:
+  #     - "authorization/**"
+  #     - "go.mod"
+  #     - "go.mod"
 
 jobs:
   build:

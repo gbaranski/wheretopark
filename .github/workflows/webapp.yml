@@ -11,12 +11,12 @@ name: Webapp CI/CD
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - master
-    paths:
-      - "webapp/**"
-      - "shared/**"
+  # push:
+  #   branches:
+  #     - master
+  #   paths:
+  #     - "webapp/**"
+  #     - "shared/**"
 
 jobs:
   build:
@@ -32,15 +32,6 @@ jobs:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      - uses: actions/checkout@v3
-      - name: Set up JDK 17
-        uses: actions/setup-java@v3
-        with:
-          java-version: '17'
-          distribution: 'adopt'
-      - name: Build shared library for JS
-        run: |
-          ./gradlew :shared:jsNodeProductionLibraryDistribution
       - name: Build and push image
         uses: docker/build-push-action@v3
         with:
