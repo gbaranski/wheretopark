@@ -6,11 +6,11 @@
 </script>
 
 {#each Object.entries(parkingLots) as [id, parkingLot]}
-    <Card p="sm">
-        <h4>{parkingLot.metadata.name}</h4>
-
-        <a href={`/parking-lot/${id}`}>Link</a>
-        <p>{parkingLot.metadata.address}</p>
-    </Card>
+    <a href={`/parking-lot/${id}`} style="text-decoration: none;">
+        <Card p="sm">
+            <h4>{parkingLot.metadata.name}</h4>
+            <p>{parkingLot.metadata.address}</p>
+        </Card>
+    </a>
 {/each}
 

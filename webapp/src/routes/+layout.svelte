@@ -1,11 +1,22 @@
 <script lang="ts">
 	import type { LayoutData } from "./$types";
+    import { Text } from '@svelteuidev/core';
     import Map from '../components/Map.svelte'
 
     export let data: LayoutData;
+	console.log({data});
 </script>
 
 <div class="split master">
+    <a style="text-decoration: none;" href="/">
+        <div style="padding: 20px;">
+            <Text size={46} align="center" color="#313131">
+                <Text root="span" inherit color="#313131">where</Text>
+                <Text root="span" inherit color="#a28a2b">to</Text>
+                <Text root="span" inherit>park</Text>
+            </Text>
+        </div>
+    </a>
     <slot></slot>
 </div>
 
