@@ -1,7 +1,6 @@
 package gdansk
 
 import (
-	"errors"
 	"log"
 	wheretopark "wheretopark/go"
 
@@ -56,7 +55,8 @@ func (p Provider) GetState() (map[wheretopark.ID]wheretopark.State, error) {
 	for _, vendor := range vendorState.ParkingLots {
 		id, exists := p.mapping[vendor.ID]
 		if !exists {
-			return nil, errors.New("no mapping for " + vendor.ID)
+			log.Printf("no mapping for %s\n", vendor.ID)
+			continue
 		}
 
 		state := wheretopark.State{
