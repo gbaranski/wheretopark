@@ -11,11 +11,13 @@ const isDevelopment = process.env.NODE_ENV === 'development';
 await db.use("wheretopark", isDevelopment ? "development" : "production");
 
 export const getParkingLots = async (): Promise<Record<ID, ParkingLot>> => {
-    const metadatas = await db.select<Metadata & { id: string}>("metadata");
-    const states = await db.select<State & {id: string}>("state");
+    const metadatas = await db.select<Metadata & { id?: string}>("metadata");
+    const states = await db.select<State & {id?: string}>("state");
     const parkingLots = metadatas.map((metadata) => {
-        const id = metadata.id.split(":")[1]
-        const state = states.find((state) => state.id == `state:${id}`);
+        const id = metadata.id!.split(":")[1]
+        const state = states.find((state) => state.id! == `state:${id}`)!;
+        delete metadata.id;
+        delete state.id;
         return [id, {
             metadata,
             state,
