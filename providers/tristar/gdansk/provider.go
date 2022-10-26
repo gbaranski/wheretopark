@@ -2,6 +2,7 @@ package gdansk
 
 import (
 	"errors"
+	"log"
 	wheretopark "wheretopark/go"
 
 	geojson "github.com/paulmach/go.geojson"
@@ -19,7 +20,11 @@ func (p Provider) GetMetadata() (map[wheretopark.ID]wheretopark.Metadata, error)
 	}
 	metadatas := make(map[wheretopark.ID]wheretopark.Metadata)
 	for _, vendor := range vendorMetadata.ParkingLots {
-		configuration := p.configuration.ParkingLots[vendor.ID]
+		configuration, exists := p.configuration.ParkingLots[vendor.ID]
+		if !exists {
+			log.Printf("missing configuration for %s\n", vendor.ID)
+			continue
+		}
 		id := wheretopark.CoordinateToID(vendor.Location.Latitude, vendor.Location.Longitude)
 		metadata := wheretopark.Metadata{
 			Name:           vendor.Name,
