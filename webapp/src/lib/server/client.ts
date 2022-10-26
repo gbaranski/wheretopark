@@ -2,7 +2,7 @@ import type {ID, Metadata, ParkingLot, State } from "../types";
 import {DATABASE_PASSWORD, DATABASE_URL, DATABASE_USER} from "./secrets";
 import Surreal from 'surrealdb.js'
 
-const db = new Surreal(DATABASE_URL);
+const db = new Surreal(`${DATABASE_URL}/rpc`);
 await db.signin({
     user: DATABASE_USER,
     pass: DATABASE_PASSWORD,
