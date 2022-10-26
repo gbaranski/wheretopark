@@ -31,11 +31,11 @@ type Metadata struct {
 	Address        string                  `json:"address"`
 	Location       geojson.Feature         `json:"location"`
 	Resources      []string                `json:"resources"`
-	TotalSpots     map[SpotType]uint       `json:"total-spots"`
-	MaxWidth       *int                    `json:"max-width,omitempty"`
-	MaxHeight      *int                    `json:"max-height,omitempty"`
+	TotalSpots     map[SpotType]uint       `json:"totalSpots"`
+	MaxWidth       *int                    `json:"maxWidth,omitempty"`
+	MaxHeight      *int                    `json:"maxHeight,omitempty"`
 	Features       []Feature               `json:"features"`
-	PaymentMethods []PaymentMethod         `json:"payment-methods"`
+	PaymentMethods []PaymentMethod         `json:"paymentMethods"`
 	Comment        map[LanguageCode]string `json:"comment"`
 	Currency       string                  `json:"currency"`
 	Timezone       string                  `json:"timezone"`
@@ -43,8 +43,8 @@ type Metadata struct {
 }
 
 type State struct {
-	LastUpdated    string            `json:"last-updated"`
-	AvailableSpots map[SpotType]uint `json:"available-spots"`
+	LastUpdated    string            `json:"lastUpdated"`
+	AvailableSpots map[SpotType]uint `json:"availableSpots"`
 }
 
 type ParkingLot struct {

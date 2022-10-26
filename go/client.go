@@ -144,10 +144,11 @@ func stateReference(id ID) string {
 }
 
 func (c *Client) SetState(id ID, state State) error {
-	return c.set(stateReference(id), map[string]any{
-		"last-updated":    state.LastUpdated,
-		"available-spots": state.AvailableSpots,
-	})
+	data, err := toMap(state)
+	if err != nil {
+		return err
+	}
+	return c.set(stateReference(id), data)
 }
 
 func (c *Client) ExistsState(id ID) (bool, error) {
@@ -155,6 +156,7 @@ func (c *Client) ExistsState(id ID) (bool, error) {
 }
 
 func (c *Client) GetState(id ID) (*State, error) {
+
 	v, err := c.get(stateReference(id))
 	if err != nil {
 		return nil, err
@@ -162,15 +164,11 @@ func (c *Client) GetState(id ID) (*State, error) {
 	if v == nil {
 		return nil, nil
 	}
-	availableSpotsRaw := v["available-spots"].(map[string]any)
-	availableSpots := make(map[SpotType]uint)
-	for key, value := range availableSpotsRaw {
-		availableSpots[key] = uint(value.(float64))
+	state, err := mapTo[State](v)
+	if err != nil {
+		return nil, err
 	}
-	return &State{
-		LastUpdated:    v["last-updated"].(string),
-		AvailableSpots: availableSpots,
-	}, nil
+	return state, nil
 }
 
 func (c *Client) DeleteState(id ID) error {
