@@ -1,20 +1,25 @@
 <script lang="ts">
 	import type { LayoutData } from "./$types";
-    import { Text } from '@svelteuidev/core';
+    import { Text, Title } from '@svelteuidev/core';
     import Map from '../components/Map.svelte'
 
     export let data: LayoutData;
 	console.log({data});
 </script>
 
+<svelte:head>
+    <link rel="preconnect" href="https://fonts.googleapis.com"> 
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin=""> 
+    <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@600&display=swap" rel="stylesheet">
+</svelte:head>
 <div class="split master">
-    <a style="text-decoration: none;" href="/">
+    <a href="/">
         <div style="padding: 20px;">
-            <Text size={46} align="center" color="#313131">
-                <Text root="span" inherit color="#313131">where</Text>
-                <Text root="span" inherit color="#a28a2b">to</Text>
-                <Text root="span" inherit>park</Text>
-            </Text>
+            <Title align="center" override={{fontFamily: "Josefin Sans", fontWeight: 600, fontSize: 0 }}>
+                <Text root="span" inherit override={{ color: "#313131", fontSize: 46 }}>where</Text>
+                <Text root="span" inherit override={{ color: "#a28a2b", fontSize: 46 }}>to</Text>
+                <Text root="span" inherit override={{ color: "#313131", fontSize: 46 }}>park</Text>
+            </Title>
         </div>
     </a>
     <slot></slot>
@@ -25,6 +30,11 @@
 </div>
 
 <style>
+a, a:hover, a:visited, a:active {
+    color: inherit;
+    text-decoration: none;
+}
+
 .split {
     height: 100%;
     position: fixed;
