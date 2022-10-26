@@ -3,6 +3,7 @@ package wheretopark_test
 import (
 	"log"
 	"math/rand"
+	"net/url"
 	"os"
 	"testing"
 	"time"
@@ -40,7 +41,11 @@ func getEnvOr(name string, or string) string {
 }
 
 func client() *wheretopark.Client {
-	url := getEnvOr("SURREALDB_URL", "ws://localhost:8000/rpc")
+	rawURL := getEnvOr("SURREALDB_URL", "ws://localhost:8000")
+	url, err := url.Parse(rawURL)
+	if err != nil {
+		log.Fatal(err)
+	}
 	client, err := wheretopark.NewClient(url, "wheretopark", "testing")
 	if err != nil {
 		log.Fatal(err)

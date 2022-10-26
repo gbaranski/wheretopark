@@ -2,6 +2,7 @@ package wheretopark
 
 import (
 	"fmt"
+	"net/url"
 
 	"github.com/goccy/go-json"
 	"github.com/surrealdb/surrealdb.go"
@@ -11,8 +12,9 @@ type Client struct {
 	database *surrealdb.DB
 }
 
-func NewClient(url, namespace, databaseName string) (*Client, error) {
-	database, err := surrealdb.New(url)
+func NewClient(url *url.URL, namespace, databaseName string) (*Client, error) {
+	endpoint := url.JoinPath("rpc")
+	database, err := surrealdb.New(endpoint.String())
 	if err != nil {
 		return nil, err
 	}

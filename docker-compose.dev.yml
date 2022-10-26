@@ -22,7 +22,7 @@ services:
     depends_on:
       - surrealdb
     environment:
-      DATABASE_URL: ws://surrealdb:8000/rpc
+      DATABASE_URL: ws://surrealdb:8000
       DATABASE_NAME: development
       DATABASE_USER: root
       DATABASE_PASSWORD: root

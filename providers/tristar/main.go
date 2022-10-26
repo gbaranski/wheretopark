@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"net/url"
 	wheretopark "wheretopark/go"
 	"wheretopark/providers/tristar/gdansk"
 
@@ -9,7 +10,7 @@ import (
 )
 
 type config struct {
-	DatabaseURL         string  `env:"DATABASE_URL" envDefault:"ws://localhost:8000/rpc"`
+	DatabaseURL         string  `env:"DATABASE_URL" envDefault:"ws://localhost:8000"`
 	DatabaseName        string  `env:"DATABASE_NAME" envDefault:"development"`
 	DatabaseUser        string  `env:"DATABASE_USER" envDefault:"root"`
 	DatabasePassword    string  `env:"DATABASE_PASSWORD" envDefault:"root"`
@@ -22,7 +23,11 @@ func main() {
 		log.Fatalf("%+v\n", err)
 	}
 
-	client, err := wheretopark.NewClient(config.DatabaseURL, "wheretopark", "development")
+	url, err := url.Parse(config.DatabaseURL)
+	if err != nil {
+		log.Fatalf("invalid database url: %s", err)
+	}
+	client, err := wheretopark.NewClient(url, "wheretopark", "development")
 	if err != nil {
 		log.Fatalf("failed to create database client: %v", err)
 	}
