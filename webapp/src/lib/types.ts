@@ -46,11 +46,11 @@ export type Metadata = {
     address: string;
     location: GeoJSON.Feature<GeoJSON.Point>;
     resources: Resource[];
-    totalSpots: Record<SpotType, number>;
+    totalSpots: Record<string, number>;
     maxWidth: number | undefined;
     maxHeight: number | undefined;
-    features: Feature[];
-    paymentMethods: PaymentMethod[];
+    features: string[];
+    paymentMethods: string[];
     comment: Record<LanguageCode, string>;
     currency: string;
     timezone: string;
@@ -60,7 +60,7 @@ export type Metadata = {
 export type State = {
     // ISO 8601 string
     lastUpdated: string;
-    availableSpots: Record<SpotType, number>,
+    availableSpots: Record<string, number>,
 };
 
 export type ParkingLot = {
