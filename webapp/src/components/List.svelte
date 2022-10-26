@@ -9,7 +9,7 @@
     <a href={`/parking-lot/${id}`} style="text-decoration: none;">
         <Card class="tile" p="sm" override={{backgroundColor: 'inherit'}}>
             <Title size={24}>{parkingLot.metadata.name}</Title>
-            <Text color="gray" size={14} weight={"semibold"}>{parkingLot.state.availableSpots[SpotType[SpotType.CAR]]} available spots</Text>
+            <Text color="gray" size={14} weight={"semibold"}>{parkingLot.state.availableSpots[SpotType[SpotType.CAR]]} available car spots</Text>
         </Card>
     </a>
 {/each}
