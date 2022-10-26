@@ -7,9 +7,5 @@ import (
 )
 
 func TestParse(t *testing.T) {
-	configuration, err := gdansk.LoadConfiguration("configuration.yaml")
-	if err != nil {
-		t.Fatal(err)
-	}
-	log.Println(configuration)
+	log.Println(gdansk.DefaultConfiguration)
 }

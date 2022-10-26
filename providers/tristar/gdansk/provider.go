@@ -65,13 +65,19 @@ func (p Provider) GetState() (map[wheretopark.ID]wheretopark.State, error) {
 	return states, nil
 }
 
-func NewProvider(configurationPath string) (*Provider, error) {
-	configuration, err := LoadConfiguration(configurationPath)
-	if err != nil {
-		return nil, err
+func NewProvider(configurationPath *string) (*Provider, error) {
+	var configuration Configuration
+	if configurationPath == nil {
+		configuration = DefaultConfiguration
+	} else {
+		newConfiguration, err := LoadConfiguration(*configurationPath)
+		if err != nil {
+			return nil, err
+		}
+		configuration = *newConfiguration
 	}
 	return &Provider{
-		configuration: *configuration,
+		configuration: configuration,
 		mapping:       make(map[string]wheretopark.ID),
 	}, nil
 

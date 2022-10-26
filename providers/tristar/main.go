@@ -9,11 +9,11 @@ import (
 )
 
 type config struct {
-	DatabaseURL         string `env:"DATABASE_URL" envDefault:"ws://localhost:8000/rpc"`
-	DatabaseName        string `env:"DATABASE_NAME" envDefault:"development"`
-	DatabaseUser        string `env:"DATABASE_USER" envDefault:"root"`
-	DatabasePassword    string `env:"DATABASE_PASSWORD" envDefault:"root"`
-	GdanskConfiguration string `env:"GDANSK_CONFIGURATION" envDefault:"gdansk/configuration.yaml"`
+	DatabaseURL         string  `env:"DATABASE_URL" envDefault:"ws://localhost:8000/rpc"`
+	DatabaseName        string  `env:"DATABASE_NAME" envDefault:"development"`
+	DatabaseUser        string  `env:"DATABASE_USER" envDefault:"root"`
+	DatabasePassword    string  `env:"DATABASE_PASSWORD" envDefault:"root"`
+	GdanskConfiguration *string `env:"GDANSK_CONFIGURATION"`
 }
 
 func main() {
