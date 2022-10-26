@@ -19,11 +19,30 @@ services:
     build:
       context: .
       dockerfile: providers/tristar/Dockerfile
+    depends_on:
+      - surrealdb
     environment:
       DATABASE_URL: ws://surrealdb:8000/rpc
       DATABASE_NAME: development
       DATABASE_USER: root
       DATABASE_PASSWORD: root
+
+  webapp:
+    container_name: webapp
+    ports:
+      - "5173:5173"
+    build: 
+      context: ./webapp
+      dockerfile: Dockerfile.dev
+    environment:
+      SECRET_DATABASE_USER: root
+      SECRET_DATABASE_PASSWORD: root
+      SECRET_DATABASE_URL: http://surrealdb:8000
+      PUBLIC_MAPBOX_ACCESS_TOKEN: pk.eyJ1IjoiZ2JhcmFuc2tpIiwiYSI6ImNsNmh4ZW9hZTBxaG4zY282MzAzbWhqbnAifQ.8_G9b7-m8n0kMr4O0-2mhQ
+    depends_on:
+      - surrealdb
+    volumes:
+      - ./webapp/src:/app/src:ro
   # authorization:
   #   build:
   #     context: .
