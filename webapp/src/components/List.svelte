@@ -1,16 +1,26 @@
 <script lang="ts">
-	import type { ID, ParkingLot } from "$lib/types";
-    import { Card } from '@svelteuidev/core';
+	import { SpotType, type ID, type ParkingLot } from "$lib/types";
+    import { Card, Title, Text } from '@svelteuidev/core';
 
     export let parkingLots: Record<ID, ParkingLot>;
 </script>
 
 {#each Object.entries(parkingLots) as [id, parkingLot]}
     <a href={`/parking-lot/${id}`} style="text-decoration: none;">
-        <Card p="sm">
-            <h4>{parkingLot.metadata.name}</h4>
-            <p>{parkingLot.metadata.address}</p>
+        <Card class="tile" p="sm" override={{backgroundColor: 'inherit'}}>
+            <Title size={24}>{parkingLot.metadata.name}</Title>
+            <Text color="gray" size={14} weight={"semibold"}>{parkingLot.state.availableSpots[SpotType[SpotType.CAR]]} available spots</Text>
         </Card>
     </a>
 {/each}
 
+
+<style>
+    a {
+        background-color: inherit;
+    }
+
+    a:hover {
+        background-color: rgb(245, 243, 236);
+    }
+</style>
