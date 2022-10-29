@@ -73,3 +73,9 @@ export const resourceIcon = (resource: string) => {
         default: return "error_outline";
     }
 };
+
+export const googleMapsLink = (location: GeoJSON.Feature<GeoJSON.Point>) => {
+    const [longitude, latitude] = location.geometry.coordinates;
+    return `https://google.com/maps/place/${latitude},${longitude}`;
+
+}

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { SpotType, type ParkingLot, Feature } from "$lib/types";
-	import { getCategory, resourceIcon, resourceText, timeFromNow } from "$lib/utils";
+	import { getCategory, googleMapsLink, resourceIcon, resourceText, timeFromNow } from "$lib/utils";
     import { Title, Text, Divider } from '@svelteuidev/core';
 
     export let data: {parkingLot: ParkingLot};
@@ -10,7 +10,12 @@
 </script>
 
 <div class="container">
-    <Title size={26}>{metadata.name}</Title>
+    <span style="display: flex;">
+        <Title root={"span"} size={26} override={{flex: 1}}>{metadata.name}</Title>
+        <a style="text-align: right;" href={googleMapsLink(metadata.location)} target="_blank" rel="noreferrer">
+            <i class="material-icons">directions</i>
+        </a>
+    </span>
     <Text size={14} weight={"semibold"}>{category}</Text>
     <Divider/>
     
