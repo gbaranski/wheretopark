@@ -12,6 +12,7 @@ specifiers:
   '@typescript-eslint/parser': ^5.41.0
   carbon-components-svelte: ^0.70.12
   carbon-icons-svelte: ^11.4.0
+  dayjs: ^1.11.6
   eslint: ^8.26.0
   eslint-config-prettier: ^8.5.0
   eslint-plugin-svelte3: ^4.0.0
@@ -19,6 +20,7 @@ specifiers:
   mapbox-gl: ^2.10.0
   prettier: ^2.7.1
   prettier-plugin-svelte: ^2.8.0
+  relativeTime: link:dayjs/plugin/relativeTime
   surrealdb.js: ^0.5.0
   svelte: ^3.52.0
   svelte-check: ^2.9.2
@@ -31,8 +33,10 @@ dependencies:
   '@svelteuidev/composables': 0.7.5
   '@svelteuidev/core': 0.7.5_crnx6m5yprih5nivgith2v7gqy
   '@types/geojson': 7946.0.10
+  dayjs: 1.11.6
   geojson: 0.5.0
   mapbox-gl: 2.10.0
+  relativeTime: link:dayjs/plugin/relativeTime
   surrealdb.js: 0.5.0
 
 devDependencies:
@@ -728,6 +732,10 @@ packages:
 
   /csscolorparser/1.0.3:
     resolution: {integrity: sha512-umPSgYwZkdFoUrH5hIq5kf0wPSXiro51nPw0j2K/c83KflkPSTBGMz6NJvMB+07VlL0y7VPo6QJcDjcgKTTm3w==}
+    dev: false
+
+  /dayjs/1.11.6:
+    resolution: {integrity: sha512-zZbY5giJAinCG+7AGaw0wIhNZ6J8AhWuSXKvuc1KAyMiRsvGQWqh4L+MomvhdAYjN+lqvVCMq1I41e3YHvXkyQ==}
     dev: false
 
   /debug/4.3.4:

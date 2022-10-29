@@ -41,3 +41,35 @@ export const getCategory = (features: Feature[]): string => {
     }
     return "Unknown";
 }
+
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
+
+dayjs.extend(relativeTime)
+
+
+export const timeFromNow = (iso: string) => {
+    return dayjs(iso).fromNow();
+}
+
+export const resourceText = (resource: string) => {
+    const url = new URL(resource);
+    switch(url.protocol) {
+        case "http:":
+        case "https:": return url.host;
+        case "mailto:": return url.pathname;
+        case "tel:": return url.pathname.replaceAll("-", " ");
+        default: return "";
+    }
+};
+
+export const resourceIcon = (resource: string) => {
+    const url = new URL(resource);
+    switch(url.protocol) {
+        case "http:":
+        case "https:": return "public";
+        case "mailto:": return "mail_outline";
+        case "tel:": return "call";
+        default: return "error_outline";
+    }
+};

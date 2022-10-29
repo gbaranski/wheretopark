@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { SpotType, type ParkingLot, Feature } from "$lib/types";
-	import { getCategory } from "$lib/utils";
-    import { Title, Text } from '@svelteuidev/core';
+	import { getCategory, resourceIcon, resourceText, timeFromNow } from "$lib/utils";
+    import { Title, Text, Divider } from '@svelteuidev/core';
 
     export let data: {parkingLot: ParkingLot};
     const {metadata, state} = data.parkingLot;
@@ -12,13 +12,57 @@
 <div class="container">
     <Title size={26}>{metadata.name}</Title>
     <Text size={14} weight={"semibold"}>{category}</Text>
-    <Text size={14} weight={"semibold"}>{state.availableSpots[SpotType[SpotType.CAR]]} available car spots</Text>
+    <Divider/>
+    
+    <div class="field">
+        <i class="material-icons">place</i>
+        <Text size={14} root="span" >
+            {metadata.address}
+        </Text>
+    </div>
 
-
+    <div class="field">
+        <i class="material-icons">directions_car</i>
+        <Text size={14} root="span" >
+            {state.availableSpots[SpotType[SpotType.CAR]]} available spots
+        </Text>
+    </div>
+    
+    <div class="field">
+        <i class="material-icons">schedule</i>
+        <Text size={14} root="span" >
+            Last updated {timeFromNow(state.lastUpdated)}
+        </Text>
+    </div>
+    
+    {#each metadata.resources as resource}
+        <div class="field">
+            <i class="material-icons">{resourceIcon(resource)}</i>
+            <Text size={14} root="span" >
+                {resourceText(resource)}
+            </Text>
+        </div>
+    {/each}
 </div>
 <style>
     .container {
         padding: 20px;
-
     }
+    
+    .field {
+        margin-bottom: 10px;
+        
+    }
+    
+    .field > i {
+        font-size: 18px !important;
+        margin-right: 10px;
+        vertical-align: middle;
+    }
+    
+    div.field > :global(*) {
+        font-weight: 500;
+        vertical-align: middle;
+    }
+    
 </style>

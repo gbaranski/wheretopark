@@ -37,8 +37,10 @@
 				"@svelteuidev/composables": "^0.7.5",
 				"@svelteuidev/core": "^0.7.5",
 				"@types/geojson": "^7946.0.10",
+				"dayjs": "^1.11.6",
 				"geojson": "^0.5.0",
 				"mapbox-gl": "^2.10.0",
+				"relativeTime": "link:dayjs/plugin/relativeTime",
 				"surrealdb.js": "^0.5.0"
 		}
 }
