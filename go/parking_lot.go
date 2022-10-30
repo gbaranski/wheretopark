@@ -29,13 +29,13 @@ type Rule struct {
 type Metadata struct {
 	Name           string                  `json:"name"`
 	Address        string                  `json:"address"`
-	Location       geojson.Feature         `json:"location"`
+	Geometry       geojson.Geometry        `json:"geometry"`
 	Resources      []string                `json:"resources"`
-	TotalSpots     map[SpotType]uint       `json:"totalSpots"`
-	MaxWidth       *int                    `json:"maxWidth,omitempty"`
-	MaxHeight      *int                    `json:"maxHeight,omitempty"`
+	TotalSpots     map[SpotType]uint       `json:"totalSpots" yaml:"total-spots"`
+	MaxWidth       *int                    `json:"maxWidth,omitempty" yaml:"max-width"`
+	MaxHeight      *int                    `json:"maxHeight,omitempty" yaml:"max-height"`
 	Features       []Feature               `json:"features"`
-	PaymentMethods []PaymentMethod         `json:"paymentMethods"`
+	PaymentMethods []PaymentMethod         `json:"paymentMethods" yaml:"payment-methods"`
 	Comment        map[LanguageCode]string `json:"comment"`
 	Currency       string                  `json:"currency"`
 	Timezone       string                  `json:"timezone"`

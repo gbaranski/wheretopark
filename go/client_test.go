@@ -62,7 +62,7 @@ func TestParkingLot(t *testing.T) {
 	metadata := wheretopark.Metadata{
 		Name:     "Galeria Bałtycka",
 		Address:  "ul. Dmowskiego",
-		Location: *geojson.NewPointFeature([]float64{18.60024, 54.38268}),
+		Geometry: *geojson.NewPointGeometry([]float64{18.60024, 54.38268}),
 		Resources: []string{
 			"mailto:galeria@galeriabaltycka.pl",
 			"tel:+48-58-521-85-52",
@@ -118,7 +118,6 @@ func TestParkingLot(t *testing.T) {
 			},
 		},
 	}
-	metadata.Location.Properties = nil
 	state := wheretopark.State{
 		LastUpdated: "2022-10-21T23:09:47+0000",
 		AvailableSpots: map[string]uint{

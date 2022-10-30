@@ -28,7 +28,7 @@ func (p Provider) GetMetadata() (map[wheretopark.ID]wheretopark.Metadata, error)
 		metadata := wheretopark.Metadata{
 			Name:           vendor.Name,
 			Address:        vendor.Address,
-			Location:       *geojson.NewPointFeature([]float64{vendor.Location.Longitude, vendor.Location.Latitude}),
+			Geometry:       *geojson.NewPointGeometry([]float64{vendor.Location.Longitude, vendor.Location.Latitude}),
 			Resources:      configuration.Resources,
 			TotalSpots:     configuration.TotalSpots,
 			MaxWidth:       configuration.MaxWidth,
