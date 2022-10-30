@@ -12,7 +12,7 @@
 <div class="container">
     <span style="display: flex;">
         <Title root={"span"} size={26} override={{flex: 1}}>{metadata.name}</Title>
-        <a style="text-align: right;" href={googleMapsLink(metadata.location)} target="_blank" rel="noreferrer">
+        <a style="text-align: right;" href={googleMapsLink(metadata.geometry)} target="_blank" rel="noreferrer">
             <i class="material-icons">directions</i>
         </a>
     </span>

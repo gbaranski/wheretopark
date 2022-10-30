@@ -44,7 +44,7 @@ export type Rule = {
 export type Metadata = {
     name: string;
     address: string;
-    location: GeoJSON.Feature<GeoJSON.Point>;
+    geometry: GeoJSON.Point;
     resources: Resource[];
     totalSpots: Record<string, number>;
     maxWidth: number | undefined;

@@ -74,8 +74,8 @@ export const resourceIcon = (resource: string) => {
     }
 };
 
-export const googleMapsLink = (location: GeoJSON.Feature<GeoJSON.Point>) => {
-    const [longitude, latitude] = location.geometry.coordinates;
+export const googleMapsLink = (geometry: GeoJSON.Point) => {
+    const [longitude, latitude] = geometry.coordinates;
     return `https://google.com/maps/place/${latitude},${longitude}`;
 
 }
