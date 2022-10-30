@@ -1,12 +1,48 @@
 {
   "pins" : [
     {
+      "identity" : "codablegeojson",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/guykogus/CodableGeoJSON.git",
+      "state" : {
+        "revision" : "67f7d9ce2ad7c809d87f77c428f0a6a058e55668",
+        "version" : "2.0.0"
+      }
+    },
+    {
+      "identity" : "codablejson",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/guykogus/CodableJSON.git",
+      "state" : {
+        "revision" : "06b9b1552d5265f4b702836eb140dab7e84bd1d1",
+        "version" : "2.0.2"
+      }
+    },
+    {
+      "identity" : "defaultcodable",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/gonzalezreal/DefaultCodable",
+      "state" : {
+        "revision" : "b75cdb44b772cdd278ea0d029d3f079384b0d87d",
+        "version" : "1.2.1"
+      }
+    },
+    {
       "identity" : "phonenumberkit",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/marmelroy/PhoneNumberKit",
       "state" : {
         "revision" : "aecb35499789bc4e22e3a025d647eef922be418e",
         "version" : "3.4.7"
+      }
+    },
+    {
+      "identity" : "swift-iso8601-durationparser",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/leonx98/Swift-ISO8601-DurationParser.git",
+      "state" : {
+        "revision" : "917d4bd5ba9b5d331831805b6ebe77a25259fef9",
+        "version" : "0.9.0"
       }
     }
   ],

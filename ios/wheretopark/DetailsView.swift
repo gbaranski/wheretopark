@@ -1,14 +1,14 @@
 //
-//  ParkingLotView.swift
-//  parkflow
+//  DetailsView.swift
+//  wheretopark
 //
+//  Created by Grzegorz Barański on 30/10/2022.
 //  Created by Grzegorz Barański on 19/05/2022.
 //
 
 import SwiftUI
 import MapKit
 import PhoneNumberKit
-import shared
 import MessageUI
 
 struct DetailsView: View {
@@ -86,9 +86,9 @@ struct DetailsView: View {
                     VStack(alignment: .leading) {
                         Text("AVAILABILITY").fontWeight(.black).font(.caption).foregroundColor(.secondary)
                         Group {
-                            let availableSpots = parkingLot.state.availableSpots[ParkingSpotType.car] ?? 0
-                            let totalSpots = parkingLot.metadata.totalSpots[ParkingSpotType.car] ?? 0
-                            let color = availabilityColor(available: availableSpots.uintValue, total: totalSpots.uintValue)
+                            let availableSpots = parkingLot.state.availableSpots["CAR"] ?? 0
+                            let totalSpots = parkingLot.metadata.totalSpots["CAR"] ?? 0
+                            let color = availabilityColor(available: availableSpots, total: totalSpots)
                             Text("\(availableSpots)").fontWeight(.heavy).foregroundColor(color) +
                             Text(" / \(totalSpots) cars").fontWeight(.heavy).foregroundColor(color).font(.caption)
                         }
@@ -96,7 +96,8 @@ struct DetailsView: View {
                     Divider()
                     VStack(alignment: .leading) {
                         Text("HOURS").fontWeight(.black).font(.caption).foregroundColor(.secondary)
-                        let status = parkingLot.status
+                        // TODO: Use real status
+                        let status = ParkingLotStatus.closed
                         switch status {
                         case .opensSoon:
                             Text("Opens soon").fontWeight(.heavy).foregroundColor(.yellow)
@@ -106,16 +107,15 @@ struct DetailsView: View {
                             Text("Closes soon").fontWeight(.heavy).foregroundColor(.yellow)
                         case .closed:
                             Text("Closed").fontWeight(.heavy).foregroundColor(.red)
-                        default:
-                            fatalError("unknown status \(status)")
+//                        default:
+//                            fatalError("unknown status \(status)")
                         }
                     }
                     Divider()
                     VStack(alignment: .leading) {
                         let formatter = RelativeDateTimeFormatter()
                         let _ = formatter.locale = Locale(identifier: "en")
-                        let lastUpdated = Date(timeIntervalSince1970: TimeInterval(parkingLot.state.lastUpdated.epochSeconds))
-                        let lastUpdatedString = formatter.localizedString(for: lastUpdated, relativeTo: Date.now)
+                        let lastUpdatedString = formatter.localizedString(for: parkingLot.state.lastUpdated, relativeTo: Date.now)
                         Text("UPDATED").fontWeight(.black).font(.caption).foregroundColor(.secondary)
                         Text("\(lastUpdatedString)").fontWeight(.bold)
                     }
@@ -133,8 +133,8 @@ struct DetailsView: View {
                     )
             }
         }.background(SharingViewController(isPresenting: $isSharing) {
-            let url = URL(string: UtilitiesKt.getShareURL(id: id))
-            let av = UIActivityViewController(activityItems: [url!], applicationActivities: nil)
+            let url = getShareURL(id: id)
+            let av = UIActivityViewController(activityItems: [url], applicationActivities: nil)
             // for iPad
             if UIDevice.current.userInterfaceIdiom == .pad {
                av.popoverPresentationController?.sourceView = UIView()
@@ -147,7 +147,7 @@ struct DetailsView: View {
     }
     
     func navigate() {
-        let mapItem = MKMapItem(placemark: MKPlacemark(coordinate: parkingLot.metadata.location.coordinate, addressDictionary: nil))
+        let mapItem = MKMapItem(placemark: MKPlacemark(coordinate: parkingLot.metadata.geometry.location!.coordinate, addressDictionary: nil))
         mapItem.name = parkingLot.metadata.name
         mapItem.openInMaps(launchOptions: [MKLaunchOptionsDirectionsModeKey: MKLaunchOptionsDirectionsModeDriving])
     }
@@ -172,28 +172,28 @@ struct DetailsRuleView: View {
     var body: some View {
         HStack(alignment: .center) {
             VStack(alignment: .leading) {
-                ForEach(Array(rule.expandHours().enumerated()), id: \.1) { i, hours in
+                ForEach(Array(rule.expandedHours.enumerated()), id: \.1) { i, hours in
                     Text(hours.trimmingCharacters(in: .whitespacesAndNewlines)).font(.body).fontWeight(.bold)
                 }
             }
             HStack {
-                ForEach(Array((rule.applies ?? []).enumerated()), id: \.1) { i, spotType in
-                    switch(spotType) {
-                    case .car:
-                        Image(systemName: "car.fill")
-                    case .carDisabled:
-                        Text("♿️")
-                    case .carElectric:
-                        Image(systemName: "bolt.car.fill")
-                    case .motorcycle:
-                        Image(systemName: "bicycle")
-                    default:
-                        Image(systemName: "questionmark.diamond")
-                    }
-                    if i != (rule.applies?.count ?? 0) - 1 {
-                        Divider()
-                    }
-                }
+//                ForEach(Array(rule.applies.enumerated()), id: \.1) { i, spotType in
+//                    switch(spotType) {
+//                    case .car:
+//                        Image(systemName: "car.fill")
+//                    case .carDisabled:
+//                        Text("♿️")
+//                    case .carElectric:
+//                        Image(systemName: "bolt.car.fill")
+//                    case .motorcycle:
+//                        Image(systemName: "bicycle")
+//                    default:
+//                        Image(systemName: "questionmark.diamond")
+//                    }
+//                    if i != (rule.applies.count ?? 0) - 1 {
+//                        Divider()
+//                    }
+//                }
             }.frame(
                 maxWidth: .infinity,
                 alignment: .topTrailing
@@ -249,20 +249,20 @@ struct DetailsAdditionalInfo: View {
     var body: some View {
         Group {
             DetailsAdditionalInfoField(name: "Parking lot") {
-                Text("\(metadata.totalSpots[ParkingSpotType.car] ?? 0) total spaces")
+                Text("\(metadata.totalSpots["CAR"] ?? 0) total spaces")
             }
             DetailsAdditionalInfoField(name: "Address") {
                 Text("\(metadata.address)")
             }
             DetailsAdditionalInfoField(name: "Coordinates") {
-                Text("\(metadata.location.latitude), \(metadata.location.longitude)")
+                Text("\(metadata.geometry.location!.coordinate.latitude), \(metadata.geometry.location!.coordinate.longitude)")
             }
             ForEach(metadata.resources, id: \.self) { resource in
-                DetailsAdditionalInfoField(name: resource.label()) {
-                    Link(
-                        "\(resource.components.host ?? "")\(resource.components.scheme == "tel" ? resource.components.path.replacingOccurrences(of: "-", with: " ") : resource.components.path)",
-                        destination: resource.components.url!).truncationMode(.tail).lineLimit(1)
-                }
+//                DetailsAdditionalInfoField(name: resource.label()) {
+//                    Link(
+//                        "\(resource.components.host ?? "")\(resource.components.scheme == "tel" ? resource.components.path.replacingOccurrences(of: "-", with: " ") : resource.components.path)",
+//                        destination: resource.components.url!).truncationMode(.tail).lineLimit(1)
+//                }
             }
             if let comment = metadata.commentForLocale {
                 DetailsAdditionalInfoField(name: "Comment") {
@@ -301,8 +301,8 @@ struct DetailsSendFeedbackView: View {
 struct DetailsView_Previews: PreviewProvider {
     static var previews: some View {
         DetailsView(
-            id: ParkingLot.companion.galeriaBaltycka.metadata.location.hash(length: 12),
-            parkingLot: ParkingLot.companion.galeriaBaltycka
+            id: "u3tjrk061424",
+            parkingLot: ParkingLot.galeriaBaltycka
         ).padding([.horizontal])
     }
 }

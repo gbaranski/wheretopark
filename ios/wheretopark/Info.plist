@@ -2,13 +2,15 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>AUTHORIZATION_URL</key>
-	<string>$(AUTHORIZATION_URL)</string>
-	<key>CLIENT_ID</key>
-	<string>$(CLIENT_ID)</string>
-	<key>CLIENT_SECRET</key>
-	<string>$(CLIENT_SECRET)</string>
-	<key>STOREKEEPER_URL</key>
-	<string>$(STOREKEEPER_URL)</string>
+	<key>DATABASE_NAME</key>
+	<string>$(DATABASE_NAME)</string>
+	<key>DATABASE_NAMESPACE</key>
+	<string>$(DATABASE_NAMESPACE)</string>
+	<key>DATABASE_PASSWORD</key>
+	<string>$(DATABASE_PASSWORD)</string>
+	<key>DATABASE_URL</key>
+	<string>$(DATABASE_URL)</string>
+	<key>DATABASE_USERNAME</key>
+	<string>$(DATABASE_USERNAME)</string>
 </dict>
 </plist>

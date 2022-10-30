@@ -11,17 +11,18 @@ const isDevelopment = process.env.NODE_ENV === 'development';
 await db.use("wheretopark", isDevelopment ? "development" : "production");
 
 export const getParkingLots = async (): Promise<Record<ID, ParkingLot>> => {
-    const metadatas = await db.select<Metadata & { id?: string}>("metadata");
-    const states = await db.select<State & {id?: string}>("state");
-    const parkingLots = metadatas.map((metadata) => {
-        const id = metadata.id!.split(":")[1]
-        const state = states.find((state) => state.id! == `state:${id}`)!;
-        delete metadata.id;
-        delete state.id;
-        return [id, {
-            metadata,
-            state,
-        } as ParkingLot];
+    const rawParkingLots = await db.select<ParkingLot & { id?: string}>("parking_lot");
+    const parkingLots = rawParkingLots.map((parkingLot) => {
+        const id = parkingLot.id!.split(":")[1]
+        delete parkingLot.id;
+        return [id, parkingLot];
     });
     return Object.fromEntries(parkingLots);
+}
+
+export const getParkingLot = async (id: string): Promise<ParkingLot | null> => {
+    const rawParkingLot = await db.select<ParkingLot & { id?: string}>(`parking_lot:${id}`);
+    const parkingLot = rawParkingLot[0];
+    delete parkingLot.id;
+    return parkingLot;
 }

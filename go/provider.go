@@ -12,25 +12,21 @@ func RunProvider(client *Client, provider Provider) error {
 	if err != nil {
 		return err
 	}
-
-	for id, metadata := range metadatas {
-		err := client.SetMetadata(id, metadata)
-		if err != nil {
-			return err
-		}
-		log.Printf("updated metadata of %s\n", id)
-	}
-
 	states, err := provider.GetState()
 	if err != nil {
 		return err
 	}
-	for id, state := range states {
-		err := client.SetState(id, state)
+
+	for id, metadata := range metadatas {
+		parkingLot := ParkingLot{
+			Metadata: metadata,
+			State:    states[id],
+		}
+		err := client.SetParkingLot(id, parkingLot)
 		if err != nil {
 			return err
 		}
-		log.Printf("updated state of %s\n", id)
+		log.Printf("updated parking lot of %s\n", id)
 	}
 
 	return nil

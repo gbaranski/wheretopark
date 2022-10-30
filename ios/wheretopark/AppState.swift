@@ -2,11 +2,10 @@
 //  AppState.swift
 //  wheretopark
 //
-//  Created by Grzegorz Barański on 11/07/2022.
+//  Created by Grzegorz Barański on 11/07/2022
 //
 
 import Foundation
-import shared
 import SwiftUI
 import Contacts
 
@@ -14,16 +13,8 @@ typealias ParkingLotID = String
 
 @MainActor class AppState: ObservableObject {
     let environment = AppEnvironment()
-    let authorizationClient: AuthorizationClient
-    let storekeeperClient: StorekeeperClient
-    init() {
-        self.authorizationClient = AuthorizationClient(baseURL: AppEnvironment.authorizationURL.absoluteString, clientID: AppEnvironment.clientID, clientSecret: AppEnvironment.clientSecret)
-        self.storekeeperClient = StorekeeperClient(
-            baseURL: AppEnvironment.storekeeperURL.absoluteString,
-            authorizationClient: authorizationClient,
-            accessScope: Set([AccessType.readmetadata, AccessType.readstate])
-        )
-    }
+    let databaseClient = DatabaseClient()
+    
     @Published private(set) var isPerformingTask = false
     @Published private(set) var fetchError: FetchError? = nil
     @Published var fetchFailed = false
@@ -66,7 +57,7 @@ typealias ParkingLotID = String
         isPerformingTask = true
         defer { isPerformingTask = false }
         do {
-            self.parkingLots = try await storekeeperClient.parkingLots()
+            self.parkingLots = try await databaseClient.parkingLots()
             self.fetchError = nil
             self.fetchFailed = false
         } catch {

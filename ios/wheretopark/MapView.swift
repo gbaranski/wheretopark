@@ -1,13 +1,13 @@
 //
-//  ParkingLotMap.swift
-//  parkflow
+//  MapView.swift
+//  wheretopark
 //
 //  Created by Grzegorz Barański on 18/05/2022.
 //
 
+import Foundation
 import SwiftUI
 import MapKit
-import shared
 
 let trackingModeProperties = [
     MKUserTrackingMode.none: ("No user tracking", "location"),
@@ -203,7 +203,7 @@ struct MapViewRepresentable: UIViewRepresentable {
                 return annotationView
             case let cluster as MKClusterAnnotation:
                 let markerAnnotationView = MKMarkerAnnotationView()
-                let totalAvailableSpots = cluster.memberAnnotations.compactMap{ $0 as? ParkingLotAnnotation }.map{ Int(truncating: $0.parkingLot.state.availableSpots[ParkingSpotType.car] ?? 0) }.reduce(0, +)
+                let totalAvailableSpots = cluster.memberAnnotations.compactMap{ $0 as? ParkingLotAnnotation }.map{ Int(truncating: $0.parkingLot.state.availableSpots["CAR"]! as NSNumber) }.reduce(0, +)
                 cluster.title = "\(totalAvailableSpots) total available spots"
                 cluster.subtitle = nil
                 markerAnnotationView.annotation = cluster
@@ -244,7 +244,7 @@ class ParkingLotAnnotation: NSObject, MKAnnotation {
     var id: ParkingLotID
     var parkingLot: ParkingLot
     var coordinate: CLLocationCoordinate2D {
-        self.parkingLot.metadata.location.coordinate
+        self.parkingLot.metadata.geometry.location!.coordinate
     }
     
     var title: String? {
@@ -252,11 +252,12 @@ class ParkingLotAnnotation: NSObject, MKAnnotation {
     }
     
     var subtitle: String? {
-        let status = parkingLot.status
+        // TODO: Change that
+        let status = ParkingLotStatus.closed
         if status == .closed || status == .opensSoon {
-            return status.name.capitalizingFirstLetter()
+            return status.rawValue.capitalizingFirstLetter()
         } else {
-            return "\(parkingLot.state.availableSpots[ParkingSpotType.car]!) available parking spots"
+            return "\(parkingLot.state.availableSpots["CAR"] ?? 0) available car parking spots"
         }
     }
     

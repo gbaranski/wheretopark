@@ -17,7 +17,6 @@
         });
         
         Object.entries(parkingLots).map(([id, parkingLot]) => {
-            console.log({parkingLot});
             const [longitude, latitude] = parkingLot.metadata.location.geometry.coordinates;
             return new mapboxgl.Marker()
                 .setLngLat([longitude, latitude]);

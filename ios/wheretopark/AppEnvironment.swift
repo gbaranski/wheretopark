@@ -1,5 +1,5 @@
 //
-//  Environment.swift
+//  AppEnvironment.swift
 //  wheretopark
 //
 //  Created by Grzegorz Barański on 09/09/2022.
@@ -9,10 +9,11 @@ import Foundation
 
 public struct AppEnvironment {
     enum Keys {
-        static let clientID = "CLIENT_ID"
-        static let clientSecret = "CLIENT_SECRET"
-        static let authorizationURL = "AUTHORIZATION_URL"
-        static let storekeeperURL = "STOREKEEPER_URL"
+        static let databaseURL = "DATABASE_URL"
+        static let databaseName = "DATABASE_NAME"
+        static let databaseNamespace = "DATABASE_NAMESPACE"
+        static let databaseUsername = "DATABASE_USERNAME"
+        static let databasePassword = "DATABASE_PASSWORD"
     }
     private static let infoDictionary: [String : Any] = {
         guard let dict = Bundle.main.infoDictionary else {
@@ -20,28 +21,39 @@ public struct AppEnvironment {
         }
         return dict
     }()
-    static let clientID: String = {
-        guard let string = AppEnvironment.infoDictionary[Keys.clientID] as? String else {
-            fatalError("client id is not set")
-        }
-        return string
-    }()
-    static let clientSecret: String = {
-        guard let string = AppEnvironment.infoDictionary[Keys.clientSecret] as? String else {
-            fatalError("client secret is not set")
-        }
-        return string
-    }()
-    static let authorizationURL: URL = {
-        guard let string = AppEnvironment.infoDictionary[Keys.authorizationURL] as? String else {
-            fatalError("authorization url is not set")
+    
+    static let databaseURL: URL = {
+        guard let string = AppEnvironment.infoDictionary[Keys.databaseURL] as? String else {
+            fatalError("database URL is not set")
         }
         return URL(string: string)!
     }()
-    static let storekeeperURL: URL = {
-        guard let string = AppEnvironment.infoDictionary[Keys.storekeeperURL] as? String else {
-            fatalError("storekeeper url is not set")
+    
+    static let databaseName: String = {
+        guard let string = AppEnvironment.infoDictionary[Keys.databaseName] as? String else {
+            fatalError("database name is not set")
         }
-        return URL(string: string)!
+        return string
+    }()
+    
+    static let databaseNamespace: String = {
+        guard let string = AppEnvironment.infoDictionary[Keys.databaseNamespace] as? String else {
+            fatalError("database namespace is not set")
+        }
+        return string
+    }()
+    
+    static let databaseUsername: String = {
+        guard let string = AppEnvironment.infoDictionary[Keys.databaseUsername] as? String else {
+            fatalError("database username is not set")
+        }
+        return string
+    }()
+    
+    static let databasePassword: String = {
+        guard let string = AppEnvironment.infoDictionary[Keys.databasePassword] as? String else {
+            fatalError("database password is not set")
+        }
+        return string
     }()
 }

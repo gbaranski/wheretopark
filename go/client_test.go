@@ -57,57 +57,7 @@ func client() *wheretopark.Client {
 	return client
 }
 
-func TestState(t *testing.T) {
-	client := client()
-	state := wheretopark.State{
-		LastUpdated: "2022-10-21T23:09:47+0000",
-		AvailableSpots: map[string]uint{
-			"CAR": 123,
-		},
-	}
-	id := RandomID()
-	err := client.SetState(id, state)
-	if err != nil {
-		log.Fatal(err)
-	}
-	err = client.SetState(id, state)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	obtainedState, err := client.GetState(id)
-	if err != nil {
-		log.Fatal(err)
-	}
-	assert.Equal(t, state, *obtainedState, "obtained state doesn't match with state that was added")
-
-	err = client.DeleteState(id)
-	if err != nil {
-		log.Fatal(err)
-	}
-	err = client.DeleteState(id)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	exists, err := client.ExistsState(id)
-	if err != nil {
-		log.Fatal(err)
-	}
-	if exists {
-		log.Fatalf("client should report that %s does not exist\n", id)
-	}
-	obtainedState, err = client.GetState(id)
-	if err != nil {
-		log.Fatal(err)
-	}
-	if obtainedState != nil {
-		log.Fatalf("state %s should have been deleted", id)
-	}
-
-}
-
-func TestMetadata(t *testing.T) {
+func TestParkingLot(t *testing.T) {
 	client := client()
 	metadata := wheretopark.Metadata{
 		Name:     "Galeria Bałtycka",
@@ -168,40 +118,53 @@ func TestMetadata(t *testing.T) {
 			},
 		},
 	}
+	metadata.Location.Properties = nil
+	state := wheretopark.State{
+		LastUpdated: "2022-10-21T23:09:47+0000",
+		AvailableSpots: map[string]uint{
+			"CAR": 123,
+		},
+	}
+	parkingLot := wheretopark.ParkingLot{
+		State:    state,
+		Metadata: metadata,
+	}
 	id := RandomID()
-	err := client.SetMetadata(id, metadata)
+	err := client.SetParkingLot(id, parkingLot)
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	obtainedMetadata, err := client.GetMetadata(id)
-	if err != nil {
-		log.Fatal(err)
-	}
-	// weird
-	if len(metadata.Location.Properties) == 0 {
-		metadata.Location.Properties = nil
-	}
-	assert.Equal(t, metadata, *obtainedMetadata, "obtained metadata doesn't match with metadata that was added")
-
-	err = client.DeleteMetadata(id)
-	if err != nil {
+	if err = client.SetParkingLot(id, parkingLot); err != nil {
 		log.Fatal(err)
 	}
 
-	exists, err := client.ExistsMetadata(id)
+	obtainedParkingLot, err := client.GetParkingLot(id)
+	if err != nil {
+		log.Fatal(err)
+	}
+	assert.Equal(t, parkingLot, *obtainedParkingLot, "obtained parking lot doesn't match with parking lot that was added")
+
+	err = client.DeleteParkingLot(id)
+	if err != nil {
+		log.Fatal(err)
+	}
+	if err = client.DeleteParkingLot(id); err != nil {
+		log.Fatal(err)
+	}
+
+	exists, err := client.ExistsParkingLot(id)
 	if err != nil {
 		log.Fatal(err)
 	}
 	if exists {
 		log.Fatalf("client should report that %s does not exist\n", id)
 	}
-	obtainedMetadata, err = client.GetMetadata(id)
+	obtainedParkingLot, err = client.GetParkingLot(id)
 	if err != nil {
 		log.Fatal(err)
 	}
-	if obtainedMetadata != nil {
-		log.Fatalf("metadata %s should have been deleted", id)
+	if obtainedParkingLot != nil {
+		log.Fatalf("parkign lot %s should have been deleted", id)
 	}
 
 }

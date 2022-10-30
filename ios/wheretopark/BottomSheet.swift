@@ -18,22 +18,14 @@ extension UISheetPresentationController.Detent.Identifier {
 
 extension UISheetPresentationController.Detent {
     class func small() -> UISheetPresentationController.Detent {
-        if #available(iOS 16.0, *) {
-            return .custom(identifier: .small) { context in
-                return 80
-            }
-        } else {
-            return ._detent(withIdentifier: UISheetPresentationController.Detent.Identifier.small.rawValue, constant: 80.0)
+        return .custom(identifier: .small) { context in
+            return 80
         }
     }
     
     class func compact() -> UISheetPresentationController.Detent {
-        if #available(iOS 16.0, *) {
-            return .custom(identifier: .compact) { context in
-                return 300
-            }
-        } else {
-            return ._detent(withIdentifier: UISheetPresentationController.Detent.Identifier.compact.rawValue, constant: 80.0)
+        return .custom(identifier: .compact) { context in
+            return 300
         }
     }
 }

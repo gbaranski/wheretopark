@@ -4,7 +4,6 @@
     import Map from '../components/Map.svelte'
 
     export let data: LayoutData;
-	console.log({data});
 </script>
 
 <svelte:head>

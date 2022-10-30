@@ -8,8 +8,9 @@
 // Configuration settings file format documentation can be found at:
 // https://help.apple.com/xcode/#/dev745c5c974
 
-CLIENT_ID = 1d00073c-8b2c-4da1-af29-561fdbf75760
-CLIENT_SECRET = 30601404-5d2d-466d-ba87-a00cf80a2085
 PROTOCOL = http:/
-AUTHORIZATION_URL = $(PROTOCOL)/192.168.1.2:5001
-STOREKEEPER_URL = $(PROTOCOL)/192.168.1.2:5002
+DATABASE_URL = $(PROTOCOL)/192.168.1.2:8000
+DATABASE_NAMESPACE = wheretopark
+DATABASE_NAME = development
+DATABASE_USERNAME = root
+DATABASE_PASSWORD = root

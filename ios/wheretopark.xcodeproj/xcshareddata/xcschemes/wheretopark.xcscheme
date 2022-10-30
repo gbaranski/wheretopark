@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "1340"
+   LastUpgradeVersion = "1400"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "6885B38D28B6D0A300860E55"
+               BlueprintIdentifier = "68239D9E290ED14200C25ED6"
                BuildableName = "wheretopark.app"
                BlueprintName = "wheretopark"
                ReferencedContainer = "container:wheretopark.xcodeproj">
@@ -29,20 +29,22 @@
       shouldUseLaunchSchemeArgsEnv = "YES">
       <Testables>
          <TestableReference
-            skipped = "NO">
+            skipped = "NO"
+            parallelizable = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "6885B39D28B6D0A400860E55"
+               BlueprintIdentifier = "68239DAF290ED14300C25ED6"
                BuildableName = "wheretoparkTests.xctest"
                BlueprintName = "wheretoparkTests"
                ReferencedContainer = "container:wheretopark.xcodeproj">
             </BuildableReference>
          </TestableReference>
          <TestableReference
-            skipped = "NO">
+            skipped = "NO"
+            parallelizable = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "6885B3A728B6D0A400860E55"
+               BlueprintIdentifier = "68239DB9290ED14300C25ED6"
                BuildableName = "wheretoparkUITests.xctest"
                BlueprintName = "wheretoparkUITests"
                ReferencedContainer = "container:wheretopark.xcodeproj">
@@ -64,7 +66,7 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "6885B38D28B6D0A300860E55"
+            BlueprintIdentifier = "68239D9E290ED14200C25ED6"
             BuildableName = "wheretopark.app"
             BlueprintName = "wheretopark"
             ReferencedContainer = "container:wheretopark.xcodeproj">
@@ -81,7 +83,7 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "6885B38D28B6D0A300860E55"
+            BlueprintIdentifier = "68239D9E290ED14200C25ED6"
             BuildableName = "wheretopark.app"
             BlueprintName = "wheretopark"
             ReferencedContainer = "container:wheretopark.xcodeproj">

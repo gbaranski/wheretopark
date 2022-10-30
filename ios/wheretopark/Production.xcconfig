@@ -2,14 +2,15 @@
 //  Production.xcconfig
 //  wheretopark
 //
-//  Created by Grzegorz Barański on 23/09/2022.
+//  Created by Grzegorz Barański on 30/10/2022.
 //
 
 // Configuration settings file format documentation can be found at:
 // https://help.apple.com/xcode/#/dev745c5c974
 
-CLIENT_ID = 9f75e24c-55d5-425e-8186-d8a75c4e3e85
-CLIENT_SECRET = b7271ed3-78ac-436f-8bbc-0222b2b26f9b
-PROTOCOL = https:/
-AUTHORIZATION_URL = $(PROTOCOL)/authorization.wheretopark.app
-STOREKEEPER_URL = $(PROTOCOL)/storekeeper.wheretopark.app
+PROTOCOL = http:/
+DATABASE_URL = $(PROTOCOL)/192.168.1.2:8000
+DATABASE_NAMESPACE = wheretopark
+DATABASE_NAME = development
+DATABASE_USERNAME = root
+DATABASE_PASSWORD = root

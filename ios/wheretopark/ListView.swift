@@ -1,6 +1,6 @@
 //
-//  ParkingLotList.swift
-//  parkflow
+//  ListView.swift
+//  wheretopark
 //
 //  Created by Grzegorz Barański on 26/05/2022.
 //
@@ -8,7 +8,6 @@
 import SwiftUI
 import CoreLocation
 import MapKit
-import shared
 
 struct ListView: View {
     @State var query: String = ""
@@ -39,7 +38,7 @@ struct ListView: View {
         } else {
             let processedParkingLots = appState.parkingLots.sorted(by: {
                 if let userLocation: CLLocation = locationManager.lastLocation {
-                    return $0.value.metadata.location.distance(from: userLocation) < $1.value.metadata.location.distance(from: userLocation)
+                    return $0.value.metadata.geometry.distance(from: userLocation) < $1.value.metadata.geometry.distance(from: userLocation)
                 } else {
                     return $0.key > $1.key
                 }
@@ -63,11 +62,11 @@ struct ListView: View {
                     ForEach(processedParkingLots, id: \.key) { id, parkingLot in
                         VStack(alignment: .leading, spacing: 3) {
                             Text(parkingLot.metadata.name).foregroundColor(.primary).font(.headline)
-                            Label("\(parkingLot.state.availableSpots[ParkingSpotType.car] ?? 0) available parking spots", systemImage: "parkingsign.circle")
+                            Label("\(parkingLot.state.availableSpots["CAR"] ?? 0) available parking spots", systemImage: "parkingsign.circle")
                                 .foregroundColor(.secondary)
                                 .font(.subheadline)
                             if let userLocation: CLLocation = locationManager.lastLocation {
-                                let distance = parkingLot.metadata.location.distance(from: userLocation)
+                                let distance = parkingLot.metadata.geometry.distance(from: userLocation)
                                 let distanceString = MKDistanceFormatter().string(fromDistance: distance)
                                 Label("\(distanceString) away", systemImage: "point.topleft.down.curvedto.point.bottomright.up")
                                     .foregroundColor(.secondary)

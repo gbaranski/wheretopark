@@ -78,8 +78,8 @@ func (c *Client) delete(thing string) error {
 	return err
 }
 
-func metadataReference(id ID) string {
-	return fmt.Sprintf("metadata:%s", id)
+func parkingLotReference(id ID) string {
+	return fmt.Sprintf("parking_lot:%s", id)
 }
 
 func toMap(v any) (map[string]any, error) {
@@ -108,71 +108,35 @@ func mapTo[T any](v map[string]any) (*T, error) {
 	return &value, nil
 }
 
-func (c *Client) SetMetadata(id ID, metadata Metadata) error {
-	data, err := toMap(metadata)
+func (c *Client) SetParkingLot(id ID, parkingLot ParkingLot) error {
+	data, err := toMap(parkingLot)
 	if err != nil {
 		return err
 	}
-	return c.set(metadataReference(id), data)
+	return c.set(parkingLotReference(id), data)
 }
 
-func (c *Client) ExistsMetadata(id ID) (bool, error) {
-	return c.exists(metadataReference(id))
+func (c *Client) ExistsParkingLot(id ID) (bool, error) {
+	return c.exists(parkingLotReference(id))
 }
 
-func (c *Client) GetMetadata(id ID) (*Metadata, error) {
-	v, err := c.get(metadataReference(id))
+func (c *Client) GetParkingLot(id ID) (*ParkingLot, error) {
+	v, err := c.get(parkingLotReference(id))
 	if err != nil {
 		return nil, err
 	}
 	if v == nil {
 		return nil, nil
 	}
-	metadata, err := mapTo[Metadata](v)
+	parkingLot, err := mapTo[ParkingLot](v)
 	if err != nil {
 		return nil, err
 	}
-	return metadata, nil
+	return parkingLot, nil
 }
 
-func (c *Client) DeleteMetadata(id ID) error {
-	return c.delete(metadataReference(id))
-}
-
-func stateReference(id ID) string {
-	return fmt.Sprintf("state:%s", id)
-}
-
-func (c *Client) SetState(id ID, state State) error {
-	data, err := toMap(state)
-	if err != nil {
-		return err
-	}
-	return c.set(stateReference(id), data)
-}
-
-func (c *Client) ExistsState(id ID) (bool, error) {
-	return c.exists(stateReference(id))
-}
-
-func (c *Client) GetState(id ID) (*State, error) {
-
-	v, err := c.get(stateReference(id))
-	if err != nil {
-		return nil, err
-	}
-	if v == nil {
-		return nil, nil
-	}
-	state, err := mapTo[State](v)
-	if err != nil {
-		return nil, err
-	}
-	return state, nil
-}
-
-func (c *Client) DeleteState(id ID) error {
-	return c.delete(stateReference(id))
+func (c *Client) DeleteParkingLot(id ID) error {
+	return c.delete(parkingLotReference(id))
 }
 
 func (c *Client) Close() {

@@ -1,58 +1,133 @@
 //
 //  ParkingLot.swift
-//  iosApp
+//  wheretopark
 //
-//  Created by Grzegorz Barański on 23/08/2022.
-//  Copyright © 2022 orgName. All rights reserved.
+//  Created by Grzegorz Barański on 30/10/2022.
 //
 
 import Foundation
-import shared
-import CoreLocation
+import MapKit
 import PhoneNumberKit
+import Swift_ISO8601_DurationParser
+import DefaultCodable
+import CodableGeoJSON
 
-extension Coordinate {
-    var coordinate: CLLocationCoordinate2D {
-        CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
+
+typealias ParkingSpotType = String
+typealias LanguageCode = String
+
+enum ParkingLotStatus: String, Codable {
+    case opensSoon
+    case open
+    case closesSoon
+    case closed
+}
+
+struct ParkingLotPricingRule: Hashable {
+    let duration: DateComponents
+    let price: Decimal
+    var repeating: Bool = false
+    
+}
+
+extension ParkingLotPricingRule: Decodable {
+    enum CodingKeys: String, CodingKey {
+        case duration
+        case price
+        case repeating
     }
     
-    func distance(from: CLLocation) -> CLLocationDistance {
-        let pointLocation = CLLocation(
-            latitude: self.latitude,
-            longitude: self.longitude
+    init(from decoder: Decoder) throws {
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        let durationString = try values.decode(String.self, forKey: .duration)
+        duration = DateComponents.durationFrom8601String(durationString)!
+        price = try values.decode(Decimal.self, forKey: .price)
+        repeating = try values.decodeIfPresent(Bool.self, forKey: .repeating) ?? false
+    }
+}
+
+struct ParkingLotRule: Decodable, Hashable {
+    let hours: String
+    @Default<Empty>
+    var applies: [ParkingSpotType]
+    let pricing: [ParkingLotPricingRule]
+    
+}
+
+struct ParkingLotMetadata: Decodable {
+    var name: String
+    var address: String
+    var geometry: GeoJSON.Geometry
+    var resources: [URL]
+    var totalSpots: [ParkingSpotType : UInt]
+    var maxWidth: Int?
+    var maxHeight: Int?
+    var features: [String]
+    @Default<Empty>
+    var paymentMethods: [String]
+    @Default<EmptyDictionary>
+    var comment: [LanguageCode : String]
+    var currency: String
+    var timezone: String
+    var rules: [ParkingLotRule]
+}
+
+struct ParkingLotState: Decodable {
+    let lastUpdated: Date
+    let availableSpots: [ParkingSpotType : UInt]
+}
+
+struct ParkingLot: Decodable {
+    let metadata: ParkingLotMetadata
+    let state: ParkingLotState
+}
+
+
+extension ParkingLot {
+    static let galeriaBaltycka =  ParkingLot(
+        metadata: ParkingLotMetadata(
+            name: "Galeria Bałtycka",
+            address: "ul.Dmowskiego",
+            geometry: GeoJSON.Geometry.point(coordinates: PointGeometry.Coordinates(longitude: 18.60024, latitude: 54.38268)),
+            resources: [
+                URL(string: "mailto:galeria@galeriabaltycka.pl")!,
+                URL(string: "tel:+48-58-521-85-52")!,
+                URL(string: "https://www.galeriabaltycka.pl/o-centrum/dojazd-parkingi/parkingi/")!
+            ],
+            totalSpots: [
+                "CAR": 1100
+            ],
+            maxWidth: nil,
+            maxHeight: nil,
+            features: ["COVERED", "UNCOVERED"],
+            paymentMethods: Default(wrappedValue: ["CASH", "CONTACTLESS", "CARD"]),
+            comment: Default(wrappedValue: [
+                "pl": "Na dwóch najwyższych kondygnacjach budynku centrum handlowego oferujemy dwupoziomowy parking i 1100 miejsc postojowych. \n" +
+                    "Wjazd do centrum handlowego odbywa się z ronda od strony ulicy Dmowskiego w Gdańsku. \n" +
+                    "Komunikację między poziomami parkingowymi a poziomami handlowymi centrum handlowego zapewniają schody ruchome i windy szybkobieżne.\n" +
+                    "Prosimy o zachowanie biletu parkingowego i opłacenie należności za postój w kasie automatycznej, znajdującej się przy wyjściu z parkingu.",
+            ]),
+            currency: "PLN",
+            timezone: "Europe/Warsaw",
+            rules: [
+                ParkingLotRule(
+                    hours: "Mo-Sa 08:00-22:00; Su 09:00-21:00",
+                    applies: Default(wrappedValue: []),
+                    pricing: [
+                        ParkingLotPricingRule(duration: DateComponents(hour: 1), price: 0),
+                        ParkingLotPricingRule(duration: DateComponents(hour: 2), price: 2),
+                        ParkingLotPricingRule(duration: DateComponents(hour: 3), price: 5),
+                        ParkingLotPricingRule(duration: DateComponents(hour: 1), price: 4, repeating: true),
+                        ParkingLotPricingRule(duration: DateComponents(day: 1), price: 25),
+                    ]
+                ),
+            ]
+        ),
+        state: ParkingLotState(
+            lastUpdated: Calendar.current.date(byAdding: .second, value: -10, to: Date.now)!,
+            availableSpots: [
+                "CAR": 123
+            ]
         )
-        return from.distance(from: pointLocation)
-    }
-}
-
-extension ParkingLotResource {
-    var components: URLComponents {
-        URLComponents(string: self.url)!
-    }
-}
-
-
-extension ParkingLotPricingRule {
-    var durationString: String {
-        let components = self.durationComponents()
-        let duration = DateComponents(
-            day: Int(components.days),
-            hour: Int(components.hours),
-            minute: Int(components.minutes),
-            second: Int(components.seconds),
-            nanosecond: Int(components.nanoseconds)
-        )
-        let durationFormatter = DateComponentsFormatter()
-        durationFormatter.unitsStyle = .full
-        return durationFormatter.string(from: duration)!
-    }
-}
-
-
-extension ParkingLotMetadata {
-    var commentForLocale: String? {
-        let languageCode = Locale.current.language.languageCode?.identifier ?? "en"
-        let comment = comment[languageCode] ?? comment ["en"]
-        return comment
-    }
+    )
 }
