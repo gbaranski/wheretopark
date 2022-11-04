@@ -4,6 +4,7 @@
 	import { onMount } from "svelte";
     import 'mapbox-gl/dist/mapbox-gl.css';
 	import type { ID, ParkingLot } from "$lib/types";
+	import { currentMap } from "$lib/store";
     
     export let parkingLots: Record<ID, ParkingLot>;
 
@@ -15,6 +16,7 @@
             center: [18.64, 54.35],
             zoom: 10,
         });
+        currentMap.set(map);
         
         Object.entries(parkingLots).map(([id, parkingLot]) => {
             const [longitude, latitude] = parkingLot.metadata.geometry.coordinates;
