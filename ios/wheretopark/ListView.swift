@@ -49,7 +49,7 @@ struct ListView: View {
             VStack {
                 HStack {
                     Image(systemName: "magnifyingglass")
-                    TextField("Search", text: $query)
+                    TextField("search", text: $query)
                 }
                 .foregroundColor(Color(UIColor.secondaryLabel))
                 .padding(.vertical, 8)
@@ -62,7 +62,7 @@ struct ListView: View {
                     ForEach(processedParkingLots, id: \.key) { id, parkingLot in
                         VStack(alignment: .leading, spacing: 3) {
                             Text(parkingLot.metadata.name).foregroundColor(.primary).font(.headline)
-                            Label("\(parkingLot.state.availableSpots["CAR"] ?? 0) available parking spots", systemImage: "parkingsign.circle")
+                            Label("\(parkingLot.state.availableSpots["CAR"] ?? 0) \(String(localized: "parkingLot.availableSpots"))", systemImage: "parkingsign.circle")
                                 .foregroundColor(.secondary)
                                 .font(.subheadline)
                             if let userLocation: CLLocation = locationManager.lastLocation {

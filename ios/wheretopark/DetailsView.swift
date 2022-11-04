@@ -52,7 +52,7 @@ struct DetailsView: View {
                 }
                 HStack {
                     Button(action: navigate) {
-                        Label("Navigate", systemImage: "car.fill").frame(maxWidth: .infinity)
+                        Label("navigate", systemImage: "car.fill").frame(maxWidth: .infinity)
                     }
                     .controlSize(.large)
                     .buttonStyle(.borderedProminent)
@@ -65,18 +65,20 @@ struct DetailsView: View {
                             }
                         ) {
                             Label(
-                                isFavourite ? "Remove from favourites" : "Add to favourites",
+                                isFavourite
+                                    ? "favourites.remove"
+                                    : "favourites.add",
                                 systemImage: isFavourite ? "star.fill" : "star"
                             )
                         }
                         Button(action: {
                             isSharing = true
                         }) {
-                          Label("Share", systemImage: "square.and.arrow.up")
+                            Label("share", systemImage: "square.and.arrow.up")
                         }
                     } label: {
                         Button(action: {}) {
-                            Label("More", systemImage: "ellipsis")
+                            Label("more", systemImage: "ellipsis")
                         }
                         .controlSize(.large)
                         .buttonStyle(.bordered)
@@ -84,7 +86,11 @@ struct DetailsView: View {
                 }
                 HStack{
                     VStack(alignment: .leading) {
-                        Text("AVAILABILITY").fontWeight(.black).font(.caption).foregroundColor(.secondary)
+                        Text("parkingLot.availability")
+                            .fontWeight(.black)
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                            .textCase(.uppercase)
                         Group {
                             let availableSpots = parkingLot.state.availableSpots["CAR"] ?? 0
                             let totalSpots = parkingLot.metadata.totalSpots["CAR"] ?? 0
@@ -95,35 +101,54 @@ struct DetailsView: View {
                     }
                     Divider()
                     VStack(alignment: .leading) {
-                        Text("HOURS").fontWeight(.black).font(.caption).foregroundColor(.secondary)
+                        Text("parkingLot.hours")
+                            .fontWeight(.black)
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                            .textCase(.uppercase)
                         // TODO: Use real status
                         let status = ParkingLotStatus.closed
                         switch status {
                         case .opensSoon:
-                            Text("Opens soon").fontWeight(.heavy).foregroundColor(.yellow)
+                            Text(LocalizedStringKey("parkingLot.status.opensSoon"))
+                                .fontWeight(.heavy)
+                                .foregroundColor(.yellow)
                         case .open:
-                            Text("Open").fontWeight(.heavy).foregroundColor(.green)
+                            Text(LocalizedStringKey("parkingLot.status.open"))
+                                .fontWeight(.heavy)
+                                .foregroundColor(.green)
                         case .closesSoon:
-                            Text("Closes soon").fontWeight(.heavy).foregroundColor(.yellow)
+                            Text(LocalizedStringKey("parkingLot.status.closesSoon"))
+                                .fontWeight(.heavy)
+                                .foregroundColor(.yellow)
                         case .closed:
-                            Text("Closed").fontWeight(.heavy).foregroundColor(.red)
-//                        default:
-//                            fatalError("unknown status \(status)")
+                            Text(LocalizedStringKey("parkingLot.status.closed"))
+                                .fontWeight(.heavy)
+                                .foregroundColor(.red)
+                            //                        default:
+                            //                            fatalError("unknown status \(status)")
                         }
                     }
                     Divider()
                     VStack(alignment: .leading) {
                         let formatter = RelativeDateTimeFormatter()
-                        let _ = formatter.locale = Locale(identifier: "en")
                         let lastUpdatedString = formatter.localizedString(for: parkingLot.state.lastUpdated, relativeTo: Date.now)
-                        Text("UPDATED").fontWeight(.black).font(.caption).foregroundColor(.secondary)
+                        Text(LocalizedStringKey("parkingLot.lastUpdated"))
+                            .textCase(.uppercase)
+                            .fontWeight(.black)
+                            .font(.caption)
+                            .foregroundColor(.secondary)
                         Text("\(lastUpdatedString)").fontWeight(.bold)
                     }
                     
                 }.frame(maxWidth: .infinity)
-                Text("Pricing").font(.title2).fontWeight(.bold)
+                Text(LocalizedStringKey("parkingLot.pricing"))
+                    .font(.title2)
+                    .fontWeight(.bold)
                 DetailsRulesView(metadata: parkingLot.metadata)
-                Text("Additional info").font(.title2).fontWeight(.bold)
+                Text(LocalizedStringKey("parkingLot.additionalInfo"))
+                    .font(.title2)
+                    .fontWeight(.bold)
                 DetailsAdditionalInfo(id: id, metadata: parkingLot.metadata)
                 DetailsSendFeedbackView(id: id, metadata: parkingLot.metadata, takeSnapshot: { self.snapshot() })
                     .frame(
@@ -137,11 +162,11 @@ struct DetailsView: View {
             let av = UIActivityViewController(activityItems: [url], applicationActivities: nil)
             // for iPad
             if UIDevice.current.userInterfaceIdiom == .pad {
-               av.popoverPresentationController?.sourceView = UIView()
+                av.popoverPresentationController?.sourceView = UIView()
             }
             av.completionWithItemsHandler = { _, _, _, _ in
-                   isSharing = false // required for re-open !!!
-               }
+                isSharing = false // required for re-open !!!
+            }
             return av
         })
     }
@@ -177,23 +202,23 @@ struct DetailsRuleView: View {
                 }
             }
             HStack {
-//                ForEach(Array(rule.applies.enumerated()), id: \.1) { i, spotType in
-//                    switch(spotType) {
-//                    case .car:
-//                        Image(systemName: "car.fill")
-//                    case .carDisabled:
-//                        Text("♿️")
-//                    case .carElectric:
-//                        Image(systemName: "bolt.car.fill")
-//                    case .motorcycle:
-//                        Image(systemName: "bicycle")
-//                    default:
-//                        Image(systemName: "questionmark.diamond")
-//                    }
-//                    if i != (rule.applies.count ?? 0) - 1 {
-//                        Divider()
-//                    }
-//                }
+                //                ForEach(Array(rule.applies.enumerated()), id: \.1) { i, spotType in
+                //                    switch(spotType) {
+                //                    case .car:
+                //                        Image(systemName: "car.fill")
+                //                    case .carDisabled:
+                //                        Text("♿️")
+                //                    case .carElectric:
+                //                        Image(systemName: "bolt.car.fill")
+                //                    case .motorcycle:
+                //                        Image(systemName: "bicycle")
+                //                    default:
+                //                        Image(systemName: "questionmark.diamond")
+                //                    }
+                //                    if i != (rule.applies.count ?? 0) - 1 {
+                //                        Divider()
+                //                    }
+                //                }
             }.frame(
                 maxWidth: .infinity,
                 alignment: .topTrailing
@@ -212,13 +237,13 @@ struct DetailsRulePricingView: View {
             let priceString = price.price.formatted(.currency(code: currency))
             HStack {
                 if price.repeating {
-                    Text("Each additional \(price.durationString)")
+                    Text("\(String(localized: "parkingLot.eachAdditional")) \(price.durationString)")
                 } else {
                     Text("\(price.durationString)")
                 }
                 Spacer()
                 if price.price == 0 {
-                    Text("Free").bold()
+                    Text("parkingLot.pricing.free").bold()
                 } else {
                     Text(priceString)
                 }
@@ -230,7 +255,7 @@ struct DetailsRulePricingView: View {
 }
 
 struct DetailsAdditionalInfoField<ContentView: View>: View {
-    let name: String
+    let name: LocalizedStringKey
     @ViewBuilder let contentView: () -> ContentView
     
     var body: some View {
@@ -248,28 +273,28 @@ struct DetailsAdditionalInfo: View {
     
     var body: some View {
         Group {
-            DetailsAdditionalInfoField(name: "Parking lot") {
-                Text("\(metadata.totalSpots["CAR"] ?? 0) total spaces")
+            DetailsAdditionalInfoField(name: "parkingLot") {
+                Text("\(metadata.totalSpots["CAR"] ?? 0) \(String(localized: "parkingLot.totalSpots"))")
             }
-            DetailsAdditionalInfoField(name: "Address") {
+            DetailsAdditionalInfoField(name: "parkingLot.address") {
                 Text("\(metadata.address)")
             }
-            DetailsAdditionalInfoField(name: "Coordinates") {
+            DetailsAdditionalInfoField(name: "parkingLot.coordinates") {
                 Text("\(metadata.geometry.location!.coordinate.latitude), \(metadata.geometry.location!.coordinate.longitude)")
             }
             ForEach(metadata.resources, id: \.self) { resource in
-//                DetailsAdditionalInfoField(name: resource.label()) {
-//                    Link(
-//                        "\(resource.components.host ?? "")\(resource.components.scheme == "tel" ? resource.components.path.replacingOccurrences(of: "-", with: " ") : resource.components.path)",
-//                        destination: resource.components.url!).truncationMode(.tail).lineLimit(1)
-//                }
+                //                DetailsAdditionalInfoField(name: resource.label()) {
+                //                    Link(
+                //                        "\(resource.components.host ?? "")\(resource.components.scheme == "tel" ? resource.components.path.replacingOccurrences(of: "-", with: " ") : resource.components.path)",
+                //                        destination: resource.components.url!).truncationMode(.tail).lineLimit(1)
+                //                }
             }
             if let comment = metadata.commentForLocale {
-                DetailsAdditionalInfoField(name: "Comment") {
+                DetailsAdditionalInfoField(name: "parkingLot.comment") {
                     Text(comment)
                 }
             }
-            DetailsAdditionalInfoField(name: "Unique ID") {
+            DetailsAdditionalInfoField(name: "parkingLot.id") {
                 Text("\(id)").textSelection(.enabled)
             }
         }

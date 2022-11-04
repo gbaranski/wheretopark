@@ -1,0 +1,33 @@
+/* 
+  Localizable.strings
+  wheretopark
+
+  Created by Grzegorz Barański on 04/11/2022.
+  
+*/
+
+favourites.add = "Add to favourites";
+favourites.remove = "Remove from favourites";
+share = "Share";
+more = "More";
+navigate = "Navigate";
+search = "Search";
+sendFeedback = "Send a feedback";
+parkingLot = "Parking Lot";
+parkingLot.address = "Address";
+parkingLot.coordinates = "Coordinates";
+parkingLot.comment = "Comment";
+parkingLot.id = "Identifier";
+parkingLot.totalSpots = "total spots";
+parkingLot.availableSpots = "available spots";
+parkingLot.availability = "Availability";
+parkingLot.hours = "Hours";
+parkingLot.lastUpdated = "Updated";
+parkingLot.pricing = "Pricing";
+parkingLot.pricing.free = "Free";
+parkingLot.additionalInfo = "Additional Info";
+parkingLot.eachAdditional = "Each additional";
+parkingLot.status.opensSoon = "Opens Soon";
+parkingLot.status.open = "Open";
+parkingLot.status.closesSoon = "Closes Soon";
+parkingLot.status.closed = "Closed";

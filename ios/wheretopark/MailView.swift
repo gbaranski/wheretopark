@@ -78,7 +78,7 @@ struct SendFeedback: View {
         Button(action: {
             self.isShowingMailView = true
         }) {
-            Text("Send a feedback")
+            Text("sendFeedback")
         }
         .disabled(!MFMailComposeViewController.canSendMail())
         .sheet(isPresented: $isShowingMailView) {

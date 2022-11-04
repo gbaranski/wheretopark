@@ -1,0 +1,33 @@
+/* 
+  Localizable.strings
+  wheretopark
+
+  Created by Grzegorz Barański on 04/11/2022.
+  
+*/
+
+favourites.add = "Dodaj do ulubionych";
+favourites.remove = "Usuń z ulubionych";
+share = "Udostępnij";
+more = "Więcej";
+navigate = "Nawiguj";
+search = "Wyszukaj";
+sendFeedback = "Zgloś problem";
+parkingLot = "Parking";
+parkingLot.address = "Adres";
+parkingLot.coordinates = "Koordynaty";
+parkingLot.comment = "Komentarz";
+parkingLot.id = "Identyfikator";
+parkingLot.totalSpots = "miejsc łącznie";
+parkingLot.availableSpots = "dostępnych miejsc parkingowych";
+parkingLot.availability = "Wolne miejsca";
+parkingLot.hours = "Godziny otwarcia";
+parkingLot.lastUpdated = "Zaktualizowane";
+parkingLot.pricing = "Ceny";
+parkingLot.pricing.free = "Gratis";
+parkingLot.additionalInfo = "Dodatkowe informacje";
+parkingLot.eachAdditional = "Kazdą nastepna";
+parkingLot.status.opensSoon = "Otwarcie wkrótce";
+parkingLot.status.open = "Otwarte";
+parkingLot.status.closesSoon = "Wkrótce zamknięte";
+parkingLot.status.closed = "Zamknięte";
