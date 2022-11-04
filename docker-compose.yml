@@ -34,9 +34,7 @@ services:
 
   tristar:
     container_name: tristar
-    build:
-      context: .
-      dockerfile: providers/tristar/Dockerfile
+    image: ghcr.io/wheretopark/tristar:latest
     networks:
       - net
     environment:
@@ -49,11 +47,9 @@ services:
 
   webapp:
     container_name: webapp
+    image: ghcr.io/wheretopark/webapp:latest
     ports:
       - "3000:3000"
-    build: 
-      context: ./webapp
-      dockerfile: Dockerfile
     networks:
       - net
     environment:
