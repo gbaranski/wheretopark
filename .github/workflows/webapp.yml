@@ -11,12 +11,11 @@ name: Webapp CI/CD
 
 on:
   workflow_dispatch:
-  # push:
-  #   branches:
-  #     - master
-  #   paths:
-  #     - "webapp/**"
-  #     - "shared/**"
+  push:
+    branches:
+      - master
+    paths:
+      - "webapp/**"
 
 jobs:
   build:
@@ -36,7 +35,7 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           push: true
-          context: .
+          context: webapp
           file: webapp/Dockerfile
           tags: ghcr.io/wheretopark/webapp:latest
-          platforms: "linux/amd64"
+          platforms: "linux/amd64,linux/arm64"

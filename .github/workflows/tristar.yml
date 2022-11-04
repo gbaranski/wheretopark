@@ -7,17 +7,16 @@
 # To get a newer version, you will need to update the SHA.
 # You can also reference a tag or branch, but the action may change without warning.
 
-name: Authorization CI/CD
+name: Tristar CI/CD
 
 on:
   workflow_dispatch:
-  # push:
-  #   branches:
-  #     - master
-  #   paths:
-  #     - "authorization/**"
-  #     - "go.mod"
-  #     - "go.mod"
+  push:
+    branches:
+      - master
+    paths:
+      - "providers/tristar/**"
+      - "go/**"
 
 jobs:
   build:
@@ -40,6 +39,7 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           push: true
-          file: authorization/Dockerfile
-          tags: ghcr.io/wheretopark/authorization:latest
+          context: .
+          file: providers/tristar/Dockerfile
+          tags: ghcr.io/wheretopark/tristar:latest
           platforms: "linux/amd64,linux/arm64"
