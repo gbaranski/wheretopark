@@ -23,14 +23,14 @@ services:
         - traefik.enable=true
         - traefik.docker.network=traefik-public
         - traefik.constraint-label=traefik-public
-        - traefik.http.routers.surrealdb-http.rule=Host(`${SURREALDB_DOMAIN?SURREALDB_DOMAIN not set}`)
-        - traefik.http.routers.surrealdb-http.entrypoints=http
-        - traefik.http.routers.surrealdb-http.middlewares=https-redirect
-        - traefik.http.routers.surrealdb-https.rule=Host(`${SURREALDB_DOMAIN?SURREALDB_DOMAIN not set}`)
-        - traefik.http.routers.surrealdb-https.entrypoints=https
-        - traefik.http.routers.surrealdb-https.tls=true
-        - traefik.http.routers.surrealdb-https.tls.certresolver=le
-        - traefik.http.services.surrealdb.loadbalancer.server.port=80
+        - traefik.http.routers.wheretopark-surrealdb-http.rule=Host(`${SURREALDB_DOMAIN?SURREALDB_DOMAIN not set}`)
+        - traefik.http.routers.wheretopark-surrealdb-http.entrypoints=http
+        - traefik.http.routers.wheretopark-surrealdb-http.middlewares=https-redirect
+        - traefik.http.routers.wheretopark-surrealdb-https.rule=Host(`${SURREALDB_DOMAIN?SURREALDB_DOMAIN not set}`)
+        - traefik.http.routers.wheretopark-surrealdb-https.entrypoints=https
+        - traefik.http.routers.wheretopark-surrealdb-https.tls=true
+        - traefik.http.routers.wheretopark-surrealdb-https.tls.certresolver=le
+        - traefik.http.services.wheretopark-surrealdb.loadbalancer.server.port=80
 
   tristar:
     container_name: tristar
@@ -60,6 +60,24 @@ services:
       PUBLIC_MAPBOX_ACCESS_TOKEN: pk.eyJ1IjoiZ2JhcmFuc2tpIiwiYSI6ImNsNmh4ZW9hZTBxaG4zY282MzAzbWhqbnAifQ.8_G9b7-m8n0kMr4O0-2mhQ
     depends_on:
       - surrealdb
+    healthcheck:
+      test: curl --fail http://localhost:3000 || exit 1
+      interval: 5s
+      timeout: 10s
+      retries: 10
+    deploy:
+      labels:
+        - traefik.enable=true
+        - traefik.docker.network=traefik-public
+        - traefik.constraint-label=traefik-public
+        - traefik.http.routers.wheretopark-webapp-http.rule=Host(`${WEBAPP_DOMAIN?WEBAPP_DOMAIN not set}`)
+        - traefik.http.routers.wheretopark-webapp-http.entrypoints=http
+        - traefik.http.routers.wheretopark-webapp-http.middlewares=https-redirect
+        - traefik.http.routers.wheretopark-webapp-https.rule=Host(`${WEBAPP_DOMAIN?WEBAPP_DOMAIN not set}`)
+        - traefik.http.routers.wheretopark-webapp-https.entrypoints=https
+        - traefik.http.routers.wheretopark-webapp-https.tls=true
+        - traefik.http.routers.wheretopark-webapp-https.tls.certresolver=le
+        - traefik.http.services.wheretopark-webapp.loadbalancer.server.port=80
 
 networks:
   net:
