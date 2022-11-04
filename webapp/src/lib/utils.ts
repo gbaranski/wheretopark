@@ -44,12 +44,17 @@ export const getCategory = (features: Feature[]): string => {
 
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
+import duration from 'dayjs/plugin/duration';
 
 dayjs.extend(relativeTime)
-
+dayjs.extend(duration);
 
 export const timeFromNow = (iso: string) => {
     return dayjs(iso).fromNow();
+}
+
+export const humanizeDuration = (s: string): string => {
+    return dayjs.duration(s).humanize(false);
 }
 
 export const resourceText = (resource: string) => {

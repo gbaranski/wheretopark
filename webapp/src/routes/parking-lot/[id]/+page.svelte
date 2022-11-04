@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { currentMap } from "$lib/store";
 	import { SpotType, type ParkingLot, Feature } from "$lib/types";
-	import { getCategory, googleMapsLink, resourceIcon, resourceText, timeFromNow } from "$lib/utils";
+	import { getCategory, googleMapsLink, humanizeDuration, resourceIcon, resourceText, timeFromNow } from "$lib/utils";
     import { Title, Text, Divider } from '@svelteuidev/core';
 	import { onMount } from "svelte";
     
@@ -19,6 +19,7 @@
             zoom: 15
         });
     });
+    console.log({selectedParkingLot: data.parkingLot});
 </script>
 
 <div class="container">
@@ -59,6 +60,12 @@
                 {resourceText(resource)}
             </Text>
         </div>
+    {/each}
+    {#each metadata.rules as rule}
+        <h5>{rule.hours}</h5>
+        {#each rule.pricing as pricing}
+            <p>{pricing.repeating ? "Each " : ""}{humanizeDuration(pricing.duration)} - {pricing.price}{metadata.currency}</p>
+        {/each}
     {/each}
 </div>
 <style>
