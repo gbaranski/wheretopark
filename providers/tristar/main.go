@@ -27,7 +27,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("invalid database url: %s", err)
 	}
-	client, err := wheretopark.NewClient(url, "wheretopark", "development")
+	client, err := wheretopark.NewClient(url, "wheretopark", config.DatabaseName)
 	if err != nil {
 		log.Fatalf("failed to create database client: %v", err)
 	}

@@ -40,57 +40,9 @@ services:
       SECRET_DATABASE_USER: root
       SECRET_DATABASE_PASSWORD: root
       SECRET_DATABASE_URL: http://surrealdb:8000
+      SECRET_DATABASE_NAME: development
       PUBLIC_MAPBOX_ACCESS_TOKEN: pk.eyJ1IjoiZ2JhcmFuc2tpIiwiYSI6ImNsNmh4ZW9hZTBxaG4zY282MzAzbWhqbnAifQ.8_G9b7-m8n0kMr4O0-2mhQ
     depends_on:
       - surrealdb
     volumes:
       - ./webapp/src:/app/src:ro
-  # authorization:
-  #   build:
-  #     context: .
-  #     dockerfile: authorization/Dockerfile
-  #   ports:
-  #     - "5001:80"
-  #   environment:
-  #     PORT: 80
-  #     GIN_MODE: release
-  #     JWT_SECRET: ${JWT_SECRET?JWT_SECRET not set}
-  #     APPLICATION_CLIENT_ID: ${APPLICATION_CLIENT_ID?APPLICATION_CLIENT_ID not set}
-  #     APPLICATION_CLIENT_SECRET: ${APPLICATION_CLIENT_SECRET?APPLICATION_CLIENT_SECRET not set}
-  #     PROVIDER_CLIENT_ID: ${PROVIDER_CLIENT_ID?PROVIDER_CLIENT_ID not set}
-  #     PROVIDER_CLIENT_SECRET: ${PROVIDER_CLIENT_SECRET?PROVIDER_CLIENT_SECRET not set}
-  #   healthcheck:
-  #     test: curl --fail http://localhost/health-check || exit 1
-  #     interval: 5s
-  #     timeout: 10s
-  #     retries: 10
-
-  # storekeeper:
-  #   image: ghcr.io/wheretopark/storekeeper:latest
-  #   ports:
-  #     - "5002:80"
-  #   environment:
-  #     PORT: 80
-  #     STORE_URI: redis://redis
-  #     JWT_SECRET: ${JWT_SECRET?JWT_SECRET not set}
-  #   depends_on:
-  #     - redis
-  #   healthcheck:
-  #     test: curl --fail http://localhost/health-check || exit 1
-  #     interval: 5s
-  #     timeout: 10s
-  #     retries: 10
-
-  # providers-tristar:
-  #   image: ghcr.io/wheretopark/providers-tristar:latest
-  #   environment:
-  #     STOREKEEPER_URL: http://storekeeper
-  #     AUTHORIZATION_URL: http://authorization
-  #     CLIENT_ID: ${PROVIDER_CLIENT_ID?PROVIDER_CLIENT_ID not set}
-  #     CLIENT_SECRET: ${PROVIDER_CLIENT_SECRET?PROVIDER_CLIENT_SECRET not set}
-  #   depends_on:
-  #     - storekeeper
-  #     - authorization
-
-  # redis:
-  #   image: redis

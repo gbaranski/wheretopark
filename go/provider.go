@@ -1,6 +1,9 @@
 package wheretopark
 
-import "log"
+import (
+	"log"
+	"time"
+)
 
 type Provider interface {
 	GetMetadata() (map[ID]Metadata, error)
@@ -8,26 +11,27 @@ type Provider interface {
 }
 
 func RunProvider(client *Client, provider Provider) error {
-	metadatas, err := provider.GetMetadata()
-	if err != nil {
-		return err
-	}
-	states, err := provider.GetState()
-	if err != nil {
-		return err
-	}
-
-	for id, metadata := range metadatas {
-		parkingLot := ParkingLot{
-			Metadata: metadata,
-			State:    states[id],
-		}
-		err := client.SetParkingLot(id, parkingLot)
+	for {
+		metadatas, err := provider.GetMetadata()
 		if err != nil {
 			return err
 		}
-		log.Printf("updated parking lot of %s\n", id)
-	}
+		states, err := provider.GetState()
+		if err != nil {
+			return err
+		}
 
-	return nil
+		for id, metadata := range metadatas {
+			parkingLot := ParkingLot{
+				Metadata: metadata,
+				State:    states[id],
+			}
+			err := client.SetParkingLot(id, parkingLot)
+			if err != nil {
+				return err
+			}
+			log.Printf("updated parking lot of %s\n", id)
+		}
+		time.Sleep(time.Minute)
+	}
 }
