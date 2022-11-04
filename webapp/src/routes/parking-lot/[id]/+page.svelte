@@ -1,25 +1,24 @@
 <script lang="ts">
 	import { currentMap } from "$lib/store";
-	import { SpotType, type ParkingLot, Feature } from "$lib/types";
+	import { SpotType, type ParkingLot, Feature, type State, type Metadata } from "$lib/types";
 	import { getCategory, googleMapsLink, humanizeDuration, resourceIcon, resourceText, timeFromNow } from "$lib/utils";
     import { Title, Text, Divider } from '@svelteuidev/core';
-	import { onMount } from "svelte";
-    
+    import { page } from '$app/stores';
 
     export let data: {parkingLot: ParkingLot};
-    const {metadata, state} = data.parkingLot;
-    const features = metadata.features.map((feature) => Feature[feature as keyof typeof Feature]);
-    const category = getCategory(features);
 
-    currentMap.subscribe((map) => {
-        if (map == null) return;
-        const [longitude, latitude] = data.parkingLot.metadata.geometry.coordinates;
-        map.flyTo({
+    $: metadata = data.parkingLot.metadata as Metadata;
+    $: state = data.parkingLot.state as State;
+    $: features = metadata?.features?.map((feature) => Feature[feature as keyof typeof Feature]);
+    $: category = getCategory(features || []);
+    
+    $: {
+        const [longitude, latitude] = metadata.geometry.coordinates;
+        $currentMap?.flyTo({
             center: [longitude, latitude],
             zoom: 15
         });
-    });
-    console.log({selectedParkingLot: data.parkingLot});
+    }
 </script>
 
 <div class="container">

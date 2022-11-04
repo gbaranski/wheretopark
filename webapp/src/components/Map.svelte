@@ -20,8 +20,15 @@
         
         Object.entries(parkingLots).map(([id, parkingLot]) => {
             const [longitude, latitude] = parkingLot.metadata.geometry.coordinates;
+            const popupHtml = `
+                <h4>${parkingLot.metadata.name}</h4>
+                <p>${parkingLot.state.availableSpots["CAR"]} available car spots</p>
+                <a href="/parking-lot/${id}">Open</a>
+            `;
+            const popup = new mapboxgl.Popup({offset: 25}).setHTML(popupHtml);
             return new mapboxgl.Marker()
-                .setLngLat([longitude, latitude]);
+                .setLngLat([longitude, latitude])
+                .setPopup(popup);
         }).forEach((marker) => marker.addTo(map));
 
     });
