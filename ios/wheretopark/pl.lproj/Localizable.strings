@@ -23,7 +23,7 @@ parkingLot.availableSpots = "dostępnych miejsc parkingowych";
 parkingLot.availability = "Wolne miejsca";
 parkingLot.hours = "Godziny otwarcia";
 parkingLot.lastUpdated = "Zaktualizowane";
-parkingLot.pricing = "Ceny";
+parkingLot.pricing = "Cennik";
 parkingLot.pricing.free = "Gratis";
 parkingLot.additionalInfo = "Dodatkowe informacje";
 parkingLot.eachAdditional = "Kazdą nastepna";
@@ -31,3 +31,8 @@ parkingLot.status.opensSoon = "Otwarcie wkrótce";
 parkingLot.status.open = "Otwarte";
 parkingLot.status.closesSoon = "Wkrótce zamknięte";
 parkingLot.status.closed = "Zamknięte";
+
+url.unrecognized = "Nierozpoznany typ";
+url.website = "Strona Internetowa";
+url.phoneNumber = "Numer telefonu";
+url.emailAddress = "Adres E-Mail";

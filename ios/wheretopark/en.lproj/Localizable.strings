@@ -31,3 +31,8 @@ parkingLot.status.opensSoon = "Opens Soon";
 parkingLot.status.open = "Open";
 parkingLot.status.closesSoon = "Closes Soon";
 parkingLot.status.closed = "Closed";
+
+url.unrecognized = "Unrecognized";
+url.website = "Website";
+url.phoneNumber = "Phone Number";
+url.emailAddress = "E-Mail Address";

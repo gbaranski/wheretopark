@@ -100,36 +100,36 @@ struct DetailsView: View {
                         }
                     }
                     Divider()
-                    VStack(alignment: .leading) {
-                        Text("parkingLot.hours")
-                            .fontWeight(.black)
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                            .textCase(.uppercase)
-                        // TODO: Use real status
-                        let status = ParkingLotStatus.closed
-                        switch status {
-                        case .opensSoon:
-                            Text(LocalizedStringKey("parkingLot.status.opensSoon"))
-                                .fontWeight(.heavy)
-                                .foregroundColor(.yellow)
-                        case .open:
-                            Text(LocalizedStringKey("parkingLot.status.open"))
-                                .fontWeight(.heavy)
-                                .foregroundColor(.green)
-                        case .closesSoon:
-                            Text(LocalizedStringKey("parkingLot.status.closesSoon"))
-                                .fontWeight(.heavy)
-                                .foregroundColor(.yellow)
-                        case .closed:
-                            Text(LocalizedStringKey("parkingLot.status.closed"))
-                                .fontWeight(.heavy)
-                                .foregroundColor(.red)
-                            //                        default:
-                            //                            fatalError("unknown status \(status)")
-                        }
-                    }
-                    Divider()
+//                    VStack(alignment: .leading) {
+//                        Text("parkingLot.hours")
+//                            .fontWeight(.black)
+//                            .font(.caption)
+//                            .foregroundColor(.secondary)
+//                            .textCase(.uppercase)
+//                        // TODO: Use real status
+//                        let status = ParkingLotStatus.closed
+//                        switch status {
+//                        case .opensSoon:
+//                            Text(LocalizedStringKey("parkingLot.status.opensSoon"))
+//                                .fontWeight(.heavy)
+//                                .foregroundColor(.yellow)
+//                        case .open:
+//                            Text(LocalizedStringKey("parkingLot.status.open"))
+//                                .fontWeight(.heavy)
+//                                .foregroundColor(.green)
+//                        case .closesSoon:
+//                            Text(LocalizedStringKey("parkingLot.status.closesSoon"))
+//                                .fontWeight(.heavy)
+//                                .foregroundColor(.yellow)
+//                        case .closed:
+//                            Text(LocalizedStringKey("parkingLot.status.closed"))
+//                                .fontWeight(.heavy)
+//                                .foregroundColor(.red)
+//                            //                        default:
+//                            //                            fatalError("unknown status \(status)")
+//                        }
+//                    }
+//                    Divider()
                     VStack(alignment: .leading) {
                         let formatter = RelativeDateTimeFormatter()
                         let lastUpdatedString = formatter.localizedString(for: parkingLot.state.lastUpdated, relativeTo: Date.now)
@@ -202,23 +202,23 @@ struct DetailsRuleView: View {
                 }
             }
             HStack {
-                //                ForEach(Array(rule.applies.enumerated()), id: \.1) { i, spotType in
-                //                    switch(spotType) {
-                //                    case .car:
-                //                        Image(systemName: "car.fill")
-                //                    case .carDisabled:
-                //                        Text("♿️")
-                //                    case .carElectric:
-                //                        Image(systemName: "bolt.car.fill")
-                //                    case .motorcycle:
-                //                        Image(systemName: "bicycle")
-                //                    default:
-                //                        Image(systemName: "questionmark.diamond")
-                //                    }
-                //                    if i != (rule.applies.count ?? 0) - 1 {
-                //                        Divider()
-                //                    }
-                //                }
+                ForEach(Array(rule.applies.enumerated()), id: \.1) { i, spotType in
+                    switch(spotType) {
+                    case "CAR":
+                        Image(systemName: "car.fill")
+                    case "CAR_DISABLED":
+                        Text("♿️")
+                    case "CAR_ELECTRIC":
+                        Image(systemName: "bolt.car.fill")
+                    case "MOTORCYCLE":
+                        Image(systemName: "bicycle")
+                    default:
+                        Image(systemName: "questionmark.diamond")
+                    }
+                    if i != (rule.applies.count) - 1 {
+                        Divider()
+                    }
+                }
             }.frame(
                 maxWidth: .infinity,
                 alignment: .topTrailing
@@ -282,12 +282,15 @@ struct DetailsAdditionalInfo: View {
             DetailsAdditionalInfoField(name: "parkingLot.coordinates") {
                 Text("\(metadata.geometry.location!.coordinate.latitude), \(metadata.geometry.location!.coordinate.longitude)")
             }
-            ForEach(metadata.resources, id: \.self) { resource in
-                //                DetailsAdditionalInfoField(name: resource.label()) {
-                //                    Link(
-                //                        "\(resource.components.host ?? "")\(resource.components.scheme == "tel" ? resource.components.path.replacingOccurrences(of: "-", with: " ") : resource.components.path)",
-                //                        destination: resource.components.url!).truncationMode(.tail).lineLimit(1)
-                //                }
+            ForEach(metadata.resources, id: \.self) { url in
+                DetailsAdditionalInfoField(name: url.label) {
+                    Link(
+                        url.human,
+                        destination: url
+                    )
+                    .truncationMode(.tail)
+                    .lineLimit(1)
+                }
             }
             if let comment = metadata.commentForLocale {
                 DetailsAdditionalInfoField(name: "parkingLot.comment") {

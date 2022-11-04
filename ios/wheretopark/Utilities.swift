@@ -109,3 +109,27 @@ extension ParkingLotMetadata {
         return comment
     }
 }
+
+extension URL {
+    var label: LocalizedStringKey {
+        let labels = [
+            "http": "url.website",
+            "https": "url.website",
+            "tel": "url.phoneNumber",
+            "mailto": "url.emailAddress",
+        ];
+        return LocalizedStringKey(labels[scheme!] ?? "url.unrecognized");
+    }
+    
+    var human: String {
+        if (scheme == "http" || scheme == "https") {
+            return "\(host!)\(path)";
+        } else if (scheme == "mailto") {
+            return String(absoluteString.dropFirst(7));
+        } else if (scheme == "tel") {
+            return String(absoluteString.dropFirst(4)).replacingOccurrences(of: "-", with: " ");
+        } else {
+            return absoluteString;
+        }
+    }
+}
