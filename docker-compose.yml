@@ -21,9 +21,11 @@ services:
       retries: 10
 
   tristar:
-    image: ghcr.io/wheretopark/tristar:latest
     container_name: wheretopark_tristar
     env_file: .env
+    build:
+      context: .
+      dockerfile: ./providers/tristar/Dockerfile
     environment:
       DATABASE_URL: ws://surrealdb:8000
       DATABASE_NAME: production
@@ -33,9 +35,10 @@ services:
       - surrealdb
 
   webapp:
-    image: ghcr.io/wheretopark/webapp:latest
     container_name: wheretopark_webapp
     env_file: .env
+    build:
+      context: ./webapp
     ports:
       - "3000:3000"
     networks:
