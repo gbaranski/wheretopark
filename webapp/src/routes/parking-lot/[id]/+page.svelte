@@ -54,17 +54,21 @@
     
     {#each metadata.resources as resource}
         <div class="field">
-            <i class="material-icons">{resourceIcon(resource)}</i>
-            <Text size={14} root="span" >
-                {resourceText(resource)}
-            </Text>
+                <i class="material-icons">{resourceIcon(resource)}</i>
+                <a href={resource}>
+                    <Text size={14} root="span" >
+                        {resourceText(resource)}
+                    </Text>
+                </a>
         </div>
     {/each}
     {#each metadata.rules as rule}
-        <h5>{rule.hours}</h5>
-        {#each rule.pricing as pricing}
-            <p>{pricing.repeating ? "Each " : ""}{humanizeDuration(pricing.duration)} - {pricing.price}{metadata.currency}</p>
-        {/each}
+        <div style="margin-top: 20px;">
+            <h5>{rule.hours}</h5>
+            {#each rule.pricing as pricing}
+                <p>{pricing.repeating ? "Each " : ""}{humanizeDuration(pricing.duration)} - {pricing.price}{metadata.currency}</p>
+            {/each}
+        </div>
     {/each}
 </div>
 <style>
