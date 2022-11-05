@@ -13,10 +13,10 @@ export enum ParkingLotStatus {
 }
 
 export enum SpotType {
-    CAR,
-    CAR_DISABLED,
-    CAR_ELECTRIC,
-    MOTORCYCLE
+    CAR = "CAR",
+    CAR_DISABLED = "CAR_DISABLED",
+    CAR_ELECTRIC = "CAR_ELECTRIC",
+    MOTORCYCLE = "MOTORCYCLE",
 }
     
 export enum Feature {
@@ -43,7 +43,7 @@ export type PricingRule = {
 
 export type Rule = {
     hours: string;
-    applies: SpotType[];
+    applies: SpotType[] | undefined;
     pricing: PricingRule[];
 
 };

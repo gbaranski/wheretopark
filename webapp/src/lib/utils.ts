@@ -1,4 +1,4 @@
-import { Feature, ParkingLotStatus, type Metadata, type ParkingLot } from "./types";
+import { Feature, ParkingLotStatus, SpotType, type Metadata, type ParkingLot } from "./types";
 
 export function capitalizeFirstLetter(s: string) {
     return s.charAt(0).toUpperCase() + s.slice(1);
@@ -116,6 +116,18 @@ export const resourceIcon = (resource: string) => {
         case "https:": return "public";
         case "mailto:": return "mail_outline";
         case "tel:": return "call";
+        default: return "error_outline";
+    }
+};
+
+
+export const spotTypeIcon = (spotType: SpotType) => {
+    console.log({spotType});
+    switch(spotType) {
+        case SpotType.CAR: return "directions_car";
+        case SpotType.CAR_DISABLED: return "accessible";
+        case SpotType.CAR_ELECTRIC: return "electric_bolt";
+        case SpotType.MOTORCYCLE: return "motorcycle";
         default: return "error_outline";
     }
 };

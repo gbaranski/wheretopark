@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { currentMap } from "$lib/store";
 	import { SpotType, type ParkingLot, Feature, type State, type Metadata } from "$lib/types";
-	import { capitalizeFirstLetter, getCategory, googleMapsLink, humanizeDuration, parkingLotStatus, parkingLotStatusColor, resourceIcon, resourceText, timeFromNow } from "$lib/utils";
+	import { capitalizeFirstLetter, getCategory, googleMapsLink, humanizeDuration, parkingLotStatus, parkingLotStatusColor, resourceIcon, resourceText, spotTypeIcon, timeFromNow } from "$lib/utils";
     import { Title, Text, Divider, Button, Popper, Tooltip, Anchor } from '@svelteuidev/core';
 
     export let data: {parkingLot: ParkingLot};
@@ -19,6 +19,9 @@
             center: [longitude, latitude],
             zoom: 15
         });
+    }
+    $: {
+        console.log({metadata, state});
     }
 </script>
 
@@ -72,14 +75,24 @@
                 </Anchor>
         </div>
     {/each}
-        {#each metadata.rules as rule}
-            <div style="margin-top: 20px;">
-                <Text weight="semibold">{rule.hours}</Text>
-                {#each rule.pricing as pricing}
-                    <Text weight="light" size={16}>{pricing.repeating ? "Each " : ""}{humanizeDuration(pricing.duration)} - {pricing.price}{metadata.currency}</Text>
+
+    <div class="field">
+        <i class="material-icons" style="position: absolute;">paid</i>
+        {#each metadata.rules as rule, i}
+            <div style="margin-left: 32px; margin-top: 10px;">
+                <Text root="span" weight="semibold">{rule.hours}</Text>
+                {#each rule.applies || [] as spotType}
+                    <i class="material-icons" style="float: right; font-size: 18px;">{spotTypeIcon(spotType)}</i>
                 {/each}
+
+                <div style="margin-left: 10px;">
+                    {#each rule.pricing as pricing}
+                        <Text weight="light" size={16}>{pricing.repeating ? "Each " : ""}{humanizeDuration(pricing.duration)} - {pricing.price}{metadata.currency}</Text>
+                    {/each}
+                </div>
             </div>
         {/each}
+    </div>
 </div>
 <style>
     .container {
