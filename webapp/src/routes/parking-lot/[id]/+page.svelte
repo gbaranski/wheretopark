@@ -1,11 +1,12 @@
 <script lang="ts">
 	import { currentMap } from "$lib/store";
 	import { SpotType, type ParkingLot, Feature, type State, type Metadata } from "$lib/types";
-	import { capitalizeFirstLetter, getCategory, googleMapsLink, humanizeDuration, resourceIcon, resourceText, timeFromNow } from "$lib/utils";
-    import { Title, Text, Divider } from '@svelteuidev/core';
-    import { page } from '$app/stores';
+	import { capitalizeFirstLetter, getCategory, googleMapsLink, humanizeDuration, parkingLotStatus, parkingLotStatusColor, resourceIcon, resourceText, timeFromNow } from "$lib/utils";
+    import { Title, Text, Divider, Button, Popper, Tooltip } from '@svelteuidev/core';
 
     export let data: {parkingLot: ParkingLot};
+    const [status, comment] = parkingLotStatus(data.parkingLot);
+    console.log({status, comment});
 
     $: metadata = data.parkingLot.metadata as Metadata;
     $: state = data.parkingLot.state as State;
@@ -45,22 +46,28 @@
 
     <div class="field">
         <i class="material-icons">directions_car</i>
-        <Text size={14} root="span" >
-            {state.availableSpots[SpotType[SpotType.CAR]]} available spots
-        </Text>
+        <Tooltip label="Last updated {timeFromNow(state.lastUpdated)}">
+            <Text size={14} root="span" weight={400}>
+                {state.availableSpots[SpotType[SpotType.CAR]]} available spots
+            </Text>
+        </Tooltip>
     </div>
     
     <div class="field">
         <i class="material-icons">schedule</i>
-        <Text size={14} root="span" >
-            Last updated {timeFromNow(state.lastUpdated)}
+        <Text size={14} root="span" override={{color: parkingLotStatusColor(status)}}>
+            {status}
         </Text>
+        {#if comment != undefined}
+            <Text size={14} root="span">
+            -  {comment}
+            </Text>
+        {/if}
     </div>
-    
     {#each metadata.resources as resource}
         <div class="field">
                 <i class="material-icons">{resourceIcon(resource)}</i>
-                <a href={resource}>
+                <a href={resource} target="_blank" rel="noreferrer">
                     <Text size={14} root="span" >
                         {resourceText(resource)}
                     </Text>

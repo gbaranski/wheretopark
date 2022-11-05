@@ -1,4 +1,4 @@
-import { Feature } from "./types";
+import { Feature, ParkingLotStatus, type Metadata, type ParkingLot } from "./types";
 
 export function capitalizeFirstLetter(s: string) {
     return s.charAt(0).toUpperCase() + s.slice(1);
@@ -45,9 +45,13 @@ export const getCategory = (features: Feature[]): string => {
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import duration from 'dayjs/plugin/duration';
+import utc from 'dayjs/plugin/utc'
+import timezone from 'dayjs/plugin/timezone';
 
 dayjs.extend(relativeTime)
 dayjs.extend(duration);
+dayjs.extend(utc);
+dayjs.extend(timezone)
 
 export const timeFromNow = (iso: string) => {
     return dayjs(iso).fromNow();
@@ -55,6 +59,43 @@ export const timeFromNow = (iso: string) => {
 
 export const humanizeDuration = (s: string): string => {
     return dayjs.duration(s).humanize(false);
+}
+
+export const parkingLotStatus = (parkingLot: ParkingLot): [ParkingLotStatus, string?] => {
+    const rawOpeningHours = parkingLot.metadata.rules.map((rule) => rule.hours).join(";");
+    const openingHours = new OpeningHours(rawOpeningHours);
+    const currentDate = dayjs().tz(parkingLot.metadata.timezone);
+
+    const rawNextChange = openingHours.getNextChange(currentDate.toDate());
+    const nextChange = rawNextChange != undefined ? dayjs(rawNextChange) : undefined;
+    const hoursToChange = nextChange ? nextChange.diff(currentDate, "hours") : undefined;
+    if (openingHours.getState(currentDate.toDate())) {
+        if (hoursToChange == undefined) return [ParkingLotStatus.Open, "24/7"];
+        else if (hoursToChange > 1) return [ParkingLotStatus.Open, `Closes ${nextChange!.format("HH:mm")}`];
+        else {
+            const matchingRuleIndex = openingHours.getMatchingRule(currentDate.toDate());
+            const argumentHash = { 
+                // @ts-ignore
+                rule_index: matchingRuleIndex! as "number",
+             } as Partial<argument_hash>
+            // @ts-ignore
+            const matchingRule = openingHours.prettifyValue(argumentHash);
+            return [ParkingLotStatus.ClosesSoon, matchingRule]
+        };
+    } else {
+        if (hoursToChange == undefined) return [ParkingLotStatus.Closed, "Temporarily closed"];
+        if (hoursToChange < 1) return [ParkingLotStatus.OpensSoon, `Open ${nextChange!.format("HH:mm")}`];
+        else return [ParkingLotStatus.Closed, `Opens ${nextChange!.format("dd HH:mm")}`];
+    }
+}
+
+export const parkingLotStatusColor = (status: ParkingLotStatus) => {
+    switch(status) {
+        case ParkingLotStatus.Open: return "green";
+        case ParkingLotStatus.ClosesSoon: return "orange";
+        case ParkingLotStatus.OpensSoon: return "orange";
+        case ParkingLotStatus.Closed: return "red";
+    }
 }
 
 export const resourceText = (resource: string) => {
@@ -84,3 +125,5 @@ export const googleMapsLink = (geometry: GeoJSON.Point) => {
     return `https://google.com/maps/place/${latitude},${longitude}`;
 
 }
+
+import OpeningHours, { type argument_hash } from 'opening_hours';

@@ -5,6 +5,13 @@ export type Coordinate = {
 
 export type Resource = string;
 
+export enum ParkingLotStatus {
+    Open = "Open",
+    Closed = "Closed",
+    OpensSoon = "Opens soon",
+    ClosesSoon = "Closes soon",
+}
+
 export enum SpotType {
     CAR,
     CAR_DISABLED,
