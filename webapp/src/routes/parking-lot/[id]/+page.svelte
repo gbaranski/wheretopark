@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { currentMap } from "$lib/store";
 	import { SpotType, type ParkingLot, Feature, type State, type Metadata } from "$lib/types";
-	import { getCategory, googleMapsLink, humanizeDuration, resourceIcon, resourceText, timeFromNow } from "$lib/utils";
+	import { capitalizeFirstLetter, getCategory, googleMapsLink, humanizeDuration, resourceIcon, resourceText, timeFromNow } from "$lib/utils";
     import { Title, Text, Divider } from '@svelteuidev/core';
     import { page } from '$app/stores';
 
@@ -21,6 +21,11 @@
     }
 </script>
 
+<svelte:head>
+    <title>{metadata.name}</title>
+	<meta name="description" content="Details of {capitalizeFirstLetter(category)} parking lot in {metadata.name} at {metadata.address}, containing prices, opening hours and it's availability of parking spots."/>
+	<meta name="keywords" content="{metadata.name}, {metadata.address}, Parking Lot, Smart City, Gdańsk, Gdynia, Sopot, Tricity"/>
+</svelte:head>
 <div class="container">
     <span style="display: flex;">
         <Title root={"span"} size={26} override={{flex: 1}}>{metadata.name}</Title>
@@ -64,9 +69,9 @@
     {/each}
     {#each metadata.rules as rule}
         <div style="margin-top: 20px;">
-            <h5>{rule.hours}</h5>
+            <Text weight="semibold">{rule.hours}</Text>
             {#each rule.pricing as pricing}
-                <p>{pricing.repeating ? "Each " : ""}{humanizeDuration(pricing.duration)} - {pricing.price}{metadata.currency}</p>
+                <Text weight="light" size={16}>{pricing.repeating ? "Each " : ""}{humanizeDuration(pricing.duration)} - {pricing.price}{metadata.currency}</Text>
             {/each}
         </div>
     {/each}
