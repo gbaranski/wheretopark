@@ -11,11 +11,11 @@ name: Webapp CI/CD
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - master
-    paths:
-      - "webapp/**"
+  # push:
+    # branches:
+      # - master
+    # paths:
+      # - "webapp/**"
 
 jobs:
   build:

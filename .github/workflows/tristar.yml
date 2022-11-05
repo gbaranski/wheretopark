@@ -11,12 +11,12 @@ name: Tristar CI/CD
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - master
-    paths:
-      - "providers/tristar/**"
-      - "go/**"
+  # push:
+    # branches:
+      # - master
+    # paths:
+      # - "providers/tristar/**"
+      # - "go/**"
 
 jobs:
   build:
