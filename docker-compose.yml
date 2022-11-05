@@ -1,7 +1,9 @@
 version: "3.8"
 services:
   surrealdb:
+    container_name: wheretopark_surrealdb
     image: surrealdb/surrealdb:latest
+    env_file: .env
     ports:
       - "8000:8000"
     command: 
@@ -10,31 +12,18 @@ services:
       - --user=${SURREALDB_USER}
       - --pass=${SURREALDB_PASSWORD}
     networks:
-      - net
-      - traefik-public
+      - default
+      - public
     healthcheck:
       test: curl --fail http://localhost:8000/health || exit 1
       interval: 5s
       timeout: 10s
       retries: 10
-    deploy:
-      labels:
-        - traefik.enable=true
-        - traefik.docker.network=traefik-public
-        - traefik.constraint-label=traefik-public
-        - traefik.http.routers.wheretopark-surrealdb-http.rule=Host(`${SURREALDB_DOMAIN?SURREALDB_DOMAIN not set}`)
-        - traefik.http.routers.wheretopark-surrealdb-http.entrypoints=http
-        - traefik.http.routers.wheretopark-surrealdb-http.middlewares=https-redirect
-        - traefik.http.routers.wheretopark-surrealdb-https.rule=Host(`${SURREALDB_DOMAIN?SURREALDB_DOMAIN not set}`)
-        - traefik.http.routers.wheretopark-surrealdb-https.entrypoints=https
-        - traefik.http.routers.wheretopark-surrealdb-https.tls=true
-        - traefik.http.routers.wheretopark-surrealdb-https.tls.certresolver=le
-        - traefik.http.services.wheretopark-surrealdb.loadbalancer.server.port=80
 
   tristar:
     image: ghcr.io/wheretopark/tristar:latest
-    networks:
-      - net
+    container_name: wheretopark_tristar
+    env_file: .env
     environment:
       DATABASE_URL: ws://surrealdb:8000
       DATABASE_NAME: production
@@ -45,10 +34,13 @@ services:
 
   webapp:
     image: ghcr.io/wheretopark/webapp:latest
+    container_name: wheretopark_webapp
+    env_file: .env
     ports:
       - "3000:3000"
     networks:
-      - net
+      - default
+      - public
     environment:
       SECRET_DATABASE_USER: ${SURREALDB_USER}
       SECRET_DATABASE_PASSWORD: ${SURREALDB_PASSWORD}
@@ -62,23 +54,7 @@ services:
       interval: 5s
       timeout: 10s
       retries: 10
-    deploy:
-      labels:
-        - traefik.enable=true
-        - traefik.docker.network=traefik-public
-        - traefik.constraint-label=traefik-public
-        - traefik.http.routers.wheretopark-webapp-http.rule=Host(`${WEBAPP_DOMAIN?WEBAPP_DOMAIN not set}`)
-        - traefik.http.routers.wheretopark-webapp-http.entrypoints=http
-        - traefik.http.routers.wheretopark-webapp-http.middlewares=https-redirect
-        - traefik.http.routers.wheretopark-webapp-https.rule=Host(`${WEBAPP_DOMAIN?WEBAPP_DOMAIN not set}`)
-        - traefik.http.routers.wheretopark-webapp-https.entrypoints=https
-        - traefik.http.routers.wheretopark-webapp-https.tls=true
-        - traefik.http.routers.wheretopark-webapp-https.tls.certresolver=le
-        - traefik.http.services.wheretopark-webapp.loadbalancer.server.port=80
 
 networks:
-  net:
-    driver: overlay
-    attachable: true
-  traefik-public:
+  public:
     external: true
