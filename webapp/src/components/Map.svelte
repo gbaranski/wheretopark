@@ -9,8 +9,8 @@
 
     onMount(async () => {
         const mapboxgl = await import("mapbox-gl");
-        mapboxgl.accessToken = MAPBOX_ACCESS_TOKEN;
         const map = new mapboxgl.Map({
+            accessToken: MAPBOX_ACCESS_TOKEN,
             container: "map-container",
             style: "mapbox://styles/mapbox/streets-v11",
             center: [18.64, 54.35],
