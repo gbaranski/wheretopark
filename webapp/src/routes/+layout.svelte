@@ -60,6 +60,7 @@ a, a:hover, a:visited, a:active {
 @media only screen and (max-width: 800px) {
     .split {
         position: static;
+        overflow: visible;
     }
     
     :global(#map-container) {
@@ -69,7 +70,7 @@ a, a:hover, a:visited, a:active {
     .master {
         background-color: rgb(255, 253, 246);
         width: 100%;
-        position:absolute;
+        position: absolute;
         top: calc(100% - 40%);
     }
 
