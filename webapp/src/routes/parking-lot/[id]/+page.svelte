@@ -2,7 +2,7 @@
 	import { currentMap } from "$lib/store";
 	import { SpotType, type ParkingLot, Feature, type State, type Metadata } from "$lib/types";
 	import { capitalizeFirstLetter, getCategory, googleMapsLink, humanizeDuration, parkingLotStatus, parkingLotStatusColor, resourceIcon, resourceText, timeFromNow } from "$lib/utils";
-    import { Title, Text, Divider, Button, Popper, Tooltip } from '@svelteuidev/core';
+    import { Title, Text, Divider, Button, Popper, Tooltip, Anchor } from '@svelteuidev/core';
 
     export let data: {parkingLot: ParkingLot};
     const [status, comment] = parkingLotStatus(data.parkingLot);
@@ -30,9 +30,9 @@
 <div class="container">
     <span style="display: flex;">
         <Title root={"span"} size={26} override={{flex: 1}}>{metadata.name}</Title>
-        <a style="text-align: right;" href={googleMapsLink(metadata.geometry)} target="_blank" rel="noreferrer">
+        <Anchor root="a" external override={{textAlign: 'right'}} href={googleMapsLink(metadata.geometry)}>
             <i class="material-icons">directions</i>
-        </a>
+        </Anchor>
     </span>
     <Text size={14} weight={"semibold"}>{category}</Text>
     <Divider/>
@@ -67,21 +67,19 @@
     {#each metadata.resources as resource}
         <div class="field">
                 <i class="material-icons">{resourceIcon(resource)}</i>
-                <a href={resource} target="_blank" rel="noreferrer">
-                    <Text size={14} root="span" >
+                <Anchor size={14} root="a" external href={resource} color="inherit">
                         {resourceText(resource)}
-                    </Text>
-                </a>
+                </Anchor>
         </div>
     {/each}
-    {#each metadata.rules as rule}
-        <div style="margin-top: 20px;">
-            <Text weight="semibold">{rule.hours}</Text>
-            {#each rule.pricing as pricing}
-                <Text weight="light" size={16}>{pricing.repeating ? "Each " : ""}{humanizeDuration(pricing.duration)} - {pricing.price}{metadata.currency}</Text>
-            {/each}
-        </div>
-    {/each}
+        {#each metadata.rules as rule}
+            <div style="margin-top: 20px;">
+                <Text weight="semibold">{rule.hours}</Text>
+                {#each rule.pricing as pricing}
+                    <Text weight="light" size={16}>{pricing.repeating ? "Each " : ""}{humanizeDuration(pricing.duration)} - {pricing.price}{metadata.currency}</Text>
+                {/each}
+            </div>
+        {/each}
 </div>
 <style>
     .container {
