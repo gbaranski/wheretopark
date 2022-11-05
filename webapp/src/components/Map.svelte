@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { MAPBOX_ACCESS_TOKEN } from "$lib/environment";
-	import mapboxgl from "mapbox-gl";
 	import { onMount } from "svelte";
     import 'mapbox-gl/dist/mapbox-gl.css';
 	import type { ID, ParkingLot } from "$lib/types";
@@ -8,7 +7,8 @@
     
     export let parkingLots: Record<ID, ParkingLot>;
 
-    onMount(() => {
+    onMount(async () => {
+        const mapboxgl = await import("mapbox-gl");
         mapboxgl.accessToken = MAPBOX_ACCESS_TOKEN;
         const map = new mapboxgl.Map({
             container: "map-container",
