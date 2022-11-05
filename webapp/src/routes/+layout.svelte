@@ -57,7 +57,7 @@ a, a:hover, a:visited, a:active {
     right: 0;
 }
 
-@media only screen and (max-width: 800px) {
+@media only screen and (orientation:portrait) {
     .split {
         position: static;
         overflow: visible;
