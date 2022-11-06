@@ -22,6 +22,7 @@ specifiers:
   surrealdb.js: ^0.5.0
   svelte: ^3.52.0
   svelte-check: ^2.9.2
+  svelte-markdown: ^0.2.3
   svelte-preprocess: ^4.10.7
   tslib: ^2.4.0
   typescript: ^4.8.4
@@ -36,6 +37,7 @@ dependencies:
   mapbox-gl: 2.10.0
   opening_hours: 3.8.0
   surrealdb.js: 0.5.0
+  svelte-markdown: 0.2.3_svelte@3.52.0
 
 devDependencies:
   '@sveltejs/adapter-node': 1.0.0-next.100
@@ -378,6 +380,10 @@ packages:
     dependencies:
       '@types/geojson': 7946.0.10
     dev: true
+
+  /@types/marked/4.0.7:
+    resolution: {integrity: sha512-eEAhnz21CwvKVW+YvRvcTuFKNU9CV1qH+opcgVK3pIMI6YZzDm6gc8o2vHjldFk6MGKt5pueSB7IOpvpx5Qekw==}
+    dev: false
 
   /@types/node/18.11.5:
     resolution: {integrity: sha512-3JRwhbjI+cHLAkUorhf8RnqUbFXajvzX4q6fMn5JwkgtuwfYtRQYI3u4V92vI6NJuTsbBQWWh3RZjFsuevyMGQ==}
@@ -1494,6 +1500,12 @@ packages:
       vt-pbf: 3.1.3
     dev: false
 
+  /marked/4.2.2:
+    resolution: {integrity: sha512-JjBTFTAvuTgANXx82a5vzK9JLSMoV6V3LBVn4Uhdso6t7vXrGx7g1Cd2r6NYSsxrYbQGFCMqBDhFHyK5q2UvcQ==}
+    engines: {node: '>= 12'}
+    hasBin: true
+    dev: false
+
   /merge2/1.4.1:
     resolution: {integrity: sha512-8q7VEgMJW4J8tcfVPy8g09NcQwZdbwFEqhe/WZkoIzjn/3TGDwtOCYtXGxA3O8tPzpczCCDgv+P2P5y00ZJOOg==}
     engines: {node: '>= 8'}
@@ -1960,6 +1972,16 @@ packages:
     dependencies:
       svelte: 3.52.0
     dev: true
+
+  /svelte-markdown/0.2.3_svelte@3.52.0:
+    resolution: {integrity: sha512-2h680NzTXnAD0CXhxe3GeHl6W+ayG4iKQRl+BIDRw+R0mUE0OiNxP1Vt8Rn+aWevB/LBiBIPCAwvL+0BkG057A==}
+    peerDependencies:
+      svelte: ^3.0.0
+    dependencies:
+      '@types/marked': 4.0.7
+      marked: 4.2.2
+      svelte: 3.52.0
+    dev: false
 
   /svelte-preprocess/4.10.7_besnmoibwkhwtentvwuriss7pa:
     resolution: {integrity: sha512-sNPBnqYD6FnmdBrUmBCaqS00RyCsCpj2BG58A1JBswNF7b0OKviwxqVrOL/CKyJrLSClrSeqQv5BXNg2RUbPOw==}

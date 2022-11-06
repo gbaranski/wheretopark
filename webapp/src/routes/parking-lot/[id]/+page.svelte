@@ -1,17 +1,18 @@
 <script lang="ts">
 	import { currentMap } from "$lib/store";
 	import { SpotType, type ParkingLot, Feature, type State, type Metadata } from "$lib/types";
-	import { capitalizeFirstLetter, getCategory, googleMapsLink, humanizeDuration, parkingLotStatus, parkingLotStatusColor, resourceIcon, resourceText, spotTypeIcon, timeFromNow } from "$lib/utils";
-    import { Title, Text, Divider, Button, Popper, Tooltip, Anchor } from '@svelteuidev/core';
+	import { capitalizeFirstLetter, getCategory, googleMapsLink, humanizeDuration, parkingLotStatus, parkingLotStatusColor, preferredComment, resourceIcon, resourceText, spotTypeIcon, timeFromNow } from "$lib/utils";
+    import { Title, Text, Divider, Tooltip, Anchor } from '@svelteuidev/core';
+    import Markdown from "svelte-markdown";
 
     export let data: {parkingLot: ParkingLot};
-    const [status, comment] = parkingLotStatus(data.parkingLot);
-    console.log({status, comment});
+    const [status, statusComment] = parkingLotStatus(data.parkingLot);
 
     $: metadata = data.parkingLot.metadata as Metadata;
     $: state = data.parkingLot.state as State;
     $: features = metadata?.features?.map((feature) => Feature[feature as keyof typeof Feature]);
     $: category = getCategory(features || []);
+    $: comment = preferredComment(metadata.comment);
     
     $: {
         const [longitude, latitude] = metadata.geometry.coordinates;
@@ -26,7 +27,7 @@
 </script>
 
 <svelte:head>
-    <title>{metadata.name}</title>
+    <title>Parking {metadata.name}</title>
 	<meta name="description" content="Details of {capitalizeFirstLetter(category)} parking lot in {metadata.name} at {metadata.address}, containing prices, opening hours and it's availability of parking spots."/>
 	<meta name="keywords" content="{metadata.name}, {metadata.address}, Parking Lot, Smart City, Gdańsk, Gdynia, Sopot, Tricity"/>
 </svelte:head>
@@ -61,9 +62,9 @@
         <Text size={14} root="span" override={{color: parkingLotStatusColor(status)}}>
             {status}
         </Text>
-        {#if comment != undefined}
+        {#if statusComment != undefined}
             <Text size={14} root="span">
-            -  {comment}
+            -  {statusComment}
             </Text>
         {/if}
     </div>
@@ -93,6 +94,14 @@
             </div>
         {/each}
     </div>
+    
+
+    <Divider variant="dashed" />
+    {#if comment}
+        <Text weight="light" size={14}>
+            <Markdown source={comment} />
+        </Text>
+    {/if}
 </div>
 <style>
     .container {

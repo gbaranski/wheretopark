@@ -1,4 +1,4 @@
-import { Feature, ParkingLotStatus, SpotType, type Metadata, type ParkingLot } from "./types";
+import { Feature, ParkingLotStatus, SpotType, type LanguageCode, type Metadata, type ParkingLot } from "./types";
 
 export function capitalizeFirstLetter(s: string) {
     return s.charAt(0).toUpperCase() + s.slice(1);
@@ -60,6 +60,8 @@ export const timeFromNow = (iso: string) => {
 export const humanizeDuration = (s: string): string => {
     return dayjs.duration(s).humanize(false);
 }
+
+import OpeningHours, { type argument_hash } from 'opening_hours';
 
 export const parkingLotStatus = (parkingLot: ParkingLot): [ParkingLotStatus, string?] => {
     const rawOpeningHours = parkingLot.metadata.rules.map((rule) => rule.hours).join(";");
@@ -138,4 +140,8 @@ export const googleMapsLink = (geometry: GeoJSON.Point) => {
 
 }
 
-import OpeningHours, { type argument_hash } from 'opening_hours';
+
+export const preferredComment = (comment: Record<LanguageCode, string>): string | undefined => {
+    // const language = navigator.language as LanguageCode;
+    return comment["en"] || comment["pl"];
+}
