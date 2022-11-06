@@ -2,7 +2,7 @@
 	import { currentMap } from "$lib/store";
 	import { SpotType, type ParkingLot, Feature, type State, type Metadata } from "$lib/types";
 	import { capitalizeFirstLetter, getCategory, googleMapsLink, humanizeDuration, parkingLotStatus, parkingLotStatusColor, preferredComment, resourceIcon, resourceText, spotTypeIcon, timeFromNow } from "$lib/utils";
-    import { Title, Text, Divider, Tooltip, Anchor } from '@svelteuidev/core';
+    import { Title, Text, Divider, Tooltip, Anchor, Badge } from '@svelteuidev/core';
     import Markdown from "svelte-markdown";
 
     export let data: {parkingLot: ParkingLot};
@@ -68,6 +68,21 @@
             </Text>
         {/if}
     </div>
+
+    {#if (metadata.paymentMethods?.length || 0) > 0}
+        <div class="field">
+            <i class="material-icons">payment</i>
+                
+            {#each metadata.paymentMethods as paymentMethod}
+                <span style="margin-right: 1px;">
+                    <Badge size="sm" variant="outline" >
+                        {paymentMethod}
+                    </Badge>
+                </span>
+            {/each}
+        </div>
+    {/if}
+
     {#each metadata.resources as resource}
         <div class="field">
                 <i class="material-icons">{resourceIcon(resource)}</i>
