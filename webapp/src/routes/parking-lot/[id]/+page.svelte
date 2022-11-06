@@ -27,7 +27,7 @@
 </script>
 
 <svelte:head>
-    <title>Parking {metadata.name}</title>
+    <title>Parking {metadata.name.replace("Parking", "")}</title>
 	<meta name="description" content="Details of {capitalizeFirstLetter(category)} parking lot in {metadata.name} at {metadata.address}, containing prices, opening hours and it's availability of parking spots."/>
 	<meta name="keywords" content="{metadata.name}, {metadata.address}, Parking Lot, Smart City, Gdańsk, Gdynia, Sopot, Tricity"/>
 </svelte:head>
