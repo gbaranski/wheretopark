@@ -1,7 +1,6 @@
 package gdynia
 
 import (
-	"fmt"
 	"log"
 	"time"
 	wheretopark "wheretopark/go"
@@ -58,8 +57,6 @@ func (p Provider) GetState() (map[wheretopark.ID]wheretopark.State, error) {
 			log.Printf("no mapping for %d\n", vendor.ID)
 			continue
 		}
-
-		fmt.Printf("vendorstate: %+v\n", vendor)
 
 		lastUpdate, err := time.Parse("2006-01-02 15:04:05", vendor.InsertTime)
 		if err != nil {
