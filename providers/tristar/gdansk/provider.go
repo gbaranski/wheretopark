@@ -2,6 +2,7 @@ package gdansk
 
 import (
 	"log"
+	"time"
 	wheretopark "wheretopark/go"
 
 	geojson "github.com/paulmach/go.geojson"
@@ -59,8 +60,16 @@ func (p Provider) GetState() (map[wheretopark.ID]wheretopark.State, error) {
 			continue
 		}
 
+		location, err := time.LoadLocation("Europe/Warsaw")
+		if err != nil {
+			return nil, err
+		}
+		lastUpdate, err := time.Parse(time.RFC3339, vendorState.LastUpdate)
+		if err != nil {
+			return nil, err
+		}
 		state := wheretopark.State{
-			LastUpdated: vendor.LastUpdate,
+			LastUpdated: lastUpdate.In(location).Format(time.RFC3339),
 			AvailableSpots: map[string]uint{
 				"CAR": vendor.AvailableSpots,
 			},

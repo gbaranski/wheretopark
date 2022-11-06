@@ -62,6 +62,11 @@ func (p Provider) GetState() (map[wheretopark.ID]wheretopark.State, error) {
 		if err != nil {
 			return nil, err
 		}
+		location, err := time.LoadLocation("Europe/Warsaw")
+		if err != nil {
+			return nil, err
+		}
+		lastUpdate = lastUpdate.In(location)
 		state := wheretopark.State{
 			LastUpdated: lastUpdate.Format(time.RFC3339),
 			AvailableSpots: map[string]uint{
