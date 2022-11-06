@@ -64,7 +64,7 @@ func main() {
 		log.Fatalf("failed to sign in: %v", err)
 	}
 
-	// go runGdansk(config.GdanskConfiguration, client)
+	go runGdansk(config.GdanskConfiguration, client)
 	go runGdynia(config.GdyniaConfiguration, client)
 
 	c := make(chan os.Signal, 1)
