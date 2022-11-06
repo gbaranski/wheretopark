@@ -55,3 +55,7 @@ type ParkingLot struct {
 func CoordinateToID(latitude, longitude float64) ID {
 	return geohash.Encode(latitude, longitude)
 }
+
+func GeometryToID(geometry geojson.Geometry) ID {
+	return geohash.Encode(geometry.Point[1], geometry.Point[0])
+}
