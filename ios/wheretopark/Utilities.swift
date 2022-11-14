@@ -102,11 +102,26 @@ extension ParkingLotPricingRule {
 }
 
 
+import OpeningHours
+
 extension ParkingLotMetadata {
     var commentForLocale: String? {
         let languageCode = Locale.current.language.languageCode?.identifier ?? "en"
         let comment = comment[languageCode] ?? comment ["en"]
         return comment
+    }
+    
+    func status() -> ParkingLotStatus {
+        let rawOpeningHours = rules.map{ $0.hours }.joined(separator: "; ")
+        print("rawOpeningHours: \(rawOpeningHours)")
+        let openingHours = OpeningHours(rawOpeningHours)
+        let dateTime = now_at(timezone)
+        if openingHours.is_open(dateTime) {
+            return .open
+        } else {
+            return .closed
+        }
+        
     }
 }
 

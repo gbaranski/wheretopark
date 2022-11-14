@@ -252,8 +252,7 @@ class ParkingLotAnnotation: NSObject, MKAnnotation {
     }
     
     var subtitle: String? {
-        // TODO: Change that
-        let status = ParkingLotStatus.closed
+        let status = parkingLot.metadata.status()
         if status == .closed || status == .opensSoon {
             return status.rawValue.capitalizingFirstLetter()
         } else {

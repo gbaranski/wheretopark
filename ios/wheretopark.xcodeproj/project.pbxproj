@@ -32,6 +32,7 @@
 		68BBFAB4290EFC750012512D /* Swift-ISO8601-DurationParser in Frameworks */ = {isa = PBXBuildFile; productRef = 68BBFAB3290EFC750012512D /* Swift-ISO8601-DurationParser */; };
 		68BBFAB7290EFD600012512D /* DefaultCodable in Frameworks */ = {isa = PBXBuildFile; productRef = 68BBFAB6290EFD600012512D /* DefaultCodable */; };
 		68E2318E291569A3004EA1B2 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 68E23190291569A3004EA1B2 /* Localizable.strings */; };
+		68F7162E2922D5650040B942 /* OpeningHours in Frameworks */ = {isa = PBXBuildFile; productRef = 68F7162D2922D5650040B942 /* OpeningHours */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -91,6 +92,7 @@
 				68BBFAB4290EFC750012512D /* Swift-ISO8601-DurationParser in Frameworks */,
 				68BBFAB7290EFD600012512D /* DefaultCodable in Frameworks */,
 				68BBFAA7290ED8E40012512D /* PhoneNumberKit in Frameworks */,
+				68F7162E2922D5650040B942 /* OpeningHours in Frameworks */,
 				68BBFAAE290EED880012512D /* CodableGeoJSON in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -207,6 +209,7 @@
 				68BBFAAD290EED880012512D /* CodableGeoJSON */,
 				68BBFAB3290EFC750012512D /* Swift-ISO8601-DurationParser */,
 				68BBFAB6290EFD600012512D /* DefaultCodable */,
+				68F7162D2922D5650040B942 /* OpeningHours */,
 			);
 			productName = wheretopark;
 			productReference = 68239D9F290ED14200C25ED6 /* wheretopark.app */;
@@ -286,6 +289,7 @@
 				68BBFAAC290EED880012512D /* XCRemoteSwiftPackageReference "CodableGeoJSON" */,
 				68BBFAB2290EFC750012512D /* XCRemoteSwiftPackageReference "Swift-ISO8601-DurationParser" */,
 				68BBFAB5290EFD600012512D /* XCRemoteSwiftPackageReference "DefaultCodable" */,
+				68F7162C2922D5650040B942 /* XCRemoteSwiftPackageReference "opening-hours-swift" */,
 			);
 			productRefGroup = 68239DA0290ED14200C25ED6 /* Products */;
 			projectDirPath = "";
@@ -761,6 +765,14 @@
 				minimumVersion = 1.0.0;
 			};
 		};
+		68F7162C2922D5650040B942 /* XCRemoteSwiftPackageReference "opening-hours-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "git@github.com:gbaranski/opening-hours-swift.git";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -783,6 +795,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 68BBFAB5290EFD600012512D /* XCRemoteSwiftPackageReference "DefaultCodable" */;
 			productName = DefaultCodable;
+		};
+		68F7162D2922D5650040B942 /* OpeningHours */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 68F7162C2922D5650040B942 /* XCRemoteSwiftPackageReference "opening-hours-swift" */;
+			productName = OpeningHours;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

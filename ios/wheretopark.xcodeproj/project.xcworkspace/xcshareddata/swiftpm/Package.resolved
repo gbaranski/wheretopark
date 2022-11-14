@@ -28,6 +28,15 @@
       }
     },
     {
+      "identity" : "opening-hours-swift",
+      "kind" : "remoteSourceControl",
+      "location" : "git@github.com:gbaranski/opening-hours-swift.git",
+      "state" : {
+        "branch" : "master",
+        "revision" : "d04206e0e0cf68ffb9732dda8ff792266371b570"
+      }
+    },
+    {
       "identity" : "phonenumberkit",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/marmelroy/PhoneNumberKit",

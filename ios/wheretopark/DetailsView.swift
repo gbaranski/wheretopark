@@ -100,36 +100,35 @@ struct DetailsView: View {
                         }
                     }
                     Divider()
-//                    VStack(alignment: .leading) {
-//                        Text("parkingLot.hours")
-//                            .fontWeight(.black)
-//                            .font(.caption)
-//                            .foregroundColor(.secondary)
-//                            .textCase(.uppercase)
-//                        // TODO: Use real status
-//                        let status = ParkingLotStatus.closed
-//                        switch status {
-//                        case .opensSoon:
-//                            Text(LocalizedStringKey("parkingLot.status.opensSoon"))
-//                                .fontWeight(.heavy)
-//                                .foregroundColor(.yellow)
-//                        case .open:
-//                            Text(LocalizedStringKey("parkingLot.status.open"))
-//                                .fontWeight(.heavy)
-//                                .foregroundColor(.green)
-//                        case .closesSoon:
-//                            Text(LocalizedStringKey("parkingLot.status.closesSoon"))
-//                                .fontWeight(.heavy)
-//                                .foregroundColor(.yellow)
-//                        case .closed:
-//                            Text(LocalizedStringKey("parkingLot.status.closed"))
-//                                .fontWeight(.heavy)
-//                                .foregroundColor(.red)
-//                            //                        default:
-//                            //                            fatalError("unknown status \(status)")
-//                        }
-//                    }
-//                    Divider()
+                    VStack(alignment: .leading) {
+                        Text("parkingLot.hours")
+                            .fontWeight(.black)
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                            .textCase(.uppercase)
+                        let status = parkingLot.metadata.status()
+                        switch status {
+                        case .opensSoon:
+                            Text(LocalizedStringKey("parkingLot.status.opensSoon"))
+                                .fontWeight(.heavy)
+                                .foregroundColor(.yellow)
+                        case .open:
+                            Text(LocalizedStringKey("parkingLot.status.open"))
+                                .fontWeight(.heavy)
+                                .foregroundColor(.green)
+                        case .closesSoon:
+                            Text(LocalizedStringKey("parkingLot.status.closesSoon"))
+                                .fontWeight(.heavy)
+                                .foregroundColor(.yellow)
+                        case .closed:
+                            Text(LocalizedStringKey("parkingLot.status.closed"))
+                                .fontWeight(.heavy)
+                                .foregroundColor(.red)
+                            //                        default:
+                            //                            fatalError("unknown status \(status)")
+                        }
+                    }
+                    Divider()
                     VStack(alignment: .leading) {
                         let formatter = RelativeDateTimeFormatter()
                         let lastUpdatedString = formatter.localizedString(for: parkingLot.state.lastUpdated, relativeTo: Date.now)

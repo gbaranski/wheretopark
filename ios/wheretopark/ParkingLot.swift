@@ -41,7 +41,8 @@ extension ParkingLotPricingRule: Decodable {
         let values = try decoder.container(keyedBy: CodingKeys.self)
         let durationString = try values.decode(String.self, forKey: .duration)
         duration = DateComponents.durationFrom8601String(durationString)!
-        price = try values.decode(Decimal.self, forKey: .price)
+        let priceString = try values.decode(String.self, forKey: .price)
+        price = Decimal(string: priceString)!
         repeating = try values.decodeIfPresent(Bool.self, forKey: .repeating) ?? false
     }
 }
