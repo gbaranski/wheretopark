@@ -3,6 +3,7 @@ package wheretopark
 import (
 	"github.com/mmcloughlin/geohash"
 	geojson "github.com/paulmach/go.geojson"
+	"github.com/shopspring/decimal"
 )
 
 type ID = string
@@ -12,9 +13,9 @@ type PaymentMethod = string
 type LanguageCode = string
 
 type PricingRule struct {
-	Duration  string  `json:"duration"`
-	Price     float32 `json:"price"`
-	Repeating bool    `json:"repeating,omitempty"`
+	Duration  string          `json:"duration"`
+	Price     decimal.Decimal `json:"price"`
+	Repeating bool            `json:"repeating,omitempty"`
 }
 
 type Rule struct {

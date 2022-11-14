@@ -10,6 +10,7 @@ import (
 	wheretopark "wheretopark/go"
 
 	geojson "github.com/paulmach/go.geojson"
+	"github.com/shopspring/decimal"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -95,23 +96,23 @@ func TestParkingLot(t *testing.T) {
 				Pricing: []wheretopark.PricingRule{
 					{
 						Duration: "PT1H",
-						Price:    0.0,
+						Price:    decimal.Zero,
 					},
 					{
 						Duration: "PT2H",
-						Price:    2.0,
+						Price:    decimal.NewFromInt(2),
 					},
 					{
 						Duration: "PT3H",
-						Price:    3.0,
+						Price:    decimal.NewFromInt(3),
 					},
 					{
 						Duration: "PT24H",
-						Price:    25.0,
+						Price:    decimal.NewFromInt(25),
 					},
 					{
 						Duration:  "PT1H",
-						Price:     4.0,
+						Price:     decimal.NewFromInt(4),
 						Repeating: true,
 					},
 				},
