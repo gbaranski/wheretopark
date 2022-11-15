@@ -42,7 +42,11 @@ class DatabaseClient: ObservableObject {
         request.addValue(AppEnvironment.databaseNamespace, forHTTPHeaderField: "NS")
         request.addValue(AppEnvironment.databaseName, forHTTPHeaderField: "DB")
         let (data, response) = try await URLSession.shared.data(for: request)
-        assert((response as? HTTPURLResponse)?.statusCode == 200)
+        let httpResponse = response as! HTTPURLResponse
+        let statusCode = httpResponse.statusCode
+        if statusCode != 200 {
+            throw NSError(domain: "UnexpectedStatusCode", code: 1, userInfo: ["statusCode": statusCode])
+        }
         let databaseResponse = try jsonDecoder.decode([DatabaseResponse<T>].self, from: data)
         return databaseResponse[0]
         
