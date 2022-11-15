@@ -69,9 +69,9 @@ extension String {
 
 func availabilityColor(available: UInt, total: UInt) -> Color {
     let percent = Double(available) / Double(total)
-    if percent > 0.5 {
+    if percent > 0.3 {
         return .green
-    } else if percent > 0.3 {
+    } else if percent > 0.2 {
         return .yellow
     } else {
         return .red
