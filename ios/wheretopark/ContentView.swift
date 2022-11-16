@@ -103,8 +103,15 @@ struct ContentView: View {
 }
 
 struct ContentView_Previews: PreviewProvider {
+    static func initLocationManager() -> LocationManager {
+        let locationManager = LocationManager()
+        locationManager.lastLocation = CLLocation(latitude:  54.377, longitude: 18.588)
+        locationManager.locationStatus = CLAuthorizationStatus.authorizedWhenInUse
+        return locationManager
+    }
+    
     @StateObject static var appState = AppState()
-    @StateObject static var locationManager = LocationManager()
+    @StateObject static var locationManager = initLocationManager()
     
     static var previews: some View {
         ContentView()
