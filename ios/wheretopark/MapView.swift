@@ -56,7 +56,7 @@ struct MapViewButtons: View {
             .foregroundColor(.gray)
             .padding(.bottom, 15)
         }
-        .background(colorScheme == .dark ? Color(red: 37 / 255, green: 39 / 255, blue: 42 / 255) : Color.white)
+        .background(.ultraThickMaterial)
         .cornerRadius(10)
         .padding(.top, 50)
         .padding(20)
