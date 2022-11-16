@@ -10,32 +10,6 @@ import MapKit
 import CoreLocation
 import UIKit
 
-struct PrimarySheetView: View {
-    @EnvironmentObject var appState: AppState
-    @EnvironmentObject var locationManager: LocationManager
-    
-    var body: some View {
-        if appState.fetchFailed {
-            Text("Error: \(appState.fetchError?.localizedDescription ?? "")")
-            SendFeedback(
-                message: {
-                    """
-                    Hi, I could not open up the application.
-                    Error: \(appState.fetchError?.localizedDescription ?? "Unknown")
-                    """
-                },
-                attachment: nil
-            )
-        } else if appState.parkingLots.isEmpty {
-            LoadingView(description: "Loading parking lot data")
-        } else {
-            ListView()
-                .environmentObject(appState)
-                .environmentObject(locationManager)
-        }
-    }
-}
-
 struct Carousel: View {
     @EnvironmentObject var appState: AppState
     @EnvironmentObject var locationManager: LocationManager
