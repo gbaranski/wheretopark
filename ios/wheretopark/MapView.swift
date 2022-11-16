@@ -102,7 +102,9 @@ struct MapViewRepresentable: UIViewRepresentable {
         // TODO: Instead of hiding, move it somewhere else to prevent overflowing
         self.map.showsCompass = false
         self.map.userTrackingMode = userTrackingMode
-        self.map.directionalLayoutMargins.bottom = 300.0
+        self.map.directionalLayoutMargins.bottom = -20
+        self.map.directionalLayoutMargins.leading = 20
+        self.map.directionalLayoutMargins.trailing = 20
         return self.map
     }
 

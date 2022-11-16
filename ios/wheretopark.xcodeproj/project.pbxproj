@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		6815B6FD292474BC002836E0 /* PreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6815B6FC292474BC002836E0 /* PreviewView.swift */; };
 		681660E5290ED4F1002CFFB7 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 681660E4290ED4F1002CFFB7 /* AppState.swift */; };
 		681660E7290ED515002CFFB7 /* ParkingLot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 681660E6290ED515002CFFB7 /* ParkingLot.swift */; };
 		68239DA3290ED14200C25ED6 /* wheretoparkApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68239DA2290ED14200C25ED6 /* wheretoparkApp.swift */; };
@@ -22,7 +23,6 @@
 		68BBFA9A290ED78F0012512D /* MailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68BBFA99290ED78F0012512D /* MailView.swift */; };
 		68BBFA9C290ED7AD0012512D /* MapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68BBFA9B290ED7AD0012512D /* MapView.swift */; };
 		68BBFA9E290ED7CC0012512D /* LoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68BBFA9D290ED7CC0012512D /* LoadingView.swift */; };
-		68BBFAA0290ED86A0012512D /* ListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68BBFA9F290ED86A0012512D /* ListView.swift */; };
 		68BBFAA2290ED8940012512D /* BottomSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68BBFAA1290ED8940012512D /* BottomSheet.swift */; };
 		68BBFAA4290ED8AB0012512D /* DetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68BBFAA3290ED8AB0012512D /* DetailsView.swift */; };
 		68BBFAA7290ED8E40012512D /* PhoneNumberKit in Frameworks */ = {isa = PBXBuildFile; productRef = 68BBFAA6290ED8E40012512D /* PhoneNumberKit */; };
@@ -53,6 +53,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		6815B6FC292474BC002836E0 /* PreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewView.swift; sourceTree = "<group>"; };
 		681660E4290ED4F1002CFFB7 /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
 		681660E6290ED515002CFFB7 /* ParkingLot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParkingLot.swift; sourceTree = "<group>"; };
 		68239D9F290ED14200C25ED6 /* wheretopark.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = wheretopark.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -72,7 +73,6 @@
 		68BBFA99290ED78F0012512D /* MailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MailView.swift; sourceTree = "<group>"; };
 		68BBFA9B290ED7AD0012512D /* MapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapView.swift; sourceTree = "<group>"; };
 		68BBFA9D290ED7CC0012512D /* LoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingView.swift; sourceTree = "<group>"; };
-		68BBFA9F290ED86A0012512D /* ListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListView.swift; sourceTree = "<group>"; };
 		68BBFAA1290ED8940012512D /* BottomSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomSheet.swift; sourceTree = "<group>"; };
 		68BBFAA3290ED8AB0012512D /* DetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailsView.swift; sourceTree = "<group>"; };
 		68BBFAA8290ED8F60012512D /* FavouriteManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavouriteManager.swift; sourceTree = "<group>"; };
@@ -151,9 +151,9 @@
 				68BBFA99290ED78F0012512D /* MailView.swift */,
 				68BBFA9B290ED7AD0012512D /* MapView.swift */,
 				68BBFA9D290ED7CC0012512D /* LoadingView.swift */,
-				68BBFA9F290ED86A0012512D /* ListView.swift */,
 				68BBFAA1290ED8940012512D /* BottomSheet.swift */,
 				68BBFAA3290ED8AB0012512D /* DetailsView.swift */,
+				6815B6FC292474BC002836E0 /* PreviewView.swift */,
 				68BBFAA8290ED8F60012512D /* FavouriteManager.swift */,
 				68BBFAAA290ED9700012512D /* Utilities.swift */,
 				68BBFAAF290EF7450012512D /* Development.xcconfig */,
@@ -344,7 +344,7 @@
 				68BBFAA4290ED8AB0012512D /* DetailsView.swift in Sources */,
 				68239DA3290ED14200C25ED6 /* wheretoparkApp.swift in Sources */,
 				68BBFA96290ED6B10012512D /* AppEnvironment.swift in Sources */,
-				68BBFAA0290ED86A0012512D /* ListView.swift in Sources */,
+				6815B6FD292474BC002836E0 /* PreviewView.swift in Sources */,
 				68BBFA9C290ED7AD0012512D /* MapView.swift in Sources */,
 				68BBFAA2290ED8940012512D /* BottomSheet.swift in Sources */,
 				68BBFA9A290ED78F0012512D /* MailView.swift in Sources */,
@@ -518,6 +518,8 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = wheretopark/wheretopark.entitlements;
 				CODE_SIGN_IDENTITY = "-";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = YES;
@@ -561,6 +563,8 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = wheretopark/wheretopark.entitlements;
 				CODE_SIGN_IDENTITY = "-";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = YES;
