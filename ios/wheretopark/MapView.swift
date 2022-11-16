@@ -188,7 +188,6 @@ struct MapViewRepresentable: UIViewRepresentable {
         
         func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
             // TODO: Move it somewhere else
-            let color = UIColor(Color.blue)
             switch annotation {
             case let parkingLotAnnotation as ParkingLotAnnotation:
                 var annotationView = mapView.dequeueReusableAnnotationView(withIdentifier: parkingLotAnnotation.id) as? MKMarkerAnnotationView
@@ -201,7 +200,8 @@ struct MapViewRepresentable: UIViewRepresentable {
                 annotationView!.canShowCallout = false
                 annotationView!.animatesWhenAdded = true
                 annotationView!.subtitleVisibility = .visible
-                annotationView!.markerTintColor = color
+                let availabilityColor = availabilityColor(available: parkingLotAnnotation.parkingLot.state.availableSpots["CAR"]!, total: parkingLotAnnotation.parkingLot.metadata.totalSpots["CAR"]!)
+                annotationView!.markerTintColor = UIColor(availabilityColor)
                 annotationView!.glyphText = String("P")
                 return annotationView
             case let cluster as MKClusterAnnotation:
@@ -211,7 +211,7 @@ struct MapViewRepresentable: UIViewRepresentable {
                 cluster.subtitle = nil
                 markerAnnotationView.annotation = cluster
                 markerAnnotationView.glyphText = String(cluster.memberAnnotations.count)
-                markerAnnotationView.markerTintColor = color
+                markerAnnotationView.markerTintColor = UIColor(Color.blue)
                 markerAnnotationView.canShowCallout = false
                 return markerAnnotationView
             case is MKUserLocation:
