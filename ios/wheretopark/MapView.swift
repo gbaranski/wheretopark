@@ -103,6 +103,7 @@ struct MapViewRepresentable: UIViewRepresentable {
         self.map.showsCompass = false
         self.map.userTrackingMode = userTrackingMode
         self.map.directionalLayoutMargins.bottom = -20
+        self.map.directionalLayoutMargins.top = -300
         self.map.directionalLayoutMargins.leading = 20
         self.map.directionalLayoutMargins.trailing = 20
         return self.map
