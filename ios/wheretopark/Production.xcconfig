@@ -8,9 +8,9 @@
 // Configuration settings file format documentation can be found at:
 // https://help.apple.com/xcode/#/dev745c5c974
 
-PROTOCOL = http:/
-DATABASE_URL = $(PROTOCOL)/192.168.1.2:8000
+PROTOCOL = https:/
+DATABASE_URL = $(PROTOCOL)/database.wheretopark.app
 DATABASE_NAMESPACE = wheretopark
-DATABASE_NAME = development
+DATABASE_NAME = production
 DATABASE_USERNAME = root
-DATABASE_PASSWORD = root
+DATABASE_PASSWORD = LeARKSTahAnteMIg
