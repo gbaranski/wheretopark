@@ -1,5 +1,5 @@
 [workspace]
 members = [
-    "providers/cctv",
+    "providers/cctv-rust",
     "rust"
 ]
