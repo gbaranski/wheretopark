@@ -20,9 +20,10 @@ type environment struct {
 	DatabaseUser     string  `env:"DATABASE_USER" envDefault:"root"`
 	DatabasePassword string  `env:"DATABASE_PASSWORD" envDefault:"root"`
 	Configuration    *string `env:"CONFIGURATION"`
+	Model            string  `env:"MODEL"`
 }
 
-func RunParkingLot(parkingLot cctv.ParkingLot, window *gocv.Window) error {
+func RunParkingLot(parkingLot cctv.ParkingLot, window *gocv.Window, model *cctv.Model) error {
 	fmt.Printf("running parking lot %s\n", parkingLot.Name)
 	video, err := gocv.OpenVideoCapture(parkingLot.CameraURL)
 	if err != nil {
@@ -30,6 +31,7 @@ func RunParkingLot(parkingLot cctv.ParkingLot, window *gocv.Window) error {
 	}
 	defer video.Close()
 	img := gocv.NewMat()
+	defer img.Close()
 	for {
 		fmt.Printf("reading frame\n")
 		if ok := video.Read(&img); !ok {
@@ -38,16 +40,21 @@ func RunParkingLot(parkingLot cctv.ParkingLot, window *gocv.Window) error {
 		}
 		fmt.Printf("got frame\n")
 
-		for _, spot := range parkingLot.Spots {
+		predictions := make(map[int]float32)
+		for i, spot := range parkingLot.Spots {
 			croppedImage := spot.CropOn(img)
-			window.IMShow(croppedImage)
-			for {
-				if window.WaitKey(1) >= 0 {
-					break
-				}
+			defer croppedImage.Close()
+			prediction := model.Predict(croppedImage)
+			spot.VisualizeOn(&img, prediction)
+			predictions[i] = prediction
+		}
+
+		window.IMShow(img)
+		for {
+			if window.WaitKey(1) >= 0 {
+				break
 			}
 		}
-		// time.Sleep(10 * time.Second)
 	}
 }
 
@@ -85,7 +92,9 @@ func main() {
 		configuration = *newConfiguration
 	}
 
-	RunParkingLot(configuration.ParkingLots[0], window)
+	model := cctv.NewModel(environment.Model)
+	defer model.Close()
+	RunParkingLot(configuration.ParkingLots[0], window, model)
 	// for _, parkingLot := range configuration.ParkingLots {
 	// go RunParkingLot(parkingLot)
 	// }

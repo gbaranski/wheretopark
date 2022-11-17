@@ -1,7 +1,9 @@
 package cctv
 
 import (
+	"fmt"
 	"image"
+	"image/color"
 
 	"gocv.io/x/gocv"
 )
@@ -46,4 +48,20 @@ func (spot *ParkingSpot) CropOn(cvFrame gocv.Mat) gocv.Mat {
 	cvOutput := gocv.NewMat()
 	gocv.WarpPerspective(cvFrame, &cvOutput, cvTransformation, size)
 	return cvOutput
+}
+
+func (spot *ParkingSpot) VisualizeOn(img *gocv.Mat, prediction float32) {
+	occupied := prediction < 0.5
+	var drawingColor color.RGBA
+	if occupied {
+		drawingColor = color.RGBA{R: 255, G: 0, B: 0, A: 255}
+	} else {
+		drawingColor = color.RGBA{R: 0, G: 255, B: 0, A: 255}
+	}
+	points := spot.ImagePoints()
+	cvPoints := gocv.NewPointVectorFromPoints(points)
+	cvPointsVector := gocv.NewPointsVectorFromPoints([][]image.Point{points})
+	cvMinAreaRect := gocv.MinAreaRect(cvPoints)
+	gocv.Polylines(img, cvPointsVector, true, drawingColor, 2)
+	gocv.PutText(img, fmt.Sprintf("%.2f", prediction), cvMinAreaRect.Center, gocv.FontHersheyPlain, 1.0, drawingColor, 1)
 }
