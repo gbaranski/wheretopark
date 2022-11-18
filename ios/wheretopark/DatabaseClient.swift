@@ -47,7 +47,6 @@ class DatabaseClient: ObservableObject {
         if statusCode != 200 {
             throw NSError(domain: "UnexpectedStatusCode", code: 1, userInfo: ["statusCode": statusCode])
         }
-        print("data: \(String(data: data, encoding: .utf8)!)")
         let databaseResponse = try jsonDecoder.decode([DatabaseResponse<T>].self, from: data)
         return databaseResponse[0]
         
