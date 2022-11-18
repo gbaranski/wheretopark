@@ -32,11 +32,11 @@ type Metadata struct {
 	Address        string                  `json:"address"`
 	Geometry       geojson.Geometry        `json:"geometry"`
 	Resources      []string                `json:"resources"`
-	TotalSpots     map[SpotType]uint       `json:"totalSpots" yaml:"total-spots"`
-	MaxWidth       *int                    `json:"maxWidth,omitempty" yaml:"max-width"`
-	MaxHeight      *int                    `json:"maxHeight,omitempty" yaml:"max-height"`
+	TotalSpots     map[SpotType]uint       `json:"totalSpots"`
+	MaxWidth       *int                    `json:"maxWidth,omitempty"`
+	MaxHeight      *int                    `json:"maxHeight,omitempty"`
 	Features       []Feature               `json:"features"`
-	PaymentMethods []PaymentMethod         `json:"paymentMethods" yaml:"payment-methods"`
+	PaymentMethods []PaymentMethod         `json:"paymentMethods"`
 	Comment        map[LanguageCode]string `json:"comment"`
 	Currency       string                  `json:"currency"`
 	Timezone       string                  `json:"timezone"`
