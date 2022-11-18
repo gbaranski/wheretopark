@@ -25,7 +25,7 @@ services:
     env_file: .env
     build:
       context: .
-      dockerfile: ./providers/tristar/Dockerfile
+      dockerfile: ./cmd/tristar/Dockerfile
     environment:
       DATABASE_URL: ws://surrealdb:8000
       DATABASE_NAME: production

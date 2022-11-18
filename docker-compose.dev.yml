@@ -20,7 +20,7 @@ services:
     container_name: tristar
     build:
       context: .
-      dockerfile: providers/tristar/Dockerfile
+      dockerfile: cmd/tristar/Dockerfile
     depends_on:
       - surrealdb
     environment:

@@ -7,7 +7,7 @@ RUN go mod download
 
 COPY . ./
 
-RUN go build -v -o tristar ./providers/tristar
+RUN go build -v -o tristar ./cmd/tristar
 
 FROM golang:1-alpine
 
