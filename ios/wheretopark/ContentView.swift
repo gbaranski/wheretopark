@@ -98,6 +98,21 @@ struct ContentView: View {
                 bottomSheetVisible = false
             }
         }
+        .alert("Failed to communicate with server", isPresented: $appState.fetchFailed) {
+            Button("Retry", role: .cancel) {
+                appState.fetchFailed = false
+                Task {
+                    await appState.fetchParkingLots()
+                }
+            }
+            Button("Exit", role: .destructive) {
+                DispatchQueue.main.asyncAfter(deadline: .now()) {
+                    UIApplication.shared.perform(#selector(NSXPCConnection.suspend))
+                }
+            }
+        } message: {
+            Text(appState.fetchError?.errorDescription ?? "")
+        }
         .task({ await appState.fetchParkingLots() })
     }
 }

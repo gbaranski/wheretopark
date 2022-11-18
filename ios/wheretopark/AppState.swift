@@ -16,7 +16,7 @@ typealias ParkingLotID = String
     let databaseClient = DatabaseClient()
     
     @Published private(set) var isPerformingTask = false
-    @Published private(set) var fetchError: FetchError? = nil
+    @Published var fetchError: FetchError? = nil
     @Published var fetchFailed = false
     
     @Published private(set) var parkingLots = [ParkingLotID : ParkingLot]()
