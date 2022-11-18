@@ -17,7 +17,6 @@ let trackingModeProperties = [
 
 struct MapViewButtons: View {
     @Binding var userTrackingMode: MKUserTrackingMode
-    @Environment(\.colorScheme) private var colorScheme
     @EnvironmentObject var appState: AppState
     @EnvironmentObject var locationManager: LocationManager
     
@@ -58,7 +57,6 @@ struct MapViewButtons: View {
         }
         .background(.ultraThickMaterial)
         .cornerRadius(10)
-        .padding(.top, 50)
         .padding(20)
     }
 }
@@ -70,7 +68,7 @@ struct MapView: View {
         ZStack(alignment: .topTrailing) {
             MapViewRepresentable(
                 userTrackingMode: $userTrackingMode
-            )
+            ).edgesIgnoringSafeArea(.all)
             MapViewButtons(
                 userTrackingMode: $userTrackingMode
             )

@@ -10,29 +10,37 @@ import MapKit
 import CoreLocation
 import UIKit
 
-struct Carousel: View {
-    @EnvironmentObject var appState: AppState
-    @EnvironmentObject var locationManager: LocationManager
-    @Binding var searchText: String
+struct HorizontalCarousel: View {
+    let parkingLots: Array<(key: String, value: ParkingLot)>
+    let onSelect: (ParkingLotID) -> Void
     
     var body: some View {
-        let processedParkingLots = appState.parkingLots.sorted(by: {
-            if let userLocation: CLLocation = locationManager.lastLocation {
-                return $0.value.metadata.geometry.distance(from: userLocation) < $1.value.metadata.geometry.distance(from: userLocation)
-            } else {
-                return $0.key > $1.key
-            }
-        }).filter { id, parkingLot in
-            return searchText.isEmpty ? true : parkingLot.metadata.name.lowercased().contains(searchText.lowercased())
-        }
-        
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(alignment: .bottom, spacing: 0) {
-                ForEach(processedParkingLots, id: \.key) { id, parkingLot in
+                ForEach(parkingLots, id: \.key) { id, parkingLot in
                     PreviewView(parkingLot: parkingLot)
                         .padding(.horizontal)
                         .onTapGesture {
-                            appState.selectedParkingLotID = id
+                            onSelect(id)
+                        }
+                }
+            }
+        }
+    }
+}
+
+struct VerticalCarousel: View {
+    let parkingLots: Array<(key: String, value: ParkingLot)>
+    let onSelect: (ParkingLotID) -> Void
+    
+    var body: some View {
+        ScrollView(.vertical, showsIndicators: false) {
+            VStack(alignment: .leading, spacing: 0) {
+                ForEach(parkingLots, id: \.key) { id, parkingLot in
+                    PreviewView(parkingLot: parkingLot)
+                        .padding(.vertical)
+                        .onTapGesture {
+                            onSelect(id)
                         }
                 }
             }
@@ -59,34 +67,49 @@ struct DetailsSheet: View {
 struct ContentView: View {
     @EnvironmentObject var appState: AppState
     @EnvironmentObject var locationManager: LocationManager
+    @Environment(\.verticalSizeClass) var ver: UserInterfaceSizeClass?
     
     @State var searchText: String = ""
     @State var bottomSheetVisible = false
     @State var bottomSheetDetent: UISheetPresentationController.Detent.Identifier? = .compact
     
+    func onSelect(id: ParkingLotID) {
+        appState.selectedParkingLotID = id
+    }
+    
     var body: some View {
+        let parkingLots = appState.parkingLots.sorted(by: {
+            if let userLocation: CLLocation = locationManager.lastLocation {
+                return $0.value.metadata.geometry.distance(from: userLocation) < $1.value.metadata.geometry.distance(from: userLocation)
+            } else {
+                return $0.key > $1.key
+            }
+        }).filter { id, parkingLot in
+            return searchText.isEmpty ? true : parkingLot.metadata.name.lowercased().contains(searchText.lowercased())
+        }
         
-        ZStack(alignment: .bottom) {
+        ZStack(alignment: ver == .compact ? .leading : .bottom) {
             MapView()
-                .edgesIgnoringSafeArea(.all)
-                .navigationBarHidden(true)
             
-            VStack {
-                Carousel(searchText: $searchText)
-                HStack {
+            VStack(alignment: .leading) {
+                if ver == .compact {
+                    VerticalCarousel(parkingLots: parkingLots, onSelect: onSelect)
+                } else {
+                    HorizontalCarousel(parkingLots: parkingLots, onSelect: onSelect)
+                }
+                HStack(alignment: .bottom) {
                     Image(systemName: "magnifyingglass")
                     TextField("search", text: $searchText)
                 }
                 .foregroundColor(Color(UIColor.secondaryLabel))
                 .padding()
-//                .padding(.vertical, 8)
-//                .padding(.horizontal, 5)
                 .background(
                     RoundedRectangle(cornerRadius: 10)
                         .fill(.ultraThickMaterial)
                 )
-                .padding()
+                .padding(ver == .compact ? .bottom : .all)
             }
+            .frame(maxWidth: ver == .compact ? 200 : .infinity)
         }
         .bottomSheet(
             isPresented: $bottomSheetVisible,
