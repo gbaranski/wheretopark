@@ -40,7 +40,8 @@ func ParseConfiguration(content string) (*Configuration, error) {
 	if err != nil {
 		return nil, err
 	}
-	for _, parkingLot := range configuration.ParkingLots {
+	for i := range configuration.ParkingLots {
+		parkingLot := &configuration.ParkingLots[i]
 		parkingLot.TotalSpots = make(map[string]uint)
 		parkingLot.TotalSpots["CAR"] = uint(len(parkingLot.Spots))
 	}
