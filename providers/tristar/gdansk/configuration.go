@@ -6,7 +6,7 @@ import (
 
 	_ "embed"
 
-	"gopkg.in/yaml.v2"
+	"github.com/ghodss/yaml"
 )
 
 //go:embed default.yaml
@@ -22,22 +22,16 @@ func init() {
 }
 
 type Configuration struct {
-	ParkingLots map[wheretopark.ID]wheretopark.Metadata `yaml:"parking-lots"`
+	ParkingLots map[wheretopark.ID]wheretopark.Metadata `json:"parkingLots"`
 }
 
 // Load Configuration from a YAML file
 func LoadConfiguration(path string) (*Configuration, error) {
-	var configuration Configuration
 	yamlFile, err := os.ReadFile(path)
 	if err != nil {
 		return nil, err
 	}
-	err = yaml.Unmarshal(yamlFile, &configuration)
-	if err != nil {
-		return nil, err
-	}
-
-	return &configuration, nil
+	return ParseConfiguration(string(yamlFile))
 }
 
 func ParseConfiguration(content string) (*Configuration, error) {

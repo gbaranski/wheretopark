@@ -22,7 +22,7 @@ func init() {
 }
 
 type Configuration struct {
-	ParkingLots map[int]wheretopark.Metadata `yaml:"parking-lots"`
+	ParkingLots map[int]wheretopark.Metadata `json:"parkingLots"`
 }
 
 // Load Configuration from a YAML file
