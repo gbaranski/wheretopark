@@ -43,7 +43,7 @@ services:
       DATABASE_PASSWORD: root
       MODEL: /opt/wheretopark/cctv/model.onnx
     volumes:
-      - $HOME/.local/share/wheretopark/cctv/model.onnx:/opt/wheretopark/cctv/model.onnx
+      - $HOME/.local/share/wheretopark/cctv:/opt/wheretopark/cctv
 
   webapp:
     container_name: webapp

@@ -1,8 +1,6 @@
-FROM golang:1-bullseye as builder
+FROM gocv/opencv:4.6.0 as builder
 
-RUN apt-get update &&  apt-get install -y \
-    pkg-config \
-    libopencv-dev
+ENV GOPATH /go
 
 WORKDIR /app
 
@@ -10,13 +8,12 @@ COPY go.* ./
 RUN go mod download
 
 COPY . ./
+RUN go version
 
 RUN go build -v -o cctv ./cmd/cctv
 
-FROM golang:1-bullseye
-
-RUN apt-get update &&  apt-get install -y \
-    libopencv-dev
+FROM gocv/opencv:4.6.0
 
 COPY --from=builder /app/cctv /app/cctv
+# ENTRYPOINT ldd /app/cctv 
 CMD ["/app/cctv"]
