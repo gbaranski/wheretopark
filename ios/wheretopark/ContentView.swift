@@ -38,8 +38,22 @@ struct Carousel: View {
             }
         }
     }
+}
+
+struct DetailsSheet: View {
+    @EnvironmentObject var appState: AppState
+    let onDismiss: (() -> Void)
     
-    
+    var body: some View {
+        if appState.selectedParkingLotID != nil {
+            DetailsView(
+                id: appState.selectedParkingLotID!,
+                parkingLot: appState.parkingLots[appState.selectedParkingLotID!]!,
+                onDismiss: onDismiss
+            )
+            .padding([.top, .horizontal])
+        }
+    }
 }
 
 struct ContentView: View {
@@ -76,19 +90,14 @@ struct ContentView: View {
         }
         .bottomSheet(
             isPresented: $bottomSheetVisible,
-            selectedDetentIdentifier: $bottomSheetDetent
-        ) {
-            if appState.selectedParkingLotID != nil && appState.selectedParkingLot.wrappedValue != nil {
-                DetailsView(
-                    id: appState.selectedParkingLotID!,
-                    parkingLot: appState.selectedParkingLot.wrappedValue!,
-                    onDismiss: {
-                        appState.selectedParkingLotID = nil
-                    }
-                )
-                .padding([.top, .horizontal])
-                .environmentObject(appState)
+            selectedDetentIdentifier: $bottomSheetDetent,
+            onDismiss: {
+                appState.selectedParkingLotID = nil
             }
+        ) {
+            DetailsSheet(onDismiss: {
+                bottomSheetVisible = false
+            }).environmentObject(appState)
         }
         .onChange(of: appState.selectedParkingLotID) { id in
             if id != nil {
