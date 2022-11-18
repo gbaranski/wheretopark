@@ -9,7 +9,6 @@ services:
       - "8000:8000"
     command: 
       - start
-      - --log=trace
       - --user=${SURREALDB_USER}
       - --pass=${SURREALDB_PASSWORD}
     networks:
