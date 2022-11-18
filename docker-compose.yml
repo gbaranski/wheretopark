@@ -4,6 +4,7 @@ services:
     container_name: wheretopark_surrealdb
     image: surrealdb/surrealdb:latest
     env_file: .env
+    restart: unless-stopped
     ports:
       - "8000:8000"
     command: 
@@ -23,6 +24,7 @@ services:
   tristar:
     container_name: wheretopark_tristar
     env_file: .env
+    restart: unless-stopped
     build:
       context: .
       dockerfile: ./cmd/tristar/Dockerfile
@@ -34,9 +36,28 @@ services:
     depends_on:
       - surrealdb
 
+  cctv:
+    container_name: wheretopark_cctv
+    env_file: .env
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: ./cmd/cctv/Dockerfile
+    environment:
+      DATABASE_URL: ws://surrealdb:8000
+      DATABASE_NAME: production
+      DATABASE_USER: ${SURREALDB_USER}
+      DATABASE_PASSWORD: ${SURREALDB_PASSWORD}
+      MODEL: /opt/wheretopark/cctv/model.onnx
+    volumes:
+      - $HOME/.local/share/wheretopark/cctv:/opt/wheretopark/cctv
+    depends_on:
+      - surrealdb
+
   webapp:
     container_name: wheretopark_webapp
     env_file: .env
+    restart: unless-stopped
     build:
       context: ./webapp
     ports:
