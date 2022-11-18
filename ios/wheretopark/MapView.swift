@@ -201,7 +201,9 @@ struct MapViewRepresentable: UIViewRepresentable {
                 annotationView!.animatesWhenAdded = true
                 annotationView!.subtitleVisibility = .visible
                 let availabilityColor = availabilityColor(available: parkingLotAnnotation.parkingLot.state.availableSpots["CAR"]!, total: parkingLotAnnotation.parkingLot.metadata.totalSpots["CAR"]!)
-                annotationView!.markerTintColor = UIColor(availabilityColor)
+                let status = parkingLotAnnotation.parkingLot.metadata.status()
+                let tintColor = status == .closed ? .red : status == .closesSoon ? .yellow : availabilityColor
+                annotationView!.markerTintColor = UIColor(tintColor)
                 annotationView!.glyphText = String("P")
                 return annotationView
             case let cluster as MKClusterAnnotation:
