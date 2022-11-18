@@ -30,7 +30,7 @@ struct PreviewView: View {
             if let userLocation: CLLocation = locationManager.lastLocation {
                 let distance = parkingLot.metadata.geometry.distance(from: userLocation)
                 let distanceString = MKDistanceFormatter().string(fromDistance: distance)
-                Label("\(distanceString) away", systemImage: "point.topleft.down.curvedto.point.bottomright.up")
+                Label(distanceString, systemImage: "point.topleft.down.curvedto.point.bottomright.up")
                     .font(.subheadline)
             }
         }
