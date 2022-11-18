@@ -18,7 +18,7 @@ type environment struct {
 	DatabaseUser     string  `env:"DATABASE_USER" envDefault:"root"`
 	DatabasePassword string  `env:"DATABASE_PASSWORD" envDefault:"root"`
 	Configuration    *string `env:"CONFIGURATION"`
-	Model            string  `env:"MODEL"`
+	Model            string  `env:"MODEL" envDefault:"$HOME/.local/share/wheretopark/cctv/model.onnx" envExpand:"true"`
 }
 
 func main() {

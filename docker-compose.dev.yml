@@ -29,6 +29,22 @@ services:
       DATABASE_USER: root
       DATABASE_PASSWORD: root
 
+  cctv:
+    container_name: cctv
+    build:
+      context: .
+      dockerfile: cmd/cctv/Dockerfile
+    depends_on:
+      - surrealdb
+    environment:
+      DATABASE_URL: ws://surrealdb:8000
+      DATABASE_NAME: development
+      DATABASE_USER: root
+      DATABASE_PASSWORD: root
+      MODEL: /opt/wheretopark/cctv/model.onnx
+    volumes:
+      - $HOME/.local/share/wheretopark/cctv/model.onnx:/opt/wheretopark/cctv/model.onnx
+
   webapp:
     container_name: webapp
     ports:
