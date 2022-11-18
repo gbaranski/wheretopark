@@ -1,6 +1,7 @@
 package cctv
 
 import (
+	"encoding/json"
 	"fmt"
 	"image"
 	"os"
@@ -8,7 +9,7 @@ import (
 
 	_ "embed"
 
-	"gopkg.in/yaml.v3"
+	"github.com/ghodss/yaml"
 )
 
 //go:embed default.yaml
@@ -25,17 +26,12 @@ func init() {
 
 // Load Configuration from a YAML file
 func LoadConfiguration(path string) (*Configuration, error) {
-	var configuration Configuration
 	yamlFile, err := os.ReadFile(path)
 	if err != nil {
 		return nil, err
 	}
-	err = yaml.Unmarshal(yamlFile, &configuration)
-	if err != nil {
-		return nil, err
-	}
 
-	return &configuration, nil
+	return ParseConfiguration(string(yamlFile))
 }
 
 func ParseConfiguration(content string) (*Configuration, error) {
@@ -44,23 +40,27 @@ func ParseConfiguration(content string) (*Configuration, error) {
 	if err != nil {
 		return nil, err
 	}
+	for _, parkingLot := range configuration.ParkingLots {
+		parkingLot.TotalSpots = make(map[string]uint)
+		parkingLot.TotalSpots["CAR"] = uint(len(parkingLot.Spots))
+	}
 
 	return &configuration, nil
 }
 
 type Configuration struct {
-	ParkingLots []ParkingLot `yaml:"parking-lots"`
+	ParkingLots []ParkingLot `json:"parkingLots"`
 }
 
 type ParkingLot struct {
-	wheretopark.Metadata `yaml:",inline"`
+	wheretopark.Metadata `json:",inline"`
 
-	CameraURL string        `yaml:"camera-url"`
-	Spots     []ParkingSpot `yaml:"spots"`
+	CameraURL string        `json:"cameraURL"`
+	Spots     []ParkingSpot `json:"spots"`
 }
 
 type ParkingSpot struct {
-	Points []Point `yaml:"points"`
+	Points []Point `json:"points"`
 }
 
 type Point struct {
@@ -72,9 +72,9 @@ func (p *Point) ToImagePoint() image.Point {
 	return image.Point{X: p.X, Y: p.Y}
 }
 
-func (p *Point) UnmarshalYAML(node *yaml.Node) error {
+func (p *Point) UnmarshalJSON(b []byte) error {
 	var array []int
-	if err := node.Decode(&array); err != nil {
+	if err := json.Unmarshal(b, &array); err != nil {
 		return err
 	}
 	if len(array) != 2 {

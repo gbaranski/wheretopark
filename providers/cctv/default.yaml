@@ -1,4 +1,4 @@
-parking-lots:
+parkingLots:
   # They put some obstructs in the parking lots. Restore when it gets removed
   # -
   #   name: Rynek w Nowym Targu
@@ -12,7 +12,7 @@ parking-lots:
   #     - +48 503 144 499
   #   websites:
   #     - http://www.zgzir.nowytarg.pl/strefa-platnego-parkowania
-  #   total-spots: 4
+  #   totalSpots: 4
   #   features:
   #     - uncovered
   #   currency: PLN
@@ -42,22 +42,27 @@ parking-lots:
   #     - points: [[1207, 533], [1251, 525], [1226, 458], [1186, 461]]
   - name: Parking przy Krytej Pływalni
     address: Jana Pawła II, 57-300 Kłodzko
-    location:
-      latitude: 50.4369156
-      longitude: 16.6460722
+    geometry:
+      type: Point
+      coordinates:
+        - 16.6460722
+        - 50.4369156
     resources:
       - https://www.basenklodzko.pl/files/regulamin_parkingu_kryta_plywalnia.pdf
       - mailto:basen@basenklodzko.pl
       - tel:+48-725-112-666
-    max-width: 210
-    max-height: -1
+    maxWidth: 210
+    maxHeight: -1
     features:
       - UNCOVERED
     currency: PLN
-    payment-methods:
+    paymentMethods:
       - CASH
       - CARD
       - CONTACTLESS
+    comment: 
+      pl: Dla Klientów korzystających z usług Krytej Pływalni w Kłodzku opłata za parking wliczona jest w cenę biletu za korzystanie z usług Krytej Pływalni. Klienci Ci przy wjeździe na parking pobierają bilet parkingowy, który zostanie zrabatowany podczas dokonywania opłaty za usługi Krytej Pływalni. Warunkiem uzyskania rabatu jest powiadomienie obsługi kasowej Krytej Pływalni przed dokonaniem zapłaty o bilecie parkingowym. W przeciwnym wypadku naliczona zostanie opłata za parkowanie zgodnie z obowiązującym cennikiem 
+    timezone: Europe/Warsaw
     rules:
       - hours: Mo-Su 07:00-20:30
         pricing:
@@ -69,7 +74,7 @@ parking-lots:
           - duration: PT1H
             price: 0
             repeating: true
-    camera-url: http://91.238.55.4:5080/LiveApp/streams/435465478973256862461988.m3u8?token=null
+    cameraURL: http://91.238.55.4:5080/LiveApp/streams/435465478973256862461988.m3u8?token=null
     spots:
       - points: [[1157, 781], [1273, 801], [1237, 942], [1096, 914]]
       - points: [[1047, 761], [1158, 780], [1102, 915], [965, 884]]
@@ -130,27 +135,32 @@ parking-lots:
 
   - name: Parking przy twierdzy w Kłodzku
     address: Zofii Stryjeńskiej 9, 57-304 Kłodzko
-    location:
-      latitude: 50.4391208
-      longitude: 16.6567852
+    geometry:
+      type: Point
+      coordinates:
+        - 16.6567852
+        - 50.4391208
     resources:
       - https://www.twierdza.klodzko.pl/jak-dojechac-i-zaparkowac.html
       - https://www.facebook.com/TwierdzaKlodzko
       - mailto:twierdza@twierdza.klodzko.pl
       - tel:+48-74-867-34-68
       - tel:+48-74-647-21-30
-    max-height: -1
+    maxHeight: -1
     features:
       - UNCOVERED
     currency: PLN
-    payment-methods:
+    paymentMethods: []
+    comment:
+      pl: Parking polecany klientom indywidualnym
+    timezone: Europe/Warsaw
     rules:
       - hours: 24/7
         pricing:
           - duration: PT1H
             price: 0
             repeating: true
-    camera-url: http://91.238.55.4:5080/LiveApp/streams/073115262314789937058502.m3u8?token=null
+    cameraURL: http://91.238.55.4:5080/LiveApp/streams/073115262314789937058502.m3u8?token=null
     spots:
       - points: [[1031, 743], [1242, 759], [1236, 689], [1056, 675]]
       - points: [[1258, 762], [1395, 766], [1373, 683], [1242, 687]]

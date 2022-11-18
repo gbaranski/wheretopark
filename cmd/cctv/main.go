@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net/url"
 	"os"
@@ -11,7 +10,6 @@ import (
 	"wheretopark/providers/cctv"
 
 	"github.com/caarlos0/env/v6"
-	"gocv.io/x/gocv"
 )
 
 type environment struct {
@@ -23,45 +21,7 @@ type environment struct {
 	Model            string  `env:"MODEL"`
 }
 
-func RunParkingLot(parkingLot cctv.ParkingLot, window *gocv.Window, model *cctv.Model) error {
-	fmt.Printf("running parking lot %s\n", parkingLot.Name)
-	video, err := gocv.OpenVideoCapture(parkingLot.CameraURL)
-	if err != nil {
-		panic(err)
-	}
-	defer video.Close()
-	img := gocv.NewMat()
-	defer img.Close()
-	for {
-		fmt.Printf("reading frame\n")
-		if ok := video.Read(&img); !ok {
-			fmt.Printf("cannot read video\n")
-			return err
-		}
-		fmt.Printf("got frame\n")
-
-		predictions := make(map[int]float32)
-		for i, spot := range parkingLot.Spots {
-			croppedImage := spot.CropOn(img)
-			defer croppedImage.Close()
-			prediction := model.Predict(croppedImage)
-			spot.VisualizeOn(&img, prediction)
-			predictions[i] = prediction
-		}
-
-		window.IMShow(img)
-		for {
-			if window.WaitKey(1) >= 0 {
-				break
-			}
-		}
-	}
-}
-
 func main() {
-	window := gocv.NewWindow("WhereToPark")
-	defer window.Close()
-
 	environment := environment{}
 	if err := env.Parse(&environment); err != nil {
 		log.Fatalf("%+v\n", err)
@@ -81,45 +41,19 @@ func main() {
 		log.Fatalf("failed to sign in: %v", err)
 	}
 
-	var configuration cctv.Configuration
-	if environment.Configuration == nil {
-		configuration = cctv.DefaultConfiguration
-	} else {
-		newConfiguration, err := cctv.LoadConfiguration(*environment.Configuration)
-		if err != nil {
-			panic(err)
-		}
-		configuration = *newConfiguration
-	}
-
 	model := cctv.NewModel(environment.Model)
 	defer model.Close()
-	RunParkingLot(configuration.ParkingLots[0], window, model)
-	// for _, parkingLot := range configuration.ParkingLots {
-	// go RunParkingLot(parkingLot)
-	// }
+	provider, err := cctv.NewProvider(environment.Configuration, model)
+	if err != nil {
+		panic(err)
+	}
+	defer provider.Close()
+	err = wheretopark.RunProvider(client, provider)
+	if err != nil {
+		panic(err)
+	}
 
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
 	<-c
-
-	// video, err := gocv.OpenVideoCapture("http://91.238.55.4:5080/LiveApp/streams/435465478973256862461988.m3u8?token=null")
-	// if err != nil {
-	// 	panic(err)
-	// }
-	// defer video.Close()
-	// window := gocv.NewWindow("Face Detect")
-	// defer window.Close()
-	// img := gocv.NewMat()
-	// defer img.Close()
-	// if ok := video.Read(&img); !ok {
-	// 	fmt.Printf("cannot read video\n")
-	// 	return
-	// }
-	// window.IMShow(img)
-	// for {
-	// 	if window.WaitKey(1) >= 0 {
-	// 		break
-	// 	}
-	// }
 }

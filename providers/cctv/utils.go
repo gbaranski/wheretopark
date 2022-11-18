@@ -65,3 +65,15 @@ func (spot *ParkingSpot) VisualizeOn(img *gocv.Mat, prediction float32) {
 	gocv.Polylines(img, cvPointsVector, true, drawingColor, 2)
 	gocv.PutText(img, fmt.Sprintf("%.2f", prediction), cvMinAreaRect.Center, gocv.FontHersheyPlain, 1.0, drawingColor, 1)
 }
+
+func (parkingLot *ParkingLot) RunPredictions(model *Model, img gocv.Mat) []float32 {
+	predictions := make([]float32, len(parkingLot.Spots))
+	for i, spot := range parkingLot.Spots {
+		croppedImage := spot.CropOn(img)
+		defer croppedImage.Close()
+		prediction := model.Predict(croppedImage)
+		spot.VisualizeOn(&img, prediction)
+		predictions[i] = prediction
+	}
+	return predictions
+}
