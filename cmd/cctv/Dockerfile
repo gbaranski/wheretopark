@@ -7,8 +7,9 @@ WORKDIR /app
 COPY go.* ./
 RUN go mod download
 
-COPY . ./
-RUN go version
+COPY ./cmd/cctv ./cmd/cctv
+COPY go ./go
+COPY providers/cctv ./providers/cctv
 
 RUN go build -v -o cctv ./cmd/cctv
 

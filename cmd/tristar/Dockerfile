@@ -5,7 +5,9 @@ WORKDIR /app
 COPY go.* ./
 RUN go mod download
 
-COPY . ./
+COPY ./cmd/tristar ./cmd/tristar
+COPY go ./go
+COPY providers/tristar ./providers/tristar
 
 RUN go build -v -o tristar ./cmd/tristar
 
