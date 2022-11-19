@@ -59,20 +59,34 @@ parkingLots:
       pl: |
         Dwupoziomowy parking rotacyjny
     rules:
-      - hours: Mo-Fr 09:00-21:00
+      - hours: Mo-Thu 06:00-21:00
         pricing:
           - duration: PT30M
             price: 0
           - duration: PT1H
             price: 4
             repeating: true
-      # Hours for so called "Niedziela Handlowa"
-      - hours: Jan 30,Apr 10,Apr 24,Jun 26,Aug 28,Dec 11,Dec 18 10:00-20:00
+      - hours: Fr 06:00-24:00
         pricing:
           - duration: PT30M
             price: 0
           - duration: PT1H
             price: 4
+            repeating: true
+
+      - hours: Sa 08:00-04:00
+        pricing:
+          - duration: PT1H
+            price: 0
+          - duration: PT1H
+            price: 4
+            repeating: true
+      # Hours for so called "Niedziela Handlowa"
+      # - hours: Jan 30,Apr 10,Apr 24,Jun 26,Aug 28,Dec 11,Dec 18 10:00-20:00
+      - hours: Su 08:00-22:00
+        pricing:
+          - duration: PT1H
+            price: 0
             repeating: true
 
   "3":
