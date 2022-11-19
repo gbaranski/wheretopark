@@ -1,6 +1,7 @@
 {% extends "juice/templates/index.html" %}
 {% block head %}
 <link rel="stylesheet" href="{{ get_url(path="index.css") }}">
+<script defer data-domain="wheretopark.app" src="https://plausible.gbaranski.com/js/plausible.js"></script>
 {% endblock head %}
 {% block hero %}
 <section>
@@ -16,5 +17,4 @@
 {% endblock hero %}
 
 {% block footer %}
-<script defer data-domain="wheretopark.app" src="https://plausible.gbaranski.com/js/plausible.js"></script>
 {% endblock footer %}
