@@ -7,11 +7,13 @@
     export let data: LayoutData;
 </script>
 
+
 <svelte:head>
     <link rel="preconnect" href="https://fonts.googleapis.com"> 
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin=""> 
     <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@600&display=swap" rel="stylesheet">
 	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script defer data-domain="web.wheretopark.app" src="https://plausible.gbaranski.com/js/plausible.js"></script>
 </svelte:head>
 
 <SvelteUIProvider ssr>
