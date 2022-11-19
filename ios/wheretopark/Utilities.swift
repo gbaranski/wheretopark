@@ -112,7 +112,7 @@ extension ParkingLotMetadata {
     }
     
     func status() -> ParkingLotStatus {
-        let rawOpeningHours = rules.map{ $0.hours }.joined(separator: "; ")
+        let rawOpeningHours = rules.map{ $0.hours }.joined(separator: ", ")
         let openingHours = OpeningHours(rawOpeningHours)
         let dateTime = now_at(timezone)
         if openingHours.is_open(dateTime) {
@@ -120,7 +120,6 @@ extension ParkingLotMetadata {
         } else {
             return .closed
         }
-        
     }
 }
 
