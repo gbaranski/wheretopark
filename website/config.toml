@@ -1,0 +1,24 @@
+# The URL the site will be built for
+base_url = "https://wheretopark.app"
+
+title = "Where To Park - The ultimate parking lot assistant"
+
+# Whether to automatically compile all Sass files in the sass directory
+compile_sass = true
+
+# Whether to build a search index to be used later on by a JavaScript library
+build_search_index = false
+
+theme = "juice"
+
+[markdown]
+# Whether to do syntax highlighting
+# Theme can be customised by setting the `highlight_theme` variable to a theme supported by Zola
+highlight_code = false
+
+[extra]
+# Put all your custom variables here
+juice_logo_name = "WhereToPark"
+juice_logo_path = "logo.svg"
+meta_title = "JS Search Extension: The ultimate search extension for Javascript"
+meta_description = "Input keyword js then press Space in the address bar to get started. Just that easy!"

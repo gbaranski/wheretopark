@@ -1,0 +1,22 @@
+name: publish to github pages
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - master
+    paths:
+      - "website/**"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Checkout'
+        uses: actions/checkout@master
+      - name: 'Build and deploy'
+        uses: shalzz/zola-deploy-action@master
+        env:
+          PAGES_BRANCH: gh-pages
+          BUILD_DIR: website
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -1,0 +1,19 @@
+{% extends "juice/templates/index.html" %}
+{% block head %}
+<link rel="stylesheet" href="{{ get_url(path="index.css") }}">
+{% endblock head %}
+{% block hero %}
+<section>
+    <h1 class="text-center heading-text">The ultimate parking lot assistant</h1>
+    <h3 class="text" style="text-align: center;">
+        We'll help you seeking an <b>available</b> and <b>affordable</b> parking slot <b>nearby</b>
+        <div style="margin-top: 50px; display: flex; flex-direction: column; align-items: center">
+            <h1>Available soon on iOS, Android and Web</h1>
+            {# <a href="https://apps.apple.com/us/app/youtube-watch-listen-stream/id544007664?itsct=apps_box_badge&amp;itscg=30200" style="display: inline-block; overflow: hidden; border-radius: 13px; width: 250px; height: 83px;"><img src="https://tools.applemediaservices.com/api/badges/download-on-the-app-store/white/en-us?size=250x83&amp;releaseDate=1347321600&h=d9d364f69cf5bdbb964336d59ba92a1f" alt="Download on the App Store" style="border-radius: 13px; width: 250px; height: 83px;"></a> #}
+        </div>
+    </h3>
+</section>
+{% endblock hero %}
+
+{% block footer %}
+{% endblock footer %}
