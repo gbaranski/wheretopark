@@ -64,7 +64,7 @@ export const humanizeDuration = (s: string): string => {
 import OpeningHours, { type argument_hash } from 'opening_hours';
 
 export const parkingLotStatus = (parkingLot: ParkingLot): [ParkingLotStatus, string?] => {
-    const rawOpeningHours = parkingLot.metadata.rules.map((rule) => rule.hours).join(";");
+    const rawOpeningHours = parkingLot.metadata.rules.map((rule) => rule.hours).join(", ");
     const openingHours = new OpeningHours(rawOpeningHours);
     const currentDate = dayjs().tz(parkingLot.metadata.timezone);
 
