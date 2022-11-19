@@ -58,7 +58,7 @@ export type Metadata = {
     maxHeight: number | undefined;
     features: string[];
     paymentMethods: string[];
-    comment: Record<LanguageCode, string>;
+    comment?: Record<LanguageCode, string>;
     currency: string;
     timezone: string;
     rules: Rule[];
