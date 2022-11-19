@@ -120,12 +120,18 @@ struct MapViewRepresentable: UIViewRepresentable {
             }
         }
         existing.forEach{ id, parkingLot in
+            print("updating annotation of \(id)")
             let annotation = view.annotations
                 .compactMap{ $0 as? ParkingLotAnnotation }
                 .first{ annotation in
                     annotation.id == id
-                }
-            annotation!.parkingLot = parkingLot
+                }!
+            annotation.parkingLot = parkingLot
+            let annotationView = view.view(for: annotation as MKAnnotation)
+            if let annotationView {
+                let markerAnnotationView = annotationView as! MKMarkerAnnotationView
+                markerAnnotationView.markerTintColor = UIColor(parkingLot.tintColor())
+            }
         }
         new.forEach { id, parkingLot in
             let annotation = ParkingLotAnnotation(id: id, parkingLot: parkingLot)
@@ -198,10 +204,7 @@ struct MapViewRepresentable: UIViewRepresentable {
                 annotationView!.canShowCallout = false
                 annotationView!.animatesWhenAdded = true
                 annotationView!.subtitleVisibility = .visible
-                let availabilityColor = availabilityColor(available: parkingLotAnnotation.parkingLot.state.availableSpots["CAR"]!, total: parkingLotAnnotation.parkingLot.metadata.totalSpots["CAR"]!)
-                let status = parkingLotAnnotation.parkingLot.metadata.status()
-                let tintColor = status == .closed ? .red : status == .closesSoon ? .yellow : availabilityColor
-                annotationView!.markerTintColor = UIColor(tintColor)
+                annotationView!.markerTintColor = UIColor(parkingLotAnnotation.parkingLot.tintColor())
                 annotationView!.glyphText = String("P")
                 return annotationView
             case let cluster as MKClusterAnnotation:
