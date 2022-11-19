@@ -59,7 +59,7 @@ parkingLots:
       pl: |
         Dwupoziomowy parking rotacyjny
     rules:
-      - hours: Mo-Thu 06:00-21:00
+      - hours: Mo-Th 06:00-21:00
         pricing:
           - duration: PT30M
             price: 0
