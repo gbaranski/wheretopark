@@ -130,14 +130,16 @@ struct DetailsView: View {
                     }
                     Divider()
                     VStack(alignment: .leading) {
-                        let formatter = RelativeDateTimeFormatter()
-                        let lastUpdatedString = formatter.localizedString(for: parkingLot.state.lastUpdated, relativeTo: Date.now)
                         Text(LocalizedStringKey("parkingLot.lastUpdated"))
                             .textCase(.uppercase)
                             .fontWeight(.black)
                             .font(.caption)
                             .foregroundColor(.secondary)
-                        Text("\(lastUpdatedString)").fontWeight(.bold)
+                        TimelineView(.everyMinute) { context in
+                            let formatter = RelativeDateTimeFormatter()
+                            let lastUpdatedString = formatter.localizedString(for: parkingLot.state.lastUpdated, relativeTo: Date.now)
+                            Text("\(lastUpdatedString)").fontWeight(.bold)
+                        }
                     }
                     
                 }.frame(maxWidth: .infinity)
