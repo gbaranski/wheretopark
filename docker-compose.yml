@@ -6,7 +6,7 @@ services:
     env_file: .env
     restart: unless-stopped
     ports:
-      - "8000:8000"
+      - "9221:8000"
     command: 
       - start
       - --user=${SURREALDB_USER}
