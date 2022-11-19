@@ -14,11 +14,6 @@ services:
     networks:
       - default
       - public
-    healthcheck:
-      test: curl --fail http://localhost:8000/health || exit 1
-      interval: 5s
-      timeout: 10s
-      retries: 10
 
   tristar:
     container_name: wheretopark_tristar
