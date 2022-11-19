@@ -126,7 +126,9 @@ struct MapViewRepresentable: UIViewRepresentable {
                 .first{ annotation in
                     annotation.id == id
                 }!
+            annotation.willChangeValue(forKey: "subtitle")
             annotation.parkingLot = parkingLot
+            annotation.didChangeValue(forKey: "subtitle")
             let annotationView = view.view(for: annotation as MKAnnotation)
             if let annotationView {
                 let markerAnnotationView = annotationView as! MKMarkerAnnotationView
