@@ -12,5 +12,7 @@
 	<string>$(DATABASE_URL)</string>
 	<key>DATABASE_USERNAME</key>
 	<string>$(DATABASE_USERNAME)</string>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 </dict>
 </plist>
