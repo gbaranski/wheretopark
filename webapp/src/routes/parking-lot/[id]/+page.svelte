@@ -21,9 +21,6 @@
             zoom: 15
         });
     }
-    $: {
-        console.log({metadata, state});
-    }
 </script>
 
 <svelte:head>
