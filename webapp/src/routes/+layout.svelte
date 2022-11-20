@@ -16,7 +16,7 @@
     <script defer data-domain="web.wheretopark.app" src="https://plausible.gbaranski.com/js/plausible.js"></script>
 </svelte:head>
 
-<SvelteUIProvider ssr>
+<SvelteUIProvider>
     <div class="split master">
         <a href="/">
             <div style="padding: 20px;">
