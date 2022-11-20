@@ -93,7 +93,6 @@ struct MapViewRepresentable: UIViewRepresentable {
         map.delegate = context.coordinator
         let region = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: MapDefaults.latitude, longitude: MapDefaults.longitude), span: MKCoordinateSpan(latitudeDelta: MapDefaults.zoom, longitudeDelta: MapDefaults.zoom))
         self.map.setRegion(region, animated: true)
-        self.map.showsTraffic = true
         self.map.showsBuildings = true
         self.map.showsScale = true
         self.map.showsUserLocation = true
