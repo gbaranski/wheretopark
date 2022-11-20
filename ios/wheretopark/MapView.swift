@@ -211,7 +211,7 @@ struct MapViewRepresentable: UIViewRepresentable {
             case let cluster as MKClusterAnnotation:
                 let markerAnnotationView = MKMarkerAnnotationView()
                 let totalAvailableSpots = cluster.memberAnnotations.compactMap{ $0 as? ParkingLotAnnotation }.map{ Int(truncating: $0.parkingLot.state.availableSpots["CAR"]! as NSNumber) }.reduce(0, +)
-                cluster.title = "\(totalAvailableSpots) total available spots"
+                cluster.title = "\(totalAvailableSpots) \(String(localized: "parkingLot.totalAvailableSpots"))"
                 cluster.subtitle = nil
                 markerAnnotationView.annotation = cluster
                 markerAnnotationView.glyphText = String(cluster.memberAnnotations.count)
@@ -261,9 +261,9 @@ class ParkingLotAnnotation: NSObject, MKAnnotation {
     var subtitle: String? {
         let status = parkingLot.metadata.status()
         if status == .closed || status == .opensSoon {
-            return status.rawValue.capitalizingFirstLetter()
+            return status.localizedString()
         } else {
-            return "\(parkingLot.state.availableSpots["CAR"] ?? 0) available car parking spots"
+            return "\(parkingLot.state.availableSpots["CAR"] ?? 0) \(String(localized: "parkingLot.availableSpots"))"
         }
     }
     

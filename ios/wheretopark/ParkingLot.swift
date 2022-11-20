@@ -11,6 +11,7 @@ import PhoneNumberKit
 import Swift_ISO8601_DurationParser
 import DefaultCodable
 import CodableGeoJSON
+import SwiftUI
 
 
 typealias ParkingSpotType = String
@@ -21,6 +22,21 @@ enum ParkingLotStatus: String, Codable {
     case open
     case closesSoon
     case closed
+    
+    func localizedString() -> String {
+        print("rawValue: `\(rawValue)`")
+        return NSLocalizedString("parkingLot.status.\(rawValue)", comment: "Status of a parking lot")
+    }
+    
+    func color() -> Color {
+        let colors: [Self : Color] = [
+            .opensSoon: .yellow,
+            .open: .green,
+            .closesSoon: .yellow,
+            .closed: .red
+        ]
+        return colors[self]!
+    }
 }
 
 struct ParkingLotPricingRule: Hashable {

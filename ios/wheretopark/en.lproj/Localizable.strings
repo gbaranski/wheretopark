@@ -20,6 +20,7 @@ parkingLot.comment = "Comment";
 parkingLot.id = "Identifier";
 parkingLot.totalSpots = "total spots";
 parkingLot.availableSpots = "available spots";
+parkingLot.totalAvailableSpots = "total available spots";
 parkingLot.availability = "Availability";
 parkingLot.hours = "Hours";
 parkingLot.lastUpdated = "Updated";
