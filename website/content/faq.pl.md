@@ -8,7 +8,9 @@ weight = 2
 
 ### Kiedy aplikacja będzie dostępna?
 
-Planujemy wydanie aplikacji przed końcem 2023 roku.
+- Aplikacja na iOS od 21 listopada 2022 roku jest dostępna na [App Store](https://apps.apple.com/us/app/where-to-park/id6444453582).
+- Aplikacja przeglądarkowa jest dostępna pod adresem [web.wheretopark.app](https://web.wheretopark.app).
+- Nad aplikacją na Androida pracujemy.
 
 ### Jakie parkingi są wspierane?
 

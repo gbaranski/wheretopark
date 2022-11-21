@@ -9,10 +9,11 @@ weight = 2
 
 At the moment, only the website is open-source, although we're planning on open-sourcing some components of the project.
 
-
 ### When the app will be available?
 
-We're planning on releasing the app before end of year 2023.
+- iOS app is available on [App Store](https://apps.apple.com/us/app/where-to-park/id6444453582) since 21st of November 2022.
+- Web app is available at [web.wheretopark.app](https://web.wheretopark.app).
+- Android app is in development.
 
 ### What parking lots do you support?
 
