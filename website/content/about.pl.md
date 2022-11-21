@@ -4,8 +4,8 @@ description = "Informacje o nas"
 weight = 2
 +++
 
-# Tech stack
-- Go na backendzie.
+# Stack technologiczny.
+- Go do mikroserwisów.
 - Baza danych SurrealDB.
 - Swift i SwiftUI do aplikacji na iOS.
 - Svelte i SvelteKit do aplikacji Webowej app i PWA na Androida.

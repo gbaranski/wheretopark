@@ -23,3 +23,7 @@
     </small>
 </footer>
 {% endblock footer %}
+
+{% block content %}
+{{ section.content | safe }}
+{% endblock content %}
