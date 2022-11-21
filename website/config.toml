@@ -6,8 +6,12 @@ title = "Where To Park - The ultimate parking lot assistant"
 # Whether to automatically compile all Sass files in the sass directory
 compile_sass = true
 
+default_language = "en"
+
+generate_feed = true
 # Whether to build a search index to be used later on by a JavaScript library
 build_search_index = false
+minify_html = true
 
 theme = "juice"
 
@@ -20,5 +24,17 @@ highlight_code = false
 # Put all your custom variables here
 juice_logo_name = "WhereToPark"
 juice_logo_path = "logo.svg"
-meta_title = "JS Search Extension: The ultimate search extension for Javascript"
-meta_description = "Input keyword js then press Space in the address bar to get started. Just that easy!"
+
+[languages.pl]
+title = "Where To Park - Asystent parkowania"
+
+[languages.pl.translations]
+heading = "Twój asystent do parkowania"
+subheading = "Pomożemy odnaleźć **najbliższe** i **dostępne** miejsce parkingowe w **przystępnej cenie**."
+
+[languages.en]
+title = "Where To Park - Parking lot assistant"
+
+[languages.en.translations]
+heading = "The ultimate parking lot assistant"
+subheading = "We'll help you seek an **available** and **affordable** parking slot **nearby**"

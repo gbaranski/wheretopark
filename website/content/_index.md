@@ -16,7 +16,8 @@ sort_by = "weight"
 # Screenshots
 
 <div class="demonstration-media">
-    <img class="demonstration-image" src="screenshot-mapview.png" alt="screenshot-mapview">
-    <img class="demonstration-image" src="screenshot-half-details.png" alt="screenshot-half-details">
-    <img class="demonstration-image" src="screenshot-details.png" alt="screenshot-details">
+    <img class="demonstration-image" src="screenshots/main.png" alt="screenshot-main">
+    <img class="demonstration-image" src="screenshots/selected.png" alt="screenshot-selected">
+    <img class="demonstration-image" src="screenshots/expanded.png" alt="screenshot-expanded">
+    <img class="demonstration-image" src="screenshots/expanded-2.png" alt="screenshot-expanded-2">
 </div>

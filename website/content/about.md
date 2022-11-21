@@ -5,11 +5,11 @@ weight = 2
 +++
 
 # Tech stack
-- Kotlin and Go on backend.
-- Swift, Kotlin and KMM for mobile.
-- Next.JS and Kotlin/JS for web.
+- Go on the backend.
+- SurrealDB database.
+- Swift and SwiftUI for the iOS App.
+- Svelte with SvelteKit for Web app and Android PWA.
 - Python with Jupyter Notebook for creating AI models.
-- Rust for using data processing and usage of generated models.
 
 # Contact
 
