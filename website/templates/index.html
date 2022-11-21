@@ -8,9 +8,13 @@
     <h1 class="text-center heading-text">{{ trans(key="heading", lang=lang) }}</h1>
     <h3 class="text" style="text-align: center;">
         {{ trans(key="subheading", lang=lang) | markdown | safe }}
-        <div style="margin-top: 50px; display: flex; flex-direction: column; align-items: center">
-            <h1>Available soon on iOS, Android and Web</h1>
-            {# <a href="https://apps.apple.com/us/app/youtube-watch-listen-stream/id544007664?itsct=apps_box_badge&amp;itscg=30200" style="display: inline-block; overflow: hidden; border-radius: 13px; width: 250px; height: 83px;"><img src="https://tools.applemediaservices.com/api/badges/download-on-the-app-store/white/en-us?size=250x83&amp;releaseDate=1347321600&h=d9d364f69cf5bdbb964336d59ba92a1f" alt="Download on the App Store" style="border-radius: 13px; width: 250px; height: 83px;"></a> #}
+        <div style="margin-top: 30px; display: flex; flex-direction: column; align-items: center">
+            <a href="https://apps.apple.com/us/app/where-to-park/id6444453582?itsct=apps_box_badge&amp;itscg=30200" style="display: inline-block; overflow: hidden; border-radius: 13px; width: 250px; height: 83px;"><img src={{ section.extra.app_store_badge }} alt="Download on the App Store" style="border-radius: 13px; width: 250px; height: 83px;"></a>
+            <br/>
+            <span>
+                {{ trans(key="or", lang=lang) }}
+                <a href="https://web.wheretopark.app">{{ trans(key="openAppInBrowser", lang=lang) }}</a>
+            </span>
         </div>
     </h3>
 </section>

@@ -1,6 +1,9 @@
 +++
 title = "Where To Park"
 sort_by = "weight"
+
+[extra]
+app_store_badge = "https://tools.applemediaservices.com/api/badges/download-on-the-app-store/white/pl-pl?size=250x83&amp;releaseDate=1668988800&h=ef8147fbbaa63160018d2a5be2e2565e"
 +++
 
 Asystent pomagający znaleźć wolne miejsce parkingowe, nie przekraczając ustalonego budżetu.
@@ -9,7 +12,7 @@ Aplikacja która pomoże ci znaleźć wolne miejsce parkingowe, jednoczesnie nie
 
 Ilosc dostępnych miejsc parkingowych jest na bieżąco aktualizowana.
 
-Funkcje
+# Funkcje
 - Lista parkingów w pobliżu.
 - Mapa z pobliskimi parkingami.
 - Wyświetlanie danych na temat danego parkingu.

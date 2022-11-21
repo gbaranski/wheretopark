@@ -31,6 +31,8 @@ title = "Where To Park - Asystent parkowania"
 [languages.pl.translations]
 heading = "Twój asystent do parkowania"
 subheading = "Pomożemy odnaleźć **najbliższe** i **dostępne** miejsce parkingowe w **przystępnej cenie**."
+or = "lub"
+openAppInBrowser = "otwórz aplikację w przeglądarce"
 
 [languages.en]
 title = "Where To Park - Parking lot assistant"
@@ -38,3 +40,5 @@ title = "Where To Park - Parking lot assistant"
 [languages.en.translations]
 heading = "The ultimate parking lot assistant"
 subheading = "We'll help you seek an **available** and **affordable** parking slot **nearby**"
+or = "or"
+openAppInBrowser = "open the app in browser"
