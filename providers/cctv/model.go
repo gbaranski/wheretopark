@@ -26,6 +26,16 @@ func (m *Model) Predict(img gocv.Mat) float32 {
 	prob := m.net.Forward("")
 	prediction := prob.GetFloatAt(0, 0)
 	return prediction
+
+}
+
+func (m *Model) PredictMany(images []gocv.Mat) []float32 {
+	predictions := make([]float32, len(images))
+	for i, img := range images {
+		prediction := m.Predict(img)
+		predictions[i] = prediction
+	}
+	return predictions
 }
 
 func (m *Model) Close() {

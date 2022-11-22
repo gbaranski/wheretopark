@@ -19,6 +19,7 @@ type environment struct {
 	DatabasePassword string  `env:"DATABASE_PASSWORD" envDefault:"root"`
 	Configuration    *string `env:"CONFIGURATION"`
 	Model            string  `env:"MODEL" envDefault:"$HOME/.local/share/wheretopark/cctv/model.onnx" envExpand:"true"`
+	SavePath         *string `env:"SAVE_PATH" envDefault:"$HOME/.cache/wheretopark/cctv" envExpand:"true"`
 }
 
 func main() {
@@ -43,7 +44,7 @@ func main() {
 
 	model := cctv.NewModel(environment.Model)
 	defer model.Close()
-	provider, err := cctv.NewProvider(environment.Configuration, model)
+	provider, err := cctv.NewProvider(environment.Configuration, model, environment.SavePath)
 	if err != nil {
 		panic(err)
 	}

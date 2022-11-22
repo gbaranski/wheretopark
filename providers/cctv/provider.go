@@ -1,7 +1,10 @@
 package cctv
 
 import (
+	"encoding/json"
 	"fmt"
+	"log"
+	"os"
 	"time"
 	wheretopark "wheretopark/go"
 
@@ -12,6 +15,7 @@ type Provider struct {
 	configuration Configuration
 	model         *Model
 	streams       []*gocv.VideoCapture
+	savePath      *string
 }
 
 func (p Provider) GetMetadata() (map[wheretopark.ID]wheretopark.Metadata, error) {
@@ -35,13 +39,61 @@ func (p Provider) GetState() (map[wheretopark.ID]wheretopark.State, error) {
 		if ok := stream.Read(&img); !ok {
 			return nil, fmt.Errorf("cannot read stream of %s", parkingLot.Name)
 		}
-		predictions := parkingLot.RunPredictions(p.model, img)
+		captureTime := time.Now()
+		spotImages := ExtractSpots(img, parkingLot.Spots)
+		predictions := p.model.PredictMany(spotImages)
 		availableSpots := 0
 		for _, prediction := range predictions {
 			if prediction > 0.5 {
 				availableSpots += 1
 			}
 		}
+
+		if p.savePath != nil {
+			// Save files for history and continious training
+			{
+				basePath := fmt.Sprintf("%s/%s/%s", *p.savePath, parkingLot.Name, captureTime.Format(time.RFC3339))
+				err := os.MkdirAll(basePath, os.ModePerm)
+				if err != nil {
+					log.Println(err)
+				}
+				// Write raw image, without any tweaks
+				{
+					gocv.IMWrite(fmt.Sprintf("%s/raw.jpg", basePath), img)
+				}
+				// Write file with results
+				{
+					spotResults := make([]SpotResult, len(predictions))
+					for i, prediction := range predictions {
+						spot := parkingLot.Spots[i]
+						spotResults[i] = SpotResult{
+							Prediction: prediction,
+							Points:     spot.Points,
+						}
+					}
+					result := Result{
+						Spots: spotResults,
+					}
+					resultJSON, err := json.Marshal(result)
+					if err != nil {
+						log.Fatalf("cannot marshall result: %v", err)
+					}
+					err = os.WriteFile(fmt.Sprintf("%s/result.json", basePath), resultJSON, 0644)
+					if err != nil {
+						log.Fatalf("cannot write result.json: %v", err)
+					}
+				}
+				// Write image with drawn spots and predicted values
+				{
+					for i, prediction := range predictions {
+						spot := parkingLot.Spots[i]
+						VisualizeSpotPrediction(&img, spot, prediction)
+					}
+					gocv.IMWrite(fmt.Sprintf("%s/visualization.jpg", basePath), img)
+				}
+			}
+		}
+
 		id := wheretopark.GeometryToID(parkingLot.Geometry)
 		state := wheretopark.State{
 			LastUpdated: time.Now().Format(time.RFC3339),
@@ -64,7 +116,7 @@ func (p Provider) Close() error {
 	return nil
 }
 
-func NewProvider(configurationPath *string, model *Model) (*Provider, error) {
+func NewProvider(configurationPath *string, model *Model, savePath *string) (*Provider, error) {
 	var configuration Configuration
 	if configurationPath == nil {
 		configuration = DefaultConfiguration
@@ -91,6 +143,7 @@ func NewProvider(configurationPath *string, model *Model) (*Provider, error) {
 		configuration: configuration,
 		model:         model,
 		streams:       streams,
+		savePath:      savePath,
 	}, nil
 
 }

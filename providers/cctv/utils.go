@@ -17,7 +17,7 @@ func (spot *ParkingSpot) ImagePoints() []image.Point {
 }
 
 // PS: frame is image
-func (spot *ParkingSpot) CropOn(cvFrame gocv.Mat) gocv.Mat {
+func CropSpot(cvFrame gocv.Mat, spot *ParkingSpot) gocv.Mat {
 	// obtain transformation
 	points := spot.ImagePoints()
 	cvPoints := gocv.NewPointVectorFromPoints(points)
@@ -50,7 +50,7 @@ func (spot *ParkingSpot) CropOn(cvFrame gocv.Mat) gocv.Mat {
 	return cvOutput
 }
 
-func (spot *ParkingSpot) VisualizeOn(img *gocv.Mat, prediction float32) {
+func VisualizeSpotPrediction(img *gocv.Mat, spot ParkingSpot, prediction float32) {
 	occupied := prediction < 0.5
 	var drawingColor color.RGBA
 	if occupied {
@@ -66,14 +66,19 @@ func (spot *ParkingSpot) VisualizeOn(img *gocv.Mat, prediction float32) {
 	gocv.PutText(img, fmt.Sprintf("%.2f", prediction), cvMinAreaRect.Center, gocv.FontHersheyPlain, 1.0, drawingColor, 1)
 }
 
-func (parkingLot *ParkingLot) RunPredictions(model *Model, img gocv.Mat) []float32 {
-	predictions := make([]float32, len(parkingLot.Spots))
-	for i, spot := range parkingLot.Spots {
-		croppedImage := spot.CropOn(img)
-		defer croppedImage.Close()
-		prediction := model.Predict(croppedImage)
-		spot.VisualizeOn(&img, prediction)
-		predictions[i] = prediction
+func ExtractSpots(img gocv.Mat, spots []ParkingSpot) []gocv.Mat {
+	images := make([]gocv.Mat, len(spots))
+	for i, spot := range spots {
+		images[i] = CropSpot(img, &spot)
 	}
-	return predictions
+	return images
+}
+
+type SpotResult struct {
+	Prediction float32 `json:"prediction"`
+	Points     []Point `json:"points"`
+}
+
+type Result struct {
+	Spots []SpotResult `json:"spots"`
 }

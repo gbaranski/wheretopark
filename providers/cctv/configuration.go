@@ -85,3 +85,8 @@ func (p *Point) UnmarshalJSON(b []byte) error {
 	p.Y = array[1]
 	return nil
 }
+
+func (p Point) MarshalJSON() ([]byte, error) {
+	array := []int{p.X, p.Y}
+	return json.Marshal(array)
+}
