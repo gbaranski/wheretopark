@@ -43,7 +43,12 @@ func ParseConfiguration(content string) (*Configuration, error) {
 	for i := range configuration.ParkingLots {
 		parkingLot := &configuration.ParkingLots[i]
 		parkingLot.TotalSpots = make(map[string]uint)
-		parkingLot.TotalSpots["CAR"] = uint(len(parkingLot.Spots))
+		totalSpots := 0
+		for _, camera := range parkingLot.Cameras {
+			totalSpots += len(camera.Spots)
+		}
+
+		parkingLot.TotalSpots["CAR"] = uint(totalSpots)
 	}
 
 	return &configuration, nil
@@ -56,8 +61,12 @@ type Configuration struct {
 type ParkingLot struct {
 	wheretopark.Metadata `json:",inline"`
 
-	CameraURL string        `json:"cameraURL"`
-	Spots     []ParkingSpot `json:"spots"`
+	Cameras []ParkingLotCamera `json:"cameras"`
+}
+
+type ParkingLotCamera struct {
+	URL   string        `json:"url"`
+	Spots []ParkingSpot `json:"spots"`
 }
 
 type ParkingSpot struct {

@@ -1,7 +1,6 @@
 package cctv
 
 import (
-	"encoding/json"
 	"fmt"
 	"log"
 	"os"
@@ -14,7 +13,7 @@ import (
 type Provider struct {
 	configuration Configuration
 	model         *Model
-	streams       []*gocv.VideoCapture
+	streams       [][]*gocv.VideoCapture
 	savePath      *string
 }
 
@@ -35,65 +34,30 @@ func (p Provider) GetState() (map[wheretopark.ID]wheretopark.State, error) {
 
 	img := gocv.NewMat()
 	for i, parkingLot := range p.configuration.ParkingLots {
-		stream := p.streams[i]
-		if ok := stream.Read(&img); !ok {
-			return nil, fmt.Errorf("cannot read stream of %s", parkingLot.Name)
-		}
-		captureTime := time.Now()
-		spotImages := ExtractSpots(img, parkingLot.Spots)
-		predictions := p.model.PredictMany(spotImages)
 		availableSpots := 0
-		for _, prediction := range predictions {
-			if prediction > 0.5 {
-				availableSpots += 1
+		for k, camera := range parkingLot.Cameras {
+			stream := p.streams[i][k]
+			if ok := stream.Read(&img); !ok {
+				return nil, fmt.Errorf("cannot read stream of %s", parkingLot.Name)
 			}
-		}
+			captureTime := time.Now()
+			spotImages := ExtractSpots(img, camera.Spots)
+			predictions := p.model.PredictMany(spotImages)
+			for _, prediction := range predictions {
+				if prediction > 0.5 {
+					availableSpots += 1
+				}
+			}
 
-		if p.savePath != nil {
-			// Save files for history and continious training
-			{
-				basePath := fmt.Sprintf("%s/%s/%s", *p.savePath, parkingLot.Name, captureTime.Format(time.RFC3339))
+			if p.savePath != nil {
+				basePath := fmt.Sprintf("%s/%s/%s/%02d", *p.savePath, parkingLot.Name, captureTime.UTC().Format("2006-01-02--15-04-05"), k+1)
 				err := os.MkdirAll(basePath, os.ModePerm)
 				if err != nil {
 					log.Println(err)
 				}
-				// Write raw image, without any tweaks
-				{
-					gocv.IMWrite(fmt.Sprintf("%s/raw.jpg", basePath), img)
-				}
-				// Write file with results
-				{
-					spotResults := make([]SpotResult, len(predictions))
-					for i, prediction := range predictions {
-						spot := parkingLot.Spots[i]
-						spotResults[i] = SpotResult{
-							Prediction: prediction,
-							Points:     spot.Points,
-						}
-					}
-					result := Result{
-						Spots: spotResults,
-					}
-					resultJSON, err := json.Marshal(result)
-					if err != nil {
-						log.Fatalf("cannot marshall result: %v", err)
-					}
-					err = os.WriteFile(fmt.Sprintf("%s/result.json", basePath), resultJSON, 0644)
-					if err != nil {
-						log.Fatalf("cannot write result.json: %v", err)
-					}
-				}
-				// Write image with drawn spots and predicted values
-				{
-					for i, prediction := range predictions {
-						spot := parkingLot.Spots[i]
-						VisualizeSpotPrediction(&img, spot, prediction)
-					}
-					gocv.IMWrite(fmt.Sprintf("%s/visualization.jpg", basePath), img)
-				}
+				SavePredictions(img, basePath, camera.Spots, predictions)
 			}
 		}
-
 		id := wheretopark.GeometryToID(parkingLot.Geometry)
 		state := wheretopark.State{
 			LastUpdated: time.Now().Format(time.RFC3339),
@@ -108,10 +72,13 @@ func (p Provider) GetState() (map[wheretopark.ID]wheretopark.State, error) {
 }
 
 func (p Provider) Close() error {
-	for _, stream := range p.streams {
-		if err := stream.Close(); err != nil {
-			return err
+	for _, streams := range p.streams {
+		for _, stream := range streams {
+			if err := stream.Close(); err != nil {
+				return err
+			}
 		}
+
 	}
 	return nil
 }
@@ -128,15 +95,18 @@ func NewProvider(configurationPath *string, model *Model, savePath *string) (*Pr
 		configuration = *newConfiguration
 	}
 
-	streams := make([]*gocv.VideoCapture, len(configuration.ParkingLots))
+	streams := make([][]*gocv.VideoCapture, len(configuration.ParkingLots))
 	for i, parkingLot := range configuration.ParkingLots {
-		fmt.Printf("conencting to %s\n", parkingLot.CameraURL)
-		stream, err := gocv.OpenVideoCapture(parkingLot.CameraURL)
-		if err != nil {
-			return nil, err
+		streams[i] = make([]*gocv.VideoCapture, len(parkingLot.Cameras))
+		for k, camera := range parkingLot.Cameras {
+			fmt.Printf("connecting to %s\n", camera.URL)
+			stream, err := gocv.OpenVideoCapture(camera.URL)
+			if err != nil {
+				return nil, err
+			}
+			fmt.Printf("connected\n")
+			streams[i][k] = stream
 		}
-		fmt.Printf("connected\n")
-		streams[i] = stream
 	}
 
 	return &Provider{

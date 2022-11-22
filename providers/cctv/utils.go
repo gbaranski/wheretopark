@@ -1,9 +1,12 @@
 package cctv
 
 import (
+	"encoding/json"
 	"fmt"
 	"image"
 	"image/color"
+	"log"
+	"os"
 
 	"gocv.io/x/gocv"
 )
@@ -72,6 +75,48 @@ func ExtractSpots(img gocv.Mat, spots []ParkingSpot) []gocv.Mat {
 		images[i] = CropSpot(img, &spot)
 	}
 	return images
+}
+
+func SaveRawImage(img gocv.Mat, basePath string) {
+	gocv.IMWrite(fmt.Sprintf("%s/raw.jpg", basePath), img)
+}
+
+func SaveResults(basePath string, spots []ParkingSpot, predictions []float32) {
+	spotResults := make([]SpotResult, len(predictions))
+	for i, prediction := range predictions {
+		spot := spots[i]
+		spotResults[i] = SpotResult{
+			Prediction: prediction,
+			Points:     spot.Points,
+		}
+	}
+	result := Result{
+		Spots: spotResults,
+	}
+	resultJSON, err := json.Marshal(result)
+	if err != nil {
+		log.Fatalf("cannot marshall result: %v", err)
+	}
+	path := fmt.Sprintf("%s/result.json", basePath)
+	err = os.WriteFile(path, resultJSON, 0644)
+	if err != nil {
+		log.Fatalf("cannot write result to %s: %v", path, err)
+	}
+}
+
+func SaveVisualizations(img gocv.Mat, basePath string, spots []ParkingSpot, predictions []float32) {
+	for i, prediction := range predictions {
+		spot := spots[i]
+		VisualizeSpotPrediction(&img, spot, prediction)
+	}
+	gocv.IMWrite(fmt.Sprintf("%s/visualization.jpg", basePath), img)
+
+}
+
+func SavePredictions(img gocv.Mat, basePath string, spots []ParkingSpot, predictions []float32) {
+	SaveRawImage(img, basePath)
+	SaveResults(basePath, spots, predictions)
+	SaveVisualizations(img, basePath, spots, predictions)
 }
 
 type SpotResult struct {
