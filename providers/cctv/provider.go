@@ -2,8 +2,6 @@ package cctv
 
 import (
 	"fmt"
-	"log"
-	"os"
 	"time"
 	wheretopark "wheretopark/go"
 
@@ -35,12 +33,13 @@ func (p Provider) GetState() (map[wheretopark.ID]wheretopark.State, error) {
 	img := gocv.NewMat()
 	for i, parkingLot := range p.configuration.ParkingLots {
 		availableSpots := 0
+		captureTime := time.Now()
 		for k, camera := range parkingLot.Cameras {
+			fmt.Printf("processing %s/%d\n", parkingLot.Name, k)
 			stream := p.streams[i][k]
 			if ok := stream.Read(&img); !ok {
 				return nil, fmt.Errorf("cannot read stream of %s", parkingLot.Name)
 			}
-			captureTime := time.Now()
 			spotImages := ExtractSpots(img, camera.Spots)
 			predictions := p.model.PredictMany(spotImages)
 			for _, prediction := range predictions {
@@ -51,10 +50,6 @@ func (p Provider) GetState() (map[wheretopark.ID]wheretopark.State, error) {
 
 			if p.savePath != nil {
 				basePath := fmt.Sprintf("%s/%s/%s/%02d", *p.savePath, parkingLot.Name, captureTime.UTC().Format("2006-01-02--15-04-05"), k+1)
-				err := os.MkdirAll(basePath, os.ModePerm)
-				if err != nil {
-					log.Println(err)
-				}
 				SavePredictions(img, basePath, camera.Spots, predictions)
 			}
 		}

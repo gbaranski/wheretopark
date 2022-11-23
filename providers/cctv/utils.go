@@ -114,6 +114,10 @@ func SaveVisualizations(img gocv.Mat, basePath string, spots []ParkingSpot, pred
 }
 
 func SavePredictions(img gocv.Mat, basePath string, spots []ParkingSpot, predictions []float32) {
+	err := os.MkdirAll(basePath, os.ModePerm)
+	if err != nil {
+		log.Println(err)
+	}
 	SaveRawImage(img, basePath)
 	SaveResults(basePath, spots, predictions)
 	SaveVisualizations(img, basePath, spots, predictions)
