@@ -34,6 +34,7 @@ func (p Provider) GetState() (map[wheretopark.ID]wheretopark.State, error) {
 	for i, parkingLot := range p.configuration.ParkingLots {
 		availableSpots := 0
 		captureTime := time.Now()
+		id := wheretopark.GeometryToID(parkingLot.Geometry)
 		for k, camera := range parkingLot.Cameras {
 			fmt.Printf("processing %s/%d\n", parkingLot.Name, k)
 			stream := p.streams[i][k]
@@ -49,11 +50,10 @@ func (p Provider) GetState() (map[wheretopark.ID]wheretopark.State, error) {
 			}
 
 			if p.savePath != nil {
-				basePath := fmt.Sprintf("%s/%s/%s/%02d", *p.savePath, parkingLot.Name, captureTime.UTC().Format("2006-01-02--15-04-05"), k+1)
+				basePath := fmt.Sprintf("%s/%s/%s/%02d", *p.savePath, id, captureTime.UTC().Format("2006-01-02--15-04-05"), k+1)
 				SavePredictions(img, basePath, camera.Spots, predictions)
 			}
 		}
-		id := wheretopark.GeometryToID(parkingLot.Geometry)
 		state := wheretopark.State{
 			LastUpdated: time.Now().Format(time.RFC3339),
 			AvailableSpots: map[string]uint{
