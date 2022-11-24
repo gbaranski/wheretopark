@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"image"
 	"image/color"
-	"log"
 	"os"
 
 	"gocv.io/x/gocv"
@@ -77,11 +76,16 @@ func ExtractSpots(img gocv.Mat, spots []ParkingSpot) []gocv.Mat {
 	return images
 }
 
-func SaveRawImage(img gocv.Mat, basePath string) {
-	gocv.IMWrite(fmt.Sprintf("%s/raw.jpg", basePath), img)
+func SaveRawImage(img gocv.Mat, basePath string) error {
+	path := fmt.Sprintf("%s/raw.jpg", basePath)
+	ok := gocv.IMWrite(path, img)
+	if !ok {
+		return fmt.Errorf("failed to write raw image to %s", path)
+	}
+	return nil
 }
 
-func SaveResults(basePath string, spots []ParkingSpot, predictions []float32) {
+func SaveResults(basePath string, spots []ParkingSpot, predictions []float32) error {
 	spotResults := make([]SpotResult, len(predictions))
 	for i, prediction := range predictions {
 		spot := spots[i]
@@ -95,32 +99,43 @@ func SaveResults(basePath string, spots []ParkingSpot, predictions []float32) {
 	}
 	resultJSON, err := json.Marshal(result)
 	if err != nil {
-		log.Fatalf("cannot marshall result: %v", err)
+		return fmt.Errorf("failed to marshal result: %w", err)
 	}
 	path := fmt.Sprintf("%s/result.json", basePath)
 	err = os.WriteFile(path, resultJSON, 0644)
 	if err != nil {
-		log.Fatalf("cannot write result to %s: %v", path, err)
+		return fmt.Errorf("failed to write result to %s: %w", path, err)
 	}
+	return nil
 }
 
-func SaveVisualizations(img gocv.Mat, basePath string, spots []ParkingSpot, predictions []float32) {
+func SaveVisualizations(img gocv.Mat, basePath string, spots []ParkingSpot, predictions []float32) error {
 	for i, prediction := range predictions {
 		spot := spots[i]
 		VisualizeSpotPrediction(&img, spot, prediction)
 	}
-	gocv.IMWrite(fmt.Sprintf("%s/visualization.jpg", basePath), img)
-
+	path := fmt.Sprintf("%s/visualization.jpg", basePath)
+	ok := gocv.IMWrite(path, img)
+	if !ok {
+		return fmt.Errorf("failed to write visualization to %s", path)
+	}
+	return nil
 }
 
-func SavePredictions(img gocv.Mat, basePath string, spots []ParkingSpot, predictions []float32) {
-	err := os.MkdirAll(basePath, os.ModePerm)
-	if err != nil {
-		log.Println(err)
+func SavePredictions(img gocv.Mat, basePath string, spots []ParkingSpot, predictions []float32) error {
+	if err := os.MkdirAll(basePath, os.ModePerm); err != nil {
+		return fmt.Errorf("failed to create directory %s: %w", basePath, err)
 	}
-	SaveRawImage(img, basePath)
-	SaveResults(basePath, spots, predictions)
-	SaveVisualizations(img, basePath, spots, predictions)
+	if err := SaveRawImage(img, basePath); err != nil {
+		return err
+	}
+	if err := SaveResults(basePath, spots, predictions); err != nil {
+		return err
+	}
+	if err := SaveVisualizations(img, basePath, spots, predictions); err != nil {
+		return err
+	}
+	return nil
 }
 
 type SpotResult struct {

@@ -5,6 +5,7 @@ import (
 	"time"
 	wheretopark "wheretopark/go"
 
+	"github.com/rs/zerolog/log"
 	"gocv.io/x/gocv"
 )
 
@@ -23,7 +24,6 @@ func (p Provider) GetMetadata() (map[wheretopark.ID]wheretopark.Metadata, error)
 		metadatas[id] = parkingLot.Metadata
 	}
 
-	fmt.Printf("obtained %d metadatas\n", len(metadatas))
 	return metadatas, nil
 }
 
@@ -36,10 +36,17 @@ func (p Provider) GetState() (map[wheretopark.ID]wheretopark.State, error) {
 		captureTime := time.Now()
 		id := wheretopark.GeometryToID(parkingLot.Geometry)
 		for k, camera := range parkingLot.Cameras {
-			fmt.Printf("processing %s/%d\n", parkingLot.Name, k)
+			log.Info().
+				Str("name", parkingLot.Name).
+				Int("camera", k).
+				Msg("processing parking lot")
 			stream := p.streams[i][k]
 			if ok := stream.Read(&img); !ok {
-				return nil, fmt.Errorf("cannot read stream of %s", parkingLot.Name)
+				log.Error().
+					Str("name", parkingLot.Name).
+					Int("camera", k).
+					Msg("unable to read stream")
+				continue
 			}
 			spotImages := ExtractSpots(img, camera.Spots)
 			predictions := p.model.PredictMany(spotImages)
@@ -62,7 +69,6 @@ func (p Provider) GetState() (map[wheretopark.ID]wheretopark.State, error) {
 		}
 		states[id] = state
 	}
-	fmt.Printf("obtained %d states\n", len(states))
 	return states, nil
 }
 
@@ -94,12 +100,20 @@ func NewProvider(configurationPath *string, model *Model, savePath *string) (*Pr
 	for i, parkingLot := range configuration.ParkingLots {
 		streams[i] = make([]*gocv.VideoCapture, len(parkingLot.Cameras))
 		for k, camera := range parkingLot.Cameras {
-			fmt.Printf("connecting to %s\n", camera.URL)
+			log.Info().
+				Str("url", camera.URL).
+				Str("name", parkingLot.Name).
+				Int("camera", k).
+				Msg("connecting")
 			stream, err := gocv.OpenVideoCapture(camera.URL)
 			if err != nil {
 				return nil, err
 			}
-			fmt.Printf("connected\n")
+			log.Info().
+				Str("url", camera.URL).
+				Str("name", parkingLot.Name).
+				Int("camera", k).
+				Msg("connected")
 			streams[i][k] = stream
 		}
 	}

@@ -1,12 +1,24 @@
 package gdansk
 
 import (
-	"log"
+	"fmt"
 	"time"
 	wheretopark "wheretopark/go"
 
+	"github.com/rs/zerolog/log"
+
 	geojson "github.com/paulmach/go.geojson"
 )
+
+var defaultLocation *time.Location
+
+func init() {
+	location, err := time.LoadLocation("Europe/Warsaw")
+	if err != nil {
+		panic(err)
+	}
+	defaultLocation = location
+}
 
 type Provider struct {
 	configuration Configuration
@@ -22,7 +34,7 @@ func (p Provider) GetMetadata() (map[wheretopark.ID]wheretopark.Metadata, error)
 	for _, vendor := range vendorMetadata.ParkingLots {
 		configuration, exists := p.configuration.ParkingLots[vendor.ID]
 		if !exists {
-			log.Printf("missing configuration for %s\n", vendor.ID)
+			log.Warn().Str("id", vendor.ID).Msg("missing configuration")
 			continue
 		}
 		id := wheretopark.CoordinateToID(vendor.Location.Latitude, vendor.Location.Longitude)
@@ -52,24 +64,21 @@ func (p Provider) GetState() (map[wheretopark.ID]wheretopark.State, error) {
 	if err != nil {
 		return nil, err
 	}
+	lastUpdate, err := time.Parse(time.RFC3339, vendorState.LastUpdate)
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse last update time: %w", err)
+	}
 	states := make(map[wheretopark.ID]wheretopark.State)
+
 	for _, vendor := range vendorState.ParkingLots {
 		id, exists := p.mapping[vendor.ID]
 		if !exists {
-			log.Printf("no mapping for %s\n", vendor.ID)
+			log.Warn().Str("id", vendor.ID).Msg("no mapping")
 			continue
 		}
 
-		location, err := time.LoadLocation("Europe/Warsaw")
-		if err != nil {
-			return nil, err
-		}
-		lastUpdate, err := time.Parse(time.RFC3339, vendorState.LastUpdate)
-		if err != nil {
-			return nil, err
-		}
 		state := wheretopark.State{
-			LastUpdated: lastUpdate.In(location).Format(time.RFC3339),
+			LastUpdated: lastUpdate.In(defaultLocation).Format(time.RFC3339),
 			AvailableSpots: map[string]uint{
 				"CAR": vendor.AvailableSpots,
 			},

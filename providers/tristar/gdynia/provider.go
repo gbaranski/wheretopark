@@ -1,10 +1,21 @@
 package gdynia
 
 import (
-	"log"
 	"time"
 	wheretopark "wheretopark/go"
+
+	"github.com/rs/zerolog/log"
 )
+
+var defaultLocation *time.Location
+
+func init() {
+	location, err := time.LoadLocation("Europe/Warsaw")
+	if err != nil {
+		panic(err)
+	}
+	defaultLocation = location
+}
 
 type Provider struct {
 	configuration Configuration
@@ -20,7 +31,7 @@ func (p Provider) GetMetadata() (map[wheretopark.ID]wheretopark.Metadata, error)
 	for _, vendor := range vendorMetadata.Parkings {
 		configuration, exists := p.configuration.ParkingLots[vendor.ID]
 		if !exists {
-			log.Printf("missing configuration for %d\n", vendor.ID)
+			log.Warn().Int("id", vendor.ID).Msg("missing configuration")
 			continue
 		}
 		id := wheretopark.GeometryToID(vendor.Location)
@@ -54,19 +65,16 @@ func (p Provider) GetState() (map[wheretopark.ID]wheretopark.State, error) {
 	for _, vendor := range *vendorState {
 		id, exists := p.mapping[vendor.ParkingID]
 		if !exists {
-			log.Printf("no mapping for %d\n", vendor.ID)
+			log.Warn().Int("id", vendor.ID).Msg("no mapping")
 			continue
 		}
 
 		lastUpdate, err := time.Parse("2006-01-02 15:04:05", vendor.InsertTime)
 		if err != nil {
-			return nil, err
+			log.Error().Err(err).Msg("failed to parse time")
+			continue
 		}
-		location, err := time.LoadLocation("Europe/Warsaw")
-		if err != nil {
-			return nil, err
-		}
-		lastUpdate = lastUpdate.In(location)
+		lastUpdate = lastUpdate.In(defaultLocation)
 		state := wheretopark.State{
 			LastUpdated: lastUpdate.Format(time.RFC3339),
 			AvailableSpots: map[string]uint{
