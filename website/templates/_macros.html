@@ -6,7 +6,7 @@
     </div>
 </a>
 
-<div>
+<nav>
     <div class="languages">
         {% set translations = page.translations|default(value=section.translations|default(value='')) | sort(attribute="lang") %}
         {% if translations != '' %}
@@ -23,15 +23,13 @@
             {% endfor %}
         {% endif %}
     </div>
-    <nav>
-        {% for page in section.pages %}
-        <a class="nav-item subtitle-text" href="{{ page.permalink }}">{{ page.title }}</a>
+    {% for page in section.pages %}
+    <a class="nav-item subtitle-text" href="{{ page.permalink }}">{{ page.title }}</a>
+    {% endfor %}
+    {% if config.extra.juice_extra_menu %}
+        {% for menu in config.extra.juice_extra_menu %}
+        <a class="nav-item subtitle-text" href="{{ menu.link }}">{{ menu.title }}</a>
         {% endfor %}
-        {% if config.extra.juice_extra_menu %}
-            {% for menu in config.extra.juice_extra_menu %}
-            <a class="nav-item subtitle-text" href="{{ menu.link }}">{{ menu.title }}</a>
-            {% endfor %}
-        {% endif %}
-    </nav>
-</div>
+    {% endif %}
+</nav>
 {% endmacro render_header %}
