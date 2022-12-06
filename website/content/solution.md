@@ -1,6 +1,5 @@
 ---
-title: "Dlaczego my?"
-description: "Dlaczego my?"
+title: "Nasze rozwiązanie"
 weight: 3
 draft: true
 ---
