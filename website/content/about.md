@@ -1,6 +1,6 @@
 +++
 title = "About"
-description = "About"
+description = "Information about our team, technology stack, and contact details."
 weight = 2
 +++
 

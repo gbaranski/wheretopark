@@ -1,6 +1,6 @@
 +++
 title = "Kontakt"
-description = "Informacje o nas"
+description = "Informacje o naszym zespole, stacku technologicznym, i informacje kontaktowe"
 weight = 2
 +++
 

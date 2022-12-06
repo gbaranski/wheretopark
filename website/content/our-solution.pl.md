@@ -1,5 +1,6 @@
 ---
 title: "Nasze rozwiązanie"
+description: "Opis naszego rozwiązania, prezentacja działania sztucznej inteligencji"
 weight: 3
 draft: true
 ---

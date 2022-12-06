@@ -1,5 +1,6 @@
 +++
 title = "Where To Park"
+description = "Where To Park to aplikacja pomagająca kierowcom odnaleźć wolne miejsce parkingowe, wykorzystująca techniki sztucznej inteligencji i analizy danych w czasie rzeczywistym."
 sort_by = "weight"
 
 [extra]

@@ -1,6 +1,6 @@
 +++
 title = "FAQ"
-description = "Czesto zadawane pytania"
+description = "Często zadawane pytania"
 weight = 2
 +++
 

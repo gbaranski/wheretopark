@@ -1,5 +1,6 @@
 +++
 title = "Where To Park"
+description = "Where To Park is a parking lot assistant that helps you find the best free parking spot in the lot with the help of AI and real-time analysis"
 sort_by = "weight"
 [extra]
 app_store_badge = "https://tools.applemediaservices.com/api/badges/download-on-the-app-store/white/en-us?size=250x83&amp;releaseDate=1668988800&h=a0d7d9ddd291f5ab79945e444e83a9f9"
