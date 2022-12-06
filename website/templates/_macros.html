@@ -13,7 +13,7 @@
         {% for translation in translations %}
                 {% set name = translation.lang | upper%}
                 {% if translation.lang == lang %}
-                    <a class="language-item selected-language-item">{{ name }}</a>
+                    <span class="language-item selected-language-item">{{ name }}</span>
                 {% else %}
                     <a class="language-item" href="{{ translation.permalink }}">{{ name }}</a>
                 {% endif %}
