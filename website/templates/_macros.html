@@ -1,0 +1,37 @@
+{% macro render_header(section) %}
+<a href="{{ section.permalink }}">
+    <div class="logo">
+        <img src="{{ get_url(path=config.extra.juice_logo_path) }}" alt="logo">
+        {{ config.extra.juice_logo_name }}
+    </div>
+</a>
+
+<div>
+    <div class="languages">
+        {% set translations = page.translations|default(value=section.translations|default(value='')) | sort(attribute="lang") %}
+        {% if translations != '' %}
+        {% for translation in translations %}
+                {% set name = translation.lang | upper%}
+                {% if translation.lang == lang %}
+                    <a class="language-item selected-language-item">{{ name }}</a>
+                {% else %}
+                    <a class="language-item" href="{{ translation.permalink }}">{{ name }}</a>
+                {% endif %}
+                {% if loop.last %}{% else %}
+                  <span>&nbsp;</span>
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+    </div>
+    <nav>
+        {% for page in section.pages %}
+        <a class="nav-item subtitle-text" href="{{ page.permalink }}">{{ page.title }}</a>
+        {% endfor %}
+        {% if config.extra.juice_extra_menu %}
+            {% for menu in config.extra.juice_extra_menu %}
+            <a class="nav-item subtitle-text" href="{{ menu.link }}">{{ menu.title }}</a>
+            {% endfor %}
+        {% endif %}
+    </nav>
+</div>
+{% endmacro render_header %}

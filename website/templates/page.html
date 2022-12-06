@@ -1,0 +1,22 @@
+{% import "_macros.html" as macros %}
+{% extends "index.html" %}
+
+{% block title %}{{ page.title }} | {{ super() }} {% endblock title %}
+
+{% block header %}
+{% if config.default_language == page.lang %}
+    {% set section_path = "_index.md" %}
+{% else %}
+    {% set section_path = "_index." ~ page.lang ~ ".md" %}
+{% endif %}
+
+{% set section = get_section(path = section_path ) %}
+<header class="box-shadow">
+    {{ macros::render_header(section=section) }}
+</header>
+{% endblock header %}
+
+{% block content %}
+<div class="heading-text">{{ page.description }}</div>
+{{ page.content | safe }}
+{% endblock content %}
