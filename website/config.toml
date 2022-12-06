@@ -2,6 +2,7 @@
 base_url = "https://wheretopark.app"
 
 title = "Where To Park - The ultimate parking lot assistant"
+description = "Where To Park is a parking lot assistant that helps you find the best free parking spot in the lot with the help of AI and real-time analysis"
 
 # Whether to automatically compile all Sass files in the sass directory
 compile_sass = true
@@ -13,7 +14,6 @@ generate_feed = true
 build_search_index = false
 minify_html = true
 
-theme = "juice"
 
 [markdown]
 # Whether to do syntax highlighting
