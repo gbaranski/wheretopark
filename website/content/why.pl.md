@@ -5,32 +5,32 @@ weight: 3
 draft: true
 ---
 
-# Problem z tzw. “search traffic”
+# *Search traffic* - problem z parkowaniem w dużych miastach
+
 *Search traffic* to ruch związany wyłącznie z poszukiwaniem miejsca parkingowego.
 
-93.7% kierowców stwierdziło ze w sytuacji gdy u celi podróży nie ma wolnego miejsca parkingowego, **krążą w oczekiwaniu na zwolnienie miejsca**, a tylko pozostałe 6.7% szuka na pobliskim parkingu [1]. 
+93.7% kierowców stwierdziło, że w sytuacji gdy obok miejsca docelowego nie ma wolnego miejsca parkingowego, **krążą w oczekiwaniu na jego zwolnienie**, a tylko pozostałe 6.3% szuka miejsca na pobliskim parkingu [1]. 
 
-Skutki ekologiczne szukania wolnego miejsca parkingowego w samym Los Angeles oszacowano w na **730 ton dwutlenku węgla** i **170 tysięcy litrów paliwa** rocznie [4].
+W samym Los Angeles oszacowano, że każdego roku search traffic przyczynia się do wytworzenia **730 ton dwutlenku węgla** i zużycia **170 tysięcy litrów paliwa** [4].
 
 # Nasze rozwiazanie
 
-Aplikacja *Where To Park* została stworzona z myślą o kierowcach, którzy aktywnie korzystają z transportu drogowego.
-Ma zadanie ułatwić znalezienie wolnego miejsca parkingowego, w przystępny i intuicyjny sposób.
+*Where To Park* ułatwia kierowcom znalezienie wolnego miejsca parkingowego w przystępny i intuicijny sposób. 
 
-Aplikacja juz teraz jest dostępna w przeglądarce, na iOS'ie i Androidzie.
+Aplikacja jest dostępna w przeglądarce, na iOS'ie i Androidzie.
 
 # Skąd zbieramy dane?
 
 ### Publiczne dane
 
-W Trójmieście jest to np system Tristar, który publicznie udostępnia dane o wolnych miejscach na prawie 20 parkingach.
-
+Przykładowo trójmiasto, oferuje otwarty dostęp do danych pochodzących z systemu Tristar, czyli na ten moment prawie 20 parkingów.
 
 ### Kamery monitoringowe
-Korzystamy ze sztucznej inteligencji w celu określenia czy dane miejsce parkingowe jest wolne. 
+Korzystamy ze sztucznej inteligencji w celu określenia ilości wolnych miejsc parkingowych. 
 Rozwiązanie aktualnie testujemy na trzech prywatnych parkingach w Gdańsku i w Kłodzku. 
+Zbadana skuteczność detekcji wynosi na ten moment około 90%.
 
-Tutaj przykładowe wizualizacje z działania systemu:
+Poniżej przykładowe wizualizacje z działania systemu:
 
 #### Parking przy basenie w Kłodzku
 <a href="/visualisation/basen_klodzko-1.jpeg" target="_blank">
@@ -44,30 +44,29 @@ Tutaj przykładowe wizualizacje z działania systemu:
 </a>
 
 
-# Zalety rozwiązania
+# Korzyści z rozwiązania
 
-Aplikacja może zachęcić kierowców aby pojechali na pobliski parking, ponieważ mają pewność ze na na tym parkingu znajdą się dla nich wolne miejsca, a za tym idą dodatkowe korzyści takie jak mniejsze natężenie ruchu i mniej zbędnych kilometrów, czyli też i mniej zanieczyszczeń w powietrzu.
+Kierowcy korzystający z naszej aplikacji chętniej zamiast krążenia wokół parkingu, powodując *search traffic*, wybierają wolne miejsce parkingowe, które znajdą w aplikacji.
 
 Rozwiązanie korzystające z kamer monitoringowych to mała ingerencja w infrastrukturę, nie jest wymagany montaż specjalnych czujników, które też nie wszędzie są możliwe do zamontowania.
 
 ## Dla miasta
 
 - Nowe możliwości dla miasta związane z posiadaniem zebranych danych, w tym:
-  - **Analiza trendów** wynikających z ilości wolnych miejsc w danych godzinach, czy dniach. Pomóc to może w bardziej trafnym wyborze miejsca do utworzenia nowych miejsc parkingowych.
+  - Historia wolnych miejsc w danych dniach i godzinach, a także wszelkie **statystyki**, i **analizy trendów** dot. kierowców. Pomóc to może w bardziej trafnym wyborze miejsca do utworzenia nowych miejsc parkingowych.
   - Wykrywanie **nieprawidłowo zaparkowanych** pojazdów.
 - Optymalizacja ruchu drogowego
   - **Zwiększenie zajętości dostępnej przestrzeni parkingowej**, kierowcy mogliby zacząć korzystać z mniej znanych, lub dopiero co otworzonych parkingów.
-  - Zmniejszenie wymaganych przemieszczeń w celu znalezienia miejsca parkingowego, a przy tym **zmniejszone ogólne natężenie ruchu**, w pracy [2] autor mówi o wpływie nawet na **8-10% ruchu ogólnego** w przypadku Krakowa, a w przypadku innych zagranicznym miast, ta wartość sięgała **nawet 70%**.
+  - **Zmniejszenie wymaganych przemieszczeń w celu znalezienia miejsca parkingowego**, a przy tym **zmniejszone ogólne natężenie ruchu**, w pracy [2] autor mówi o wpływie nawet na **8-10% ruchu ogólnego** w przypadku Krakowa, a w przypadku innych zagranicznym miast, ta wartość sięgała **nawet 70%**.
 - Promocja miasta jako **innowacyjne i nowoczesne**.
-- **Specjalne oznaczenia** dla np. parkingów Park & Ride, które mogą pomoc w dotarciu do użytkowników.
 
 ## Dla kierowców
 - Oszczędność czasu i pieniędzy
-    - Kierowcy w Krakowie **tracili średnio około 10 minut na znalezienie dostępnego miejsca parkingowego**, przy czym maksymalny czas wynosił około 45 minut [1]. Taka aplikacja może drastycznie skrócić ten czas.
-    - **Koszt eksploatacyjny samochodu**, i koszt czasu poświęcony na szukanie miejsca parkingowego wynosi szacunkowo okolo 9zł, nie wliczając w to dodatkowego kosztu samego parkowania w SPP. A mnożąc tą wartość przez 20 dni roboczych miesiąca, otrzymujemy wartość **180 zł miesięcznie** [1].
+    - Kierowcy w Krakowie **tracili średnio około 10 minut na znalezienie dostępnego miejsca parkingowego**, przy czym maksymalny czas wynosił około 45 minut [1].
+    - **Koszt eksploatacyjny samochodu, i koszt czasu poświęcony na jednorazowe szukanie miejsca parkingowego** wynosi szacunkowo około 9zł, nie wliczając w to dodatkowego kosztu samego parkowania w SPP [1].
     - Badanie w Los Angeles mówi o rocznej stracie czasu na poziomie 95000 godzin [4].
 - **Osoby niepełnosprawne**, mogą prosto w aplikacji sprawdzić które parkingi maja dla nich specjalnie wyznaczone miejsca, i czy są te miejsca wolne. 
-- **Predykcje dostępności** bazowane na historii ilości wolnych miejsc, np. widoczna dla użytkownika statystyka mówiącą o tym, że w piątek o godzinie 10 zazwyczaj nie ma ani jednego wolnego miejsca na danym parkingu, przez co może on inaczej zaplanować wcześniej trasę.
+- **Predykcje dostępności** - widoczna dla użytkownika statystyka mówiącą o tym, że przykładowo w piątek o godzinie 10 zazwyczaj ciężko znaleźć wolne miejsce na danym parkingu, a dzięki tej informacji mozna zaplanowac trasę dzień wczesniej.
 
 
 W przyszłości planujemy także dodatkowe funkcjonalności takie jak np. **rezerwacja miejsc parkingowych**, czy **płatności za postój** w aplikacji.
