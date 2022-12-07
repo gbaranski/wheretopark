@@ -45,6 +45,7 @@ services:
       MODEL: /opt/wheretopark/cctv/model.onnx
     volumes:
       - $HOME/.local/share/wheretopark/cctv:/opt/wheretopark/cctv
+      - $HOME/.cache/wheretopark/cctv:/root/.cache/wheretopark/cctv
     depends_on:
       - surrealdb
 
