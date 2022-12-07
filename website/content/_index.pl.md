@@ -7,17 +7,13 @@ sort_by = "weight"
 app_store_badge = "https://tools.applemediaservices.com/api/badges/download-on-the-app-store/white/pl-pl?size=250x83&amp;releaseDate=1668988800&h=ef8147fbbaa63160018d2a5be2e2565e"
 +++
 
-Aplikacja która pomoże ci znaleźć wolne miejsce parkingowe, jednoczesnie nie przekraczajac ustalonego budżetu. 
-
-Ilość dostępnych miejsc parkingowych jest na bieżąco aktualizowana.
-
 # Funkcje
 - Lista parkingów w pobliżu.
 - Mapa z pobliskimi parkingami.
 - Wyświetlanie danych na temat danego parkingu.
 
 Dane na temat parkingu zawierają:
-- Dostępność miejsc
+- Dostępność miejsc w czasie rzeczywistym
 - Łączna ilośc miejsc
 - Cennik oraz godziny otwarcia.
 - Dane kontaktowe
