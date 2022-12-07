@@ -35,14 +35,14 @@ Zbadana skuteczność detekcji wynosi na ten moment około 90%.
 Poniżej przykładowe wizualizacje z działania systemu:
 
 #### Parking przy basenie w Kłodzku
-<a href="/visualisation/basen_klodzko-1.jpeg" target="_blank">
-    <img src="/visualisation/basen_klodzko-1.jpeg" width="400px">
+<a href="/visualisation/basen_klodzko-1.webp" target="_blank">
+    <img src="/visualisation/basen_klodzko-1.webp" width="400px">
 </a>
 
 #### Parking Królewski w Gdańsku
 
-<a href="/visualisation/krolewski_gdansk-1.jpeg" target="_blank">
-    <img src="/visualisation/krolewski_gdansk-1.jpeg" width="400px">
+<a href="/visualisation/krolewski_gdansk-1.webp" target="_blank">
+    <img src="/visualisation/krolewski_gdansk-1.webp" width="400px">
 </a>
 
 
