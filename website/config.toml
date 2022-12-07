@@ -30,6 +30,7 @@ title = "Where To Park - Asystent parkowania"
 
 [languages.pl.translations]
 flag = "🇵🇱"
+exploreMore = "Zobacz więcej"
 heading = "Twój asystent do parkowania"
 subheading = "Pomożemy odnaleźć **najbliższe** i **dostępne** miejsce parkingowe w **przystępnej cenie**."
 or = "lub"
@@ -40,6 +41,7 @@ title = "Where To Park - Parking lot assistant"
 
 [languages.en.translations]
 flag = "🇬🇧"
+exploreMore = "Explore More"
 heading = "The ultimate parking lot assistant"
 subheading = "We'll help you seek an **available** and **affordable** parking slot **nearby**"
 or = "or"
