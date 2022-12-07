@@ -68,15 +68,13 @@ func (p Provider) GetState() (map[wheretopark.ID]wheretopark.State, error) {
 			log.Warn().Int("id", vendor.ID).Msg("no mapping")
 			continue
 		}
-
-		lastUpdate, err := time.Parse("2006-01-02 15:04:05", vendor.InsertTime)
+		lastUpdate, err := time.ParseInLocation("2006-01-02 15:04:05", vendor.InsertTime, defaultLocation)
 		if err != nil {
 			log.Error().Err(err).Msg("failed to parse time")
 			continue
 		}
-		lastUpdate = lastUpdate.In(defaultLocation)
 		state := wheretopark.State{
-			LastUpdated: lastUpdate.Format(time.RFC3339),
+			LastUpdated: lastUpdate.UTC().Format(time.RFC3339),
 			AvailableSpots: map[string]uint{
 				"CAR": uint(vendor.FreePlaces),
 			},
