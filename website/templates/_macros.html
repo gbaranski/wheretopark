@@ -11,11 +11,14 @@
         {% set translations = page.translations|default(value=section.translations|default(value='')) | sort(attribute="lang") %}
         {% if translations != '' %}
         {% for translation in translations %}
-                {% set name = translation.lang | upper%}
+                {% set name = translation.lang | upper %}
+                {% set flag = trans(key="flag", lang=translation.lang) %}
                 {% if translation.lang == lang %}
-                    <span class="language-item selected-language-item">{{ name }}</span>
+                    <span class="language-item selected-language-item">{{ flag }}</span>
                 {% else %}
-                    <a class="language-item" href="{{ translation.permalink }}">{{ name }}</a>
+                    <a class="language-item" href="{{ translation.permalink }}">
+                        {{ flag }}
+                    </a>
                 {% endif %}
                 {% if loop.last %}{% else %}
                   <span>&nbsp;</span>

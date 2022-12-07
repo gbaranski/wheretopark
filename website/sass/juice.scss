@@ -60,12 +60,12 @@ header {
 .language-item {
   font-family: "Alfa Slab One", serif;
   color: var(--primary-text-color);
-  font-size: 16px;
+  font-size: 20px;
 }
 
 .selected-language-item {
   color: var(--secondary-text-color);
-  text-decoration: underline;
+  filter: grayscale(100%);
 }
 
 .nav-item {
