@@ -1,8 +1,9 @@
 ---
 title: "Nasze rozwiązanie"
 description: "Opis naszego rozwiązania, prezentacja działania sztucznej inteligencji"
-weight: 3
-draft: true
+weight: 0
+extra:
+  hidden: true
 ---
 
 # *Search traffic* - problem z parkowaniem w dużych miastach
