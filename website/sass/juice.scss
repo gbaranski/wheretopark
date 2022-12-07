@@ -186,7 +186,7 @@ footer {
     }
   }
 
-  .nav-item .language-item {
+  .nav-item, .language-item {
     margin: 0 5px;
     font-size: 20px;
   }
@@ -203,7 +203,7 @@ footer {
     padding: 0;
   }
 
-  .explore-more, .toc {
+  .toc {
     display: none;
   }
 
