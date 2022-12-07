@@ -23,7 +23,8 @@ Aplikacja jest dostępna w przeglądarce, na iOS'ie i Androidzie.
 
 ### Publiczne dane
 
-Przykładowo trójmiasto, oferuje otwarty dostęp do danych pochodzących z systemu Tristar, czyli na ten moment prawie 20 parkingów.
+Wybrane aglomeracje oferują otwarty dostęp do danych pochodzących z istniejących systemów parkingowych. 
+Jednym z nich jest Trójmiasto, które za pośrednictwem systemu Tristar daje dostęp do prawie 20 parkingów.
 
 ### Kamery monitoringowe
 Korzystamy ze sztucznej inteligencji w celu określenia ilości wolnych miejsc parkingowych. 
