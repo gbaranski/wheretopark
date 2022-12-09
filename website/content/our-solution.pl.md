@@ -48,7 +48,7 @@ Poniżej przykładowe wizualizacje z działania systemu:
 
 Kierowcy korzystający z naszej aplikacji, zamiast krążenia wokół parkingu (powodując *search traffic*), wybierają wolne miejsce parkingowe sugerowane przez naszą aplikację.
 
-Rozwiązanie korzystające z kamer monitoringowych to mała ingerencja w infrastrukturę. Korzystamy z istniejących kamer i nie jest wymagamy montażu specjalnych czujników.
+Rozwiązanie korzystające z kamer monitoringowych to mała ingerencja w infrastrukturę. Korzystamy z istniejących kamer i nie jest wymagany montaż specjalnych czujników.
 
 ## Dla miasta
 
