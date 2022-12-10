@@ -10,6 +10,8 @@ extra:
 
 *Search traffic* to ruch drogowy wynikający wyłącznie z poszukiwania miejsca parkingowego.
 
+Z badań w Krakowie wynika, że **udział *search traffic* w ruchu ogólnym** oscyluje w okolicach **8-10%**, a w przypadku innych zagranicznych miast, ta wartość może sięgać nawet **70%** [2].
+
 93.7% kierowców stwierdziło, że w sytuacji gdy obok miejsca docelowego nie ma wolnego miejsca parkingowego, **krążą w oczekiwaniu na jego zwolnienie**, a tylko pozostałe 6.3% szuka miejsca na pobliskim parkingu [1]. 
 
 W samym Los Angeles oszacowano, że każdego roku *search traffic* przyczynia się do wytworzenia **730 ton dwutlenku węgla** i zużycia **170 tysięcy litrów paliwa** [4].
@@ -57,7 +59,7 @@ Rozwiązanie korzystające z kamer monitoringowych to mała ingerencja w infrast
   - Wykrywanie **nieprawidłowo zaparkowanych** pojazdów.
 - Optymalizacja ruchu drogowego
   - **Zwiększenie zajętości dostępnej przestrzeni parkingowej**, kierowcy mogliby zacząć korzystać z mniej znanych, lub dopiero co otworzonych parkingów.
-  - **Zmniejszenie wymaganych przemieszczeń w celu znalezienia miejsca parkingowego**, a przy tym **zmniejszone ogólne natężenie ruchu**, w pracy [2] autor mówi o wpływie nawet na **8-10% ruchu ogólnego** w przypadku Krakowa, a w przypadku innych zagranicznym miast, ta wartość sięgała **nawet 70%**.
+  - **Zmniejszenie wymaganych przemieszczeń w celu znalezienia miejsca parkingowego**, a przy tym **zmniejszone ogólne natężenie ruchu**.
 - Promocja miasta jako **innowacyjne i nowoczesne**.
 
 ## Dla kierowców
@@ -71,6 +73,14 @@ Rozwiązanie korzystające z kamer monitoringowych to mała ingerencja w infrast
 
 W przyszłości planujemy także dodatkowe funkcjonalności takie jak np. **rezerwacja miejsc parkingowych**, czy **płatności za postój** w aplikacji.
 
+## Aplikacja
+
+<p>
+  <img src="/pl/preview/image1.png" width="24%"/>
+  <img src="/pl/preview/image2.png" width="24%"/>
+  <img src="/pl/preview/image3.png" width="24%"/>
+  <img src="/pl/preview/image4.png" width="24%"/>
+</p>
 
 # Przypisy
 1. [Duda-Wiertel U. Konsekwencje zmiany dostępności przestrzeni parkingowej we wrażliwych obszarach centrów miast, Politechnika Krakowska, Kraków 2018.](https://yadda.icm.edu.pl/baztech/element/bwmeta1.element.baztech-51e98198-f84e-4b3f-8a4a-2492f1fef1df)
