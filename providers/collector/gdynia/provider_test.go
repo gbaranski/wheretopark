@@ -2,7 +2,7 @@ package gdynia_test
 
 import (
 	"testing"
-	"wheretopark/providers/tristar/gdynia"
+	"wheretopark/providers/collector/gdynia"
 
 	"github.com/stretchr/testify/assert"
 )

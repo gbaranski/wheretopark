@@ -7,7 +7,7 @@
 # To get a newer version, you will need to update the SHA.
 # You can also reference a tag or branch, but the action may change without warning.
 
-name: Tristar CI/CD
+name: Collector CI/CD
 
 on:
   workflow_dispatch:
@@ -15,7 +15,7 @@ on:
     # branches:
       # - master
     # paths:
-      # - "providers/tristar/**"
+      # - "providers/collector/**"
       # - "go/**"
 
 jobs:
@@ -40,6 +40,6 @@ jobs:
         with:
           push: true
           context: .
-          file: providers/tristar/Dockerfile
-          tags: ghcr.io/wheretopark/tristar:latest
+          file: providers/collector/Dockerfile
+          tags: ghcr.io/wheretopark/collector:latest
           platforms: "linux/amd64,linux/arm64"

@@ -2,7 +2,7 @@ package gdansk_test
 
 import (
 	"testing"
-	"wheretopark/providers/tristar/gdansk"
+	"wheretopark/providers/collector/gdansk"
 
 	"github.com/stretchr/testify/assert"
 )

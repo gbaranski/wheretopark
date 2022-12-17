@@ -15,13 +15,13 @@ services:
       - default
       - public
 
-  tristar:
-    container_name: wheretopark_tristar
+  collector:
+    container_name: wheretopark_collector
     env_file: .env
     restart: unless-stopped
     build:
       context: .
-      dockerfile: ./cmd/tristar/Dockerfile
+      dockerfile: ./cmd/collector/Dockerfile
     environment:
       DATABASE_URL: ws://surrealdb:8000
       DATABASE_NAME: production

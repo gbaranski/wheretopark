@@ -7,8 +7,8 @@ import (
 	"os/signal"
 	"syscall"
 	wheretopark "wheretopark/go"
-	"wheretopark/providers/tristar/gdansk"
-	"wheretopark/providers/tristar/gdynia"
+	"wheretopark/providers/collector/gdansk"
+	"wheretopark/providers/collector/gdynia"
 
 	"github.com/caarlos0/env/v6"
 )

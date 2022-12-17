@@ -3,7 +3,7 @@ package gdynia_test
 import (
 	"log"
 	"testing"
-	"wheretopark/providers/tristar/gdansk"
+	"wheretopark/providers/collector/gdansk"
 )
 
 func TestMetadatas(t *testing.T) {
