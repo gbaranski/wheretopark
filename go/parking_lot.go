@@ -6,6 +6,28 @@ import (
 	"github.com/shopspring/decimal"
 )
 
+const (
+	SpotTypeCar         = "CAR"
+	SpotTypeCarElectric = "CAR_ELECTRIC"
+	SpotTypeCarDisabled = "CAR_DISABLED"
+	SpotTypeMotorcycle  = "MOTORCYCLE"
+	SpotTypeTruck       = "TRUCK"
+)
+
+const (
+	FeatureCovered     = "COVERED"
+	FeatureUncovered   = "UNCOVERED"
+	FeatureUnderground = "UNDERGROUND"
+	FeatureGuarded     = "GUARDED"
+)
+
+const (
+	PaymentMethodCash        = "CASH"
+	PaymentMethodCard        = "CARD"
+	PaymentMethodContactless = "CONTACTLESS"
+	PaymentMethodMobile      = "MOBILE"
+)
+
 type ID = string
 type SpotType = string
 type Feature = string
