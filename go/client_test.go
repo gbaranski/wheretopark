@@ -72,8 +72,7 @@ func TestParkingLot(t *testing.T) {
 		TotalSpots: map[string]uint{
 			"CAR": 1110,
 		},
-		MaxWidth:  nil,
-		MaxHeight: nil,
+		MaxDimensions: nil,
 		Features: []string{
 			"COVERED",
 			"UNCOVERED",

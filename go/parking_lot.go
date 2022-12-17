@@ -49,14 +49,23 @@ type Rule struct {
 	Pricing []PricingRule `json:"pricing"`
 }
 
+type Dimensions struct {
+	Width  *int `json:"width,omitempty"`
+	Height *int `json:"height,omitempty"`
+	Length *int `json:"length,omitempty"`
+}
+
+func (d *Dimensions) Empty() bool {
+	return d.Width == nil && d.Height == nil && d.Length == nil
+}
+
 type Metadata struct {
 	Name           string                  `json:"name"`
 	Address        string                  `json:"address"`
 	Geometry       geojson.Geometry        `json:"geometry"`
 	Resources      []string                `json:"resources"`
 	TotalSpots     map[SpotType]uint       `json:"totalSpots"`
-	MaxWidth       *int                    `json:"maxWidth,omitempty"`
-	MaxHeight      *int                    `json:"maxHeight,omitempty"`
+	MaxDimensions  *Dimensions             `json:"maxDimensions,omitempty"`
 	Features       []Feature               `json:"features"`
 	PaymentMethods []PaymentMethod         `json:"paymentMethods"`
 	Comment        map[LanguageCode]string `json:"comment"`

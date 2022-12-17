@@ -44,8 +44,7 @@ func (p Provider) GetMetadata() (map[wheretopark.ID]wheretopark.Metadata, error)
 			Geometry:       *geojson.NewPointGeometry([]float64{vendor.Location.Longitude, vendor.Location.Latitude}),
 			Resources:      configuration.Resources,
 			TotalSpots:     configuration.TotalSpots,
-			MaxWidth:       configuration.MaxWidth,
-			MaxHeight:      configuration.MaxHeight,
+			MaxDimensions:  configuration.MaxDimensions,
 			Features:       configuration.Features,
 			PaymentMethods: configuration.PaymentMethods,
 			Comment:        configuration.Comment,
@@ -79,8 +78,8 @@ func (p Provider) GetState() (map[wheretopark.ID]wheretopark.State, error) {
 
 		state := wheretopark.State{
 			LastUpdated: lastUpdate.In(defaultLocation).Format(time.RFC3339),
-			AvailableSpots: map[string]uint{
-				"CAR": vendor.AvailableSpots,
+			AvailableSpots: map[wheretopark.SpotType]uint{
+				wheretopark.SpotTypeCar: vendor.AvailableSpots,
 			},
 		}
 		states[id] = state

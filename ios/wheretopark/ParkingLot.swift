@@ -71,14 +71,21 @@ struct ParkingLotRule: Decodable, Hashable {
     
 }
 
+struct Dimensions: Decodable {
+    static let Empty = Dimensions(width: nil, height: nil, length: nil)
+    
+    let width: Int?
+    let height: Int?
+    let length: Int?
+}
+
 struct ParkingLotMetadata: Decodable {
     var name: String
     var address: String
     var geometry: GeoJSON.Geometry
     var resources: [URL]
     var totalSpots: [ParkingSpotType : UInt]
-    var maxWidth: Int?
-    var maxHeight: Int?
+    var maxDimensions: Dimensions?
     var features: [String]
     @Default<Empty>
     var paymentMethods: [String]
@@ -114,8 +121,6 @@ extension ParkingLot {
             totalSpots: [
                 "CAR": 1100
             ],
-            maxWidth: nil,
-            maxHeight: nil,
             features: ["COVERED", "UNCOVERED"],
             paymentMethods: Default(wrappedValue: ["CASH", "CONTACTLESS", "CARD"]),
             comment: Default(wrappedValue: [

@@ -41,8 +41,7 @@ func (p Provider) GetMetadata() (map[wheretopark.ID]wheretopark.Metadata, error)
 			Geometry:       vendor.Location,
 			Resources:      configuration.Resources,
 			TotalSpots:     configuration.TotalSpots,
-			MaxWidth:       configuration.MaxWidth,
-			MaxHeight:      configuration.MaxHeight,
+			MaxDimensions:  configuration.MaxDimensions,
 			Features:       configuration.Features,
 			PaymentMethods: configuration.PaymentMethods,
 			Comment:        configuration.Comment,
@@ -75,8 +74,8 @@ func (p Provider) GetState() (map[wheretopark.ID]wheretopark.State, error) {
 		}
 		state := wheretopark.State{
 			LastUpdated: lastUpdate.UTC().Format(time.RFC3339),
-			AvailableSpots: map[string]uint{
-				"CAR": uint(vendor.FreePlaces),
+			AvailableSpots: map[wheretopark.SpotType]uint{
+				wheretopark.SpotTypeCar: uint(vendor.FreePlaces),
 			},
 		}
 		states[id] = state

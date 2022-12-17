@@ -48,14 +48,19 @@ export type Rule = {
 
 };
 
+export type Dimensions = {
+    width: number;
+    length: number;
+    height: number;
+};
+
 export type Metadata = {
     name: string;
     address: string;
     geometry: GeoJSON.Point;
     resources: Resource[];
     totalSpots: Record<string, number>;
-    maxWidth: number | undefined;
-    maxHeight: number | undefined;
+    maxDimensions: Dimensions | undefined;
     features: string[];
     paymentMethods: string[];
     comment?: Record<LanguageCode, string>;

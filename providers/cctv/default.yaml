@@ -51,8 +51,9 @@ parkingLots:
       - https://www.basenklodzko.pl/files/regulamin_parkingu_kryta_plywalnia.pdf
       - mailto:basen@basenklodzko.pl
       - tel:+48-725-112-666
-    maxWidth: 210
-    maxHeight: -1
+    maxDimensions:
+      width: 210
+      height: -1
     features:
       - UNCOVERED
     currency: PLN
@@ -148,7 +149,8 @@ parkingLots:
       - mailto:twierdza@twierdza.klodzko.pl
       - tel:+48-74-867-34-68
       - tel:+48-74-647-21-30
-    maxHeight: -1
+    maxDimensions:
+      height: -1
     features:
       - UNCOVERED
     currency: PLN
