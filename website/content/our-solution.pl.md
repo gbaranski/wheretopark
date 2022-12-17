@@ -8,7 +8,7 @@ extra:
 
 # *Search traffic* - problem z parkowaniem w dużych miastach
 
-*Search traffic* to ruch drogowy wynikający wyłącznie z poszukiwania miejsca parkingowego.
+*Search traffic* to ruch wynikający wyłącznie z poszukiwania miejsca parkingowego.
 
 Z badań w Krakowie wynika, że **udział *search traffic* w ruchu ogólnym** oscyluje w okolicach **8-10%**, a w przypadku innych zagranicznych miast, ta wartość może sięgać nawet **70%** [2].
 
@@ -18,7 +18,13 @@ W samym Los Angeles oszacowano, że każdego roku *search traffic* przyczynia si
 
 # Nasze rozwiazanie
 
-*Where To Park* ułatwia kierowcom znalezienie wolnego miejsca parkingowego w obrębie miejsca docelowego. Dostarcza ona mapę parkingów, liczbę wolnych miejsc, cennik, oraz kontakt. Dane zbierane są z publicznie dostępnych baz danych oraz rozpoznawania obrazu z publicznych kamer. Aplikacja jest dostępna na przeglądarki, iOS i Android.
+*Where To Park* ułatwia kierowcom znalezienie wolnego miejsca parkingowego w obrębie miejsca docelowego. Dostarcza ona mapę parkingów, liczbę wolnych miejsc, cennik, oraz kontakt. Dane zbierane są z publicznie dostępnych baz danych oraz rozpoznawania obrazu z publicznych kamer. 
+
+<img src="/pl/preview.jpg"/>
+<div style="text-align: right;">
+  <font size="2">Aplikacja jest dostępna na przeglądarki, iOS i Android.</font>
+</div>
+<br/>
 
 # Skąd zbieramy dane?
 
