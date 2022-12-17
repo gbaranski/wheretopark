@@ -1,0 +1,292 @@
+parkingLots:
+  u3qcjvvj2zv3:
+    resources:
+      - https://www.ztp.waw.pl/strona-111-wykaz_parkingow_strzezonych.html
+      - mailto:nopar@wp.pl
+      - tel:+48-601-248-664
+      - tel:+48-730-255-220
+    features:
+      - UNCOVERED
+      - GUARDED
+    paymentMethods:
+      - CASH
+      - CARD
+      - CONTACTLESS
+    comment:
+      pl:
+        Dia mieszkancow z adresem zameldowania w bezposrednim sasiedztwie parkingu stosuje sie oplate abonamentowa w wys. 250 zt miesiecznie. Tyczy sie to wyłącznie samochodów osobowych i motocykli w ofercie całodobowej.
+    rules:
+      - hours: 24/7
+        applies:
+          - CAR
+          - CAR_ELECTRIC
+          - CAR_DISABLED
+          - MOTORCYCLE
+        pricing:
+          - duration: PT1H
+            price: 5
+          - duration: PT2H
+            price: 11
+          - duration: PT3H
+            price: 14
+          - duration: PT1H
+            price: 4
+            repeating: true
+          - duration: PT1M
+            price: 470
+            repeating: true
+
+      # Day tariff
+      - hours: Mo-Su 06:00-18:00
+        applies:
+          - CAR
+          - CAR_ELECTRIC
+          - CAR_DISABLED
+          - MOTORCYCLE
+        pricing:
+          - duration: PT1M
+            price: 370
+            repeating: true
+
+      # Night tariff
+      - hours: Mo-Su 18:00-06:00
+        applies:
+          - CAR
+          - CAR_ELECTRIC
+          - CAR_DISABLED
+          - MOTORCYCLE
+        pricing:
+          - duration: PT1M
+            price: 230
+            repeating: true
+          
+
+      - hours: 24/7
+        applies:
+          - TRUCK
+        pricing:
+          - duration: PT1H
+            price: 6
+          - duration: PT2H
+            price: 13
+          - duration: PT3H
+            price: 18
+          - duration: PT1H
+            price: 4
+            repeating: true
+          - duration: PT1M
+            price: 560
+            repeating: true
+
+      # Day tariff
+      - hours: Mo-Su 06:00-18:00
+        applies:
+          - TRUCK
+        pricing:
+          - duration: PT1M
+            price: 370
+            repeating: true
+
+      # Night tariff
+      - hours: Mo-Su 18:00-06:00
+        applies:
+          - TRUCK
+        pricing:
+          - duration: PT1M
+            price: 230
+            repeating: true
+
+  u3qcn41g7dsw:
+    resources:
+      - https://www.ztp.waw.pl/strona-111-wykaz_parkingow_strzezonych.html
+      - mailto:nopar@wp.pl
+      - tel:+48-601-248-664
+      - tel:+48-730-255-520
+    features:
+      - UNCOVERED
+      - GUARDED
+    paymentMethods:
+      - CASH
+      - CARD
+      - CONTACTLESS
+    comment:
+      pl:
+        Dia mieszkancow z adresem zameldowania w bezposrednim sasiedztwie parkingu stosuje sie oplate abonamentowa w wys. 250 zt miesiecznie. Tyczy sie to wyłącznie samochodów osobowych i motocykli w ofercie całodobowej.
+    rules:
+      - hours: 24/7
+        applies:
+          - CAR
+          - CAR_ELECTRIC
+          - CAR_DISABLED
+          - MOTORCYCLE
+        pricing:
+          - duration: PT1H
+            price: 5
+          - duration: PT2H
+            price: 11
+          - duration: PT3H
+            price: 14
+          - duration: PT1H
+            price: 4
+            repeating: true
+          - duration: PT1M
+            price: 370
+            repeating: true
+
+      # Day tariff
+      - hours: Mo-Su 06:00-18:00
+        applies:
+          - CAR
+          - CAR_ELECTRIC
+          - CAR_DISABLED
+          - MOTORCYCLE
+        pricing:
+          - duration: PT1M
+            price: 270
+            repeating: true
+
+      # Night tariff
+      - hours: Mo-Su 18:00-06:00
+        applies:
+          - CAR
+          - CAR_ELECTRIC
+          - CAR_DISABLED
+          - MOTORCYCLE
+        pricing:
+          - duration: PT1M
+            price: 200
+            repeating: true
+          
+
+      - hours: 24/7
+        applies:
+          - TRUCK
+        pricing:
+          - duration: PT1H
+            price: 6
+          - duration: PT2H
+            price: 13
+          - duration: PT3H
+            price: 18
+          - duration: PT1H
+            price: 4
+            repeating: true
+          - duration: PT1M
+            price: 460
+            repeating: true
+
+      # Day tariff
+      - hours: Mo-Su 06:00-18:00
+        applies:
+          - TRUCK
+        pricing:
+          - duration: PT1M
+            price: 340
+            repeating: true
+
+      # Night tariff
+      - hours: Mo-Su 18:00-06:00
+        applies:
+          - TRUCK
+        pricing:
+          - duration: PT1M
+            price: 250
+            repeating: true
+              
+
+  u3qcn41g7dsw:
+    resources:
+      - https://www.ztp.waw.pl/strona-111-wykaz_parkingow_strzezonych.html
+      - mailto:nopar@wp.pl
+      - tel:+48-601-248-664
+      - tel:+48-730-255-520
+    features:
+      - UNCOVERED
+      - GUARDED
+    paymentMethods:
+      - CASH
+      - CARD
+      - CONTACTLESS
+    comment:
+      pl:
+        Dia mieszkancow z adresem zameldowania w bezposrednim sasiedztwie parkingu stosuje sie oplate abonamentowa w wys. 250 zt miesiecznie. Tyczy sie to wyłącznie samochodów osobowych i motocykli w ofercie całodobowej.
+    rules:
+      - hours: 24/7
+        applies:
+          - CAR
+          - CAR_ELECTRIC
+          - CAR_DISABLED
+          - MOTORCYCLE
+        pricing:
+          - duration: PT1H
+            price: 5
+          - duration: PT2H
+            price: 11
+          - duration: PT3H
+            price: 14
+          - duration: PT1H
+            price: 4
+            repeating: true
+          - duration: PT1M
+            price: 370
+            repeating: true
+
+      # Day tariff
+      - hours: Mo-Su 06:00-18:00
+        applies:
+          - CAR
+          - CAR_ELECTRIC
+          - CAR_DISABLED
+          - MOTORCYCLE
+        pricing:
+          - duration: PT1M
+            price: 270
+            repeating: true
+
+      # Night tariff
+      - hours: Mo-Su 18:00-06:00
+        applies:
+          - CAR
+          - CAR_ELECTRIC
+          - CAR_DISABLED
+          - MOTORCYCLE
+        pricing:
+          - duration: PT1M
+            price: 200
+            repeating: true
+          
+
+      - hours: 24/7
+        applies:
+          - TRUCK
+        pricing:
+          - duration: PT1H
+            price: 6
+          - duration: PT2H
+            price: 13
+          - duration: PT3H
+            price: 18
+          - duration: PT1H
+            price: 4
+            repeating: true
+          - duration: PT1M
+            price: 460
+            repeating: true
+
+      # Day tariff
+      - hours: Mo-Su 06:00-18:00
+        applies:
+          - TRUCK
+        pricing:
+          - duration: PT1M
+            price: 340
+            repeating: true
+
+      # Night tariff
+      - hours: Mo-Su 18:00-06:00
+        applies:
+          - TRUCK
+        pricing:
+          - duration: PT1M
+            price: 250
+            repeating: true
