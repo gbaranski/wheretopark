@@ -30,6 +30,17 @@ func process(client *Client, provider Provider) error {
 		Msg("obtained states")
 
 	for id, metadata := range metadatas {
+		if metadata.PaymentMethods == nil {
+			metadata.PaymentMethods = make([]string, 0)
+		}
+		if metadata.Comment == nil {
+			metadata.Comment = make(map[string]string, 0)
+		}
+		for i, rule := range metadata.Rules {
+			if rule.Pricing == nil {
+				metadata.Rules[i].Pricing = make([]PricingRule, 0)
+			}
+		}
 		parkingLot := ParkingLot{
 			Metadata: metadata,
 			State:    states[id],
