@@ -6,7 +6,7 @@
     import Markdown from "svelte-markdown";
 
     export let data: {parkingLot: ParkingLot};
-    const [status, statusComment] = parkingLotStatus(data.parkingLot);
+    const [status, statusComment] = parkingLotStatus(data.parkingLot, SpotType.CAR);
 
     $: metadata = data.parkingLot.metadata as Metadata;
     $: state = data.parkingLot.state as State;

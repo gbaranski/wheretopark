@@ -63,8 +63,13 @@ export const humanizeDuration = (s: string): string => {
 
 import OpeningHours, { type argument_hash } from 'opening_hours';
 
-export const parkingLotStatus = (parkingLot: ParkingLot): [ParkingLotStatus, string?] => {
-    const rawOpeningHours = parkingLot.metadata.rules.map((rule) => rule.hours).join(", ");
+export const parkingLotStatus = (parkingLot: ParkingLot, spotType: SpotType): [ParkingLotStatus, string?] => {
+    const rules = parkingLot.metadata.rules.filter((rule) => rule.applies === undefined || rule.applies.includes(spotType));
+    const allDayRule = rules.find((rule => rule.hours == "24/7"));
+    if (allDayRule != null) {
+        return [ParkingLotStatus.Open, "24/7"];
+    }
+    const rawOpeningHours = rules.map((rule) => rule.hours).join(", ");
     const openingHours = new OpeningHours(rawOpeningHours);
     const currentDate = dayjs().tz(parkingLot.metadata.timezone);
 
@@ -130,6 +135,8 @@ export const spotTypeIcon = (spotType: SpotType) => {
         case SpotType.CAR_DISABLED: return "accessible";
         case SpotType.CAR_ELECTRIC: return "electric_bolt";
         case SpotType.MOTORCYCLE: return "motorcycle";
+        case SpotType.TRUCK: return "local_shipping";
+        case SpotType.BUS: return "directions_bus";
         default: return "error_outline";
     }
 };
