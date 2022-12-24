@@ -17,6 +17,9 @@ export enum SpotType {
     CAR_DISABLED = "CAR_DISABLED",
     CAR_ELECTRIC = "CAR_ELECTRIC",
     MOTORCYCLE = "MOTORCYCLE",
+    TRUCK = "TRUCK",
+    BUS = "BUS",
+
 }
     
 export enum Feature {
