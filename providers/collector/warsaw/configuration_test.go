@@ -3,9 +3,9 @@ package warsaw_test
 import (
 	"log"
 	"testing"
-	"wheretopark/providers/collector/gdansk"
+	"wheretopark/providers/collector/warsaw"
 )
 
 func TestParse(t *testing.T) {
-	log.Println(gdansk.DefaultConfiguration)
+	log.Println(warsaw.DefaultConfiguration)
 }
