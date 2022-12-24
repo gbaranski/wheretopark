@@ -8,8 +8,8 @@ services:
       - "8000:8000"
     command: 
       - start
-      - --user=${SURREALDB_USER}
-      - --pass=${SURREALDB_PASSWORD}
+      - --user=root
+      - --pass=changeThisPassword
 
   collector:
     container_name: wheretopark_collector
@@ -20,8 +20,8 @@ services:
     environment:
       DATABASE_URL: ws://surrealdb:8000
       DATABASE_NAME: development
-      DATABASE_USER: ${SURREALDB_USER}
-      DATABASE_PASSWORD: ${SURREALDB_PASSWORD}
+      DATABASE_USER: root
+      DATABASE_PASSWORD: changeThisPassword
     depends_on:
       - surrealdb
 
@@ -47,11 +47,12 @@ services:
     restart: unless-stopped
     build:
       context: ./webapp
+      dockerfile: Dockerfile.dev
     ports:
-      - "3000:3000"
+      - "5173:5173"
     environment:
-      SECRET_DATABASE_USER: ${SURREALDB_USER}
-      SECRET_DATABASE_PASSWORD: ${SURREALDB_PASSWORD}
+      SECRET_DATABASE_USER: root
+      SECRET_DATABASE_PASSWORD: changeThisPassword
       SECRET_DATABASE_NAME: development
       SECRET_DATABASE_URL: http://surrealdb:8000
       PUBLIC_MAPBOX_ACCESS_TOKEN: pk.eyJ1IjoiZ2JhcmFuc2tpIiwiYSI6ImNsNmh4ZW9hZTBxaG4zY282MzAzbWhqbnAifQ.8_G9b7-m8n0kMr4O0-2mhQ
@@ -62,3 +63,5 @@ services:
       interval: 5s
       timeout: 10s
       retries: 10
+    volumes:
+      - ./webapp/src:/app/src:ro
