@@ -60,15 +60,25 @@ func (p Provider) GetMetadata() (map[wheretopark.ID]wheretopark.Metadata, error)
 		if maxDimensions.Empty() {
 			maxDimensions = nil
 		}
+		totalPlaces := TotalPlaces{
+			Disabled: 0,
+			Standard: 0,
+			Electric: 0,
+		}
+		for _, e := range vendor.TotalPlaces {
+			totalPlaces.Disabled += e.Disabled
+			totalPlaces.Electric += e.Electric
+			totalPlaces.Standard += e.Standard
+		}
 		metadata := wheretopark.Metadata{
 			Name:      vendor.Name,
-			Address:   vendor.Address,
+			Address:   configuration.Address,
 			Geometry:  *geojson.NewPointGeometry([]float64{vendor.Longitude, vendor.Latitude}),
 			Resources: configuration.Resources,
 			TotalSpots: map[string]uint{
-				wheretopark.SpotTypeCarElectric: vendor.TotalPlaces.Electric,
-				wheretopark.SpotTypeCar:         vendor.TotalPlaces.Standard,
-				wheretopark.SpotTypeCarDisabled: vendor.TotalPlaces.Disabled,
+				wheretopark.SpotTypeCarElectric: totalPlaces.Electric,
+				wheretopark.SpotTypeCar:         totalPlaces.Standard,
+				wheretopark.SpotTypeCarDisabled: totalPlaces.Disabled,
 			},
 			MaxDimensions:  maxDimensions,
 			Features:       configuration.Features,

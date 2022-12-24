@@ -22,10 +22,10 @@ type Dimension struct {
 type Park struct {
 	Name            string          `json:"name"`
 	FreePlacesTotal FreePlacesTotal `json:"free_places_total"`
-	TotalPlaces     TotalPlaces     `json:"total_places"`
-	Longitude       float64         `json:"longitude"`
-	Latitude        float64         `json:"latitude"`
-	Address         string          `json:"address"`
+	TotalPlaces     []TotalPlaces   `json:"total_places"`
+	Longitude       float64         `json:"longitude,string"`
+	Latitude        float64         `json:"latitude,string"`
+	Address         string          `json:"adress"`
 	Dimensions      []Dimension     `json:"dimensions"`
 }
 
