@@ -88,7 +88,7 @@ func (p Provider) GetState() (map[wheretopark.ID]wheretopark.State, error) {
 	if err != nil {
 		return nil, err
 	}
-	lastUpdate, err := time.Parse(time.RFC3339, data.Result.Timestamp)
+	lastUpdate, err := time.ParseInLocation("2006-01-02T15:04:05", data.Result.Timestamp, defaultLocation)
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse last update time: %w", err)
 	}
