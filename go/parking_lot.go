@@ -12,6 +12,7 @@ const (
 	SpotTypeCarDisabled = "CAR_DISABLED"
 	SpotTypeMotorcycle  = "MOTORCYCLE"
 	SpotTypeTruck       = "TRUCK"
+	SpotTypeBus         = "BUS"
 )
 
 const (
@@ -19,6 +20,7 @@ const (
 	FeatureUncovered   = "UNCOVERED"
 	FeatureUnderground = "UNDERGROUND"
 	FeatureGuarded     = "GUARDED"
+	FeatureMonitored   = "MONITORED"
 )
 
 const (
@@ -85,9 +87,9 @@ type ParkingLot struct {
 }
 
 func CoordinateToID(latitude, longitude float64) ID {
-	return geohash.Encode(latitude, longitude)
+	return geohash.EncodeWithPrecision(latitude, longitude, 10)
 }
 
 func GeometryToID(geometry geojson.Geometry) ID {
-	return geohash.Encode(geometry.Point[1], geometry.Point[0])
+	return geohash.EncodeWithPrecision(geometry.Point[1], geometry.Point[0], 10)
 }

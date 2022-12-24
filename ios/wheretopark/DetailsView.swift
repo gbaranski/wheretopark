@@ -196,6 +196,10 @@ struct DetailsRuleView: View {
                         Image(systemName: "bolt.car.fill")
                     case "MOTORCYCLE":
                         Image(systemName: "bicycle")
+                    case "TRUCK":
+                        Image(systemName: "box.truck.fill")
+                    case "BUS":
+                        Image(systemName: "bus.fill")
                     default:
                         Image(systemName: "questionmark.diamond")
                     }
