@@ -1,64 +1,64 @@
 version: "3.8"
 services:
   surrealdb:
+    container_name: wheretopark_surrealdb
     image: surrealdb/surrealdb:latest
-    container_name: surrealdb
+    restart: unless-stopped
     ports:
       - "8000:8000"
     command: 
       - start
-      - --log=trace
-      - --user=root
-      - --pass=root
-    healthcheck:
-      test: curl --fail http://localhost:8000/health || exit 1
-      interval: 5s
-      timeout: 10s
-      retries: 10
+      - --user=${SURREALDB_USER}
+      - --pass=${SURREALDB_PASSWORD}
 
   collector:
-    container_name: collector
+    container_name: wheretopark_collector
+    restart: unless-stopped
     build:
       context: .
-      dockerfile: cmd/collector/Dockerfile
-    depends_on:
-      - surrealdb
+      dockerfile: ./cmd/collector/Dockerfile
     environment:
       DATABASE_URL: ws://surrealdb:8000
       DATABASE_NAME: development
-      DATABASE_USER: root
-      DATABASE_PASSWORD: root
+      DATABASE_USER: ${SURREALDB_USER}
+      DATABASE_PASSWORD: ${SURREALDB_PASSWORD}
+    depends_on:
+      - surrealdb
 
-  cctv:
-    container_name: cctv
-    build:
-      context: .
-      dockerfile: cmd/cctv/Dockerfile
-    depends_on:
-      - surrealdb
-    environment:
-      DATABASE_URL: ws://surrealdb:8000
-      DATABASE_NAME: development
-      DATABASE_USER: root
-      DATABASE_PASSWORD: root
-      MODEL: /opt/wheretopark/cctv/model.onnx
-    volumes:
-      - $HOME/.local/share/wheretopark/cctv:/opt/wheretopark/cctv
+  # cctv:
+  #   container_name: wheretopark_cctv
+  #   restart: unless-stopped
+  #   build:
+  #     context: .
+  #     dockerfile: ./cmd/cctv/Dockerfile
+  #   environment:
+  #     DATABASE_URL: ws://surrealdb:8000
+  #     DATABASE_NAME: development
+  #     DATABASE_USER: ${SURREALDB_USER}
+  #     DATABASE_PASSWORD: ${SURREALDB_PASSWORD}
+  #     MODEL: /opt/wheretopark/cctv/model.onnx
+  #   volumes:
+  #     - $HOME/.local/share/wheretopark/cctv:/opt/wheretopark/cctv
+  #   depends_on:
+  #     - surrealdb
 
   webapp:
-    container_name: webapp
-    ports:
-      - "5173:5173"
-    build: 
+    container_name: wheretopark_webapp
+    restart: unless-stopped
+    build:
       context: ./webapp
-      dockerfile: Dockerfile.dev
+    ports:
+      - "3000:3000"
     environment:
-      SECRET_DATABASE_USER: root
-      SECRET_DATABASE_PASSWORD: root
-      SECRET_DATABASE_URL: http://surrealdb:8000
+      SECRET_DATABASE_USER: ${SURREALDB_USER}
+      SECRET_DATABASE_PASSWORD: ${SURREALDB_PASSWORD}
       SECRET_DATABASE_NAME: development
+      SECRET_DATABASE_URL: http://surrealdb:8000
       PUBLIC_MAPBOX_ACCESS_TOKEN: pk.eyJ1IjoiZ2JhcmFuc2tpIiwiYSI6ImNsNmh4ZW9hZTBxaG4zY282MzAzbWhqbnAifQ.8_G9b7-m8n0kMr4O0-2mhQ
     depends_on:
       - surrealdb
-    volumes:
-      - ./webapp/src:/app/src:ro
+    healthcheck:
+      test: curl --fail http://localhost:3000 || exit 1
+      interval: 5s
+      timeout: 10s
+      retries: 10
