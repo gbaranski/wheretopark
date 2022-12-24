@@ -120,7 +120,7 @@ func (p Provider) GetState() (map[wheretopark.ID]wheretopark.State, error) {
 	return states, nil
 }
 
-func NewProvider(configurationPath *string) (*Provider, error) {
+func NewProvider(configurationPath *string) (wheretopark.Provider, error) {
 	var configuration Configuration
 	if configurationPath == nil {
 		configuration = DefaultConfiguration
@@ -131,7 +131,7 @@ func NewProvider(configurationPath *string) (*Provider, error) {
 		}
 		configuration = *newConfiguration
 	}
-	return &Provider{
+	return Provider{
 		configuration: configuration,
 	}, nil
 
