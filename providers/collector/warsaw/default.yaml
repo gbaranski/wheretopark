@@ -392,8 +392,8 @@ parkingLots:
     address: Smolna, 00-375 Warszawa
     resources:
       - https://www.ztp.waw.pl/strona-111-wykaz_parkingow_strzezonych.html
-        https://www.ztp.waw.pl/portal/download/file_id/187.html
-        https://www.ztp.waw.pl/portal/download/file_id/188.html
+      - https://www.ztp.waw.pl/portal/download/file_id/187.html
+      - https://www.ztp.waw.pl/portal/download/file_id/188.html
       - mailto:nopar@wp.pl
       - tel:+48-601-248-664
       - tel:+48-730-255-470
@@ -472,7 +472,7 @@ parkingLots:
     resources:
       - https://www.ztp.waw.pl/strona-111-wykaz_parkingow_strzezonych.html
       - https://www.ztp.waw.pl/portal/download/file_id/178.html
-        https://www.ztp.waw.pl/portal/download/file_id/179.html
+      - https://www.ztp.waw.pl/portal/download/file_id/179.html
       - mailto:nopar@wp.pl
       - tel:+48-601-248-664
       - tel:+48-730-255-560
