@@ -9,6 +9,7 @@ import (
 	wheretopark "wheretopark/go"
 	"wheretopark/providers/collector/gdansk"
 	"wheretopark/providers/collector/gdynia"
+	"wheretopark/providers/collector/warsaw"
 
 	"github.com/caarlos0/env/v6"
 )
@@ -20,27 +21,17 @@ type config struct {
 	DatabasePassword    string  `env:"DATABASE_PASSWORD" envDefault:"root"`
 	GdanskConfiguration *string `env:"GDANSK_CONFIGURATION"`
 	GdyniaConfiguration *string `env:"GDYNIA_CONFIGURATION"`
+	WarsawConfiguration *string `env:"WARSAW_CONFIGURATION"`
 }
 
-func runGdansk(config *string, client *wheretopark.Client) {
-	provider, err := gdansk.NewProvider(config)
+func runProvider(name string, createFn func(configPath *string) (wheretopark.Provider, error), configPath *string, client *wheretopark.Client) {
+	provider, err := createFn(configPath)
 	if err != nil {
-		log.Fatalf("creating gdansk provider failed with error: %v", err)
+		log.Fatalf("creating %s provider failed with error: %v", name, err)
 	}
 	err = wheretopark.RunProvider(client, provider)
 	if err != nil {
-		log.Fatalf("running gdansk provider failed with error: %v", err)
-	}
-}
-
-func runGdynia(config *string, client *wheretopark.Client) {
-	provider, err := gdynia.NewProvider(config)
-	if err != nil {
-		log.Fatalf("creating gdynia provider failed with error: %v", err)
-	}
-	err = wheretopark.RunProvider(client, provider)
-	if err != nil {
-		log.Fatalf("running gdynia provider failed with error: %v", err)
+		log.Fatalf("running %s provider failed with error: %v", name, err)
 	}
 }
 
@@ -64,8 +55,9 @@ func main() {
 		log.Fatalf("failed to sign in: %v", err)
 	}
 
-	go runGdansk(config.GdanskConfiguration, client)
-	go runGdynia(config.GdyniaConfiguration, client)
+	go runProvider("gdansk", gdansk.NewProvider, config.GdanskConfiguration, client)
+	go runProvider("gdynia", gdynia.NewProvider, config.GdyniaConfiguration, client)
+	go runProvider("warsaw", warsaw.NewProvider, config.WarsawConfiguration, client)
 
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
