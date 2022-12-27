@@ -12,13 +12,13 @@ extra:
 
 Z badań w Krakowie wynika, że **udział *search traffic* w ruchu ogólnym** oscyluje w okolicach **8-10%**, a w przypadku innych zagranicznych miast, ta wartość może sięgać nawet **70%** [2].
 
-93.7% kierowców stwierdziło, że w sytuacji gdy obok miejsca docelowego nie ma wolnego miejsca parkingowego, **krążą w oczekiwaniu na jego zwolnienie**, a tylko pozostałe 6.3% szuka miejsca na pobliskim parkingu [1]. 
+93.7% kierowców stwierdziło, że w sytuacji gdy na parkingu nie ma wolnego miejsca, **krążą w oczekiwaniu na jego zwolnienie**, a tylko pozostałe 6.3% szuka miejsca na pobliskim parkingu [1]. 
 
-W samym Los Angeles oszacowano, że każdego roku *search traffic* przyczynia się do wytworzenia **730 ton dwutlenku węgla** i zużycia **170 tysięcy litrów paliwa** [4].
+W samym Los Angeles oszacowano, że każdego roku *search traffic* przyczynia się do wytworzenia **730 ton dwutlenku węgla** i zużycia **170 tysięcy litrów paliwa** [3].
 
 # Nasze rozwiazanie
 
-*Where To Park* ułatwia kierowcom znalezienie wolnego miejsca parkingowego w obrębie miejsca docelowego. Dostarcza ona mapę parkingów, liczbę wolnych miejsc, cennik, oraz kontakt. Dane zbierane są z publicznie dostępnych baz danych oraz rozpoznawania obrazu z publicznych kamer. 
+*Where To Park* ma na celu usprawnić proces parkowania, i przy tym obniżyć wyżej wymieniony search traffic, poprzez danie kierowcom łatwego dostępu do informacji o ilości wolnych miejsc na pobliskich parkingach, przez co zamiast krążenia wokół parkingu, mogą oni od razu pojechać ten obok, ponieważ w aplikacji mogą zobaczyć ze znajdą się na nim wolne miejsca.
 
 <img src="/pl/preview.jpg"/>
 <div style="text-align: right;">
@@ -36,9 +36,11 @@ Jednym z nich jest Trójmiasto, które za pośrednictwem systemu Tristar daje do
 ### Kamery monitoringowe
 Korzystamy ze sztucznej inteligencji w celu określenia liczby wolnych miejsc parkingowych. 
 Rozwiązanie aktualnie testujemy na trzech prywatnych parkingach w Gdańsku oraz Kłodzku. 
-W zależności od parkingu oraz warunków atmosferycznych, skuteczność detekcji wolnego miejsca wynosi około 70-90%.
+W zależności od parkingu oraz warunków atmosferycznych, skuteczność detekcji wolnego miejsca wynosi około 70-90%, z miejscem na poprawę, do której wymagamy większej ilości danych.
 
-Poniżej przykładowe wizualizacje z działania systemu:
+Niżej przykładowe wizualizacje funkcjonowania systemu.
+
+Program automatycznie oznaczył na <span style="color:green">zielono</span> miejsca wolne, a na <span style="color:red">czerwono</span> zajęte.
 
 #### Parking przy basenie w Kłodzku
 <a href="/visualisation/basen_klodzko-1.webp" target="_blank">
@@ -68,6 +70,10 @@ Rozwiązanie korzystające z kamer monitoringowych to mała ingerencja w infrast
   - **Zmniejszenie wymaganych przemieszczeń w celu znalezienia miejsca parkingowego**, a przy tym **zmniejszone ogólne natężenie ruchu**.
 - Promocja miasta jako **innowacyjne i nowoczesne**.
 
+## Dla prywatnych parkingów
+- Więcej klientów, ze względu na promocje parkingu w aplikacji.
+- W przyszłosci, możliwość rezerwacji miejsc parkingowych bezpośrednio w aplikacji, zamiast przez telefon. 
+
 ## Dla kierowców
 - Oszczędność czasu i pieniędzy
     - Kierowcy w Krakowie **tracili średnio około 10 minut na znalezienie dostępnego miejsca parkingowego**, przy czym maksymalny czas wynosił około 45 minut [1].
@@ -91,6 +97,4 @@ W przyszłości planujemy także dodatkowe funkcjonalności takie jak np. **reze
 # Przypisy
 1. [Duda-Wiertel U. Konsekwencje zmiany dostępności przestrzeni parkingowej we wrażliwych obszarach centrów miast, Politechnika Krakowska, Kraków 2018.](https://yadda.icm.edu.pl/baztech/element/bwmeta1.element.baztech-51e98198-f84e-4b3f-8a4a-2492f1fef1df)
 2. [Duda-Wiertel U. Search traffic w obszarach z deficytem miejsc postojowych, Politechnika Krakowska, Kraków 2021.](https://yadda.icm.edu.pl/baztech/element/bwmeta1.element.baztech-d8bf4176-2ea0-4571-b5a5-bdc066343c33)
-3. [Rehman, Mujeeb & Shah, Munam. (2017). A smart parking system to minimize searching time, fuel consumption and CO2 emission. 1-6. 10.23919/IConAC.2017.8082088.](https://www.researchgate.net/publication/320826298_A_smart_parking_system_to_minimize_searching_time_fuel_consumption_and_CO2_emission)
-4. [Aliedani, Ali & Loke, Seng & Desai, Aniruddha & Desai, Prajakta. (2016). Investigating Vehicle-to-Vehicle Communication for Cooperative Car Parking: the CoPark Approach.](https://www.researchgate.net/publication/307534127_Investigating_Vehicle-to-Vehicle_Communication_for_Cooperative_Car_Parking_the_CoPark_Approach)
-5. [Richard Arnott & Tilmann Rave & Ronnie Schöb, 2005. "Alleviating Urban Traffic Congestion," MIT Press Books, The MIT Press, edition 1, volume 1, number 0262012197.](https://ideas.repec.org/b/mtp/titles/0262012197.html)
+3. [Aliedani, Ali & Loke, Seng & Desai, Aniruddha & Desai, Prajakta. (2016). Investigating Vehicle-to-Vehicle Communication for Cooperative Car Parking: the CoPark Approach.](https://www.researchgate.net/publication/307534127_Investigating_Vehicle-to-Vehicle_Communication_for_Cooperative_Car_Parking_the_CoPark_Approach)
