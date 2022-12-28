@@ -42,6 +42,11 @@ type PricingRule struct {
 	Repeating bool            `json:"repeating,omitempty"`
 }
 
+func (p PricingRule) Repeated() PricingRule {
+	p.Repeating = true
+	return p
+}
+
 type Rule struct {
 	// https://schema.org/openingHours
 	// https://wiki.openstreetmap.org/wiki/Key:opening_hours
@@ -52,13 +57,13 @@ type Rule struct {
 }
 
 type Dimensions struct {
-	Width  *int `json:"width,omitempty"`
-	Height *int `json:"height,omitempty"`
-	Length *int `json:"length,omitempty"`
+	Width  int `json:"width,omitempty"`
+	Height int `json:"height,omitempty"`
+	Length int `json:"length,omitempty"`
 }
 
 func (d *Dimensions) Empty() bool {
-	return d.Width == nil && d.Height == nil && d.Length == nil
+	return d.Width == 0 && d.Height == 0 && d.Length == 0
 }
 
 type Metadata struct {

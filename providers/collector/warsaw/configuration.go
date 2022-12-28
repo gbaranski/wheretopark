@@ -1,45 +1,31 @@
 package warsaw
 
 import (
-	"os"
 	wheretopark "wheretopark/go"
 
 	_ "embed"
-
-	"github.com/ghodss/yaml"
 )
 
-//go:embed default.yaml
-var defaultConfigurationContent string
-var DefaultConfiguration Configuration
+var configuration = &Configuration{
+	ParkingLots: make(map[string]wheretopark.Metadata),
+}
 
 func init() {
-	defaultConfiguration, err := ParseConfiguration(defaultConfigurationContent)
-	if err != nil {
-		panic(err)
+	for k, v := range ztpParkingLots {
+		v.PaymentMethods = append(v.PaymentMethods, ztpBasePaymentMethods...)
+		v.Features = append(v.Features, ztpBaseFeatures...)
+		v.Resources = append(v.Resources, ztpBasicResources...)
+		configuration.ParkingLots[k] = v
 	}
-	DefaultConfiguration = *defaultConfiguration
+	for k, v := range prParkingLots {
+		v.Resources = append(v.Resources, prBaseResources...)
+		v.Features = append(v.Features, prBaseFeatures...)
+		v.Comment = prComment
+		v.Rules = prRules
+		configuration.ParkingLots[k] = v
+	}
 }
 
 type Configuration struct {
-	ParkingLots map[wheretopark.ID]wheretopark.Metadata `json:"parkingLots"`
-}
-
-// Load Configuration from a YAML file
-func LoadConfiguration(path string) (*Configuration, error) {
-	yamlFile, err := os.ReadFile(path)
-	if err != nil {
-		return nil, err
-	}
-	return ParseConfiguration(string(yamlFile))
-}
-
-func ParseConfiguration(content string) (*Configuration, error) {
-	var configuration Configuration
-	err := yaml.Unmarshal([]byte(content), &configuration)
-	if err != nil {
-		return nil, err
-	}
-
-	return &configuration, nil
+	ParkingLots map[wheretopark.ID]wheretopark.Metadata
 }
