@@ -18,8 +18,7 @@ func init() {
 }
 
 type Provider struct {
-	configuration Configuration
-	mapping       map[int]wheretopark.ID
+	mapping map[int]wheretopark.ID
 }
 
 func (p Provider) GetMetadata() (map[wheretopark.ID]wheretopark.Metadata, error) {
@@ -29,7 +28,7 @@ func (p Provider) GetMetadata() (map[wheretopark.ID]wheretopark.Metadata, error)
 	}
 	metadatas := make(map[wheretopark.ID]wheretopark.Metadata)
 	for _, vendor := range vendorMetadata.Parkings {
-		configuration, exists := p.configuration.ParkingLots[vendor.ID]
+		configuration, exists := configuration.ParkingLots[vendor.ID]
 		if !exists {
 			log.Warn().Int("id", vendor.ID).Msg("missing configuration")
 			continue
@@ -83,20 +82,9 @@ func (p Provider) GetState() (map[wheretopark.ID]wheretopark.State, error) {
 	return states, nil
 }
 
-func NewProvider(configurationPath *string) (wheretopark.Provider, error) {
-	var configuration Configuration
-	if configurationPath == nil {
-		configuration = DefaultConfiguration
-	} else {
-		newConfiguration, err := LoadConfiguration(*configurationPath)
-		if err != nil {
-			return nil, err
-		}
-		configuration = *newConfiguration
-	}
+func NewProvider() (wheretopark.Provider, error) {
 	return Provider{
-		configuration: configuration,
-		mapping:       make(map[int]wheretopark.ID),
+		mapping: make(map[int]wheretopark.ID),
 	}, nil
 
 }

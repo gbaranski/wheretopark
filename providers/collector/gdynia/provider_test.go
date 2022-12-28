@@ -8,7 +8,7 @@ import (
 )
 
 func TestProvider(t *testing.T) {
-	provider, err := gdynia.NewProvider(nil)
+	provider, err := gdynia.NewProvider()
 	if err != nil {
 		t.Fatal(err)
 	}

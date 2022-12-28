@@ -21,11 +21,10 @@ type config struct {
 	DatabasePassword    string  `env:"DATABASE_PASSWORD" envDefault:"root"`
 	GdanskConfiguration *string `env:"GDANSK_CONFIGURATION"`
 	GdyniaConfiguration *string `env:"GDYNIA_CONFIGURATION"`
-	WarsawConfiguration *string `env:"WARSAW_CONFIGURATION"`
 }
 
-func runProvider(name string, createFn func(configPath *string) (wheretopark.Provider, error), configPath *string, client *wheretopark.Client) {
-	provider, err := createFn(configPath)
+func runProvider(name string, createFn func() (wheretopark.Provider, error), client *wheretopark.Client) {
+	provider, err := createFn()
 	if err != nil {
 		log.Fatalf("creating %s provider failed with error: %v", name, err)
 	}
@@ -55,9 +54,9 @@ func main() {
 		log.Fatalf("failed to sign in: %v", err)
 	}
 
-	go runProvider("gdansk", gdansk.NewProvider, config.GdanskConfiguration, client)
-	go runProvider("gdynia", gdynia.NewProvider, config.GdyniaConfiguration, client)
-	go runProvider("warsaw", warsaw.NewProvider, config.WarsawConfiguration, client)
+	go runProvider("gdansk", gdansk.NewProvider, client)
+	go runProvider("gdynia", gdynia.NewProvider, client)
+	go runProvider("warsaw", warsaw.NewProvider, client)
 
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, os.Interrupt, syscall.SIGTERM)

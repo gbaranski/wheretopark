@@ -22,7 +22,6 @@ func init() {
 }
 
 type Provider struct {
-	configuration Configuration
 }
 
 func (p Provider) GetMetadata() (map[wheretopark.ID]wheretopark.Metadata, error) {
@@ -33,7 +32,7 @@ func (p Provider) GetMetadata() (map[wheretopark.ID]wheretopark.Metadata, error)
 	metadatas := make(map[wheretopark.ID]wheretopark.Metadata)
 	for _, vendor := range data.Result.Parks {
 		id := wheretopark.CoordinateToID(vendor.Latitude, vendor.Longitude)
-		configuration, exists := p.configuration.ParkingLots[id]
+		configuration, exists := configuration.ParkingLots[id]
 		if !exists {
 			log.Warn().Str("name", vendor.Name).Msg("missing configuration")
 			continue
@@ -50,11 +49,11 @@ func (p Provider) GetMetadata() (map[wheretopark.ID]wheretopark.Metadata, error)
 			}
 			widthInCm := int(width.Mul(decimal.NewFromInt(100)).IntPart())
 			lengthInCm := int(length.Mul(decimal.NewFromInt(100)).IntPart())
-			if maxDimensions.Width == nil || widthInCm < *maxDimensions.Width {
-				maxDimensions.Width = &widthInCm
+			if maxDimensions.Width == 0 || widthInCm < maxDimensions.Width {
+				maxDimensions.Width = widthInCm
 			}
-			if maxDimensions.Length == nil || lengthInCm < *maxDimensions.Length {
-				maxDimensions.Length = &lengthInCm
+			if maxDimensions.Length == 0 || lengthInCm < maxDimensions.Length {
+				maxDimensions.Length = lengthInCm
 			}
 		}
 		if maxDimensions.Empty() {
@@ -120,19 +119,7 @@ func (p Provider) GetState() (map[wheretopark.ID]wheretopark.State, error) {
 	return states, nil
 }
 
-func NewProvider(configurationPath *string) (wheretopark.Provider, error) {
-	var configuration Configuration
-	if configurationPath == nil {
-		configuration = DefaultConfiguration
-	} else {
-		newConfiguration, err := LoadConfiguration(*configurationPath)
-		if err != nil {
-			return nil, err
-		}
-		configuration = *newConfiguration
-	}
-	return Provider{
-		configuration: configuration,
-	}, nil
+func NewProvider() (wheretopark.Provider, error) {
+	return Provider{}, nil
 
 }
