@@ -24,6 +24,12 @@ func init() {
 		v.Rules = prRules
 		configuration.ParkingLots[k] = v
 	}
+
+	for k, v := range configuration.ParkingLots {
+		v.Comment["pl"] += "\nŹródło danych: Miasto Stołeczne Warszawa."
+		v.Comment["en"] += "\nSource of data: Capital City of Warsaw."
+		configuration.ParkingLots[k] = v
+	}
 }
 
 type Configuration struct {
