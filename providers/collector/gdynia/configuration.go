@@ -127,16 +127,11 @@ var (
 	}
 
 	defaultComment = map[string]string{
-		"pl": `
-			Parking znajduje się w śródmiejskiej strefie płatnego parkowania.
-			
-			Opłaty za postój pojazdu WD sa określone na https://www.zdiz.gdynia.pl/parkowanie/oplaty/
-		  
-			Bezpłatny postój w niedzielę z identyfikatorem Mieszkańca Gdyni
-		  
-			Opłat nie pobiera się 1 i 6 stycznia, w niedzielę i poniedziałek Świąt Wielkanocnych, 25 i 26 grudnia
-		  
-			Długoterminowe abonamenty są określone na https://www.zdiz.gdynia.pl/parkowanie/oplaty/
+		"pl": `Parking znajduje się w śródmiejskiej strefie płatnego parkowania.
+Opłaty za postój pojazdu WD sa określone na https://www.zdiz.gdynia.pl/parkowanie/oplaty/
+Bezpłatny postój w niedzielę z identyfikatorem Mieszkańca Gdyni
+Opłat nie pobiera się 1 i 6 stycznia, w niedzielę i poniedziałek Świąt Wielkanocnych, 25 i 26 grudnia
+Długoterminowe abonamenty są określone na https://www.zdiz.gdynia.pl/parkowanie/oplaty/
 		`,
 	}
 )
