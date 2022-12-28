@@ -109,20 +109,21 @@ func ztpRules(car ztpPrices, truck ztpPrices) []wheretopark.Rule {
 }
 
 func ztpComment(priceForInhabitants int, inhabitantsOnlyDaily bool) map[string]string {
-	comment := ""
+	comment := make(map[string]string)
 	if priceForInhabitants > 0 {
-		comment += fmt.Sprintf("Dla mieszkancow z adresem zameldowania w bezpośrednim sąsiedzstwie parkingu stosuje sie opłatę abonamentową w wys. %d zł miesięcznie", priceForInhabitants)
+		comment["pl"] = fmt.Sprintf("Dla mieszkancow z adresem zameldowania w bezpośrednim sąsiedzstwie parkingu stosuje sie opłatę abonamentową w wys. %d zł miesięcznie", priceForInhabitants)
+		comment["en"] = fmt.Sprintf("For inhabitatns with home address in the direct neighborhood of the parking lot, subscription fee of %d PLN monthly is being applied", priceForInhabitants)
 		if inhabitantsOnlyDaily {
-			comment += ". Tyczy się to wyłącznie samochodów osobowych i motocykli w ofercie całodobowej."
+			comment["pl"] += ". Tyczy się to wyłącznie samochodów osobowych i motocykli w ofercie całodobowej.\n"
+			comment["en"] += ". Applied only for cars and motorcycles in the 24-hour offer.\n"
+		} else {
+			comment["pl"] += ".\n"
+			comment["en"] += ".\n"
 		}
 	}
-	if comment == "" {
-		return nil
-	} else {
-		return map[string]string{
-			"pl": comment,
-		}
-	}
+	comment["pl"] += "Źródło danych: Miasto Stołeczne Warszawa."
+	comment["en"] += "Source of data: Capital City of Warsaw."
+	return comment
 }
 
 var (

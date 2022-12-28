@@ -20,30 +20,55 @@ var (
 	}
 
 	prComment = map[string]string{
-		"pl": `
-		Parkingi przeznaczone są dla samochodów osobowych, motocykli, rowerów i motorowerów.
-        System parkingów „Parkuj i Jedź” (Park & Ride) umożliwia bezpłatne parkowanie pojazdów osobom, które w chwili wyjazdu z parkingu przedstawią ważny bilet:
-          - dobowy,
-          - 3-dniowy,
-          - weekendowy,
-          - weekendowy grupowy,
-          - 30-dniowy,
-          - 90-dniowy,
-          - bilet seniora,
-          - bilet dla dzieci z rodzin z trójką dzieci
-          - dokument uprawniający do bezpłatnych przejazdów środkami lokalnego transportu zbiorowego organizowanego przez m.st. Warszawę.
+		"pl": `Parkingi przeznaczone są dla samochodów osobowych, motocykli, rowerów i motorowerów.
+System parkingów „Parkuj i Jedź” (Park & Ride) umożliwia bezpłatne parkowanie pojazdów osobom, które w chwili wyjazdu z parkingu przedstawią ważny bilet:
+  - dobowy,
+  - 3-dniowy,
+  - weekendowy,
+  - weekendowy grupowy,
+  - 30-dniowy,
+  - 90-dniowy,
+  - bilet seniora,
+  - bilet dla dzieci z rodzin z trójką dzieci
+  - dokument uprawniający do bezpłatnych przejazdów środkami lokalnego transportu zbiorowego organizowanego przez m.st. Warszawę.
 
-        W innym przypadku użytkownik jest zobowiązany do uiszczenia przy wyjeździe z parkingu jednorazowej opłaty za wynajem miejsca parkingowego w wysokości 100 zł.
+W innym przypadku użytkownik jest zobowiązany do uiszczenia przy wyjeździe z parkingu jednorazowej opłaty za wynajem miejsca parkingowego w wysokości 100 zł.
 
-        Opłata zaczyna być naliczana po upływie 20 minut od wjazdu na parking.
+Opłata zaczyna być naliczana po upływie 20 minut od wjazdu na parking.
 
-        Opłaty nie pobiera się za:
-          - postój rowerów, motorowerów i motocykli,
-          - postój pojazdów Zarządcy oraz obsługi parkingu podczas wykonywania czynności eksploatacyjnych,
-          - ładowanie pojazdów elektrycznych.
+Opłaty nie pobiera się za:
+  - postój rowerów, motorowerów i motocykli,
+  - postój pojazdów Zarządcy oraz obsługi parkingu podczas wykonywania czynności eksploatacyjnych,
+  - ładowanie pojazdów elektrycznych.
 
-        Kontrola uprawnień odbywa się wyrywkowo przez kontrolerów przy wyjeździe na zasadach kontroli w pojazdach komunikacji miejskiej.
-		`,
+Kontrola uprawnień odbywa się wyrywkowo przez kontrolerów przy wyjeździe na zasadach kontroli w pojazdach komunikacji miejskiej.
+
+Źródło danych: Miasto Stołeczne Warszawa.`,
+
+		"en": `Parking lots are intended for cars, motorcycles, bicycles and mopeds.
+The "Park and Ride" (Park & Ride) parking system allows free parking for vehicles that present a valid ticket at the time of departure from the car park:
+  - daily,
+  - 3-day,
+  - weekend,
+  - group weekend,
+  - 30-day,
+  - 90-day,
+  - senior ticket,
+  - ticket for children from families with three children
+  - document entitling to free rides with local public transport organized by the City of Warsaw.
+
+In other cases, the user is obliged to pay a one-time fee for renting a parking space upon departure from the car park in the amount of 100 PLN.
+
+The fee starts to be charged after 20 minutes from entering the car park.
+
+Fees are not charged for:
+  - parking bicycles, mopeds and motorcycles,
+  - parking vehicles of the Manager and parking staff during the performance of maintenance activities,
+  - charging electric vehicles.
+
+The right to use is checked randomly by controllers upon departure on the basis of control in public transport vehicles.
+
+Data source: City of Warsaw.`,
 	}
 
 	prParkingLots = map[string]wheretopark.Metadata{
