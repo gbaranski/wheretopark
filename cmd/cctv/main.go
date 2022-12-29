@@ -48,7 +48,6 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	defer provider.Close()
 	err = wheretopark.RunProvider(client, provider)
 	if err != nil {
 		panic(err)

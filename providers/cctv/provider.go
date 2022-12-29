@@ -12,7 +12,6 @@ import (
 type Provider struct {
 	configuration Configuration
 	model         *Model
-	streams       [][]*gocv.VideoCapture
 	savePath      *string
 }
 
@@ -32,7 +31,7 @@ func (p Provider) GetState() (map[wheretopark.ID]wheretopark.State, error) {
 
 	img := gocv.NewMat()
 	defer img.Close()
-	for i, parkingLot := range p.configuration.ParkingLots {
+	for _, parkingLot := range p.configuration.ParkingLots {
 		availableSpots := 0
 		captureTime := time.Now()
 		id := wheretopark.GeometryToID(parkingLot.Geometry)
@@ -41,7 +40,12 @@ func (p Provider) GetState() (map[wheretopark.ID]wheretopark.State, error) {
 				Str("name", parkingLot.Name).
 				Int("camera", k).
 				Msg("processing parking lot")
-			stream := p.streams[i][k]
+
+			stream, err := gocv.OpenVideoCapture(camera.URL)
+			if err != nil {
+				return nil, err
+			}
+			defer stream.Close()
 			if ok := stream.Read(&img); !ok {
 				log.Error().
 					Str("name", parkingLot.Name).
@@ -84,18 +88,6 @@ func (p Provider) GetState() (map[wheretopark.ID]wheretopark.State, error) {
 	return states, nil
 }
 
-func (p Provider) Close() error {
-	for _, streams := range p.streams {
-		for _, stream := range streams {
-			if err := stream.Close(); err != nil {
-				return err
-			}
-		}
-
-	}
-	return nil
-}
-
 func NewProvider(configurationPath *string, model *Model, savePath *string) (*Provider, error) {
 	var configuration Configuration
 	if configurationPath == nil {
@@ -108,32 +100,9 @@ func NewProvider(configurationPath *string, model *Model, savePath *string) (*Pr
 		configuration = *newConfiguration
 	}
 
-	streams := make([][]*gocv.VideoCapture, len(configuration.ParkingLots))
-	for i, parkingLot := range configuration.ParkingLots {
-		streams[i] = make([]*gocv.VideoCapture, len(parkingLot.Cameras))
-		for k, camera := range parkingLot.Cameras {
-			log.Info().
-				Str("url", camera.URL).
-				Str("name", parkingLot.Name).
-				Int("camera", k).
-				Msg("connecting")
-			stream, err := gocv.OpenVideoCapture(camera.URL)
-			if err != nil {
-				return nil, err
-			}
-			log.Info().
-				Str("url", camera.URL).
-				Str("name", parkingLot.Name).
-				Int("camera", k).
-				Msg("connected")
-			streams[i][k] = stream
-		}
-	}
-
 	return &Provider{
 		configuration: configuration,
 		model:         model,
-		streams:       streams,
 		savePath:      savePath,
 	}, nil
 
