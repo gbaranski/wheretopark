@@ -24,6 +24,7 @@ func (m *Model) Predict(img gocv.Mat) float32 {
 
 	m.net.SetInput(blob, "input_1")
 	prob := m.net.Forward("")
+	defer prob.Close()
 	prediction := prob.GetFloatAt(0, 0)
 	return prediction
 

@@ -31,6 +31,7 @@ func (p Provider) GetState() (map[wheretopark.ID]wheretopark.State, error) {
 	states := make(map[wheretopark.ID]wheretopark.State)
 
 	img := gocv.NewMat()
+	defer img.Close()
 	for i, parkingLot := range p.configuration.ParkingLots {
 		availableSpots := 0
 		captureTime := time.Now()
@@ -49,6 +50,11 @@ func (p Provider) GetState() (map[wheretopark.ID]wheretopark.State, error) {
 				continue
 			}
 			spotImages := ExtractSpots(img, camera.Spots)
+			defer func() {
+				for _, spotImage := range spotImages {
+					spotImage.Close()
+				}
+			}()
 			predictions := p.model.PredictMany(spotImages)
 			for _, prediction := range predictions {
 				if prediction > 0.5 {
@@ -57,8 +63,14 @@ func (p Provider) GetState() (map[wheretopark.ID]wheretopark.State, error) {
 			}
 
 			if p.savePath != nil {
-				basePath := fmt.Sprintf("%s/%s/%s/%02d", *p.savePath, id, captureTime.UTC().Format("2006-01-02--15-04-05"), k+1)
-				SavePredictions(img, basePath, camera.Spots, predictions)
+				basePath := fmt.Sprintf("%s/%s/%02d", *p.savePath, id, k+1)
+				err := SavePredictions(img, basePath, captureTime, camera.Spots, predictions)
+				if err != nil {
+					log.Error().
+						Str("name", parkingLot.Name).
+						Int("camera", k).
+						Msg("unable to save predictions")
+				}
 			}
 		}
 		state := wheretopark.State{

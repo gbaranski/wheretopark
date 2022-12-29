@@ -6,6 +6,8 @@ import (
 	"image"
 	"image/color"
 	"os"
+	"path/filepath"
+	"time"
 
 	"gocv.io/x/gocv"
 )
@@ -23,9 +25,11 @@ func CropSpot(cvFrame gocv.Mat, spot *ParkingSpot) gocv.Mat {
 	// obtain transformation
 	points := spot.ImagePoints()
 	cvPoints := gocv.NewPointVectorFromPoints(points)
+	defer cvPoints.Close()
 	cvMinAreaRect := gocv.MinAreaRect(cvPoints)
 	size := image.Point{X: cvMinAreaRect.Width, Y: cvMinAreaRect.Height}
 	cvBoxMat := gocv.NewMat()
+	defer cvBoxMat.Close()
 	gocv.BoxPoints(cvMinAreaRect, &cvBoxMat)
 	box := []image.Point{}
 	for i := 0; i < cvBoxMat.Rows(); i++ {
@@ -36,6 +40,7 @@ func CropSpot(cvFrame gocv.Mat, spot *ParkingSpot) gocv.Mat {
 	}
 
 	cvBox := gocv.NewPointVectorFromPoints(box)
+	defer cvBox.Close()
 	cvDestination := gocv.NewPointVectorFromPoints(
 		[]image.Point{
 			{X: 0, Y: size.Y - 1},
@@ -44,7 +49,9 @@ func CropSpot(cvFrame gocv.Mat, spot *ParkingSpot) gocv.Mat {
 			{X: size.X - 1, Y: size.Y - 1},
 		},
 	)
+	defer cvDestination.Close()
 	cvTransformation := gocv.GetPerspectiveTransform(cvBox, cvDestination)
+	defer cvTransformation.Close()
 
 	// transform
 	cvOutput := gocv.NewMat()
@@ -62,7 +69,9 @@ func VisualizeSpotPrediction(img *gocv.Mat, spot ParkingSpot, prediction float32
 	}
 	points := spot.ImagePoints()
 	cvPoints := gocv.NewPointVectorFromPoints(points)
+	defer cvPoints.Close()
 	cvPointsVector := gocv.NewPointsVectorFromPoints([][]image.Point{points})
+	defer cvPointsVector.Close()
 	cvMinAreaRect := gocv.MinAreaRect(cvPoints)
 	gocv.Polylines(img, cvPointsVector, true, drawingColor, 2)
 	gocv.PutText(img, fmt.Sprintf("%.2f", prediction), cvMinAreaRect.Center, gocv.FontHersheyPlain, 1.0, drawingColor, 1)
@@ -76,8 +85,11 @@ func ExtractSpots(img gocv.Mat, spots []ParkingSpot) []gocv.Mat {
 	return images
 }
 
-func SaveRawImage(img gocv.Mat, basePath string) error {
-	path := fmt.Sprintf("%s/raw.jpg", basePath)
+func SaveRawImage(img gocv.Mat, path string) error {
+	directory := filepath.Dir(path)
+	if err := os.MkdirAll(directory, os.ModePerm); err != nil {
+		return fmt.Errorf("failed to create directory %s: %w", directory, err)
+	}
 	ok := gocv.IMWrite(path, img)
 	if !ok {
 		return fmt.Errorf("failed to write raw image to %s", path)
@@ -85,7 +97,11 @@ func SaveRawImage(img gocv.Mat, basePath string) error {
 	return nil
 }
 
-func SaveResults(basePath string, spots []ParkingSpot, predictions []float32) error {
+func SaveResults(spots []ParkingSpot, predictions []float32, path string) error {
+	directory := filepath.Dir(path)
+	if err := os.MkdirAll(directory, os.ModePerm); err != nil {
+		return fmt.Errorf("failed to create directory %s: %w", directory, err)
+	}
 	spotResults := make([]SpotResult, len(predictions))
 	for i, prediction := range predictions {
 		spot := spots[i]
@@ -101,7 +117,6 @@ func SaveResults(basePath string, spots []ParkingSpot, predictions []float32) er
 	if err != nil {
 		return fmt.Errorf("failed to marshal result: %w", err)
 	}
-	path := fmt.Sprintf("%s/result.json", basePath)
 	err = os.WriteFile(path, resultJSON, 0644)
 	if err != nil {
 		return fmt.Errorf("failed to write result to %s: %w", path, err)
@@ -109,12 +124,15 @@ func SaveResults(basePath string, spots []ParkingSpot, predictions []float32) er
 	return nil
 }
 
-func SaveVisualizations(img gocv.Mat, basePath string, spots []ParkingSpot, predictions []float32) error {
+func SaveVisualizations(img gocv.Mat, spots []ParkingSpot, predictions []float32, path string) error {
+	directory := filepath.Dir(path)
+	if err := os.MkdirAll(directory, os.ModePerm); err != nil {
+		return fmt.Errorf("failed to create directory %s: %w", directory, err)
+	}
 	for i, prediction := range predictions {
 		spot := spots[i]
 		VisualizeSpotPrediction(&img, spot, prediction)
 	}
-	path := fmt.Sprintf("%s/visualization.jpg", basePath)
 	ok := gocv.IMWrite(path, img)
 	if !ok {
 		return fmt.Errorf("failed to write visualization to %s", path)
@@ -122,17 +140,15 @@ func SaveVisualizations(img gocv.Mat, basePath string, spots []ParkingSpot, pred
 	return nil
 }
 
-func SavePredictions(img gocv.Mat, basePath string, spots []ParkingSpot, predictions []float32) error {
-	if err := os.MkdirAll(basePath, os.ModePerm); err != nil {
-		return fmt.Errorf("failed to create directory %s: %w", basePath, err)
-	}
-	if err := SaveRawImage(img, basePath); err != nil {
+func SavePredictions(img gocv.Mat, basePath string, captureTime time.Time, spots []ParkingSpot, predictions []float32) error {
+	time := captureTime.UTC().Format("2006-01-02--15-04-05")
+	if err := SaveRawImage(img, fmt.Sprintf("%s/images/%s.jpg", basePath, time)); err != nil {
 		return err
 	}
-	if err := SaveResults(basePath, spots, predictions); err != nil {
+	if err := SaveResults(spots, predictions, fmt.Sprintf("%s/results/%s.json", basePath, time)); err != nil {
 		return err
 	}
-	if err := SaveVisualizations(img, basePath, spots, predictions); err != nil {
+	if err := SaveVisualizations(img, spots, predictions, fmt.Sprintf("%s/visualizations/%s.jpg", basePath, time)); err != nil {
 		return err
 	}
 	return nil
