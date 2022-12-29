@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { currentMap } from "$lib/store";
-	import { onMount } from "svelte";
 	import List from "../components/List.svelte";
 	import type { LayoutData } from "../types/layout";
 	

@@ -15,6 +15,8 @@
 		"devDependencies": {
 				"@sveltejs/adapter-node": "1.0.0-next.100",
 				"@sveltejs/kit": "1.0.0-next.525",
+				"@types/geoip-lite": "^1.4.1",
+				"@types/haversine": "^1.1.5",
 				"@types/mapbox-gl": "^2.7.6",
 				"@types/node": "^18.11.5",
 				"@typescript-eslint/eslint-plugin": "^5.41.0",
@@ -36,7 +38,9 @@
 				"@svelteuidev/core": "^0.7.5",
 				"@types/geojson": "^7946.0.10",
 				"dayjs": "^1.11.6",
+				"geoip-lite": "^1.4.6",
 				"geojson": "^0.5.0",
+				"haversine": "^1.1.1",
 				"mapbox-gl": "^2.10.0",
 				"opening_hours": "^3.8.0",
 				"surrealdb.js": "^0.5.0",

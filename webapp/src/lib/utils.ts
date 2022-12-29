@@ -1,4 +1,5 @@
-import { Feature, ParkingLotStatus, SpotType, type LanguageCode, type Metadata, type ParkingLot } from "./types";
+import { Feature, ParkingLotStatus, SpotType, type Coordinate, type LanguageCode, type Metadata, type ParkingLot } from "./types";
+import haversine from 'haversine';
 
 export function capitalizeFirstLetter(s: string) {
     return s.charAt(0).toUpperCase() + s.slice(1);
@@ -151,4 +152,8 @@ export const googleMapsLink = (geometry: GeoJSON.Point) => {
 export const preferredComment = (comment: Record<LanguageCode, string>): string | undefined => {
     // const language = navigator.language as LanguageCode;
     return comment["en"] || comment["pl"];
+}
+
+export const distanceBetweenPoints = (a: GeoJSON.Point, b: GeoJSON.Point) => {
+    return haversine({geometry: a}, {geometry: b}, {format: 'geojson'});
 }
