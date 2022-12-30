@@ -25,7 +25,7 @@ struct PreviewView: View {
                 .fontWeight(.bold)
             Label(metadata.address, systemImage: "map.circle")
                 .font(.subheadline)
-            Label("\(state.availableSpots["CAR"] ?? 0) \(String(localized: "parkingLot.availableSpots"))", systemImage: "parkingsign.circle")
+            Label("\(state.availableSpots[ParkingSpotType.car.rawValue] ?? 0) \(String(localized: "parkingLot.availableSpots"))", systemImage: "parkingsign.circle")
                 .font(.subheadline)
             if let userLocation: CLLocation = locationManager.lastLocation {
                 let distance = parkingLot.metadata.geometry.distance(from: userLocation)
@@ -48,7 +48,7 @@ struct PreviewView_Previews: PreviewProvider {
     static var previews: some View {
         ZStack(alignment: .center) {
             Color.green.ignoresSafeArea()
-            PreviewView(parkingLot: ParkingLot.galeriaBaltycka)
+            PreviewView(parkingLot: ParkingLot.example)
                 .environmentObject(locationManager)
         }
     }

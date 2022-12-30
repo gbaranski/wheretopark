@@ -14,8 +14,40 @@ import CodableGeoJSON
 import SwiftUI
 
 
-typealias ParkingSpotType = String
 typealias LanguageCode = String
+
+enum ParkingSpotType: String, Equatable, CaseIterable {
+    case car = "CAR"
+    case carDisabled = "CAR_DISABLED"
+    case carElectric = "CAR_ELECTRIC"
+    case motorcycle = "MOTORCYCLE"
+    case truck = "TRUCK"
+    case bus = "BUS"
+    case unknown
+    
+    func emoji() -> Text {
+        let emojis: [Self : String] = [
+            .car: "🚗",
+            .carDisabled: "♿️",
+            .carElectric: "⚡",
+            .motorcycle: "🏍️",
+            .truck: "🚚",
+            .bus: "🚌",
+            .unknown: "❔",
+        ]
+        return Text(emojis[self]!)
+    }
+}
+
+extension ParkingSpotType: Codable {
+    init(from decoder: Decoder) throws {
+        let container = try decoder.singleValueContainer()
+        let value = try container.decode(String.self)
+        let spotType = ParkingSpotType.allCases.first{ $0.rawValue == value }
+        self = spotType ?? ParkingSpotType.unknown
+    }
+}
+
 
 enum ParkingLotStatus: String, Codable {
     case opensSoon
@@ -84,7 +116,7 @@ struct ParkingLotMetadata: Decodable {
     var address: String
     var geometry: GeoJSON.Geometry
     var resources: [URL]
-    var totalSpots: [ParkingSpotType : UInt]
+    var totalSpots: [String : UInt]
     var maxDimensions: Dimensions?
     var features: [String]
     @Default<Empty>
@@ -98,7 +130,7 @@ struct ParkingLotMetadata: Decodable {
 
 struct ParkingLotState: Decodable {
     let lastUpdated: Date
-    let availableSpots: [ParkingSpotType : UInt]
+    let availableSpots: [String : UInt]
 }
 
 struct ParkingLot: Decodable {
@@ -108,7 +140,7 @@ struct ParkingLot: Decodable {
 
 
 extension ParkingLot {
-    static let galeriaBaltycka =  ParkingLot(
+    static let example =  ParkingLot(
         metadata: ParkingLotMetadata(
             name: "Galeria Bałtycka",
             address: "ul.Dmowskiego",
@@ -119,7 +151,7 @@ extension ParkingLot {
                 URL(string: "https://www.galeriabaltycka.pl/o-centrum/dojazd-parkingi/parkingi/")!
             ],
             totalSpots: [
-                "CAR": 1100
+                ParkingSpotType.car.rawValue: 1100
             ],
             features: ["COVERED", "UNCOVERED"],
             paymentMethods: Default(wrappedValue: ["CASH", "CONTACTLESS", "CARD"]),
@@ -143,12 +175,26 @@ extension ParkingLot {
                         ParkingLotPricingRule(duration: DateComponents(day: 1), price: 25),
                     ]
                 ),
+                ParkingLotRule(
+                    hours: "Mo-Sa 08:00-22:00; Su 09:00-21:00",
+                    applies: Default(wrappedValue: [
+                        ParkingSpotType.truck,
+                        ParkingSpotType.bus
+                    ]),
+                    pricing: [
+                        ParkingLotPricingRule(duration: DateComponents(hour: 1), price: 2),
+                        ParkingLotPricingRule(duration: DateComponents(hour: 2), price: 4),
+                        ParkingLotPricingRule(duration: DateComponents(hour: 3), price: 6),
+                        ParkingLotPricingRule(duration: DateComponents(hour: 1), price: 8, repeating: true),
+                        ParkingLotPricingRule(duration: DateComponents(day: 1), price: 50),
+                    ]
+                ),
             ]
         ),
         state: ParkingLotState(
             lastUpdated: Calendar.current.date(byAdding: .second, value: -10, to: Date.now)!,
             availableSpots: [
-                "CAR": 123
+                ParkingSpotType.car.rawValue: 123
             ]
         )
     )

@@ -125,7 +125,7 @@ extension ParkingLotMetadata {
 
 extension ParkingLot {
     func tintColor() -> Color {
-        let availabilityColor = availabilityColor(available: state.availableSpots["CAR"]!, total: metadata.totalSpots["CAR"]!)
+        let availabilityColor = availabilityColor(available: state.availableSpots[ParkingSpotType.car.rawValue]!, total: metadata.totalSpots[ParkingSpotType.car.rawValue]!)
         let status = metadata.status()
         let tintColor = status == .closed ? .red : status == .closesSoon ? .yellow : availabilityColor
         return tintColor

@@ -92,8 +92,8 @@ struct DetailsView: View {
                             .foregroundColor(.secondary)
                             .textCase(.uppercase)
                         Group {
-                            let availableSpots = parkingLot.state.availableSpots["CAR"] ?? 0
-                            let totalSpots = parkingLot.metadata.totalSpots["CAR"] ?? 0
+                            let availableSpots = parkingLot.state.availableSpots[ParkingSpotType.car.rawValue] ?? 0
+                            let totalSpots = parkingLot.metadata.totalSpots[ParkingSpotType.car.rawValue] ?? 0
                             let color = availabilityColor(available: availableSpots, total: totalSpots)
                             Text("\(availableSpots)").fontWeight(.heavy).foregroundColor(color) +
                             Text(" / \(totalSpots) cars").fontWeight(.heavy).foregroundColor(color).font(.caption)
@@ -187,22 +187,7 @@ struct DetailsRuleView: View {
             }
             HStack {
                 ForEach(Array(rule.applies.enumerated()), id: \.1) { i, spotType in
-                    switch(spotType) {
-                    case "CAR":
-                        Image(systemName: "car.fill")
-                    case "CAR_DISABLED":
-                        Text("♿️")
-                    case "CAR_ELECTRIC":
-                        Image(systemName: "bolt.car.fill")
-                    case "MOTORCYCLE":
-                        Image(systemName: "bicycle")
-                    case "TRUCK":
-                        Image(systemName: "box.truck.fill")
-                    case "BUS":
-                        Image(systemName: "bus.fill")
-                    default:
-                        Image(systemName: "questionmark.diamond")
-                    }
+                    spotType.emoji()
                     if i != (rule.applies.count) - 1 {
                         Divider()
                     }
@@ -262,7 +247,7 @@ struct DetailsAdditionalInfo: View {
     var body: some View {
         Group {
             DetailsAdditionalInfoField(name: "parkingLot") {
-                Text("\(metadata.totalSpots["CAR"] ?? 0) \(String(localized: "parkingLot.totalSpots"))")
+                Text("\(metadata.totalSpots[ParkingSpotType.car.rawValue] ?? 0) \(String(localized: "parkingLot.totalSpots"))")
             }
             DetailsAdditionalInfoField(name: "parkingLot.address") {
                 Text("\(metadata.address)")
@@ -317,8 +302,8 @@ struct DetailsSendFeedbackView: View {
 struct DetailsView_Previews: PreviewProvider {
     static var previews: some View {
         DetailsView(
-            id: "u3tjrk061424",
-            parkingLot: ParkingLot.galeriaBaltycka
+            id: "abcdefg",
+            parkingLot: ParkingLot.example
         ).padding([.horizontal])
     }
 }
