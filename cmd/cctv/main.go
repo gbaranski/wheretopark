@@ -1,7 +1,6 @@
 package main
 
 import (
-	"log"
 	"net/url"
 	"os"
 	"os/signal"
@@ -10,6 +9,8 @@ import (
 	"wheretopark/providers/cctv"
 
 	"github.com/caarlos0/env/v6"
+	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/log"
 )
 
 type environment struct {
@@ -23,23 +24,24 @@ type environment struct {
 }
 
 func main() {
+	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
 	environment := environment{}
 	if err := env.Parse(&environment); err != nil {
-		log.Fatalf("%+v\n", err)
+		log.Fatal().Err(err).Send()
 	}
 
 	url, err := url.Parse(environment.DatabaseURL)
 	if err != nil {
-		log.Fatalf("invalid database url: %s", err)
+		log.Fatal().Err(err).Msg("invalid database URL")
 	}
 	client, err := wheretopark.NewClient(url, "wheretopark", environment.DatabaseName)
 	if err != nil {
-		log.Fatalf("failed to create database client: %v", err)
+		log.Fatal().Err(err).Msg("failed to create database client")
 	}
 	defer client.Close()
 	err = client.SignInWithPassword(environment.DatabaseUser, environment.DatabasePassword)
 	if err != nil {
-		log.Fatalf("failed to sign in: %v", err)
+		log.Fatal().Err(err).Msg("failed to sign in")
 	}
 
 	model := cctv.NewModel(environment.Model)

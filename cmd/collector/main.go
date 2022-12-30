@@ -1,7 +1,6 @@
 package main
 
 import (
-	"log"
 	"net/url"
 	"os"
 	"os/signal"
@@ -12,6 +11,8 @@ import (
 	"wheretopark/providers/collector/warsaw"
 
 	"github.com/caarlos0/env/v6"
+	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/log"
 )
 
 type config struct {
@@ -26,32 +27,33 @@ type config struct {
 func runProvider(name string, createFn func() (wheretopark.Provider, error), client *wheretopark.Client) {
 	provider, err := createFn()
 	if err != nil {
-		log.Fatalf("creating %s provider failed with error: %v", name, err)
+		log.Fatal().Err(err).Str("name", name).Msg("creating provider failed")
 	}
 	err = wheretopark.RunProvider(client, provider)
 	if err != nil {
-		log.Fatalf("running %s provider failed with error: %v", name, err)
+		log.Fatal().Err(err).Str("name", name).Msg("running provider failed")
 	}
 }
 
 func main() {
+	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
 	config := config{}
 	if err := env.Parse(&config); err != nil {
-		log.Fatalf("%+v\n", err)
+		log.Fatal().Err(err).Send()
 	}
 
 	url, err := url.Parse(config.DatabaseURL)
 	if err != nil {
-		log.Fatalf("invalid database url: %s", err)
+		log.Fatal().Err(err).Msg("invalid database URL")
 	}
 	client, err := wheretopark.NewClient(url, "wheretopark", config.DatabaseName)
 	if err != nil {
-		log.Fatalf("failed to create database client: %v", err)
+		log.Fatal().Err(err).Msg("failed to create database client")
 	}
 	defer client.Close()
 	err = client.SignInWithPassword(config.DatabaseUser, config.DatabasePassword)
 	if err != nil {
-		log.Fatalf("failed to sign in: %v", err)
+		log.Fatal().Err(err).Msg("failed to sign in")
 	}
 
 	go runProvider("gdansk", gdansk.NewProvider, client)
