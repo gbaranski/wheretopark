@@ -20,7 +20,7 @@ type environment struct {
 	DatabasePassword string  `env:"DATABASE_PASSWORD" envDefault:"changeThisPassword"`
 	Configuration    *string `env:"CONFIGURATION"`
 	Model            string  `env:"MODEL" envDefault:"$HOME/.local/share/wheretopark/cctv/model.onnx" envExpand:"true"`
-	SavePath         *string `env:"SAVE_PATH" envDefault:"$HOME/.cache/wheretopark/cctv" envExpand:"true"`
+	SavePath         *string `env:"SAVE_PATH" envExpand:"true"`
 }
 
 func main() {
