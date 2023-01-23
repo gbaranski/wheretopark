@@ -43,9 +43,6 @@ services:
       DATABASE_USER: ${SURREALDB_USER}
       DATABASE_PASSWORD: ${SURREALDB_PASSWORD}
       MODEL: /opt/wheretopark/cctv/model.onnx
-    volumes:
-      - $HOME/.local/share/wheretopark/cctv:/opt/wheretopark/cctv
-      - $HOME/.cache/wheretopark/cctv:/root/.cache/wheretopark/cctv
     depends_on:
       - surrealdb
 
