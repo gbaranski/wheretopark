@@ -17,7 +17,9 @@ At the moment, only the website is open-source, although we're planning on open-
 
 ### What parking lots do you support?
 
-In Tricity we currently support almost 20 parking lots, but we're looking into further expansion.
+
+At the moment we support around 40 parking lots in cities such as Gdańsk, Warsaw and Kłodzko. 
+We're planning on expanding the list of supported parking lots.
 
 ### I'd like to add support for my parking lot to promote it, how can I do that?
 

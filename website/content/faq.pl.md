@@ -14,7 +14,8 @@ weight = 2
 
 ### Jakie parkingi są wspierane?
 
-Aktualnie wspieramy aktualnie około 20 parkingów w trójmieście, ale docelowo ta liczba będzie rosła.
+Aktualnie wspieramy około 40 parkingów, w miastach takich jak Gdańsk, Warszawa i Kłodzko. 
+Docelowo liczba dostępnych parkingów będzie rosła.
 
 ### Chciałbym dodac wsparcie dla mojego parkingu, żeby go wypromowac, jak to zrobić?
 
