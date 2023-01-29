@@ -33,6 +33,13 @@ parkingLot.status.open = "Otwarte";
 parkingLot.status.closesSoon = "Wkrótce zamknięte";
 parkingLot.status.closed = "Zamknięte";
 
+CAR = "Samochód";
+CAR_DISABLED = "Niepełnosprawni";
+CAR_ELECTRIC = "Samochód elektryczny";
+MOTORCYCLE = "Motocykl";
+TRUCK = "Samochód ciężarowy";
+BUS = "Autobus";
+
 url.unrecognized = "Nierozpoznany typ";
 url.website = "Strona Internetowa";
 url.phoneNumber = "Numer telefonu";

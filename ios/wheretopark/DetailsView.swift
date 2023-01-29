@@ -126,9 +126,6 @@ struct DetailsView: View {
                     }
                     
                 }.frame(maxWidth: .infinity)
-                Text(LocalizedStringKey("parkingLot.pricing"))
-                    .font(.title2)
-                    .fontWeight(.bold)
                 DetailsRulesView(metadata: parkingLot.metadata)
                 Text(LocalizedStringKey("parkingLot.additionalInfo"))
                     .font(.title2)
@@ -164,11 +161,32 @@ struct DetailsView: View {
 
 struct DetailsRulesView: View {
     let metadata: ParkingLotMetadata
+    @State private var selectedSpotType: ParkingSpotType = ParkingSpotType(rawValue: UserDefaults.standard.string(forKey: "selectedSpotType") ?? "car") ?? ParkingSpotType.car
+    
     
     var body: some View {
-        Group {
-            ForEach(Array(metadata.rules.enumerated()), id: \.1) { i, rule in
-                DetailsRuleView(rule: rule, currency: metadata.currency)
+        let applicableRules = metadata.rules.contains { $0.applies.contains(selectedSpotType) }
+            ? metadata.rules.filter { $0.applies.contains(selectedSpotType) }
+            : metadata.rules.filter { $0.applies.isEmpty }
+        VStack {
+            HStack {
+                Text(LocalizedStringKey("parkingLot.pricing"))
+                    .font(.title2)
+                    .fontWeight(.bold)
+                Spacer()
+                Picker("SpotType", selection: $selectedSpotType) {
+                    ForEach(ParkingSpotType.allCases.filter { $0 != .unknown }, id: \.self) { spotType in
+                        let spotTypeText = NSLocalizedString(spotType.rawValue, comment: "type of the spot")
+                        Text("\(spotType.emoji()) \(spotTypeText)")
+                    }
+                }.onChange(of: selectedSpotType) {
+                    UserDefaults.standard.set($0.rawValue, forKey: "selectedSpotType")
+                }
+            }
+            Group {
+                ForEach(Array(applicableRules.enumerated()), id: \.1) { i, rule in
+                    DetailsRuleView(rule: rule, currency: metadata.currency)
+                }
             }
         }
     }
