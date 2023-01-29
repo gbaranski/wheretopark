@@ -44,3 +44,9 @@ url.unrecognized = "Unrecognized";
 url.website = "Website";
 url.phoneNumber = "Phone Number";
 url.emailAddress = "E-Mail Address";
+
+
+maxDimensions = "Maximum dimensions";
+"dimensions.width %lld" = "Width: %lld cm";
+"dimensions.height %lld" = "Height: %lld cm";
+"dimensions.length %lld" = "Length: %lld cm";

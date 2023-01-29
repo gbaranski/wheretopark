@@ -268,6 +268,19 @@ struct DetailsAdditionalInfo: View {
             DetailsAdditionalInfoField(name: "parkingLot") {
                 Text("\(metadata.totalSpots[ParkingSpotType.car.rawValue] ?? 0) \(String(localized: "parkingLot.totalSpots"))")
             }
+            if let dimensions = metadata.maxDimensions {
+                DetailsAdditionalInfoField(name: "maxDimensions") {
+                    if let width = dimensions.width {
+                        Text("dimensions.width \(width)")
+                    }
+                    if let height = dimensions.height {
+                        Text("dimensions.height \(height)")
+                    }
+                    if let length = dimensions.length {
+                        Text("dimensions.length \(length)")
+                    }
+                }
+            }
             DetailsAdditionalInfoField(name: "parkingLot.address") {
                 Text("\(metadata.address)")
             }

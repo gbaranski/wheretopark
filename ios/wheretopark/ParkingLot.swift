@@ -153,6 +153,7 @@ extension ParkingLot {
             totalSpots: [
                 ParkingSpotType.car.rawValue: 1100
             ],
+            maxDimensions: Dimensions(width: 200, height: 170, length: 420),
             features: ["COVERED", "UNCOVERED"],
             paymentMethods: Default(wrappedValue: ["CASH", "CONTACTLESS", "CARD"]),
             comment: Default(wrappedValue: [
