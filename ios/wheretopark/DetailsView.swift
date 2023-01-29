@@ -215,6 +215,7 @@ struct DetailsRuleView: View {
                 alignment: .topTrailing
             )
         }
+        Spacer()
         DetailsRulePricingView(rule: rule, currency: currency)
     }
 }
