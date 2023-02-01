@@ -3,6 +3,7 @@
 	import { SpotType, type ParkingLot, Feature, type State, type Metadata } from "$lib/types";
 	import { capitalizeFirstLetter, getCategory, googleMapsLink, humanizeDuration, parkingLotStatus, parkingLotStatusColor, preferredComment, resourceIcon, resourceText, spotTypeIcon, timeFromNow } from "$lib/utils";
     import { Title, Text, Divider, Tooltip, Anchor, Badge } from '@svelteuidev/core';
+    import { LL } from '$lib/i18n/i18n-svelte';
     import Markdown from "svelte-markdown";
 
     export let data: {parkingLot: ParkingLot};
@@ -30,7 +31,7 @@
 </svelte:head>
 <div class="container">
     <span style="display: flex;">
-        <Title root={"span"} size={26} override={{flex: 1}}>{metadata.name}</Title>
+        <Text root={"span"} size={26} override={{flex: 1}}>{metadata.name}</Text>
         <Anchor root="a" external override={{textAlign: 'right'}} href={googleMapsLink(metadata.geometry)}>
             <i class="material-icons">directions</i>
         </Anchor>
@@ -49,7 +50,7 @@
         <i class="material-icons">directions_car</i>
         <Tooltip label="Last updated {timeFromNow(state.lastUpdated)}">
             <Text size={14} root="span" weight={400}>
-                {state.availableSpots[SpotType[SpotType.CAR]]} available spots
+                {$LL.AVAILABLE_SPOTS({count: state.availableSpots[SpotType[SpotType.CAR]]})}
             </Text>
         </Tooltip>
     </div>

@@ -1,8 +1,8 @@
 <script lang="ts">
-	import type { LayoutData } from "./$types";
+	import type { LayoutData } from './$types';
     import { Text, Title } from '@svelteuidev/core';
     import { SvelteUIProvider } from '@svelteuidev/core';
-    import Map from '../components/Map.svelte'
+    import Map from '$components/Map.svelte'
 
     export let data: LayoutData;
 </script>
@@ -20,11 +20,11 @@
     <div class="split master">
         <a href="/">
             <div style="padding: 20px;">
-                <Title align="center" override={{fontFamily: "Josefin Sans", fontWeight: 600, fontSize: 0 }}>
+                <Text root='h1' align="center" weight="bold" size={0} override={{fontFamily: "Josefin Sans"}}  >
                     <Text root="span" inherit override={{ color: "#313131", fontSize: 46 }}>where</Text>
                     <Text root="span" inherit override={{ color: "#a28a2b", fontSize: 46 }}>to</Text>
                     <Text root="span" inherit override={{ color: "#313131", fontSize: 46 }}>park</Text>
-                </Title>
+                </Text>
             </div>
         </a>
         <slot></slot>

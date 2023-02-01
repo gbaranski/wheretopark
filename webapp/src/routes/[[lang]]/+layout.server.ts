@@ -1,5 +1,5 @@
 import type { LayoutServerLoad } from "./$types";
-import type { LayoutData } from "src/types/layout";
+import type { LayoutData } from "$types/layout";
 import { getParkingLots } from "$lib/server/client";
 import { distanceBetweenPoints } from "$lib/utils";
 import geoip from 'geoip-lite';

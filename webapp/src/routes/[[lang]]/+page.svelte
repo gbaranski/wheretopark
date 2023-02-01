@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { currentMap } from "$lib/store";
-	import List from "../components/List.svelte";
-	import type { LayoutData } from "../types/layout";
+	import List from "$components/List.svelte";
+	import type { LayoutData } from "$types/layout";
 	
     export let data: LayoutData;
 
