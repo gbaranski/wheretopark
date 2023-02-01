@@ -64,4 +64,4 @@ services:
       timeout: 10s
       retries: 10
     volumes:
-      - ./webapp/src:/app/src:ro
+      - ./webapp/src:/app/src:rw
