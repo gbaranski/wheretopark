@@ -530,7 +530,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = wheretopark/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = DevToPark;
+				INFOPLIST_KEY_CFBundleDisplayName = "Where To Park";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.navigation";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Location is required to show current location on map, and sort nearby parking lots by distance.";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
@@ -576,7 +576,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = wheretopark/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = WhereToPark;
+				INFOPLIST_KEY_CFBundleDisplayName = "Where To Park";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.navigation";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Location is required to show current location on map, and sort nearby parking lots by distance.";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
