@@ -271,13 +271,25 @@ struct DetailsAdditionalInfo: View {
             if let dimensions = metadata.maxDimensions {
                 DetailsAdditionalInfoField(name: "maxDimensions") {
                     if let width = dimensions.width {
-                        Text("dimensions.width \(width)")
+                        if width == -1 {
+                            Text("dimensions.width no limit")
+                        } else {
+                            Text("dimensions.width \(width)")
+                        }
                     }
                     if let height = dimensions.height {
-                        Text("dimensions.height \(height)")
+                        if height == -1 {
+                            Text("dimensions.height no limit")
+                        } else {
+                            Text("dimensions.height \(height)")
+                        }
                     }
                     if let length = dimensions.length {
-                        Text("dimensions.length \(length)")
+                        if length == -1 {
+                            Text("dimensions.length no limit")
+                        } else {
+                            Text("dimensions.length \(length)")
+                        }
                     }
                 }
             }

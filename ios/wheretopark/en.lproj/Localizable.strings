@@ -48,5 +48,8 @@ url.emailAddress = "E-Mail Address";
 
 maxDimensions = "Maximum dimensions";
 "dimensions.width %lld" = "Width: %lld cm";
+"dimensions.width no limit" = "Width: unlimited";
 "dimensions.height %lld" = "Height: %lld cm";
+"dimensions.height no limit" = "Height: unlimited";
 "dimensions.length %lld" = "Length: %lld cm";
+"dimensions.length no limit" = "Length: unlimited";
