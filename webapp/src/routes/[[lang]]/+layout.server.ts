@@ -1,10 +1,12 @@
-import type { LayoutServerLoad } from "./$types";
-import type { LayoutData } from "$types/layout";
-import { getParkingLots } from "$lib/server/client";
 import { distanceBetweenPoints } from "$lib/utils";
 import geoip from 'geoip-lite';
+import type { LayoutServerLoad } from "./$types";
 
-export const load: LayoutServerLoad = async ({getClientAddress}): Promise<LayoutData> => {
+export const prerender = false;
+export const ssr = false;
+
+export const load = (async ({getClientAddress}) => {
+    const { getParkingLots } = await import("$lib/server/client");
     const parkingLotsMap = await getParkingLots();
     const userAddress =  getClientAddress();
     const userGeo = geoip.lookup(userAddress);
@@ -25,4 +27,4 @@ export const load: LayoutServerLoad = async ({getClientAddress}): Promise<Layout
     return {
         parkingLots: Object.fromEntries(parkingLots),
     }
-}
+}) satisfies LayoutServerLoad;
