@@ -3,6 +3,7 @@ title = "FAQ"
 description = "Frequently asked questions"
 weight = 2
 +++
+
 # General
 
 ### Will the project be open source?
