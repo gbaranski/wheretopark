@@ -1,0 +1,45 @@
+version: "3.8"
+services:
+  surrealdb:
+    container_name: wheretopark_surrealdb
+    image: surrealdb/surrealdb:latest
+    env_file: .env
+    restart: unless-stopped
+    ports:
+      - "9221:8000"
+    command: 
+      - start
+      - --user=${SURREALDB_USER}
+      - --pass=${SURREALDB_PASSWORD}
+    networks:
+      - default
+      - public
+
+  webapp:
+    container_name: wheretopark_webapp
+    env_file: .env
+    restart: unless-stopped
+    build:
+      context: ./webapp
+    ports:
+      - "3000:3000"
+    networks:
+      - default
+      - public
+    environment:
+      SECRET_DATABASE_USER: ${SURREALDB_USER}
+      SECRET_DATABASE_PASSWORD: ${SURREALDB_PASSWORD}
+      SECRET_DATABASE_NAME: production
+      SECRET_DATABASE_URL: http://surrealdb:8000
+      PUBLIC_MAPBOX_ACCESS_TOKEN: pk.eyJ1IjoiZ2JhcmFuc2tpIiwiYSI6ImNsNmh4ZW9hZTBxaG4zY282MzAzbWhqbnAifQ.8_G9b7-m8n0kMr4O0-2mhQ
+    depends_on:
+      - surrealdb
+    healthcheck:
+      test: curl --fail http://localhost:3000 || exit 1
+      interval: 5s
+      timeout: 10s
+      retries: 10
+
+networks:
+  public:
+    external: true
