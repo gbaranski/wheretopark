@@ -29,6 +29,10 @@ p > img {
   height: auto;
 }
 
+a > img {
+  width: 100%;
+}
+
 header {
   background-color: var(--primary-color);
   color: black;

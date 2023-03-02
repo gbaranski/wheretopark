@@ -1,7 +1,6 @@
 # The URL the site will be built for
 base_url = "https://wheretopark.app"
 
-title = "Where To Park - The ultimate parking lot assistant"
 description = "Where To Park is a parking lot assistant that helps you find the best free parking spot in the lot with the help of AI and real-time analysis"
 
 # Whether to automatically compile all Sass files in the sass directory
@@ -26,7 +25,7 @@ juice_logo_name = "WhereToPark"
 juice_logo_path = "logo.svg"
 
 [languages.pl]
-title = "Where To Park - Asystent parkowania"
+title = "Where To Park - inteligentne systemy parkowania"
 
 [languages.pl.translations]
 flag = "🇵🇱"
@@ -37,7 +36,7 @@ or = "lub"
 openAppInBrowser = "otwórz aplikację w przeglądarce"
 
 [languages.en]
-title = "Where To Park - Parking lot assistant"
+title = "Where To Park - AI powered parking lot systems"
 
 [languages.en.translations]
 flag = "🇬🇧"

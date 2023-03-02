@@ -25,7 +25,7 @@ W samym Los Angeles oszacowano, że każdego roku *search traffic* przyczynia si
 
 *Where To Park* ma na celu usprawnić proces parkowania, i przy tym obniżyć wyżej wymieniony search traffic, poprzez danie kierowcom łatwego dostępu do informacji o ilości wolnych miejsc na pobliskich parkingach, przez co zamiast krążenia wokół parkingu, mogą oni od razu pojechać ten obok, ponieważ w aplikacji mogą zobaczyć ze znajdą się na nim wolne miejsca.
 
-<img src="/pl/preview.jpg"/>
+<img src="preview.jpg"/>
 <div style="text-align: right;">
   <font size="2">Aplikacja jest dostępna na przeglądarki, iOS i Android.</font>
 </div>
@@ -89,8 +89,6 @@ Rozwiązanie korzystające z kamer monitoringowych to mała ingerencja w infrast
 - **Predykcje dostępności**. Użytkownik ma dostęp do statystyki zajętości miejsc na parkinach o danej godzine i danego dnia. Przykładowo w piątek o godzinie 10 zazwyczaj ciężko znaleźć wolne miejsce na danym parkingu, a dzięki tej informacji mozna zaplanowac trasę dzień wczesniej.
 
 
-W przyszłości planujemy także dodatkowe funkcjonalności takie jak np. **rezerwacja miejsc parkingowych**, czy **płatności za postój** w aplikacji.
-
 # Aplikacja
 
 ## Funkcje
@@ -104,16 +102,6 @@ Dane na temat parkingu zawierają:
 - Cennik oraz godziny otwarcia.
 - Dane kontaktowe
 - Dodatkowe komentarze, np. "legitymacja studencka pozwala na 50% zniżki przy subskrypcji miesięcznej"
-
-## Zrzuty ekranu
-
-<div class="demonstration-media">
-    <img class="demonstration-image" src="screenshots/main.webp" alt="screenshot-main">
-    <img class="demonstration-image" src="screenshots/selected.webp" alt="screenshot-selected">
-    <img class="demonstration-image" src="screenshots/expanded.webp" alt="screenshot-expanded">
-    <img class="demonstration-image" src="screenshots/expanded-2.webp" alt="screenshot-expanded-2">
-</div>
-
 
 # Przypisy
 1. [Duda-Wiertel U. Konsekwencje zmiany dostępności przestrzeni parkingowej we wrażliwych obszarach centrów miast, Politechnika Krakowska, Kraków 2018.](https://yadda.icm.edu.pl/baztech/element/bwmeta1.element.baztech-51e98198-f84e-4b3f-8a4a-2492f1fef1df)
