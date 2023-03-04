@@ -3,11 +3,11 @@ package gdynia_test
 import (
 	"log"
 	"testing"
-	"wheretopark/providers/collector/gdansk"
+	"wheretopark/providers/collector/gdynia"
 )
 
 func TestMetadatas(t *testing.T) {
-	metadatas, err := gdansk.GetMetadata()
+	metadatas, err := gdynia.GetMetadata()
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -15,7 +15,7 @@ func TestMetadatas(t *testing.T) {
 }
 
 func TestStates(t *testing.T) {
-	states, err := gdansk.GetState()
+	states, err := gdynia.GetState()
 	if err != nil {
 		t.Fatal(err)
 	}

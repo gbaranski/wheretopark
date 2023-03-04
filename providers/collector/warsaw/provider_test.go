@@ -2,13 +2,13 @@ package warsaw_test
 
 import (
 	"testing"
-	"wheretopark/providers/collector/gdansk"
+	"wheretopark/providers/collector/warsaw"
 
 	"github.com/stretchr/testify/assert"
 )
 
 func TestProvider(t *testing.T) {
-	provider, err := gdansk.NewProvider()
+	provider, err := warsaw.NewProvider()
 	if err != nil {
 		t.Fatal(err)
 	}
