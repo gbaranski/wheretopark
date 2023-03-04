@@ -50,7 +50,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	err = wheretopark.RunProvider(client, provider)
+	err = wheretopark.RunProvider(client, provider, wheretopark.DEFAULT_PROVIDER_CONFIG)
 	if err != nil {
 		panic(err)
 	}

@@ -18,6 +18,10 @@ type Provider struct {
 	savePath      *string
 }
 
+func (p *Provider) Name() string {
+	return "cctv"
+}
+
 func (p *Provider) GetMetadata() (map[wheretopark.ID]wheretopark.Metadata, error) {
 	metadatas := make(map[wheretopark.ID]wheretopark.Metadata, len(p.configuration.ParkingLots))
 
