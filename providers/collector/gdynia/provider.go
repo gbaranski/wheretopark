@@ -21,6 +21,10 @@ type Provider struct {
 	mapping map[int]wheretopark.ID
 }
 
+func (p Provider) Name() string {
+	return "gdynia"
+}
+
 func (p Provider) GetMetadata() (map[wheretopark.ID]wheretopark.Metadata, error) {
 	vendorMetadata, err := GetMetadata()
 	if err != nil {

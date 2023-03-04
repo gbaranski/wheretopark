@@ -8,6 +8,7 @@ import (
 )
 
 type Provider interface {
+	Name() string
 	GetMetadata() (map[ID]Metadata, error)
 	GetState() (map[ID]State, error)
 }
@@ -59,6 +60,7 @@ func process(client *Client, provider Provider) error {
 }
 
 func RunProvider(client *Client, provider Provider) error {
+	log.Info().Str("name", provider.Name()).Msg("starting provider")
 	for {
 		if err := process(client, provider); err != nil {
 			log.Error().
