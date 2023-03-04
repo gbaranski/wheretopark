@@ -38,7 +38,9 @@ func (p Provider) GetMetadata() (map[wheretopark.ID]wheretopark.Metadata, error)
 		id := wheretopark.CoordinateToID(vendor.Latitude, vendor.Longitude)
 		configuration, exists := configuration.ParkingLots[id]
 		if !exists {
-			log.Warn().Str("name", vendor.Name).Msg("missing configuration")
+			log.Warn().
+				Str("name", vendor.Name).
+				Msg("missing configuration")
 			continue
 		}
 		maxDimensions := &wheretopark.Dimensions{}

@@ -34,7 +34,10 @@ func (p Provider) GetMetadata() (map[wheretopark.ID]wheretopark.Metadata, error)
 	for _, vendor := range vendorMetadata.Parkings {
 		configuration, exists := configuration.ParkingLots[vendor.ID]
 		if !exists {
-			log.Warn().Int("id", vendor.ID).Msg("missing configuration")
+			log.Warn().
+				Int("id", vendor.ID).
+				Str("name", vendor.Name).
+				Msg("missing configuration")
 			continue
 		}
 		id := wheretopark.GeometryToID(vendor.Location)

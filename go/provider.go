@@ -20,6 +20,7 @@ func process(client *Client, provider Provider) error {
 	}
 	log.Debug().
 		Int("n", len(metadatas)).
+		Str("name", provider.Name()).
 		Msg("obtained metadatas")
 
 	states, err := provider.GetState()
@@ -28,6 +29,7 @@ func process(client *Client, provider Provider) error {
 	}
 	log.Debug().
 		Int("n", len(metadatas)).
+		Str("name", provider.Name()).
 		Msg("obtained states")
 
 	for id, metadata := range metadatas {
@@ -50,7 +52,6 @@ func process(client *Client, provider Provider) error {
 		if err != nil {
 			return err
 		}
-		log.Debug().Str("id", id).Msg("updated parking lot")
 	}
 	log.Info().
 		Int("n", len(metadatas)).
@@ -59,7 +60,15 @@ func process(client *Client, provider Provider) error {
 	return nil
 }
 
-func RunProvider(client *Client, provider Provider) error {
+type ProviderConfig struct {
+	Interval time.Duration
+}
+
+var DEFAULT_PROVIDER_CONFIG = ProviderConfig{
+	Interval: time.Minute,
+}
+
+func RunProvider(client *Client, provider Provider, config ProviderConfig) error {
 	log.Info().Str("name", provider.Name()).Msg("starting provider")
 	for {
 		if err := process(client, provider); err != nil {
@@ -67,6 +76,6 @@ func RunProvider(client *Client, provider Provider) error {
 				Err(err).
 				Send()
 		}
-		time.Sleep(time.Minute)
+		time.Sleep(config.Interval)
 	}
 }
