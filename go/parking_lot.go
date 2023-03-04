@@ -67,6 +67,7 @@ func (d *Dimensions) Empty() bool {
 }
 
 type Metadata struct {
+	LastUpdated    string                  `json:"lastUpdated"`
 	Name           string                  `json:"name"`
 	Address        string                  `json:"address"`
 	Geometry       geojson.Geometry        `json:"geometry"`
