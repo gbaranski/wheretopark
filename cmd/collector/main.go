@@ -5,9 +5,11 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+	"time"
 	wheretopark "wheretopark/go"
 	"wheretopark/providers/collector/gdansk"
 	"wheretopark/providers/collector/gdynia"
+	"wheretopark/providers/collector/glasgow"
 	"wheretopark/providers/collector/warsaw"
 
 	"github.com/caarlos0/env/v6"
@@ -59,6 +61,7 @@ func main() {
 	go runProvider("gdansk", gdansk.NewProvider, client, wheretopark.DEFAULT_PROVIDER_CONFIG)
 	go runProvider("gdynia", gdynia.NewProvider, client, wheretopark.DEFAULT_PROVIDER_CONFIG)
 	go runProvider("warsaw", warsaw.NewProvider, client, wheretopark.DEFAULT_PROVIDER_CONFIG)
+	go runProvider("glasgow", glasgow.NewProvider, client, wheretopark.ProviderConfig{Interval: 5 * time.Minute})
 
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
