@@ -99,9 +99,10 @@ var (
 		wheretopark.PaymentMethodMobile,
 	}
 	defaultComment = map[string]string{
-		"pl": `Taryfa Zarządu Transportu Miejskiego w Poznaniu zachęca do łączenia przejazdów samochodem i komunikacją miejską – dzięki biletowi okresowemu na karcie PEKA z parkingów P&R można korzystać bezpłatnie. Osoby nie korzystające z biletu okresowego są zobowiązane wykupić bilet w cenie 10 zł, na podstawie którego można podróżować na liniach ZTM w godzinach działania parkingów.
-				W przypadku pozostawienia pojazdu na noc(po godzinie 02:30) obowiązuje opłata dodatkowa 100 PLN.
-				`,
+		"pl": `Taryfa Zarządu Transportu Miejskiego w Poznaniu zachęca do łączenia przejazdów samochodem i komunikacją miejską - dzięki biletowi okresowemu na karcie PEKA z parkingów P&R można korzystać bezpłatnie. Osoby nie korzystające z biletu okresowego są zobowiązane wykupić bilet w cenie 10 zł, na podstawie którego można podróżować na liniach ZTM w godzinach działania parkingów.
+W przypadku pozostawienia pojazdu na noc(po godzinie 02:30) obowiązuje opłata dodatkowa 100 PLN.
+
+Źródło danych: ztm.poznan.pl`,
 	}
 	defaultCurrency = "PLN"
 	defaultTimezone = "Europe/Warsaw"
