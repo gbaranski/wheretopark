@@ -25,8 +25,9 @@ type config struct {
 	GdyniaConfiguration *string `env:"GDYNIA_CONFIGURATION"`
 }
 
-func runProvider(name string, createFn func() (wheretopark.Provider, error), client *wheretopark.Client, config wheretopark.ProviderConfig) {
+func runProvider(createFn func() (wheretopark.Provider, error), client *wheretopark.Client, config wheretopark.ProviderConfig) {
 	provider, err := createFn()
+	name := provider.Name()
 	if err != nil {
 		log.Fatal().Err(err).Str("name", name).Msg("creating provider failed")
 	}
@@ -57,10 +58,10 @@ func main() {
 		log.Fatal().Err(err).Msg("failed to sign in")
 	}
 
-	go runProvider("gdansk", gdansk.NewProvider, client, wheretopark.DEFAULT_PROVIDER_CONFIG)
-	go runProvider("gdynia", gdynia.NewProvider, client, wheretopark.DEFAULT_PROVIDER_CONFIG)
-	go runProvider("warsaw", warsaw.NewProvider, client, wheretopark.DEFAULT_PROVIDER_CONFIG)
-	go runProvider("poznan", poznan.NewProvider, client, wheretopark.DEFAULT_PROVIDER_CONFIG)
+	go runProvider(gdansk.NewProvider, client, wheretopark.DEFAULT_PROVIDER_CONFIG)
+	go runProvider(gdynia.NewProvider, client, wheretopark.DEFAULT_PROVIDER_CONFIG)
+	go runProvider(warsaw.NewProvider, client, wheretopark.DEFAULT_PROVIDER_CONFIG)
+	go runProvider(poznan.NewProvider, client, wheretopark.DEFAULT_PROVIDER_CONFIG)
 
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
