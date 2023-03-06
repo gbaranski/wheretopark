@@ -41,7 +41,7 @@ var configuration = Configuration{
 		"rondo_staroleka": {
 			Name:     "Park & Ride Rondo Starołęka",
 			Address:  "ul. Wągrowska, 61-001 Poznań",
-			Geometry: *geojson.NewPointGeometry([]float64{16.86491989796027, 52.46078549710232}),
+			Geometry: *geojson.NewPointGeometry([]float64{16.94430210187254, 52.37916546114334}),
 			Resources: []string{
 				"https://www.apcoa.pl/en/parking-in/poznan/ztm-park-ride-staroleka-poznan-ul-wagrowska/",
 			},
