@@ -21,7 +21,7 @@ highlight_code = false
 
 [extra]
 # Put all your custom variables here
-juice_logo_name = "WhereToPark"
+juice_logo_name = "Where To Park"
 juice_logo_path = "logo.svg"
 
 [languages.pl]
