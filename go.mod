@@ -3,7 +3,7 @@ module wheretopark
 go 1.18
 
 require (
-	github.com/caarlos0/env/v6 v6.10.1
+	github.com/caarlos0/env/v7 v7.1.0
 	github.com/ghodss/yaml v1.0.0
 	github.com/go-resty/resty/v2 v2.7.0
 	github.com/mmcloughlin/geohash v0.10.0

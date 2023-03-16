@@ -11,7 +11,7 @@ import (
 	"wheretopark/providers/collector/poznan"
 	"wheretopark/providers/collector/warsaw"
 
-	"github.com/caarlos0/env/v6"
+	"github.com/caarlos0/env/v7"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 )
