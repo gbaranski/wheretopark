@@ -151,7 +151,7 @@ var configuration = Configuration{
 		},
 
 		"CPG06C_1": {
-			Name:    "Cadogan Square Car Par",
+			Name:    "Cadogan Square Car Park",
 			Address: "Cadogan Square Car Park, 25 Douglas St, Glasgow G2 7BG, United Kingdom",
 			MaxDimensions: &wheretopark.Dimensions{
 				Height: 200,
@@ -212,7 +212,7 @@ var configuration = Configuration{
 		},
 
 		"CPG03C_1": {
-			Name:    "Cambridge Street Car",
+			Name:    "Cambridge Street Car Park",
 			Address: "Cambridge St, Glasgow G3 6RU, United Kingdom",
 			MaxDimensions: &wheretopark.Dimensions{
 				Height: 198,
