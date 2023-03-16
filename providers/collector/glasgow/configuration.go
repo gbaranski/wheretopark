@@ -30,7 +30,7 @@ var configuration = Configuration{
 						wheretopark.NewPricingRule("PT1H", decimal.RequireFromString("5.50")),
 						wheretopark.NewPricingRule("PT12H", decimal.RequireFromString("11.00")),
 						wheretopark.NewPricingRule("PT13H", decimal.RequireFromString("16.00")),
-						wheretopark.NewPricingRule("PT1D", decimal.RequireFromString("22.00")),
+						wheretopark.NewPricingRule("P1D", decimal.RequireFromString("22.00")),
 					},
 				},
 			},
