@@ -21,7 +21,7 @@ highlight_code = false
 
 [extra]
 # Put all your custom variables here
-juice_logo_name = "WhereToPark"
+juice_logo_name = "Where To Park"
 juice_logo_path = "logo.svg"
 
 [languages.pl]
@@ -42,6 +42,6 @@ title = "Where To Park - AI powered parking lot systems"
 flag = "🇬🇧"
 exploreMore = "Explore More"
 heading = "The ultimate parking lot assistant"
-subheading = "We'll help you seek an **available** and **affordable** parking slot **nearby**"
+subheading = "We'll help you find an **available** and **affordable** parking space **near you**"
 or = "or"
 openAppInBrowser = "open the app in browser"
