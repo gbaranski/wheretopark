@@ -112,5 +112,5 @@ Parking lot data contains:
 
 # Press
 
-- http://blog.citydata.pl/where-to-park-aplikacja-do-szukania-wolnych-miejsc-parkingowych/
-- https://otwartedane.gdynia.pl/where-to-park-aplikacja-do-szukania-wolnych-miejsc-parkingowych/
+- [blog.citydata.pl](https://blog.citydata.pl/where-to-park-aplikacja-do-szukania-wolnych-miejsc-parkingowych/)
+- [otwartedane.gdynia.pl](https://otwartedane.gdynia.pl/where-to-park-aplikacja-do-szukania-wolnych-miejsc-parkingowych/)
