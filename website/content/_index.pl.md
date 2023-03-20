@@ -108,3 +108,8 @@ Dane na temat parkingu zawierają:
 2. [Duda-Wiertel U. Search traffic w obszarach z deficytem miejsc postojowych, Politechnika Krakowska, Kraków 2021.](https://yadda.icm.edu.pl/baztech/element/bwmeta1.element.baztech-d8bf4176-2ea0-4571-b5a5-bdc066343c33)
 3. [Aliedani, Ali & Loke, Seng & Desai, Aniruddha & Desai, Prajakta. (2016). Investigating Vehicle-to-Vehicle Communication for Cooperative Car Parking: the CoPark Approach.](https://www.researchgate.net/publication/307534127_Investigating_Vehicle-to-Vehicle_Communication_for_Cooperative_Car_Parking_the_CoPark_Approach)
 
+
+# Mówią o nas
+
+- http://blog.citydata.pl/where-to-park-aplikacja-do-szukania-wolnych-miejsc-parkingowych/
+- https://otwartedane.gdynia.pl/where-to-park-aplikacja-do-szukania-wolnych-miejsc-parkingowych/
