@@ -48,15 +48,14 @@ type Response struct {
 
 const (
 	// https://developer.glasgow.gov.uk/api-details#api=55c36a318b3a0306f0009483&operation=563cea91aab82f1168298575
-	DATA_URL   = "https://api.glasgow.gov.uk/datextraffic/carparks?format=json"
-	CLIENT_ID  = "af1f62dd-f91a-4c78-8399-c9830c77c027"
-	CLIENT_KEY = "DWO8txJXYPLOrmmRiD71Zv80ylewDqRwkyTbd53V5ACcr1ueiVzPPvCBXvTQGBmg"
+	DATA_URL = "https://api.glasgow.gov.uk/datextraffic/carparks?format=json"
+	API_KEY  = "ccaa1e24db6e4a9bb791f99433cc7ab7"
 )
 
 var client = resty.New()
 
 func GetData() (*Response, error) {
-	resp, err := client.R().SetBasicAuth(CLIENT_ID, CLIENT_KEY).SetResult(&Response{}).Get(DATA_URL)
+	resp, err := client.R().SetHeader("Ocp-Apim-Subscription-Key", API_KEY).SetHeader("Cache-Control", "no-cache").SetResult(&Response{}).Get(DATA_URL)
 	if err != nil {
 		return nil, err
 	}
