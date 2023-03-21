@@ -19,12 +19,10 @@ import (
 )
 
 type config struct {
-	DatabaseURL         string  `env:"DATABASE_URL" envDefault:"ws://localhost:8000"`
-	DatabaseName        string  `env:"DATABASE_NAME" envDefault:"development"`
-	DatabaseUser        string  `env:"DATABASE_USER" envDefault:"root"`
-	DatabasePassword    string  `env:"DATABASE_PASSWORD" envDefault:"root"`
-	GdanskConfiguration *string `env:"GDANSK_CONFIGURATION"`
-	GdyniaConfiguration *string `env:"GDYNIA_CONFIGURATION"`
+	DatabaseURL      string `env:"DATABASE_URL" envDefault:"ws://localhost:8000"`
+	DatabaseName     string `env:"DATABASE_NAME" envDefault:"development"`
+	DatabaseUser     string `env:"DATABASE_USER" envDefault:"root"`
+	DatabasePassword string `env:"DATABASE_PASSWORD" envDefault:"root"`
 }
 
 func runProvider(createFn func() (wheretopark.Provider, error), client *wheretopark.Client, config wheretopark.ProviderConfig) {
@@ -64,7 +62,7 @@ func main() {
 	go runProvider(gdynia.NewProvider, client, wheretopark.DEFAULT_PROVIDER_CONFIG)
 	go runProvider(warsaw.NewProvider, client, wheretopark.DEFAULT_PROVIDER_CONFIG)
 	go runProvider(poznan.NewProvider, client, wheretopark.DEFAULT_PROVIDER_CONFIG)
-  go runProvider(glasgow.NewProvider, client, wheretopark.ProviderConfig{Interval: 5 * time.Minute})
+	go runProvider(glasgow.NewProvider, client, wheretopark.ProviderConfig{Interval: 5 * time.Minute})
 
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
