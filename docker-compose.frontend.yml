@@ -38,6 +38,11 @@ services:
     build:
       context: .
       dockerfile: ./cmd/exporter/Dockerfile
+    environment:
+      DATABASE_URL: http://surrealdb:8000
+      DATABASE_NAME: production
+      DATABASE_USER: ${SURREALDB_USER}
+      DATABASE_PASSWORD: ${SURREALDB_PASSWORD}
     depends_on:
       - surrealdb
 
