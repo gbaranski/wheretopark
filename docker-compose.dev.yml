@@ -9,7 +9,35 @@ services:
     command: 
       - start
       - --user=root
-      - --pass=changeThisPassword
+      - --pass=password
+      - --log=debug
+
+  prometheus: 
+    container_name: wheretopark_prometheus
+    image: prom/prometheus:latest
+    restart: unless-stopped
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus:/etc/prometheus
+      - prometheus-data:/prometheus
+    depends_on:
+      - exporter
+  
+  exporter:
+    container_name: wheretopark_exporter
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: ./cmd/exporter/Dockerfile
+    environment:
+      DATABASE_URL: ws://surrealdb:8000
+      DATABASE_NAME: development
+      DATABASE_USER: root
+      DATABASE_PASSWORD: password
+    depends_on:
+      - surrealdb
+
 
   collector:
     container_name: wheretopark_collector
@@ -21,7 +49,7 @@ services:
       DATABASE_URL: ws://surrealdb:8000
       DATABASE_NAME: development
       DATABASE_USER: root
-      DATABASE_PASSWORD: changeThisPassword
+      DATABASE_PASSWORD: password
     depends_on:
       - surrealdb
 
@@ -52,7 +80,7 @@ services:
       - "5173:5173"
     environment:
       SECRET_DATABASE_USER: root
-      SECRET_DATABASE_PASSWORD: changeThisPassword
+      SECRET_DATABASE_PASSWORD: password
       SECRET_DATABASE_NAME: development
       SECRET_DATABASE_URL: http://surrealdb:8000
       PUBLIC_MAPBOX_ACCESS_TOKEN: pk.eyJ1IjoiZ2JhcmFuc2tpIiwiYSI6ImNsNmh4ZW9hZTBxaG4zY282MzAzbWhqbnAifQ.8_G9b7-m8n0kMr4O0-2mhQ
@@ -65,3 +93,6 @@ services:
       retries: 10
     volumes:
       - ./webapp/src:/app/src:rw
+
+volumes:
+  prometheus-data:

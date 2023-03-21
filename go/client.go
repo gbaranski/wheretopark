@@ -73,6 +73,15 @@ func (c *Client) get(thing string) (map[string]any, error) {
 	return v, nil
 }
 
+func (c *Client) getAll(table string) ([]any, error) {
+	entries, err := c.database.Select(table)
+	if err != nil {
+		return nil, err
+	}
+	v := entries.([]any)
+	return v, nil
+}
+
 func (c *Client) delete(thing string) error {
 	_, err := c.database.Delete(thing)
 	return err
@@ -137,6 +146,25 @@ func (c *Client) GetParkingLot(id ID) (*ParkingLot, error) {
 
 func (c *Client) DeleteParkingLot(id ID) error {
 	return c.delete(parkingLotReference(id))
+}
+
+func (c *Client) GetAllParkingLots() (map[ID]ParkingLot, error) {
+	v, err := c.getAll("parking_lot")
+	if err != nil {
+		return nil, err
+	}
+	parkingLots := make(map[ID]ParkingLot, len(v))
+	for _, data := range v {
+		data := data.(map[string]any)
+		id := data["id"].(string)
+		id = id[len("parking_lot:"):]
+		parkingLot, err := mapTo[ParkingLot](data)
+		if err != nil {
+			return nil, err
+		}
+		parkingLots[id] = *parkingLot
+	}
+	return parkingLots, nil
 }
 
 func (c *Client) Close() {

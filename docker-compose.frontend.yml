@@ -15,6 +15,32 @@ services:
       - default
       - public
 
+  prometheus: 
+    container_name: wheretopark_prometheus
+    image: prom/prometheus:latest
+    env_file: .env
+    restart: unless-stopped
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus:/etc/prometheus
+      - prometheus-data:/prometheus
+    networks:
+      - default
+      - public
+    depends_on:
+      - exporter
+
+  exporter:
+    container_name: wheretopark_exporter
+    env_file: .env
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: ./cmd/exporter/Dockerfile
+    depends_on:
+      - surrealdb
+
   webapp:
     container_name: wheretopark_webapp
     env_file: .env
@@ -39,7 +65,10 @@ services:
       interval: 5s
       timeout: 10s
       retries: 10
-
+  
 networks:
   public:
     external: true
+
+volumes:
+  prometheus-data:
