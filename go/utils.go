@@ -1,6 +1,11 @@
 package wheretopark
 
-import "github.com/shopspring/decimal"
+import (
+	"fmt"
+	"time"
+
+	"github.com/shopspring/decimal"
+)
 
 func NewIntPricingRule(duration string, price int32) PricingRule {
 	return PricingRule{
@@ -15,5 +20,18 @@ func NewPricingRule(duration string, price decimal.Decimal) PricingRule {
 		Duration:  duration,
 		Price:     price,
 		Repeating: false,
+	}
+}
+
+func withTimeout(fn func() error, timeout time.Duration) error {
+	done := make(chan error)
+	go func() {
+		done <- fn()
+	}()
+	select {
+	case <-time.After(timeout):
+		return fmt.Errorf("timeout")
+	case err := <-done:
+		return err
 	}
 }

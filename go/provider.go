@@ -68,13 +68,20 @@ var DEFAULT_PROVIDER_CONFIG = ProviderConfig{
 	Interval: time.Minute,
 }
 
+const DEFAULT_PROCESS_TIMEOUT = 30 * time.Second
+
 func RunProvider(client *Client, provider Provider, config ProviderConfig) error {
+
 	log.Info().Str("name", provider.Name()).Msg("starting provider")
 	for {
-		if err := process(client, provider); err != nil {
+		processFn := func() error {
+			return process(client, provider)
+		}
+		if err := withTimeout(processFn, DEFAULT_PROCESS_TIMEOUT); err != nil {
 			log.Error().
 				Err(err).
-				Send()
+				Str("name", provider.Name()).
+				Msg("failed to process provider")
 		}
 		time.Sleep(config.Interval)
 	}
