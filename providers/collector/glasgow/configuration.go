@@ -328,6 +328,15 @@ func init() {
 		v.LastUpdated = metadataLastUpdated
 		v.Features = defaultFeatures
 		v.Resources = defaultResources
+		const SOURCE_NOTICE = "Source of data: glasgow.gov.uk."
+		if v.Comment == nil {
+			v.Comment = make(map[string]string)
+			v.Comment["en"] = SOURCE_NOTICE
+		} else {
+			v.Comment["en"] += "\n"
+			v.Comment["en"] += SOURCE_NOTICE
+		}
+
 		configuration.ParkingLots[k] = v
 	}
 }
