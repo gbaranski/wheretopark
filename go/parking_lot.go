@@ -2,11 +2,14 @@ package wheretopark
 
 import (
 	"encoding/json"
+	"fmt"
+	"net/url"
 	"time"
 
 	"github.com/mmcloughlin/geohash"
 	geojson "github.com/paulmach/go.geojson"
 	"github.com/shopspring/decimal"
+	"golang.org/x/exp/slices"
 	"golang.org/x/text/currency"
 )
 
@@ -32,6 +35,12 @@ const (
 	PaymentMethodCard        = "CARD"
 	PaymentMethodContactless = "CONTACTLESS"
 	PaymentMethodMobile      = "MOBILE"
+)
+
+var (
+	SpotTypes      = []SpotType{SpotTypeCar, SpotTypeCarElectric, SpotTypeCarDisabled, SpotTypeMotorcycle, SpotTypeTruck, SpotTypeBus}
+	Features       = []Feature{FeatureCovered, FeatureUncovered, FeatureUnderground, FeatureGuarded, FeatureMonitored}
+	PaymentMethods = []PaymentMethod{PaymentMethodCash, PaymentMethodCard, PaymentMethodContactless, PaymentMethodMobile}
 )
 
 type ID = string
@@ -78,12 +87,12 @@ type Metadata struct {
 	Resources      []string                `json:"resources"`
 	TotalSpots     map[SpotType]uint       `json:"totalSpots"`
 	MaxDimensions  *Dimensions             `json:"maxDimensions,omitempty"`
-	Features       []Feature               `json:"features"`
-	PaymentMethods []PaymentMethod         `json:"paymentMethods"`
-	Comment        map[LanguageCode]string `json:"comment"`
+	Features       []Feature               `json:"features,omitempty"`
+	PaymentMethods []PaymentMethod         `json:"paymentMethods,omitempty"`
+	Comment        map[LanguageCode]string `json:"comment,omitempty"`
 	Currency       currency.Unit           `json:"currency"`
 	Timezone       *time.Location          `json:"timezone"`
-	Rules          []Rule                  `json:"rules"`
+	Rules          []Rule                  `json:"rules,omitempty"`
 }
 
 func (m Metadata) MarshalJSON() ([]byte, error) {
@@ -130,6 +139,79 @@ func GeometryToID(geometry *geojson.Geometry) ID {
 	return geohash.EncodeWithPrecision(geometry.Point[1], geometry.Point[0], 10)
 }
 
+func (p *ParkingLot) Validate() error {
+	if err := p.Metadata.Validate(); err != nil {
+		return err
+	}
+	if err := p.State.Validate(); err != nil {
+		return err
+	}
+	for spotType := range p.State.AvailableSpots {
+		if _, exists := p.Metadata.TotalSpots[spotType]; !exists {
+			fmt.Printf("spotType %s from availableSpots is not defined in totalSpots", spotType)
+		}
+	}
+	return nil
+}
+
 func (m *Metadata) Validate() error {
+	if m.LastUpdated.Unix() == 0 {
+		return fmt.Errorf("lastUpdated must not be set to zero")
+	}
+	if m.Name == "" {
+		return fmt.Errorf("name must not be empty")
+	}
+	if m.Address == "" {
+		return fmt.Errorf("address must not be empty")
+	}
+	defaultGeometry := geojson.Geometry{}
+	if m.Geometry == nil || m.Geometry == &defaultGeometry {
+		return fmt.Errorf("geometry must not be empty")
+	}
+	if m.TotalSpots == nil {
+		return fmt.Errorf("totalSpots must not be empty")
+	}
+	for spotType := range m.TotalSpots {
+		if !slices.Contains(SpotTypes, spotType) {
+			return fmt.Errorf("invalid spotType: %s", spotType)
+		}
+	}
+	for _, resource := range m.Resources {
+		if _, err := url.Parse(resource); err != nil {
+			return fmt.Errorf("invalid resource URL: %s", resource)
+		}
+	}
+	for _, feature := range m.Features {
+		if !slices.Contains(Features, feature) {
+			return fmt.Errorf("invalid feature: %s", feature)
+		}
+	}
+	for _, paymentMethod := range m.PaymentMethods {
+		if !slices.Contains(PaymentMethods, paymentMethod) {
+			return fmt.Errorf("invalid paymentMethod: %s", paymentMethod)
+		}
+	}
+	if m.Timezone == nil {
+		return fmt.Errorf("timezone must not be nil")
+	}
+
+	// TODO: Validate rules opening hours
+	if m.Rules == nil {
+		return fmt.Errorf("rules must not be empty")
+	}
+
+	return nil
+}
+
+func (s *State) Validate() error {
+	if s.LastUpdated.Unix() == 0 {
+		return fmt.Errorf("lastUpdated must not be set to zero")
+	}
+
+	for spotType := range s.AvailableSpots {
+		if !slices.Contains(SpotTypes, spotType) {
+			return fmt.Errorf("invalid spotType: %s", spotType)
+		}
+	}
 	return nil
 }

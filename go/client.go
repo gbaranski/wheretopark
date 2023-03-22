@@ -137,6 +137,9 @@ func (c *Client) SetParkingLots(parkingLots map[ID]ParkingLot) error {
 }
 
 func (c *Client) SetParkingLot(id ID, parkingLot ParkingLot) error {
+	if err := parkingLot.Validate(); err != nil {
+		return fmt.Errorf("invalid parking lot: %w", err)
+	}
 	data, err := toMap(parkingLot)
 	if err != nil {
 		return err
@@ -145,6 +148,9 @@ func (c *Client) SetParkingLot(id ID, parkingLot ParkingLot) error {
 }
 
 func (c *Client) SetMetadata(id ID, metadata Metadata) error {
+	if err := metadata.Validate(); err != nil {
+		return fmt.Errorf("invalid metadata: %w", err)
+	}
 	data, err := toMap(metadata)
 	if err != nil {
 		return err
@@ -153,6 +159,9 @@ func (c *Client) SetMetadata(id ID, metadata Metadata) error {
 }
 
 func (c *Client) SetState(id ID, state State) error {
+	if err := state.Validate(); err != nil {
+		return fmt.Errorf("invalid state: %w", err)
+	}
 	data, err := toMap(state)
 	if err != nil {
 		return err
