@@ -9,6 +9,7 @@ import (
 	"time"
 	wheretopark "wheretopark/go"
 
+	"github.com/goccy/go-json"
 	geojson "github.com/paulmach/go.geojson"
 	"github.com/shopspring/decimal"
 	"github.com/stretchr/testify/assert"
@@ -51,7 +52,7 @@ func client() *wheretopark.Client {
 	if err != nil {
 		log.Fatal(err)
 	}
-	err = client.SignInWithPassword("root", "root")
+	err = client.SignInWithPassword("root", "password")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -141,7 +142,7 @@ func TestParkingLot(t *testing.T) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	assert.Equal(t, parkingLot, *obtainedParkingLot, "obtained parking lot doesn't match with parking lot that was added")
+	equalJson(t, parkingLot, *obtainedParkingLot, "obtained parking lot doesn't match with parking lot that was added")
 
 	err = client.DeleteParkingLot(id)
 	if err != nil {
@@ -165,5 +166,18 @@ func TestParkingLot(t *testing.T) {
 	if obtainedParkingLot != nil {
 		log.Fatalf("parkign lot %s should have been deleted", id)
 	}
+
+}
+
+func equalJson[T any](t *testing.T, a T, b T, msg string) {
+	aJson, err := json.Marshal(a)
+	if err != nil {
+		t.Fatal(err)
+	}
+	bJson, err := json.Marshal(b)
+	if err != nil {
+		t.Fatal(err)
+	}
+	assert.Equal(t, aJson, bJson, msg)
 
 }
