@@ -5,7 +5,9 @@ import (
 
 	_ "embed"
 
+	geojson "github.com/paulmach/go.geojson"
 	"github.com/shopspring/decimal"
+	"golang.org/x/text/currency"
 )
 
 type Configuration struct {
@@ -325,25 +327,38 @@ var configuration = Configuration{
 
 func init() {
 	for k, v := range configuration.ParkingLots {
-		v.LastUpdated = metadataLastUpdated
-		v.Features = defaultFeatures
-		v.Resources = defaultResources
 		const SOURCE_NOTICE = "Source of data: glasgow.gov.uk."
-		if v.Comment == nil {
-			v.Comment = make(map[string]string)
-			v.Comment["en"] = SOURCE_NOTICE
+		comment := v.Comment
+		if comment == nil {
+			comment = make(map[string]string)
+			comment["en"] = SOURCE_NOTICE
 		} else {
-			v.Comment["en"] += "\n"
-			v.Comment["en"] += SOURCE_NOTICE
+			comment["en"] += "\n"
+			comment["en"] += SOURCE_NOTICE
 		}
 
-		configuration.ParkingLots[k] = v
+		configuration.ParkingLots[k] = wheretopark.Metadata{
+			LastUpdated:    defaultLastUpdated,
+			Name:           v.Name,
+			Address:        v.Address,
+			Geometry:       &geojson.Geometry{},
+			Resources:      defaultResources,
+			TotalSpots:     map[string]uint{},
+			MaxDimensions:  v.MaxDimensions,
+			Features:       defaultFeatures,
+			PaymentMethods: []string{},
+			Comment:        comment,
+			Currency:       currency.GBP,
+			Timezone:       defaultTimezone,
+			Rules:          v.Rules,
+		}
 	}
 }
 
 var (
-	metadataLastUpdated = "2023-03-04"
-	defaultFeatures     = []string{
+	defaultTimezone    = wheretopark.MustLoadLocation("Europe/London")
+	defaultLastUpdated = wheretopark.MustParseDate("2023-03-22")
+	defaultFeatures    = []string{
 		wheretopark.FeatureCovered,
 		wheretopark.FeatureUncovered,
 		wheretopark.FeatureMonitored,

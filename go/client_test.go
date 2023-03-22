@@ -13,6 +13,7 @@ import (
 	geojson "github.com/paulmach/go.geojson"
 	"github.com/shopspring/decimal"
 	"github.com/stretchr/testify/assert"
+	"golang.org/x/text/currency"
 )
 
 func init() {
@@ -64,7 +65,7 @@ func TestParkingLot(t *testing.T) {
 	metadata := wheretopark.Metadata{
 		Name:     "Galeria Bałtycka",
 		Address:  "ul. Dmowskiego",
-		Geometry: *geojson.NewPointGeometry([]float64{18.60024, 54.38268}),
+		Geometry: geojson.NewPointGeometry([]float64{18.60024, 54.38268}),
 		Resources: []string{
 			"mailto:galeria@galeriabaltycka.pl",
 			"tel:+48-58-521-85-52",
@@ -87,8 +88,8 @@ func TestParkingLot(t *testing.T) {
 			"pl": "Polski komentarz",
 			"en": "English comment",
 		},
-		Currency: "PLN",
-		Timezone: "Europe/Warsaw",
+		Currency: currency.PLN,
+		Timezone: time.UTC,
 		Rules: []wheretopark.Rule{
 			{
 				Hours:   "Mo-Sa 08:00-22:00; Su 09:00-21:00",

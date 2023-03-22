@@ -57,7 +57,7 @@ func getParkingLotData(name string) (*Row, error) {
 		return nil, err
 	}
 	record := records[1] // take second one, because first one is the list of labels
-	date, err := time.ParseInLocation("2006-01-02 15:04:05", record[0], defaultLocation)
+	date, err := time.ParseInLocation("2006-01-02 15:04:05", record[0], defaultTimezone)
 	if err != nil {
 		return nil, err
 	}

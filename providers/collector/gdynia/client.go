@@ -6,13 +6,13 @@ import (
 )
 
 type Metadata struct {
-	ID             int              `json:"id"`
-	Code           string           `json:"code"`
-	Name           string           `json:"name"`
-	Address        string           `json:"address"`
-	StreetEntrance string           `json:"streetEntrance"`
-	Location       geojson.Geometry `json:"location"`
-	LastUpdate     string           `json:"lastUpdate"`
+	ID             int               `json:"id"`
+	Code           string            `json:"code"`
+	Name           string            `json:"name"`
+	Address        string            `json:"address"`
+	StreetEntrance string            `json:"streetEntrance"`
+	Location       *geojson.Geometry `json:"location"`
+	LastUpdate     string            `json:"lastUpdate"`
 }
 
 type MetadataResponse struct {

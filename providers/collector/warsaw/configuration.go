@@ -4,7 +4,14 @@ import (
 	wheretopark "wheretopark/go"
 
 	_ "embed"
+
+	geojson "github.com/paulmach/go.geojson"
+	"golang.org/x/text/currency"
 )
+
+type Configuration struct {
+	ParkingLots map[wheretopark.ID]wheretopark.Metadata
+}
 
 var configuration = &Configuration{
 	ParkingLots: make(map[string]wheretopark.Metadata),
@@ -12,20 +19,43 @@ var configuration = &Configuration{
 
 func init() {
 	for k, v := range ztpParkingLots {
-		v.PaymentMethods = append(v.PaymentMethods, ztpBasePaymentMethods...)
-		v.Features = append(v.Features, ztpBaseFeatures...)
-		v.Resources = append(v.Resources, ztpBasicResources...)
-		configuration.ParkingLots[k] = v
+		ztpParkingLots[k] = wheretopark.Metadata{
+			LastUpdated:    defaultLastUpdated,
+			Name:           "",
+			Address:        "",
+			Geometry:       &geojson.Geometry{},
+			Resources:      append(v.Resources, ztpBaseResources...),
+			TotalSpots:     map[string]uint{},
+			MaxDimensions:  &wheretopark.Dimensions{},
+			Features:       append(v.Features, ztpBaseFeatures...),
+			PaymentMethods: append(v.PaymentMethods, ztpBasePaymentMethods...),
+			Comment:        v.Comment,
+			Currency:       defaultCurrency,
+			Timezone:       defaultTimezone,
+			Rules:          v.Rules,
+		}
 	}
 	for k, v := range prParkingLots {
-		v.Resources = append(v.Resources, prBaseResources...)
-		v.Features = append(v.Features, prBaseFeatures...)
-		v.Comment = prComment
-		v.Rules = prRules
-		configuration.ParkingLots[k] = v
+		prParkingLots[k] = wheretopark.Metadata{
+			LastUpdated:    defaultLastUpdated,
+			Name:           "",
+			Address:        "",
+			Geometry:       &geojson.Geometry{},
+			Resources:      append(v.Resources, prBaseResources...),
+			TotalSpots:     map[string]uint{},
+			MaxDimensions:  &wheretopark.Dimensions{},
+			Features:       append(v.Features, prBaseFeatures...),
+			PaymentMethods: []string{},
+			Comment:        prDefaultComment,
+			Currency:       defaultCurrency,
+			Timezone:       defaultTimezone,
+			Rules:          prDefaultRules,
+		}
 	}
 }
 
-type Configuration struct {
-	ParkingLots map[wheretopark.ID]wheretopark.Metadata
-}
+var (
+	defaultTimezone    = wheretopark.MustLoadLocation("Europe/Warsaw")
+	defaultLastUpdated = wheretopark.MustParseDate("2022-12-28")
+	defaultCurrency    = currency.PLN
+)

@@ -35,3 +35,19 @@ func WithTimeout(fn func() error, timeout time.Duration) error {
 		return err
 	}
 }
+
+func MustParseDate(date string) time.Time {
+	v, err := time.Parse(time.DateOnly, date)
+	if err != nil {
+		panic(err)
+	}
+	return v
+}
+
+func MustLoadLocation(name string) *time.Location {
+	location, err := time.LoadLocation(name)
+	if err != nil {
+		panic(err)
+	}
+	return location
+}

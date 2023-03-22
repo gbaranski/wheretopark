@@ -6,6 +6,7 @@ import (
 	_ "embed"
 
 	geojson "github.com/paulmach/go.geojson"
+	"golang.org/x/text/currency"
 )
 
 type Configuration struct {
@@ -17,7 +18,7 @@ var configuration = Configuration{
 		"swmichala": {
 			Name:     "Park & Ride ul. Św. Michała",
 			Address:  "ul. Świętego Michała, 61-113 Poznan",
-			Geometry: *geojson.NewPointGeometry([]float64{16.962210812192566, 52.408434016240186}),
+			Geometry: geojson.NewPointGeometry([]float64{16.962210812192566, 52.408434016240186}),
 			Resources: []string{
 				"https://www.apcoa.pl/parking-w/poznan/ztm-park-ride-poznan-ul-sw-michala/",
 			},
@@ -29,7 +30,7 @@ var configuration = Configuration{
 		"biskupinska": {
 			Name:     "Park & Ride ul. Biskupińska",
 			Address:  "ul. Biskupińska, 60-463 Poznań",
-			Geometry: *geojson.NewPointGeometry([]float64{16.864887711571242, 52.46070378280677}),
+			Geometry: geojson.NewPointGeometry([]float64{16.864887711571242, 52.46070378280677}),
 			Resources: []string{
 				"https://www.apcoa.pl/en/parking-in/poznan/ztm-park-ride-poznan-ul-biskupinska/",
 			},
@@ -41,7 +42,7 @@ var configuration = Configuration{
 		"rondo_staroleka": {
 			Name:     "Park & Ride Rondo Starołęka",
 			Address:  "ul. Wągrowska, 61-001 Poznań",
-			Geometry: *geojson.NewPointGeometry([]float64{16.94430210187254, 52.37916546114334}),
+			Geometry: geojson.NewPointGeometry([]float64{16.94430210187254, 52.37916546114334}),
 			Resources: []string{
 				"https://www.apcoa.pl/en/parking-in/poznan/ztm-park-ride-staroleka-poznan-ul-wagrowska/",
 			},
@@ -53,7 +54,7 @@ var configuration = Configuration{
 		"szymanowskiego": {
 			Name:     "Park & Ride ul. Szymanowskiego",
 			Address:  "ul. Szymanowskiego, 61-995 Poznań",
-			Geometry: *geojson.NewPointGeometry([]float64{16.916001501951616, 52.46207982767391}),
+			Geometry: geojson.NewPointGeometry([]float64{16.916001501951616, 52.46207982767391}),
 			Resources: []string{
 				"https://www.apcoa.pl/en/parking-in/poznan/ztm-park-ride-poznan-ul-szymanowskiego/",
 			},
@@ -66,21 +67,27 @@ var configuration = Configuration{
 
 func init() {
 	for k, v := range configuration.ParkingLots {
-		v.LastUpdated = defaultLastUpdated
-		v.MaxDimensions = defaultMaxDimensions
-		v.Features = defaultFeatures
-		v.Resources = append(baseResources, v.Resources...)
-		v.PaymentMethods = defaultPaymentMethods
-		v.Comment = defaultComment
-		v.Currency = defaultCurrency
-		v.Timezone = defaultTimezone
-		v.Rules = defaultRules
-		configuration.ParkingLots[k] = v
+		configuration.ParkingLots[k] = wheretopark.Metadata{
+			LastUpdated:    defaultLastUpdated,
+			Name:           v.Name,
+			Address:        v.Address,
+			Geometry:       v.Geometry,
+			Resources:      append(v.Resources, baseResources...),
+			TotalSpots:     v.TotalSpots,
+			MaxDimensions:  defaultMaxDimensions,
+			Features:       defaultFeatures,
+			PaymentMethods: defaultPaymentMethods,
+			Comment:        defaultComment,
+			Currency:       defaultCurrency,
+			Timezone:       defaultTimezone,
+			Rules:          defaultRules,
+		}
 	}
 }
 
 var (
-	defaultLastUpdated   = "2023-03-06"
+	defaultTimezone      = wheretopark.MustLoadLocation("Europe/Warsaw")
+	defaultLastUpdated   = wheretopark.MustParseDate("2023-03-06")
 	defaultMaxDimensions = &wheretopark.Dimensions{
 		Height: -1,
 	}
@@ -104,8 +111,7 @@ W przypadku pozostawienia pojazdu na noc(po godzinie 02:30) obowiązuje opłata 
 
 Źródło danych: ztm.poznan.pl`,
 	}
-	defaultCurrency = "PLN"
-	defaultTimezone = "Europe/Warsaw"
+	defaultCurrency = currency.GBP
 	defaultRules    = []wheretopark.Rule{
 		{
 			Hours: "Mo-Su 04:30-02:30",

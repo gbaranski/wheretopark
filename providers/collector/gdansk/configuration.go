@@ -4,6 +4,8 @@ import (
 	wheretopark "wheretopark/go"
 
 	_ "embed"
+
+	"golang.org/x/text/currency"
 )
 
 type Configuration struct {
@@ -557,3 +559,29 @@ W tym przypadku podstawą będzie niebieska naklejka na szybie pojazdu z symbole
 		},
 	},
 }
+
+func init() {
+	for k, v := range configuration.ParkingLots {
+		configuration.ParkingLots[k] = wheretopark.Metadata{
+			LastUpdated:    defaultLastUpdated,
+			Name:           v.Name,
+			Address:        v.Address,
+			Geometry:       v.Geometry,
+			Resources:      v.Resources,
+			TotalSpots:     v.TotalSpots,
+			MaxDimensions:  v.MaxDimensions,
+			Features:       v.Features,
+			PaymentMethods: v.PaymentMethods,
+			Comment:        v.Comment,
+			Currency:       defaultCurrency,
+			Timezone:       defaultTimezone,
+			Rules:          v.Rules,
+		}
+	}
+}
+
+var (
+	defaultLastUpdated = wheretopark.MustParseDate("2022-12-17")
+	defaultTimezone    = wheretopark.MustLoadLocation("Europe/Warsaw")
+	defaultCurrency    = currency.PLN
+)

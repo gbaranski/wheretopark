@@ -5,7 +5,9 @@ import (
 
 	_ "embed"
 
+	geojson "github.com/paulmach/go.geojson"
 	"github.com/shopspring/decimal"
+	"golang.org/x/text/currency"
 )
 
 type Configuration struct {
@@ -43,24 +45,51 @@ var configuration = Configuration{
 
 func init() {
 	for k, v := range configuration.ParkingLots {
-		v.Resources = append(v.Resources, baseResources...)
-		v.Features = append(v.Features, baseFeatures...)
-		v.PaymentMethods = defaultPaymentMethods
-		v.Comment = defaultComment
-		configuration.ParkingLots[k] = v
+		configuration.ParkingLots[k] = wheretopark.Metadata{
+			LastUpdated:    defaultLastUpdated,
+			Name:           "",
+			Address:        "",
+			Geometry:       &geojson.Geometry{},
+			Resources:      defaultResources,
+			TotalSpots:     v.TotalSpots,
+			MaxDimensions:  &wheretopark.Dimensions{},
+			Features:       defaultFeatures,
+			PaymentMethods: defaultPaymentMethods,
+			Comment:        defaultComment,
+			Currency:       currency.Unit{},
+			Timezone:       defaultLocation,
+			Rules:          v.Rules,
+		}
 	}
 }
 
 var (
-	baseResources = []string{
+	defaultLastUpdated = wheretopark.MustParseDate("2022-12-17")
+	defaultResources   = []string{
 		"https://www.wtp.waw.pl/parkingi/parking-pr-zeran-pkp/",
 		"mailto:ztm@ztm.waw.pl",
 		"tel:+48-(22)-56-98-116",
 		"tel:+48-(22)-56-98-11",
 	}
 
-	baseFeatures = []string{
+	defaultFeatures = []string{
 		wheretopark.FeatureUncovered,
+	}
+
+	defaultPaymentMethods = []string{
+		wheretopark.PaymentMethodCash,
+		wheretopark.PaymentMethodCard,
+		wheretopark.PaymentMethodContactless,
+		wheretopark.PaymentMethodMobile,
+	}
+
+	defaultComment = map[string]string{
+		"pl": `Parking znajduje się w śródmiejskiej strefie płatnego parkowania.
+Opłaty za postój pojazdu WD sa określone na https://www.zdiz.gdynia.pl/parkowanie/oplaty/
+Bezpłatny postój w niedzielę z identyfikatorem Mieszkańca Gdyni
+Opłat nie pobiera się 1 i 6 stycznia, w niedzielę i poniedziałek Świąt Wielkanocnych, 25 i 26 grudnia
+Długoterminowe abonamenty są określone na https://www.zdiz.gdynia.pl/parkowanie/oplaty/
+		`,
 	}
 
 	typeOneRules = []wheretopark.Rule{
@@ -117,21 +146,5 @@ var (
 				wheretopark.NewPricingRule("PT1H", decimal.Zero),
 			},
 		},
-	}
-
-	defaultPaymentMethods = []string{
-		wheretopark.PaymentMethodCash,
-		wheretopark.PaymentMethodCard,
-		wheretopark.PaymentMethodContactless,
-		wheretopark.PaymentMethodMobile,
-	}
-
-	defaultComment = map[string]string{
-		"pl": `Parking znajduje się w śródmiejskiej strefie płatnego parkowania.
-Opłaty za postój pojazdu WD sa określone na https://www.zdiz.gdynia.pl/parkowanie/oplaty/
-Bezpłatny postój w niedzielę z identyfikatorem Mieszkańca Gdyni
-Opłat nie pobiera się 1 i 6 stycznia, w niedzielę i poniedziałek Świąt Wielkanocnych, 25 i 26 grudnia
-Długoterminowe abonamenty są określone na https://www.zdiz.gdynia.pl/parkowanie/oplaty/
-		`,
 	}
 )

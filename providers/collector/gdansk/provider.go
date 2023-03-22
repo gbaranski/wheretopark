@@ -11,16 +11,6 @@ import (
 	geojson "github.com/paulmach/go.geojson"
 )
 
-var defaultLocation *time.Location
-
-func init() {
-	location, err := time.LoadLocation("Europe/Warsaw")
-	if err != nil {
-		panic(err)
-	}
-	defaultLocation = location
-}
-
 type Provider struct {
 	mapping map[string]wheretopark.ID
 }
@@ -50,17 +40,18 @@ func (p Provider) GetMetadata() (map[wheretopark.ID]wheretopark.Metadata, error)
 		}
 		id := wheretopark.CoordinateToID(vendor.Location.Latitude, vendor.Location.Longitude)
 		metadata := wheretopark.Metadata{
+			LastUpdated:    configuration.LastUpdated,
 			Name:           vendor.Name,
 			Address:        vendor.Address,
-			Geometry:       *geojson.NewPointGeometry([]float64{vendor.Location.Longitude, vendor.Location.Latitude}),
+			Geometry:       geojson.NewPointGeometry([]float64{vendor.Location.Longitude, vendor.Location.Latitude}),
 			Resources:      configuration.Resources,
 			TotalSpots:     configuration.TotalSpots,
 			MaxDimensions:  configuration.MaxDimensions,
 			Features:       configuration.Features,
 			PaymentMethods: configuration.PaymentMethods,
 			Comment:        configuration.Comment,
-			Currency:       "PLN",
-			Timezone:       "Europe/Warsaw",
+			Currency:       configuration.Currency,
+			Timezone:       configuration.Timezone,
 			Rules:          configuration.Rules,
 		}
 		metadatas[id] = metadata
@@ -88,7 +79,7 @@ func (p Provider) GetState() (map[wheretopark.ID]wheretopark.State, error) {
 		}
 
 		state := wheretopark.State{
-			LastUpdated: lastUpdate.In(defaultLocation).Format(time.RFC3339),
+			LastUpdated: lastUpdate.In(defaultTimezone).Format(time.RFC3339),
 			AvailableSpots: map[wheretopark.SpotType]uint{
 				wheretopark.SpotTypeCar: vendor.AvailableSpots,
 			},

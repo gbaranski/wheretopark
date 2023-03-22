@@ -1,10 +1,10 @@
 package wheretopark
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/url"
 
-	"github.com/goccy/go-json"
 	"github.com/surrealdb/surrealdb.go"
 )
 

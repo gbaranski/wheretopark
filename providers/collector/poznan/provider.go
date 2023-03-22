@@ -8,16 +8,6 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-var defaultLocation *time.Location
-
-func init() {
-	location, err := time.LoadLocation("Europe/Warsaw")
-	if err != nil {
-		panic(err)
-	}
-	defaultLocation = location
-}
-
 type Provider struct {
 	mapping map[string]wheretopark.ID
 }

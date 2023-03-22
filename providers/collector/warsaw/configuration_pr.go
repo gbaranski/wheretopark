@@ -13,13 +13,13 @@ var (
 		wheretopark.FeatureUncovered,
 	}
 
-	prRules = []wheretopark.Rule{
+	prDefaultRules = []wheretopark.Rule{
 		{
 			Hours: "Mo-Su 04:30-02:30",
 		},
 	}
 
-	prComment = map[string]string{
+	prDefaultComment = map[string]string{
 		"pl": `Parkingi przeznaczone są dla samochodów osobowych, motocykli, rowerów i motorowerów.
 System parkingów „Parkuj i Jedź” (Park & Ride) umożliwia bezpłatne parkowanie pojazdów osobom, które w chwili wyjazdu z parkingu przedstawią ważny bilet:
   - dobowy,

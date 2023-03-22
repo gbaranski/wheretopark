@@ -24,7 +24,7 @@ type config struct {
 	DatabaseURL      string `env:"DATABASE_URL" envDefault:"ws://localhost:8000"`
 	DatabaseName     string `env:"DATABASE_NAME" envDefault:"development"`
 	DatabaseUser     string `env:"DATABASE_USER" envDefault:"root"`
-	DatabasePassword string `env:"DATABASE_PASSWORD" envDefault:"root"`
+	DatabasePassword string `env:"DATABASE_PASSWORD" envDefault:"password"`
 }
 
 func runProvider[T provider.Common](createFn func() (T, error), runFn func(T, *wheretopark.Client) error, client *wheretopark.Client) {

@@ -1,9 +1,13 @@
 package wheretopark
 
 import (
+	"encoding/json"
+	"time"
+
 	"github.com/mmcloughlin/geohash"
 	geojson "github.com/paulmach/go.geojson"
 	"github.com/shopspring/decimal"
+	"golang.org/x/text/currency"
 )
 
 const (
@@ -67,19 +71,34 @@ func (d *Dimensions) Empty() bool {
 }
 
 type Metadata struct {
-	LastUpdated    string                  `json:"lastUpdated,omitempty"`
+	LastUpdated    time.Time               `json:"lastUpdated,omitempty"`
 	Name           string                  `json:"name"`
 	Address        string                  `json:"address"`
-	Geometry       geojson.Geometry        `json:"geometry"`
+	Geometry       *geojson.Geometry       `json:"geometry"`
 	Resources      []string                `json:"resources"`
 	TotalSpots     map[SpotType]uint       `json:"totalSpots"`
 	MaxDimensions  *Dimensions             `json:"maxDimensions,omitempty"`
 	Features       []Feature               `json:"features"`
 	PaymentMethods []PaymentMethod         `json:"paymentMethods"`
 	Comment        map[LanguageCode]string `json:"comment"`
-	Currency       string                  `json:"currency"`
-	Timezone       string                  `json:"timezone"`
+	Currency       currency.Unit           `json:"currency"`
+	Timezone       *time.Location          `json:"timezone"`
 	Rules          []Rule                  `json:"rules"`
+}
+
+func (m Metadata) MarshalJSON() ([]byte, error) {
+	type MetadataAlias Metadata
+	return json.Marshal(&struct {
+		*MetadataAlias
+		LastUpdated string `json:"lastUpdated,omitempty"`
+		Currency    string `json:"currency"`
+		Timezone    string `json:"timezone"`
+	}{
+		MetadataAlias: (*MetadataAlias)(&m),
+		LastUpdated:   m.LastUpdated.Format(time.DateOnly),
+		Currency:      m.Currency.String(),
+		Timezone:      m.Timezone.String(),
+	})
 }
 
 type State struct {
@@ -96,6 +115,10 @@ func CoordinateToID(latitude, longitude float64) ID {
 	return geohash.EncodeWithPrecision(latitude, longitude, 10)
 }
 
-func GeometryToID(geometry geojson.Geometry) ID {
+func GeometryToID(geometry *geojson.Geometry) ID {
 	return geohash.EncodeWithPrecision(geometry.Point[1], geometry.Point[0], 10)
+}
+
+func (m *Metadata) Validate() error {
+	return nil
 }

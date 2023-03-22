@@ -6,6 +6,7 @@ import (
 	"wheretopark/go/provider/sequential"
 
 	"github.com/rs/zerolog/log"
+	"golang.org/x/text/currency"
 )
 
 var defaultLocation *time.Location
@@ -47,6 +48,7 @@ func (p Provider) GetMetadata() (map[wheretopark.ID]wheretopark.Metadata, error)
 		}
 		id := wheretopark.GeometryToID(vendor.Location)
 		metadata := wheretopark.Metadata{
+			LastUpdated:    configuration.LastUpdated,
 			Name:           vendor.Name,
 			Address:        vendor.Address,
 			Geometry:       vendor.Location,
@@ -56,8 +58,8 @@ func (p Provider) GetMetadata() (map[wheretopark.ID]wheretopark.Metadata, error)
 			Features:       configuration.Features,
 			PaymentMethods: configuration.PaymentMethods,
 			Comment:        configuration.Comment,
-			Currency:       "PLN",
-			Timezone:       "Europe/Warsaw",
+			Currency:       currency.PLN,
+			Timezone:       defaultLocation,
 			Rules:          configuration.Rules,
 		}
 		metadatas[id] = metadata

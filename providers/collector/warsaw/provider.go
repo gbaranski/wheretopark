@@ -8,22 +8,12 @@ import (
 
 	"github.com/rs/zerolog/log"
 	"github.com/shopspring/decimal"
+	"golang.org/x/text/currency"
 
 	geojson "github.com/paulmach/go.geojson"
 )
 
-var defaultLocation *time.Location
-
-func init() {
-	location, err := time.LoadLocation("Europe/Warsaw")
-	if err != nil {
-		panic(err)
-	}
-	defaultLocation = location
-}
-
-type Provider struct {
-}
+type Provider struct{}
 
 func (p Provider) Config() simple.Config {
 	return simple.DEFAULT_CONFIG
@@ -38,7 +28,7 @@ func (p Provider) GetParkingLots() (map[wheretopark.ID]wheretopark.ParkingLot, e
 	if err != nil {
 		return nil, err
 	}
-	lastUpdate, err := time.ParseInLocation("2006-01-02T15:04:05", data.Result.Timestamp, defaultLocation)
+	lastUpdate, err := time.ParseInLocation("2006-01-02T15:04:05", data.Result.Timestamp, defaultTimezone)
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse last update time: %w", err)
 	}
@@ -86,26 +76,23 @@ func (p Provider) GetParkingLots() (map[wheretopark.ID]wheretopark.ParkingLot, e
 			totalPlaces.Standard += e.Standard
 		}
 		metadata := wheretopark.Metadata{
-			Name:      vendor.Name,
-			Address:   configuration.Address,
-			Geometry:  *geojson.NewPointGeometry([]float64{vendor.Longitude, vendor.Latitude}),
-			Resources: configuration.Resources,
-			TotalSpots: map[string]uint{
-				wheretopark.SpotTypeCarElectric: totalPlaces.Electric,
-				wheretopark.SpotTypeCar:         totalPlaces.Standard,
-				wheretopark.SpotTypeCarDisabled: totalPlaces.Disabled,
-			},
+			LastUpdated:    configuration.LastUpdated,
+			Name:           vendor.Name,
+			Address:        configuration.Address,
+			Geometry:       geojson.NewPointGeometry([]float64{vendor.Longitude, vendor.Latitude}),
+			Resources:      configuration.Resources,
+			TotalSpots:     map[string]uint{wheretopark.SpotTypeCarElectric: totalPlaces.Electric, wheretopark.SpotTypeCar: totalPlaces.Standard, wheretopark.SpotTypeCarDisabled: totalPlaces.Disabled},
 			MaxDimensions:  maxDimensions,
 			Features:       configuration.Features,
 			PaymentMethods: configuration.PaymentMethods,
 			Comment:        configuration.Comment,
-			Currency:       "PLN",
-			Timezone:       "Europe/Warsaw",
+			Currency:       currency.PLN,
+			Timezone:       defaultTimezone,
 			Rules:          configuration.Rules,
 		}
 
 		state := wheretopark.State{
-			LastUpdated: lastUpdate.In(defaultLocation).Format(time.RFC3339),
+			LastUpdated: lastUpdate.In(defaultTimezone).Format(time.RFC3339),
 			AvailableSpots: map[string]uint{
 				wheretopark.SpotTypeCarElectric: vendor.FreePlacesTotal.Electric,
 				wheretopark.SpotTypeCar:         vendor.FreePlacesTotal.Public,
@@ -125,7 +112,7 @@ func (p Provider) GetState() (map[wheretopark.ID]wheretopark.State, error) {
 	if err != nil {
 		return nil, err
 	}
-	lastUpdate, err := time.ParseInLocation("2006-01-02T15:04:05", data.Result.Timestamp, defaultLocation)
+	lastUpdate, err := time.ParseInLocation("2006-01-02T15:04:05", data.Result.Timestamp, defaultTimezone)
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse last update time: %w", err)
 	}
@@ -135,7 +122,7 @@ func (p Provider) GetState() (map[wheretopark.ID]wheretopark.State, error) {
 		id := wheretopark.CoordinateToID(vendor.Latitude, vendor.Longitude)
 
 		state := wheretopark.State{
-			LastUpdated: lastUpdate.In(defaultLocation).Format(time.RFC3339),
+			LastUpdated: lastUpdate.In(defaultTimezone).Format(time.RFC3339),
 			AvailableSpots: map[string]uint{
 				wheretopark.SpotTypeCarElectric: vendor.FreePlacesTotal.Electric,
 				wheretopark.SpotTypeCar:         vendor.FreePlacesTotal.Public,
@@ -149,5 +136,4 @@ func (p Provider) GetState() (map[wheretopark.ID]wheretopark.State, error) {
 
 func NewProvider() (simple.Provider, error) {
 	return Provider{}, nil
-
 }

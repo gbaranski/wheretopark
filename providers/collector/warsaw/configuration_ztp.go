@@ -137,7 +137,7 @@ var (
 		wheretopark.FeatureGuarded,
 	}
 
-	ztpBasicResources = []string{
+	ztpBaseResources = []string{
 		"https://www.ztp.waw.pl/strona-111-wykaz_parkingow_strzezonych.html",
 		"mailto:nopar@wp.pl",
 		"tel:+48-601-248-664",

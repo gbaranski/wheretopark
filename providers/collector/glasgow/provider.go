@@ -7,22 +7,12 @@ import (
 	"wheretopark/go/provider/simple"
 
 	"github.com/rs/zerolog/log"
+	"golang.org/x/text/currency"
 
 	geojson "github.com/paulmach/go.geojson"
 )
 
-var defaultLocation *time.Location
-
-func init() {
-	location, err := time.LoadLocation("Europe/London")
-	if err != nil {
-		panic(err)
-	}
-	defaultLocation = location
-}
-
-type Provider struct {
-}
+type Provider struct{}
 
 func (p Provider) Config() simple.Config {
 	return simple.NewConfig(time.Hour * 1)
@@ -54,23 +44,22 @@ func (p Provider) GetParkingLots() (map[wheretopark.ID]wheretopark.ParkingLot, e
 			continue
 		}
 		metadata := wheretopark.Metadata{
-			Name:      configuration.Name,
-			Address:   configuration.Address,
-			Geometry:  *geojson.NewPointGeometry([]float64{longitude, latitude}),
-			Resources: configuration.Resources,
-			TotalSpots: map[string]uint{
-				wheretopark.SpotTypeCar: vendor.Record.TotalCapacity,
-			},
+			LastUpdated:    configuration.LastUpdated,
+			Name:           configuration.Name,
+			Address:        configuration.Address,
+			Geometry:       geojson.NewPointGeometry([]float64{longitude, latitude}),
+			Resources:      configuration.Resources,
+			TotalSpots:     map[string]uint{wheretopark.SpotTypeCar: vendor.Record.TotalCapacity},
 			MaxDimensions:  nil,
 			Features:       configuration.Features,
 			PaymentMethods: configuration.PaymentMethods,
 			Comment:        configuration.Comment,
-			Currency:       "GBP",
-			Timezone:       defaultLocation.String(),
+			Currency:       currency.GBP,
+			Timezone:       defaultTimezone,
 			Rules:          configuration.Rules,
 		}
 
-		lastUpdate, err := time.ParseInLocation("2006-01-02T15:04:05", vendor.Record.DateTime, defaultLocation)
+		lastUpdate, err := time.ParseInLocation("2006-01-02T15:04:05", vendor.Record.DateTime, defaultTimezone)
 		if err != nil {
 			return nil, fmt.Errorf("failed to parse last update time: %w", err)
 		}
@@ -79,7 +68,7 @@ func (p Provider) GetParkingLots() (map[wheretopark.ID]wheretopark.ParkingLot, e
 			continue
 		}
 		state := wheretopark.State{
-			LastUpdated: lastUpdate.In(defaultLocation).Format(time.RFC3339),
+			LastUpdated: lastUpdate.In(defaultTimezone).Format(time.RFC3339),
 			AvailableSpots: map[string]uint{
 				wheretopark.SpotTypeCar: vendor.Record.TotalCapacity - uint(vendor.Record.OccupiedSpaces),
 			},
