@@ -62,7 +62,8 @@ func main() {
 	go runProvider(gdynia.NewProvider, client, wheretopark.DEFAULT_PROVIDER_CONFIG)
 	go runProvider(warsaw.NewProvider, client, wheretopark.DEFAULT_PROVIDER_CONFIG)
 	go runProvider(poznan.NewProvider, client, wheretopark.DEFAULT_PROVIDER_CONFIG)
-	go runProvider(glasgow.NewProvider, client, wheretopark.ProviderConfig{Interval: 5 * time.Minute})
+	// TODO: After getting the business subscription, decrease the interval
+	go runProvider(glasgow.NewProvider, client, wheretopark.ProviderConfig{Interval: 3 * time.Hour})
 
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
