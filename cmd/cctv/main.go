@@ -6,6 +6,7 @@ import (
 	"os/signal"
 	"syscall"
 	wheretopark "wheretopark/go"
+	sequential "wheretopark/go/provider/sequential"
 	"wheretopark/providers/cctv"
 
 	"github.com/caarlos0/env/v7"
@@ -50,7 +51,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	err = wheretopark.RunProvider(client, provider, wheretopark.DEFAULT_PROVIDER_CONFIG)
+	err = sequential.Run(provider, client)
 	if err != nil {
 		panic(err)
 	}

@@ -3,6 +3,7 @@ package gdynia
 import (
 	"time"
 	wheretopark "wheretopark/go"
+	"wheretopark/go/provider/sequential"
 
 	"github.com/rs/zerolog/log"
 )
@@ -23,6 +24,10 @@ type Provider struct {
 
 func (p Provider) Name() string {
 	return "gdynia"
+}
+
+func (p Provider) Config() sequential.Config {
+	return sequential.DEFAULT_CONFIG
 }
 
 func (p Provider) GetMetadata() (map[wheretopark.ID]wheretopark.Metadata, error) {
@@ -89,7 +94,7 @@ func (p Provider) GetState() (map[wheretopark.ID]wheretopark.State, error) {
 	return states, nil
 }
 
-func NewProvider() (wheretopark.Provider, error) {
+func NewProvider() (sequential.Provider, error) {
 	return Provider{
 		mapping: make(map[int]wheretopark.ID),
 	}, nil

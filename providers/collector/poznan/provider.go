@@ -3,6 +3,7 @@ package poznan
 import (
 	"time"
 	wheretopark "wheretopark/go"
+	"wheretopark/go/provider/simple"
 
 	"github.com/rs/zerolog/log"
 )
@@ -25,32 +26,16 @@ func (p Provider) Name() string {
 	return "poznan"
 }
 
-func (p Provider) GetMetadata() (map[wheretopark.ID]wheretopark.Metadata, error) {
-	vendorData, err := GetData()
-	if err != nil {
-		return nil, err
-	}
-	metadatas := make(map[wheretopark.ID]wheretopark.Metadata)
-	for name := range vendorData {
-		metadata, exists := configuration.ParkingLots[name]
-		if !exists {
-			log.Warn().
-				Str("name", name).
-				Msg("missing configuration")
-			continue
-		}
-		id := wheretopark.GeometryToID(metadata.Geometry)
-		metadatas[id] = metadata
-	}
-	return metadatas, nil
+func (p Provider) Config() simple.Config {
+	return simple.DEFAULT_CONFIG
 }
 
-func (p Provider) GetState() (map[wheretopark.ID]wheretopark.State, error) {
+func (p Provider) GetParkingLots() (map[wheretopark.ID]wheretopark.ParkingLot, error) {
 	vendorData, err := GetData()
 	if err != nil {
 		return nil, err
 	}
-	states := make(map[wheretopark.ID]wheretopark.State)
+	parkingLots := make(map[wheretopark.ID]wheretopark.ParkingLot)
 	for name, data := range vendorData {
 		metadata, exists := configuration.ParkingLots[name]
 		if !exists {
@@ -66,12 +51,15 @@ func (p Provider) GetState() (map[wheretopark.ID]wheretopark.State, error) {
 				wheretopark.SpotTypeCar: data.AvailableSpots,
 			},
 		}
-		states[id] = state
+		parkingLots[id] = wheretopark.ParkingLot{
+			Metadata: metadata,
+			State:    state,
+		}
 	}
-	return states, nil
+	return parkingLots, nil
 }
 
-func NewProvider() (wheretopark.Provider, error) {
+func NewProvider() (simple.Provider, error) {
 	return Provider{
 		mapping: make(map[string]wheretopark.ID),
 	}, nil

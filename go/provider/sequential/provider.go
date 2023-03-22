@@ -1,19 +1,21 @@
-package wheretopark
+package sequential
 
 import (
 	"fmt"
 	"time"
+	wheretopark "wheretopark/go"
 
 	"github.com/rs/zerolog/log"
 )
 
 type Provider interface {
 	Name() string
-	GetMetadata() (map[ID]Metadata, error)
-	GetState() (map[ID]State, error)
+	Config() Config
+	GetMetadata() (map[wheretopark.ID]wheretopark.Metadata, error)
+	GetState() (map[wheretopark.ID]wheretopark.State, error)
 }
 
-func process(client *Client, provider Provider) error {
+func process(client *wheretopark.Client, provider Provider) error {
 	metadatas, err := provider.GetMetadata()
 	if err != nil {
 		return fmt.Errorf("failed to get metadatas: %w", err)
@@ -41,10 +43,10 @@ func process(client *Client, provider Provider) error {
 		}
 		for i, rule := range metadata.Rules {
 			if rule.Pricing == nil {
-				metadata.Rules[i].Pricing = make([]PricingRule, 0)
+				metadata.Rules[i].Pricing = make([]wheretopark.PricingRule, 0)
 			}
 		}
-		parkingLot := ParkingLot{
+		parkingLot := wheretopark.ParkingLot{
 			Metadata: metadata,
 			State:    states[id],
 		}
@@ -60,29 +62,38 @@ func process(client *Client, provider Provider) error {
 	return nil
 }
 
-type ProviderConfig struct {
-	Interval time.Duration
+type Config struct {
+	metadataInterval time.Duration
+	stateInterval    time.Duration
 }
 
-var DEFAULT_PROVIDER_CONFIG = ProviderConfig{
-	Interval: time.Minute,
+var DEFAULT_CONFIG = Config{
+	metadataInterval: time.Minute,
+	stateInterval:    time.Minute,
+}
+
+func NewConfig(metadataInterval, stateInterval time.Duration) Config {
+	return Config{
+		metadataInterval: metadataInterval,
+		stateInterval:    stateInterval,
+	}
 }
 
 const DEFAULT_PROCESS_TIMEOUT = 30 * time.Second
 
-func RunProvider(client *Client, provider Provider, config ProviderConfig) error {
-
+func Run(provider Provider, client *wheretopark.Client) error {
 	log.Info().Str("name", provider.Name()).Msg("starting provider")
+	config := provider.Config()
 	for {
 		processFn := func() error {
 			return process(client, provider)
 		}
-		if err := withTimeout(processFn, DEFAULT_PROCESS_TIMEOUT); err != nil {
+		if err := wheretopark.WithTimeout(processFn, DEFAULT_PROCESS_TIMEOUT); err != nil {
 			log.Error().
 				Err(err).
 				Str("name", provider.Name()).
 				Msg("failed to process provider")
 		}
-		time.Sleep(config.Interval)
+		time.Sleep(config.metadataInterval)
 	}
 }

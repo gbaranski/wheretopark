@@ -3,8 +3,6 @@ package warsaw_test
 import (
 	"testing"
 	"wheretopark/providers/collector/warsaw"
-
-	"github.com/stretchr/testify/assert"
 )
 
 func TestProvider(t *testing.T) {
@@ -12,14 +10,8 @@ func TestProvider(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	metadata, err := provider.GetMetadata()
+	_, err = provider.GetParkingLots()
 	if err != nil {
 		t.Fatal(err)
 	}
-
-	state, err := provider.GetState()
-	if err != nil {
-		t.Fatal(err)
-	}
-	assert.Equal(t, len(metadata), len(state))
 }

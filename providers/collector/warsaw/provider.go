@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"time"
 	wheretopark "wheretopark/go"
+	"wheretopark/go/provider/simple"
 
 	"github.com/rs/zerolog/log"
 	"github.com/shopspring/decimal"
@@ -24,16 +25,25 @@ func init() {
 type Provider struct {
 }
 
+func (p Provider) Config() simple.Config {
+	return simple.DEFAULT_CONFIG
+}
+
 func (p Provider) Name() string {
 	return "warsaw"
 }
 
-func (p Provider) GetMetadata() (map[wheretopark.ID]wheretopark.Metadata, error) {
+func (p Provider) GetParkingLots() (map[wheretopark.ID]wheretopark.ParkingLot, error) {
 	data, err := GetData()
 	if err != nil {
 		return nil, err
 	}
-	metadatas := make(map[wheretopark.ID]wheretopark.Metadata)
+	lastUpdate, err := time.ParseInLocation("2006-01-02T15:04:05", data.Result.Timestamp, defaultLocation)
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse last update time: %w", err)
+	}
+
+	parkingLots := make(map[wheretopark.ID]wheretopark.ParkingLot)
 	for _, vendor := range data.Result.Parks {
 		id := wheretopark.CoordinateToID(vendor.Latitude, vendor.Longitude)
 		configuration, exists := configuration.ParkingLots[id]
@@ -93,9 +103,21 @@ func (p Provider) GetMetadata() (map[wheretopark.ID]wheretopark.Metadata, error)
 			Timezone:       "Europe/Warsaw",
 			Rules:          configuration.Rules,
 		}
-		metadatas[id] = metadata
+
+		state := wheretopark.State{
+			LastUpdated: lastUpdate.In(defaultLocation).Format(time.RFC3339),
+			AvailableSpots: map[string]uint{
+				wheretopark.SpotTypeCarElectric: vendor.FreePlacesTotal.Electric,
+				wheretopark.SpotTypeCar:         vendor.FreePlacesTotal.Public,
+				wheretopark.SpotTypeCarDisabled: vendor.FreePlacesTotal.Disabled,
+			},
+		}
+		parkingLots[id] = wheretopark.ParkingLot{
+			Metadata: metadata,
+			State:    state,
+		}
 	}
-	return metadatas, nil
+	return parkingLots, nil
 }
 
 func (p Provider) GetState() (map[wheretopark.ID]wheretopark.State, error) {
@@ -125,7 +147,7 @@ func (p Provider) GetState() (map[wheretopark.ID]wheretopark.State, error) {
 	return states, nil
 }
 
-func NewProvider() (wheretopark.Provider, error) {
+func NewProvider() (simple.Provider, error) {
 	return Provider{}, nil
 
 }

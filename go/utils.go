@@ -23,7 +23,7 @@ func NewPricingRule(duration string, price decimal.Decimal) PricingRule {
 	}
 }
 
-func withTimeout(fn func() error, timeout time.Duration) error {
+func WithTimeout(fn func() error, timeout time.Duration) error {
 	done := make(chan error)
 	go func() {
 		done <- fn()

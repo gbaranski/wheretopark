@@ -5,8 +5,10 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
-	"time"
 	wheretopark "wheretopark/go"
+	"wheretopark/go/provider"
+	"wheretopark/go/provider/sequential"
+	"wheretopark/go/provider/simple"
 	"wheretopark/providers/collector/gdansk"
 	"wheretopark/providers/collector/gdynia"
 	"wheretopark/providers/collector/glasgow"
@@ -25,13 +27,13 @@ type config struct {
 	DatabasePassword string `env:"DATABASE_PASSWORD" envDefault:"root"`
 }
 
-func runProvider(createFn func() (wheretopark.Provider, error), client *wheretopark.Client, config wheretopark.ProviderConfig) {
+func runProvider[T provider.Common](createFn func() (T, error), runFn func(T, *wheretopark.Client) error, client *wheretopark.Client) {
 	provider, err := createFn()
 	name := provider.Name()
 	if err != nil {
 		log.Fatal().Err(err).Str("name", name).Msg("creating provider failed")
 	}
-	err = wheretopark.RunProvider(client, provider, config)
+	err = runFn(provider, client)
 	if err != nil {
 		log.Fatal().Err(err).Str("name", name).Msg("running provider failed")
 	}
@@ -58,12 +60,12 @@ func main() {
 		log.Fatal().Err(err).Msg("failed to sign in")
 	}
 
-	go runProvider(gdansk.NewProvider, client, wheretopark.DEFAULT_PROVIDER_CONFIG)
-	go runProvider(gdynia.NewProvider, client, wheretopark.DEFAULT_PROVIDER_CONFIG)
-	go runProvider(warsaw.NewProvider, client, wheretopark.DEFAULT_PROVIDER_CONFIG)
-	go runProvider(poznan.NewProvider, client, wheretopark.DEFAULT_PROVIDER_CONFIG)
+	go runProvider(gdansk.NewProvider, sequential.Run, client)
+	go runProvider(gdynia.NewProvider, sequential.Run, client)
+	go runProvider(warsaw.NewProvider, simple.Run, client)
+	go runProvider(poznan.NewProvider, simple.Run, client)
 	// TODO: After getting the business subscription, decrease the interval
-	go runProvider(glasgow.NewProvider, client, wheretopark.ProviderConfig{Interval: 3 * time.Hour})
+	go runProvider(glasgow.NewProvider, simple.Run, client)
 
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, os.Interrupt, syscall.SIGTERM)

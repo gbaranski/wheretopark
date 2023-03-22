@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"time"
 	wheretopark "wheretopark/go"
+	"wheretopark/go/provider/sequential"
 
 	"github.com/rs/zerolog/log"
 
@@ -22,6 +23,10 @@ func init() {
 
 type Provider struct {
 	mapping map[string]wheretopark.ID
+}
+
+func (p Provider) Config() sequential.Config {
+	return sequential.DEFAULT_CONFIG
 }
 
 func (p Provider) Name() string {
@@ -93,7 +98,7 @@ func (p Provider) GetState() (map[wheretopark.ID]wheretopark.State, error) {
 	return states, nil
 }
 
-func NewProvider() (wheretopark.Provider, error) {
+func NewProvider() (sequential.Provider, error) {
 	return Provider{
 		mapping: make(map[string]wheretopark.ID),
 	}, nil

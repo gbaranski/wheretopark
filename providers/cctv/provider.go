@@ -6,6 +6,7 @@ import (
 	"sync/atomic"
 	"time"
 	wheretopark "wheretopark/go"
+	"wheretopark/go/provider/sequential"
 
 	"github.com/rs/zerolog/log"
 	"gocv.io/x/gocv"
@@ -20,6 +21,10 @@ type Provider struct {
 
 func (p *Provider) Name() string {
 	return "cctv"
+}
+
+func (p *Provider) Config() sequential.Config {
+	return sequential.DEFAULT_CONFIG
 }
 
 func (p *Provider) GetMetadata() (map[wheretopark.ID]wheretopark.Metadata, error) {
@@ -130,7 +135,7 @@ func (p *Provider) GetState() (map[wheretopark.ID]wheretopark.State, error) {
 	return states, nil
 }
 
-func NewProvider(configurationPath *string, model *Model, savePath *string) (*Provider, error) {
+func NewProvider(configurationPath *string, model *Model, savePath *string) (sequential.Provider, error) {
 	var configuration Configuration
 	if configurationPath == nil {
 		configuration = DefaultConfiguration

@@ -117,6 +117,16 @@ func mapTo[T any](v map[string]any) (*T, error) {
 	return &value, nil
 }
 
+func (c *Client) SetParkingLots(parkingLots map[ID]ParkingLot) error {
+	for id, parkingLot := range parkingLots {
+		err := c.SetParkingLot(id, parkingLot)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
 func (c *Client) SetParkingLot(id ID, parkingLot ParkingLot) error {
 	data, err := toMap(parkingLot)
 	if err != nil {
