@@ -41,6 +41,15 @@ func (c *Client) set(thing string, data map[string]any) error {
 	return err
 }
 
+func (c *Client) setField(thing string, field string, data map[string]any) error {
+	dataJson, err := json.Marshal(data)
+	if err != nil {
+		return err
+	}
+	_, err = c.database.Query(fmt.Sprintf("UPDATE %s SET %s = %s", thing, field, dataJson), nil)
+	return err
+}
+
 func (c *Client) exists(thing string) (bool, error) {
 	raw, err := c.database.Query("SELECT true as exists FROM $what", map[string]any{"what": thing})
 	if err != nil {
@@ -133,6 +142,22 @@ func (c *Client) SetParkingLot(id ID, parkingLot ParkingLot) error {
 		return err
 	}
 	return c.set(parkingLotReference(id), data)
+}
+
+func (c *Client) SetMetadata(id ID, metadata Metadata) error {
+	data, err := toMap(metadata)
+	if err != nil {
+		return err
+	}
+	return c.setField(parkingLotReference(id), "metadata", data)
+}
+
+func (c *Client) SetState(id ID, state State) error {
+	data, err := toMap(state)
+	if err != nil {
+		return err
+	}
+	return c.setField(parkingLotReference(id), "state", data)
 }
 
 func (c *Client) ExistsParkingLot(id ID) (bool, error) {

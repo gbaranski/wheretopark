@@ -11,8 +11,8 @@ require (
 	github.com/prometheus/client_golang v1.14.0
 	github.com/rs/zerolog v1.28.0
 	github.com/shopspring/decimal v1.3.1
-	github.com/stretchr/testify v1.8.1
-	github.com/surrealdb/surrealdb.go v0.1.1
+	github.com/stretchr/testify v1.8.2
+	github.com/surrealdb/surrealdb.go v0.1.2-0.20230309175011-e0397e60fdc8
 	gocv.io/x/gocv v0.31.0
 	golang.org/x/text v0.8.0
 )
