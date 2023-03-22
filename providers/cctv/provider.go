@@ -108,7 +108,7 @@ func (p *Provider) ProcessParkingLot(parkingLot ParkingLot) wheretopark.State {
 	}
 	wg.Wait()
 	return wheretopark.State{
-		LastUpdated: time.Now().Format(time.RFC3339),
+		LastUpdated: time.Now(),
 		AvailableSpots: map[string]uint{
 			"CAR": uint(availableSpots),
 		},

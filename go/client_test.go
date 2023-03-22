@@ -121,7 +121,7 @@ func TestParkingLot(t *testing.T) {
 		},
 	}
 	state := wheretopark.State{
-		LastUpdated: "2022-10-21T23:09:47+0000",
+		LastUpdated: wheretopark.MustParseDate("2022-10-21T23:09:47Z"),
 		AvailableSpots: map[string]uint{
 			"CAR": 123,
 		},

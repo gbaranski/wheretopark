@@ -71,7 +71,7 @@ func (d *Dimensions) Empty() bool {
 }
 
 type Metadata struct {
-	LastUpdated    time.Time               `json:"lastUpdated,omitempty"`
+	LastUpdated    time.Time               `json:"lastUpdated"`
 	Name           string                  `json:"name"`
 	Address        string                  `json:"address"`
 	Geometry       *geojson.Geometry       `json:"geometry"`
@@ -102,8 +102,19 @@ func (m Metadata) MarshalJSON() ([]byte, error) {
 }
 
 type State struct {
-	LastUpdated    string            `json:"lastUpdated"`
+	LastUpdated    time.Time         `json:"lastUpdated"`
 	AvailableSpots map[SpotType]uint `json:"availableSpots"`
+}
+
+func (s State) MarshalJSON() ([]byte, error) {
+	type StateAlias State
+	return json.Marshal(&struct {
+		*StateAlias
+		LastUpdated string `json:"lastUpdated"`
+	}{
+		StateAlias:  (*StateAlias)(&s),
+		LastUpdated: s.LastUpdated.Format(time.RFC3339),
+	})
 }
 
 type ParkingLot struct {

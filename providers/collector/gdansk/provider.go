@@ -79,7 +79,7 @@ func (p Provider) GetState() (map[wheretopark.ID]wheretopark.State, error) {
 		}
 
 		state := wheretopark.State{
-			LastUpdated: lastUpdate.In(defaultTimezone).Format(time.RFC3339),
+			LastUpdated: lastUpdate.In(defaultTimezone),
 			AvailableSpots: map[wheretopark.SpotType]uint{
 				wheretopark.SpotTypeCar: vendor.AvailableSpots,
 			},

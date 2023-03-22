@@ -1,7 +1,6 @@
 package poznan
 
 import (
-	"time"
 	wheretopark "wheretopark/go"
 	"wheretopark/go/provider/simple"
 
@@ -36,7 +35,7 @@ func (p Provider) GetParkingLots() (map[wheretopark.ID]wheretopark.ParkingLot, e
 		}
 		id := wheretopark.GeometryToID(metadata.Geometry)
 		state := wheretopark.State{
-			LastUpdated: data.LastUpdated.UTC().Format(time.RFC3339),
+			LastUpdated: data.LastUpdated.UTC(),
 			AvailableSpots: map[string]uint{
 				wheretopark.SpotTypeCar: data.AvailableSpots,
 			},

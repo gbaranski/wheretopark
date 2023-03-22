@@ -86,7 +86,7 @@ func (p Provider) GetState() (map[wheretopark.ID]wheretopark.State, error) {
 			continue
 		}
 		state := wheretopark.State{
-			LastUpdated: lastUpdate.UTC().Format(time.RFC3339),
+			LastUpdated: lastUpdate.UTC(),
 			AvailableSpots: map[wheretopark.SpotType]uint{
 				wheretopark.SpotTypeCar: uint(vendor.FreePlaces),
 			},

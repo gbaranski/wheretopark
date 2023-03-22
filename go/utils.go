@@ -44,6 +44,14 @@ func MustParseDate(date string) time.Time {
 	return v
 }
 
+func MustParseDateTime(dateTime string) time.Time {
+	v, err := time.Parse(time.RFC3339, dateTime)
+	if err != nil {
+		panic(err)
+	}
+	return v
+}
+
 func MustLoadLocation(name string) *time.Location {
 	location, err := time.LoadLocation(name)
 	if err != nil {

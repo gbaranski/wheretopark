@@ -92,7 +92,7 @@ func (p Provider) GetParkingLots() (map[wheretopark.ID]wheretopark.ParkingLot, e
 		}
 
 		state := wheretopark.State{
-			LastUpdated: lastUpdate.In(defaultTimezone).Format(time.RFC3339),
+			LastUpdated: lastUpdate.In(defaultTimezone),
 			AvailableSpots: map[string]uint{
 				wheretopark.SpotTypeCarElectric: vendor.FreePlacesTotal.Electric,
 				wheretopark.SpotTypeCar:         vendor.FreePlacesTotal.Public,
@@ -122,7 +122,7 @@ func (p Provider) GetState() (map[wheretopark.ID]wheretopark.State, error) {
 		id := wheretopark.CoordinateToID(vendor.Latitude, vendor.Longitude)
 
 		state := wheretopark.State{
-			LastUpdated: lastUpdate.In(defaultTimezone).Format(time.RFC3339),
+			LastUpdated: lastUpdate.In(defaultTimezone),
 			AvailableSpots: map[string]uint{
 				wheretopark.SpotTypeCarElectric: vendor.FreePlacesTotal.Electric,
 				wheretopark.SpotTypeCar:         vendor.FreePlacesTotal.Public,

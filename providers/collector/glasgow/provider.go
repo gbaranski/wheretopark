@@ -68,7 +68,7 @@ func (p Provider) GetParkingLots() (map[wheretopark.ID]wheretopark.ParkingLot, e
 			continue
 		}
 		state := wheretopark.State{
-			LastUpdated: lastUpdate.In(defaultTimezone).Format(time.RFC3339),
+			LastUpdated: lastUpdate.In(defaultTimezone),
 			AvailableSpots: map[string]uint{
 				wheretopark.SpotTypeCar: vendor.Record.TotalCapacity - uint(vendor.Record.OccupiedSpaces),
 			},
