@@ -121,6 +121,9 @@ func (m *Metadata) UnmarshalJSON(data []byte) error {
 	if err != nil {
 		return err
 	}
+	if aux.LastUpdated < time.DateOnly {
+		return fmt.Errorf("invalid date format: %s", aux.LastUpdated)
+	}
 	m.LastUpdated, err = time.Parse(time.DateOnly, aux.LastUpdated[:len(time.DateOnly)])
 	if err != nil {
 		return err
