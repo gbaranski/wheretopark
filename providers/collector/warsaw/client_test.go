@@ -4,6 +4,8 @@ import (
 	"log"
 	"testing"
 	"wheretopark/providers/collector/warsaw"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestData(t *testing.T) {
@@ -11,5 +13,6 @@ func TestData(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+	assert.True(t, len(data.Result.Parks) > 0, "No data returned")
 	log.Println(data)
 }

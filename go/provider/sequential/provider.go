@@ -131,7 +131,7 @@ func initProcessing(provider Provider, client *wheretopark.Client) error {
 		}
 		err := client.SetParkingLot(id, parkingLot)
 		if err != nil {
-			return err
+			return fmt.Errorf("setting parking lot: %w", err)
 		}
 	}
 	log.Info().
