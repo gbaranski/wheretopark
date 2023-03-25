@@ -10,10 +10,7 @@ import (
 	wheretopark "wheretopark/go"
 
 	"github.com/goccy/go-json"
-	geojson "github.com/paulmach/go.geojson"
-	"github.com/shopspring/decimal"
 	"github.com/stretchr/testify/assert"
-	"golang.org/x/text/currency"
 )
 
 func init() {
@@ -43,129 +40,61 @@ func getEnvOr(name string, or string) string {
 	return value
 }
 
-func client() *wheretopark.Client {
+func client(t *testing.T) *wheretopark.Client {
 	rawURL := getEnvOr("SURREALDB_URL", "ws://localhost:8000")
 	url, err := url.Parse(rawURL)
 	if err != nil {
-		log.Fatal(err)
+		t.Fatal(err)
 	}
 	client, err := wheretopark.NewClient(url, "wheretopark", "testing")
 	if err != nil {
-		log.Fatal(err)
+		t.Fatal(err)
 	}
 	err = client.SignInWithPassword("root", "password")
 	if err != nil {
-		log.Fatal(err)
+		t.Fatal(err)
 	}
 	return client
 }
 
-func TestParkingLot(t *testing.T) {
-	client := client()
-	metadata := wheretopark.Metadata{
-		Name:     "Galeria Bałtycka",
-		Address:  "ul. Dmowskiego",
-		Geometry: geojson.NewPointGeometry([]float64{18.60024, 54.38268}),
-		Resources: []string{
-			"mailto:galeria@galeriabaltycka.pl",
-			"tel:+48-58-521-85-52",
-			"https://www.galeriabaltycka.pl/o-centrum/dojazd-parkingi/parkingi/",
-		},
-		TotalSpots: map[string]uint{
-			"CAR": 1110,
-		},
-		MaxDimensions: nil,
-		Features: []string{
-			"COVERED",
-			"UNCOVERED",
-		},
-		PaymentMethods: []string{
-			"CASH",
-			"CARD",
-			"CONTACTLESS",
-		},
-		Comment: map[string]string{
-			"pl": "Polski komentarz",
-			"en": "English comment",
-		},
-		Currency: currency.PLN,
-		Timezone: time.UTC,
-		Rules: []wheretopark.Rule{
-			{
-				Hours:   "Mo-Sa 08:00-22:00; Su 09:00-21:00",
-				Applies: nil,
-				Pricing: []wheretopark.PricingRule{
-					{
-						Duration: "PT1H",
-						Price:    decimal.Zero,
-					},
-					{
-						Duration: "PT2H",
-						Price:    decimal.NewFromInt(2),
-					},
-					{
-						Duration: "PT3H",
-						Price:    decimal.NewFromInt(3),
-					},
-					{
-						Duration: "PT24H",
-						Price:    decimal.NewFromInt(25),
-					},
-					{
-						Duration:  "PT1H",
-						Price:     decimal.NewFromInt(4),
-						Repeating: true,
-					},
-				},
-			},
-		},
-	}
-	state := wheretopark.State{
-		LastUpdated: wheretopark.MustParseDate("2022-10-21T23:09:47Z"),
-		AvailableSpots: map[string]uint{
-			"CAR": 123,
-		},
-	}
-	parkingLot := wheretopark.ParkingLot{
-		State:    state,
-		Metadata: metadata,
-	}
+func TestClient(t *testing.T) {
+	client := client(t)
 	id := RandomID()
-	err := client.SetParkingLot(id, parkingLot)
+	err := client.SetParkingLot(id, sampleParkingLot)
 	if err != nil {
-		log.Fatal(err)
+		t.Fatal(err)
 	}
-	if err = client.SetParkingLot(id, parkingLot); err != nil {
-		log.Fatal(err)
+	if err = client.SetParkingLot(id, sampleParkingLot); err != nil {
+		t.Fatal(err)
 	}
 
 	obtainedParkingLot, err := client.GetParkingLot(id)
 	if err != nil {
-		log.Fatal(err)
+		t.Fatal(err)
 	}
-	equalJson(t, parkingLot, *obtainedParkingLot, "obtained parking lot doesn't match with parking lot that was added")
+	equalJson(t, sampleParkingLot, *obtainedParkingLot, "obtained parking lot doesn't match with parking lot that was added")
 
 	err = client.DeleteParkingLot(id)
 	if err != nil {
-		log.Fatal(err)
+		t.Fatal(err)
 	}
 	if err = client.DeleteParkingLot(id); err != nil {
-		log.Fatal(err)
+		t.Fatal(err)
 	}
 
 	exists, err := client.ExistsParkingLot(id)
 	if err != nil {
-		log.Fatal(err)
+		t.Fatal(err)
 	}
 	if exists {
-		log.Fatalf("client should report that %s does not exist\n", id)
+		t.Fatalf("client should report that %s does not exist\n", id)
 	}
 	obtainedParkingLot, err = client.GetParkingLot(id)
 	if err != nil {
-		log.Fatal(err)
+		t.Fatal(err)
 	}
 	if obtainedParkingLot != nil {
-		log.Fatalf("parkign lot %s should have been deleted", id)
+		t.Fatalf("parkign lot %s should have been deleted", id)
 	}
 
 }

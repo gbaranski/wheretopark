@@ -95,19 +95,45 @@ type Metadata struct {
 	Rules          []Rule                  `json:"rules,omitempty"`
 }
 
+type metadataAlias Metadata
+
+type metadataJSON struct {
+	*metadataAlias
+	LastUpdated string `json:"lastUpdated,omitempty"`
+	Currency    string `json:"currency"`
+	Timezone    string `json:"timezone"`
+}
+
 func (m Metadata) MarshalJSON() ([]byte, error) {
-	type MetadataAlias Metadata
-	return json.Marshal(&struct {
-		*MetadataAlias
-		LastUpdated string `json:"lastUpdated,omitempty"`
-		Currency    string `json:"currency"`
-		Timezone    string `json:"timezone"`
-	}{
-		MetadataAlias: (*MetadataAlias)(&m),
+	return json.Marshal(&metadataJSON{
+		metadataAlias: (*metadataAlias)(&m),
 		LastUpdated:   m.LastUpdated.Format(time.DateOnly),
 		Currency:      m.Currency.String(),
 		Timezone:      m.Timezone.String(),
 	})
+}
+
+func (m *Metadata) UnmarshalJSON(data []byte) error {
+	aux := metadataJSON{
+		metadataAlias: (*metadataAlias)(m),
+	}
+	err := json.Unmarshal(data, &aux)
+	if err != nil {
+		return err
+	}
+	m.LastUpdated, err = time.Parse(time.DateOnly, aux.LastUpdated[:len(time.DateOnly)])
+	if err != nil {
+		return err
+	}
+	m.Currency, err = currency.ParseISO(aux.Currency)
+	if err != nil {
+		return err
+	}
+	m.Timezone, err = time.LoadLocation(aux.Timezone)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 type State struct {
@@ -115,15 +141,34 @@ type State struct {
 	AvailableSpots map[SpotType]uint `json:"availableSpots"`
 }
 
+type stateAlias State
+
+type stateJSON struct {
+	*stateAlias
+	LastUpdated string `json:"lastUpdated"`
+}
+
 func (s State) MarshalJSON() ([]byte, error) {
-	type StateAlias State
-	return json.Marshal(&struct {
-		*StateAlias
-		LastUpdated string `json:"lastUpdated"`
-	}{
-		StateAlias:  (*StateAlias)(&s),
+	return json.Marshal(&stateJSON{
+		stateAlias:  (*stateAlias)(&s),
 		LastUpdated: s.LastUpdated.Format(time.RFC3339),
 	})
+}
+
+func (s *State) UnmarshalJSON(data []byte) error {
+	aux := stateJSON{
+		stateAlias: (*stateAlias)(s),
+	}
+	err := json.Unmarshal(data, &aux)
+	if err != nil {
+		return err
+	}
+	fmt.Printf("date: %s\n", aux.LastUpdated)
+	s.LastUpdated, err = time.Parse(time.RFC3339, aux.LastUpdated)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 type ParkingLot struct {

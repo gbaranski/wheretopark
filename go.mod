@@ -6,6 +6,7 @@ require (
 	github.com/caarlos0/env/v7 v7.1.0
 	github.com/ghodss/yaml v1.0.0
 	github.com/go-resty/resty/v2 v2.7.0
+	github.com/google/go-cmp v0.5.9
 	github.com/mmcloughlin/geohash v0.10.0
 	github.com/paulmach/go.geojson v1.4.0
 	github.com/prometheus/client_golang v1.14.0
