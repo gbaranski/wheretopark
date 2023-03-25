@@ -133,8 +133,10 @@ var (
 	}
 
 	ztpBasePaymentMethods = []wheretopark.Feature{
-		wheretopark.FeatureUncovered,
-		wheretopark.FeatureGuarded,
+		wheretopark.PaymentMethodCash,
+		wheretopark.PaymentMethodCard,
+		wheretopark.PaymentMethodContactless,
+		wheretopark.PaymentMethodMobile,
 	}
 
 	ztpBaseResources = []string{

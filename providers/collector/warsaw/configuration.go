@@ -22,7 +22,7 @@ func init() {
 		configuration.ParkingLots[k] = wheretopark.Metadata{
 			LastUpdated:    defaultLastUpdated,
 			Name:           "",
-			Address:        "",
+			Address:        v.Address,
 			Geometry:       &geojson.Geometry{},
 			Resources:      append(v.Resources, ztpBaseResources...),
 			TotalSpots:     map[string]uint{},
@@ -39,7 +39,7 @@ func init() {
 		configuration.ParkingLots[k] = wheretopark.Metadata{
 			LastUpdated:    defaultLastUpdated,
 			Name:           "",
-			Address:        "",
+			Address:        v.Address,
 			Geometry:       &geojson.Geometry{},
 			Resources:      append(v.Resources, prBaseResources...),
 			TotalSpots:     map[string]uint{},
