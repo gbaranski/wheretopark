@@ -36,7 +36,6 @@ func (p Provider) GetParkingLots() (map[wheretopark.ID]wheretopark.ParkingLot, e
 	parkingLots := make(map[wheretopark.ID]wheretopark.ParkingLot)
 	for _, vendor := range data.Result.Parks {
 		id := wheretopark.CoordinateToID(vendor.Latitude, vendor.Longitude)
-		fmt.Printf("id=%s,lat=%f,lng=%f\n", id, vendor.Latitude, vendor.Longitude)
 		configuration, exists := configuration.ParkingLots[id]
 		if !exists {
 			log.Warn().
