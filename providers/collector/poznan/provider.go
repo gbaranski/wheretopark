@@ -30,6 +30,7 @@ func (p Provider) GetParkingLots() (map[wheretopark.ID]wheretopark.ParkingLot, e
 		if !exists {
 			log.Warn().
 				Str("name", name).
+				Str("provider", p.Name()).
 				Msg("missing configuration")
 			continue
 		}

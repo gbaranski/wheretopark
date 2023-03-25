@@ -36,10 +36,10 @@ func (p Provider) GetParkingLots() (map[wheretopark.ID]wheretopark.ParkingLot, e
 		id := wheretopark.CoordinateToID(latitude, longitude)
 		configuration, exists := configuration.ParkingLots[vendor.Record.ID]
 		if !exists {
-			log.Warn().Str("name", vendor.Record.ID).Msg("missing configuration")
 			log.Warn().
 				Str("id", vendor.Record.ID).
 				Str("name", vendor.Record.Identity).
+				Str("provider", p.Name()).
 				Msg("missing configuration")
 			continue
 		}

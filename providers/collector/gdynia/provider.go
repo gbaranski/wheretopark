@@ -43,6 +43,7 @@ func (p Provider) GetMetadata() (map[wheretopark.ID]wheretopark.Metadata, error)
 			log.Warn().
 				Int("id", vendor.ID).
 				Str("name", vendor.Name).
+				Str("provider", p.Name()).
 				Msg("missing configuration")
 			continue
 		}
