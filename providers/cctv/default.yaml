@@ -41,6 +41,7 @@ parkingLots:
   #     - points: [[1149, 542], [1203, 535], [1184, 460], [1137, 464]]
   #     - points: [[1207, 533], [1251, 525], [1226, 458], [1186, 461]]
   - name: Parking przy Krytej Pływalni
+    lastUpdated: 2022-11-23
     address: Jana Pawła II, 57-300 Kłodzko
     geometry:
       type: Point
@@ -137,6 +138,7 @@ parkingLots:
           - points: [[356, 464], [365, 456], [393, 460], [372, 474]]
 
   - name: Parking przy twierdzy w Kłodzku
+    lastUpdated: 2022-11-23
     address: Zofii Stryjeńskiej 9, 57-304 Kłodzko
     geometry:
       type: Point
@@ -176,6 +178,7 @@ parkingLots:
           - points: [[1289, 571], [1327, 571], [1263, 530], [1212, 548]]
 
   - name: Parking Królewski w Gdańsku
+    lastUpdated: 2022-12-09
     address: ul. Bł. ks. Franciszka Rogaczewskiego 55, 80-804 Gdańsk
     geometry:
       type: Point
