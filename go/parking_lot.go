@@ -166,7 +166,6 @@ func (s *State) UnmarshalJSON(data []byte) error {
 	if err != nil {
 		return err
 	}
-	fmt.Printf("date: %s\n", aux.LastUpdated)
 	s.LastUpdated, err = time.Parse(time.RFC3339, aux.LastUpdated)
 	if err != nil {
 		return err
