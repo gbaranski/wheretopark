@@ -13,7 +13,7 @@ require (
 	github.com/rs/zerolog v1.28.0
 	github.com/shopspring/decimal v1.3.1
 	github.com/stretchr/testify v1.8.2
-	github.com/surrealdb/surrealdb.go v0.1.2-0.20230309175011-e0397e60fdc8
+	github.com/surrealdb/surrealdb.go v0.2.1-0.20230324132234-98daa053bf91
 	gocv.io/x/gocv v0.31.0
 	golang.org/x/exp v0.0.0-20230321023759-10a507213a29
 	golang.org/x/text v0.8.0

@@ -86,6 +86,8 @@ github.com/stretchr/testify v1.8.2 h1:+h33VjcLVPDHtOdpUCuF+7gSuG3yGIftsP1YvFihtJ
 github.com/stretchr/testify v1.8.2/go.mod h1:w2LPCIKwWwSfY2zedu0+kehJoqGctiVI29o6fzry7u4=
 github.com/surrealdb/surrealdb.go v0.1.2-0.20230309175011-e0397e60fdc8 h1:CtGN7xtYXyNTvCDIQVw/HZiTBizxpC401DjAs38YrZE=
 github.com/surrealdb/surrealdb.go v0.1.2-0.20230309175011-e0397e60fdc8/go.mod h1:CloW70O49xyVO/rGO9cAZ62FEbl0/hreRHEJuamnndQ=
+github.com/surrealdb/surrealdb.go v0.2.1-0.20230324132234-98daa053bf91 h1:hoUCxH0TpH71Mu/u5y6O1qQdROoFAGylNVaiLUWWXnM=
+github.com/surrealdb/surrealdb.go v0.2.1-0.20230324132234-98daa053bf91/go.mod h1:CloW70O49xyVO/rGO9cAZ62FEbl0/hreRHEJuamnndQ=
 github.com/valyala/bytebufferpool v1.0.0/go.mod h1:6bBcMArwyJ5K/AmCkWv1jt77kVWyCJ6HpOuEn7z0Csc=
 github.com/valyala/fasttemplate v1.0.1/go.mod h1:UQGH1tvbgY+Nz5t2n7tXsz52dQxojPUpymEIMZ47gx8=
 github.com/valyala/fasttemplate v1.2.1/go.mod h1:KHLXt3tVN2HBp8eijSv/kGJopbvo7S+qRAEEKiv+SiQ=

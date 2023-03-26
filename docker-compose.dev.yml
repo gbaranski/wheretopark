@@ -12,35 +12,38 @@ services:
       - --pass=password
       - --log=debug
 
-  prometheus: 
-    container_name: wheretopark_prometheus
-    image: prom/prometheus:latest
+  influxdb: 
+    container_name: wheretopark_influxdb
+    image: influxdb:2.6-alpine
     restart: unless-stopped
+    environment:
+      DOCKER_INFLUXDB_INIT_MODE: setup
+      DOCKER_INFLUXDB_INIT_USERNAME: admin
+      DOCKER_INFLUXDB_INIT_PASSWORD: password
+      DOCKER_INFLUXDB_INIT_ORG: wheretopark
+      DOCKER_INFLUXDB_INIT_BUCKET: development
+      DOCKER_INFLUXDB_INIT_ADMIN_TOKEN: i0SKtlqIDAcilQ4G3j_Q4apwQmVJ4XX6MTXI8om14lBGnqPvQ_5-QWBoHG7-oKR2kqcf2lPswGs6zPvsK5JQ4A==
     ports:
-      - "9090:9090"
+      - "8086:8086"
     volumes:
-      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
-      - ./prometheus/web.yml:/etc/prometheus/web.yml
-      - prometheus-data:/prometheus
-    command: 
-      - --config.file=/etc/prometheus/prometheus.yml
-      - --web.config.file=/etc/prometheus/web.yml
-    depends_on:
-      - exporter
+      - influxdb_data:/var/lib/influxdb
   
-  exporter:
-    container_name: wheretopark_exporter
+  influxer:
+    container_name: wheretopark_influxer
     restart: unless-stopped
     build:
       context: .
-      dockerfile: ./cmd/exporter/Dockerfile
+      dockerfile: ./cmd/influxer/Dockerfile
     environment:
       DATABASE_URL: ws://surrealdb:8000
       DATABASE_NAME: development
       DATABASE_USER: root
       DATABASE_PASSWORD: password
+      INFLUXDB_URL: http://influxdb:8086
+      INFLUXDB_TOKEN: i0SKtlqIDAcilQ4G3j_Q4apwQmVJ4XX6MTXI8om14lBGnqPvQ_5-QWBoHG7-oKR2kqcf2lPswGs6zPvsK5JQ4A==
     depends_on:
       - surrealdb
+      - influxdb
 
 
   collector:
@@ -99,4 +102,4 @@ services:
       - ./webapp/src:/app/src:rw
 
 volumes:
-  prometheus-data:
+  influxdb_data:
