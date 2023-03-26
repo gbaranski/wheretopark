@@ -31,11 +31,11 @@ func runProvider[T provider.Common](createFn func() (T, error), runFn func(T, *w
 	provider, err := createFn()
 	name := provider.Name()
 	if err != nil {
-		log.Fatal().Err(err).Str("name", name).Msg("creating provider failed")
+		log.Fatal().Err(err).Str("provider", name).Msg("fail to create")
 	}
 	err = runFn(provider, client)
 	if err != nil {
-		log.Fatal().Err(err).Str("name", name).Msg("running provider failed")
+		log.Fatal().Err(err).Str("provider", name).Msg("fail to run")
 	}
 }
 

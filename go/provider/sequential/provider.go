@@ -5,6 +5,7 @@ import (
 	"time"
 	wheretopark "wheretopark/go"
 
+	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 )
 
@@ -15,32 +16,30 @@ type Provider interface {
 	GetState() (map[wheretopark.ID]wheretopark.State, error)
 }
 
-func obtainMetadatas(provider Provider, client *wheretopark.Client) (map[wheretopark.ID]wheretopark.Metadata, error) {
+func obtainMetadatas(logger zerolog.Logger, provider Provider, client *wheretopark.Client) (map[wheretopark.ID]wheretopark.Metadata, error) {
 	metadatas, err := provider.GetMetadata()
 	if err != nil {
 		return nil, fmt.Errorf("failed to get metadatas: %w", err)
 	}
-	log.Debug().
+	logger.Debug().
 		Int("n", len(metadatas)).
-		Str("name", provider.Name()).
 		Msg("obtained metadatas")
 	return metadatas, nil
 }
 
-func obtainStates(provider Provider, client *wheretopark.Client) (map[wheretopark.ID]wheretopark.State, error) {
+func obtainStates(logger zerolog.Logger, provider Provider, client *wheretopark.Client) (map[wheretopark.ID]wheretopark.State, error) {
 	states, err := provider.GetState()
 	if err != nil {
 		return nil, fmt.Errorf("failed to get states: %w", err)
 	}
-	log.Debug().
+	logger.Debug().
 		Int("n", len(states)).
-		Str("name", provider.Name()).
 		Msg("obtained states")
 	return states, nil
 }
 
-func processMetadata(provider Provider, client *wheretopark.Client) error {
-	metadatas, err := obtainMetadatas(provider, client)
+func processMetadata(logger zerolog.Logger, provider Provider, client *wheretopark.Client) error {
+	metadatas, err := obtainMetadatas(logger, provider, client)
 	if err != nil {
 		return err
 	}
@@ -54,8 +53,8 @@ func processMetadata(provider Provider, client *wheretopark.Client) error {
 	return nil
 }
 
-func processState(provider Provider, client *wheretopark.Client) error {
-	states, err := obtainStates(provider, client)
+func processState(logger zerolog.Logger, provider Provider, client *wheretopark.Client) error {
+	states, err := obtainStates(logger, provider, client)
 	if err != nil {
 		return err
 	}
@@ -87,40 +86,40 @@ func NewConfig(metadataInterval, stateInterval time.Duration) Config {
 
 const DEFAULT_PROCESS_TIMEOUT = 30 * time.Second
 
-func runLoop(processFn func() error, what string, interval time.Duration) {
+func runLoop(logger zerolog.Logger, processFn func() error, what string, interval time.Duration) {
 	for {
 		time.Sleep(interval)
 		if err := wheretopark.WithTimeout(processFn, DEFAULT_PROCESS_TIMEOUT); err != nil {
-			log.Error().Err(err).Msg(fmt.Sprintf("failed to process %s", what))
+			logger.Error().Err(err).Msg(fmt.Sprintf("failed to process %s", what))
 		}
 	}
 }
 
 func Run(provider Provider, client *wheretopark.Client) error {
-	log.Info().Str("name", provider.Name()).Msg("starting provider")
+	logger := log.With().Str("provider", provider.Name()).Logger()
+	logger.Info().Str("type", "sequential").Msg("starting")
 	config := provider.Config()
 
-	err := initProcessing(provider, client)
+	err := initProcessing(logger, provider, client)
 	if err != nil {
 		return fmt.Errorf("failed to initialize processing: %w", err)
 	}
 
-	go runLoop(func() error {
-		return processState(provider, client)
+	go runLoop(logger, func() error {
+		return processState(logger, provider, client)
 	}, "state", config.stateInterval)
-	runLoop(func() error {
-		return processMetadata(provider, client)
+	runLoop(logger, func() error {
+		return processMetadata(logger, provider, client)
 	}, "metadata", config.metadataInterval)
-
 	return nil
 }
 
-func initProcessing(provider Provider, client *wheretopark.Client) error {
-	metadatas, err := obtainMetadatas(provider, client)
+func initProcessing(logger zerolog.Logger, provider Provider, client *wheretopark.Client) error {
+	metadatas, err := obtainMetadatas(logger, provider, client)
 	if err != nil {
 		return fmt.Errorf("failed to obtain metadatas: %w", err)
 	}
-	states, err := obtainStates(provider, client)
+	states, err := obtainStates(logger, provider, client)
 	if err != nil {
 		return fmt.Errorf("failed to obtain metadatas: %w", err)
 	}
@@ -134,7 +133,7 @@ func initProcessing(provider Provider, client *wheretopark.Client) error {
 			return fmt.Errorf("setting parking lot: %w", err)
 		}
 	}
-	log.Info().
+	logger.Info().
 		Int("n", len(metadatas)).
 		Msg("updated parking lots")
 	return nil
