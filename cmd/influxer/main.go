@@ -35,8 +35,8 @@ func process(client *wheretopark.Client, influx api.WriteAPIBlocking) error {
 		point := influxdb2.NewPointWithMeasurement("parking_lot").
 			AddTag("id", id).
 			AddTag("name", parkingLot.Metadata.Name).
-			AddField("availableSpots", parkingLot.State.AvailableSpots).
-			AddField("totalSpots", parkingLot.Metadata.TotalSpots).
+			AddField("availableSpots", parkingLot.State.AvailableSpots["CAR"]).
+			AddField("totalSpots", parkingLot.Metadata.TotalSpots["CAR"]).
 			SetTime(parkingLot.State.LastUpdated)
 
 		err := influx.WritePoint(context.Background(), point)
