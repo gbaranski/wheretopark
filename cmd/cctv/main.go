@@ -18,7 +18,7 @@ type environment struct {
 	DatabaseURL      string  `env:"DATABASE_URL" envDefault:"ws://localhost:8000"`
 	DatabaseName     string  `env:"DATABASE_NAME" envDefault:"development"`
 	DatabaseUser     string  `env:"DATABASE_USER" envDefault:"root"`
-	DatabasePassword string  `env:"DATABASE_PASSWORD" envDefault:"changeThisPassword"`
+	DatabasePassword string  `env:"DATABASE_PASSWORD" envDefault:"password"`
 	Configuration    *string `env:"CONFIGURATION"`
 	Model            string  `env:"MODEL" envDefault:"$HOME/.local/share/wheretopark/cctv/model.onnx" envExpand:"true"`
 	SavePath         *string `env:"SAVE_PATH" envExpand:"true"`

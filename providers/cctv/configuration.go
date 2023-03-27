@@ -9,7 +9,7 @@ import (
 
 	_ "embed"
 
-	"github.com/ghodss/yaml"
+	"github.com/goccy/go-yaml"
 )
 
 //go:embed default.yaml
@@ -35,11 +35,21 @@ func LoadConfiguration(path string) (*Configuration, error) {
 }
 
 func ParseConfiguration(content string) (*Configuration, error) {
-	var configuration Configuration
-	err := yaml.Unmarshal([]byte(content), &configuration)
+	var configurationAny map[string]any
+	err := yaml.Unmarshal([]byte(content), &configurationAny)
 	if err != nil {
 		return nil, err
 	}
+	configurationJson, err := json.Marshal(configurationAny)
+	if err != nil {
+		return nil, err
+	}
+	var configuration Configuration
+	err = json.Unmarshal(configurationJson, &configuration)
+	if err != nil {
+		return nil, err
+	}
+
 	for i := range configuration.ParkingLots {
 		parkingLot := &configuration.ParkingLots[i]
 		parkingLot.TotalSpots = make(map[string]uint)
@@ -62,6 +72,25 @@ type ParkingLot struct {
 	wheretopark.Metadata `json:",inline"`
 
 	Cameras []ParkingLotCamera `json:"cameras"`
+}
+
+func (p *ParkingLot) UnmarshalJSON(data []byte) error {
+	var metadata wheretopark.Metadata
+	err := json.Unmarshal(data, &metadata)
+	if err != nil {
+		return err
+	}
+	p.Metadata = metadata
+
+	var cameras struct {
+		Cameras []ParkingLotCamera `json:"cameras"`
+	}
+	err = json.Unmarshal(data, &cameras)
+	if err != nil {
+		return err
+	}
+	p.Cameras = cameras.Cameras
+	return nil
 }
 
 type ParkingLotCamera struct {
