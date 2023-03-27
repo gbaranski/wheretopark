@@ -157,3 +157,14 @@ export const preferredComment = (comment: Record<LanguageCode, string>): string 
 export const distanceBetweenPoints = (a: GeoJSON.Point, b: GeoJSON.Point) => {
     return haversine({geometry: a}, {geometry: b}, {format: 'geojson'});
 }
+
+export const availabilityColor = (available: number, total: number) => {
+    const percent = available / total;
+    if (percent > 0.3) return "green";
+    else if (percent > 0.1) return "orange";
+    else return "red";
+}
+
+export const markerColor = (available: number, total: number, status: ParkingLotStatus) => {
+    return status == ParkingLotStatus.Open ? availabilityColor(available, total) : parkingLotStatusColor(status);
+}

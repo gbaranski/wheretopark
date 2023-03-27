@@ -2,8 +2,9 @@
 	import { MAPBOX_ACCESS_TOKEN } from "$lib/environment";
 	import { onMount } from "svelte";
     import 'mapbox-gl/dist/mapbox-gl.css';
-	import type { ID, ParkingLot } from "$lib/types";
+	import { SpotType, type ID, type ParkingLot } from "$lib/types";
 	import { currentMap } from "$lib/store";
+	import { markerColor, parkingLotStatus } from "$lib/utils";
     
     export let parkingLots: Record<ID, ParkingLot>;
 
@@ -26,7 +27,11 @@
                 <a href="/parking-lot/${id}">Open</a>
             `;
             const popup = new mapboxgl.Popup({offset: 25}).setHTML(popupHtml);
-            return new mapboxgl.Marker()
+            const status = parkingLotStatus(parkingLot, SpotType.CAR)[0];
+            const options = {
+                color: markerColor(parkingLot.state.availableSpots["CAR"], parkingLot.metadata.totalSpots["CAR"], status)
+            }
+            return new mapboxgl.Marker(options)
                 .setLngLat([longitude, latitude])
                 .setPopup(popup);
         }).forEach((marker) => marker.addTo(map));
