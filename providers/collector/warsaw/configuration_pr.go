@@ -15,7 +15,8 @@ var (
 
 	prDefaultRules = []wheretopark.Rule{
 		{
-			Hours: "Mo-Su 04:30-02:30",
+			Hours:   "Mo-Su 04:30-02:30",
+			Pricing: []wheretopark.PricingRule{},
 		},
 	}
 
