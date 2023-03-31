@@ -41,7 +41,10 @@ title = "Where To Park - AI powered parking lot systems"
 [languages.en.translations]
 flag = "🇬🇧"
 exploreMore = "Explore More"
-heading = "The ultimate parking lot assistant"
-subheading = "We'll help you find an **available** and **affordable** parking space **near you**"
+heading = "An AI-powered parking lot solution that actually saves you time!"
+subheading = '''We use **Artificial Intelligence** and **Computer Vision** in order to determine parking lot occupancy in **real-time**. 
+                <br/> 
+                Our mobile app also gives you prices, opening times, and everything else you need in order to find the **perfect spot**!
+             '''
 or = "or"
 openAppInBrowser = "open the app in browser"
