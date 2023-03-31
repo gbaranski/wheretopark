@@ -110,7 +110,12 @@ Parking lot data contains:
 2. [Duda-Wiertel U. Search traffic w obszarach z deficytem miejsc postojowych, Politechnika Krakowska, Kraków 2021.](https://yadda.icm.edu.pl/baztech/element/bwmeta1.element.baztech-d8bf4176-2ea0-4571-b5a5-bdc066343c33)
 3. [Aliedani, Ali & Loke, Seng & Desai, Aniruddha & Desai, Prajakta. (2016). Investigating Vehicle-to-Vehicle Communication for Cooperative Car Parking: the CoPark Approach.](https://www.researchgate.net/publication/307534127_Investigating_Vehicle-to-Vehicle_Communication_for_Cooperative_Car_Parking_the_CoPark_Approach)
 
+# Awards
+
+- [E(x)plory Contest Finalist](https://www.explory.pl/2023/naukowcy/32-grzegorz-baranski/)
+
 # Press
 
 - [blog.citydata.pl](https://blog.citydata.pl/where-to-park-aplikacja-do-szukania-wolnych-miejsc-parkingowych/)
 - [otwartedane.gdynia.pl](https://otwartedane.gdynia.pl/where-to-park-aplikacja-do-szukania-wolnych-miejsc-parkingowych/)
+- [explory.pl](https://www.explory.pl/2023/naukowcy/32-grzegorz-baranski/)
