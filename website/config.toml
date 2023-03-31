@@ -20,6 +20,7 @@ minify_html = true
 highlight_code = false
 
 [extra]
+author = "Grzegorz gbaranski Barański"
 # Put all your custom variables here
 juice_logo_name = "Where To Park"
 juice_logo_path = "logo.svg"
