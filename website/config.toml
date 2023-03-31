@@ -30,8 +30,12 @@ title = "Where To Park - inteligentne systemy parkowania"
 [languages.pl.translations]
 flag = "🇵🇱"
 exploreMore = "Zobacz więcej"
-heading = "Twój asystent do parkowania"
-subheading = "Pomożemy odnaleźć **najbliższe** i **dostępne** miejsce parkingowe w **przystępnej cenie**."
+heading = "System parkingów oparty na sztucznej inteligencji który faktycznie zaoszczędzi czas!"
+subheading = '''
+Używamy **sztucznej inteligencji** i **kamer monitoringowych** aby określić zajętość parkingu w **czasie rzeczywistym**. 
+<br/> 
+Nasza aplikacja mobilna udostępnia również dane takie jak ceny, godziny otwarcia i wszystko inne potrzebne aby odnaleźć **to miejsce parkingowe**.
+'''
 or = "lub"
 openAppInBrowser = "otwórz aplikację w przeglądarce"
 
@@ -42,9 +46,10 @@ title = "Where To Park - AI powered parking lot systems"
 flag = "🇬🇧"
 exploreMore = "Explore More"
 heading = "An AI-powered parking lot solution that actually saves you time!"
-subheading = '''We use **Artificial Intelligence** and **Computer Vision** in order to determine parking lot occupancy in **real-time**. 
-                <br/> 
-                Our mobile app also gives you prices, opening times, and everything else you need in order to find the **perfect spot**!
-             '''
+subheading = '''
+We use **Artificial Intelligence** and **CCTV Cameras** in order to determine parking lot occupancy in **real-time**. 
+<br/> 
+Our mobile app also gives you prices, opening times, and everything else you need in order to find the **perfect spot**!
+'''
 or = "or"
 openAppInBrowser = "open the app in browser"
