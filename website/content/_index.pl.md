@@ -116,4 +116,5 @@ Dane na temat parkingu zawierają:
 - [blog.citydata.pl](https://blog.citydata.pl/where-to-park-aplikacja-do-szukania-wolnych-miejsc-parkingowych/)
 - [otwartedane.gdynia.pl](https://otwartedane.gdynia.pl/where-to-park-aplikacja-do-szukania-wolnych-miejsc-parkingowych/)
 - [mlodagdynia.pl](https://mlodagdynia.pl/pl/19_wiadomosci-z-regionu/53682_wolne-miejsca-na-parkingu-pomoze-aplikacja-trojmiejskiego-licealisty.html)
+- [eska.pl](https://www.eska.pl/trojmiasto/licealista-z-gdanska-tworzy-aplikacje-ktora-ulatwi-znalezienie-miejsca-na-parkingu-aa-MCvr-56JZ-Gnus.html)
 - [explory.pl](https://www.explory.pl/2023/naukowcy/32-grzegorz-baranski/)
