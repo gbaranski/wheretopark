@@ -27,7 +27,6 @@ services:
       DATABASE_PASSWORD: ${SURREALDB_PASSWORD}
       MODEL: /opt/wheretopark/cctv/model.onnx
       SAVE_PATH: /root/.cache/wheretopark/cctv
-      SAVE_ITEMS: visualizations
     volumes:
       - $HOME/.local/share/wheretopark/cctv:/opt/wheretopark/cctv
       - $HOME/.cache/wheretopark/cctv:/root/.cache/wheretopark/cctv
