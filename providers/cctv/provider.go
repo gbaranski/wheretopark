@@ -75,7 +75,6 @@ func (p *Provider) ProcessCamera(parkingLot ParkingLot, cameraID int, camera Par
 			availableSpots += 1
 		}
 	}
-	fmt.Printf("available spots: %d\n", availableSpots)
 
 	if p.savePath != nil {
 		basePath := fmt.Sprintf("%s/%s/%02d", *p.savePath, id, cameraID)
