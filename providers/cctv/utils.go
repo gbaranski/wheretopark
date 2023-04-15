@@ -1,13 +1,9 @@
 package cctv
 
 import (
-	"encoding/json"
 	"fmt"
 	"image"
 	"image/color"
-	"os"
-	"path/filepath"
-	"time"
 
 	"gocv.io/x/gocv"
 )
@@ -85,95 +81,11 @@ func ExtractSpots(img gocv.Mat, spots []ParkingSpot) []gocv.Mat {
 	return images
 }
 
-func SaveInput(img gocv.Mat, path string) error {
-	directory := filepath.Dir(path)
-	if err := os.MkdirAll(directory, os.ModePerm); err != nil {
-		return fmt.Errorf("failed to create directory %s: %w", directory, err)
-	}
-	ok := gocv.IMWrite(path, img)
-	if !ok {
-		return fmt.Errorf("failed to write input image to %s", path)
-	}
-	return nil
-}
-
-func SaveResults(spots []ParkingSpot, predictions []float32, path string) error {
-	directory := filepath.Dir(path)
-	if err := os.MkdirAll(directory, os.ModePerm); err != nil {
-		return fmt.Errorf("failed to create directory %s: %w", directory, err)
-	}
-	spotResults := make([]SpotResult, len(predictions))
-	for i, prediction := range predictions {
-		spot := spots[i]
-		spotResults[i] = SpotResult{
-			Prediction: prediction,
-			Points:     spot.Points,
+func contains(s []string, e string) bool {
+	for _, a := range s {
+		if a == e {
+			return true
 		}
 	}
-	result := Result{
-		Spots: spotResults,
-	}
-	resultJSON, err := json.Marshal(result)
-	if err != nil {
-		return fmt.Errorf("failed to marshal result: %w", err)
-	}
-	err = os.WriteFile(path, resultJSON, 0644)
-	if err != nil {
-		return fmt.Errorf("failed to write result to %s: %w", path, err)
-	}
-	return nil
+	return false
 }
-
-func SaveVisualizations(img gocv.Mat, spots []ParkingSpot, predictions []float32, path string) error {
-	directory := filepath.Dir(path)
-	if err := os.MkdirAll(directory, os.ModePerm); err != nil {
-		return fmt.Errorf("failed to create directory %s: %w", directory, err)
-	}
-	for i, prediction := range predictions {
-		spot := spots[i]
-		VisualizeSpotPrediction(&img, spot, prediction)
-	}
-	ok := gocv.IMWrite(path, img)
-	if !ok {
-		return fmt.Errorf("failed to write visualization to %s", path)
-	}
-	return nil
-}
-
-func SavePredictions(img gocv.Mat, basePath string, saveItems []SaveItem, captureTime time.Time, spots []ParkingSpot, predictions []float32) error {
-	time := captureTime.UTC().Format("2006-01-02--15-04-05")
-	savers := map[SaveItem]func() error{
-		SaveItemInput: func() error {
-			return SaveInput(img, fmt.Sprintf("%s/inputs/%s.jpg", basePath, time))
-		},
-		SaveItemResult: func() error {
-			return SaveResults(spots, predictions, fmt.Sprintf("%s/results/%s.json", basePath, time))
-		},
-		SaveItemVisualization: func() error {
-			return SaveVisualizations(img, spots, predictions, fmt.Sprintf("%s/visualizations/%s.jpg", basePath, time))
-		},
-	}
-	for _, saver := range saveItems {
-		if err := savers[saver](); err != nil {
-			return fmt.Errorf("failed saving %s: %w", saver, err)
-		}
-	}
-	return nil
-}
-
-type SpotResult struct {
-	Prediction float32 `json:"prediction"`
-	Points     []Point `json:"points"`
-}
-
-type Result struct {
-	Spots []SpotResult `json:"spots"`
-}
-
-type SaveItem = string
-
-const (
-	SaveItemVisualization SaveItem = "visualizations"
-	SaveItemResult        SaveItem = "results"
-	SaveItemInput         SaveItem = "inputs"
-)

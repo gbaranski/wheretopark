@@ -15,14 +15,15 @@ import (
 )
 
 type environment struct {
-	DatabaseURL      string          `env:"DATABASE_URL" envDefault:"ws://localhost:8000"`
-	DatabaseName     string          `env:"DATABASE_NAME" envDefault:"development"`
-	DatabaseUser     string          `env:"DATABASE_USER" envDefault:"root"`
-	DatabasePassword string          `env:"DATABASE_PASSWORD" envDefault:"password"`
-	Configuration    *string         `env:"CONFIGURATION"`
-	Model            string          `env:"MODEL" envDefault:"$HOME/.local/share/wheretopark/cctv/model.onnx" envExpand:"true"`
-	SavePath         *string         `env:"SAVE_PATH" envExpand:"true"`
-	SaveItems        []cctv.SaveItem `env:"SAVE_ITEMS" envSeparator:","`
+	DatabaseURL      string           `env:"DATABASE_URL" envDefault:"ws://localhost:8000"`
+	DatabaseName     string           `env:"DATABASE_NAME" envDefault:"development"`
+	DatabaseUser     string           `env:"DATABASE_USER" envDefault:"root"`
+	DatabasePassword string           `env:"DATABASE_PASSWORD" envDefault:"password"`
+	Configuration    *string          `env:"CONFIGURATION"`
+	Model            string           `env:"MODEL" envDefault:"$HOME/.local/share/wheretopark/cctv/model.onnx" envExpand:"true"`
+	SavePath         *string          `env:"SAVE_PATH" envExpand:"true"`
+	SaveItems        []cctv.SaveItem  `env:"SAVE_ITEMS" envSeparator:","`
+	SaveIDs          []wheretopark.ID `env:"SAVE_IDS" envSeparator:","`
 }
 
 func main() {
@@ -31,6 +32,8 @@ func main() {
 	if err := env.Parse(&environment); err != nil {
 		log.Fatal().Err(err).Send()
 	}
+
+	saver := cctv.NewSaver(environment.SavePath, environment.SaveItems, environment.SaveIDs)
 
 	url, err := url.Parse(environment.DatabaseURL)
 	if err != nil {
@@ -48,7 +51,7 @@ func main() {
 
 	model := cctv.NewModel(environment.Model)
 	defer model.Close()
-	provider, err := cctv.NewProvider(environment.Configuration, model, environment.SavePath)
+	provider, err := cctv.NewProvider(environment.Configuration, model, saver)
 	if err != nil {
 		panic(err)
 	}

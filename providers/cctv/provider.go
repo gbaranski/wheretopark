@@ -1,7 +1,6 @@
 package cctv
 
 import (
-	"fmt"
 	"sync"
 	"sync/atomic"
 	"time"
@@ -16,8 +15,7 @@ type Provider struct {
 	configuration Configuration
 	model         *Model
 	modelMutex    sync.Mutex
-	savePath      *string
-	saveItems     []SaveItem
+	saver         Saver
 }
 
 func (p *Provider) Name() string {
@@ -76,15 +74,12 @@ func (p *Provider) ProcessCamera(parkingLot ParkingLot, cameraID int, camera Par
 		}
 	}
 
-	if p.savePath != nil {
-		basePath := fmt.Sprintf("%s/%s/%02d", *p.savePath, id, cameraID)
-		err := SavePredictions(img, basePath, p.saveItems, captureTime, camera.Spots, predictions)
-		if err != nil {
-			log.Error().
-				Str("name", parkingLot.Name).
-				Int("camera", cameraID).
-				Msg("unable to save predictions")
-		}
+	err = p.saver.SavePredictions(img, id, cameraID, captureTime, camera.Spots, predictions)
+	if err != nil {
+		log.Error().
+			Str("name", parkingLot.Name).
+			Int("camera", cameraID).
+			Msg("unable to save predictions")
 	}
 	return uint(availableSpots), nil
 }
@@ -136,7 +131,7 @@ func (p *Provider) GetState() (map[wheretopark.ID]wheretopark.State, error) {
 	return states, nil
 }
 
-func NewProvider(configurationPath *string, model *Model, savePath *string) (sequential.Provider, error) {
+func NewProvider(configurationPath *string, model *Model, saver Saver) (sequential.Provider, error) {
 	var configuration Configuration
 	if configurationPath == nil {
 		configuration = DefaultConfiguration
@@ -152,7 +147,7 @@ func NewProvider(configurationPath *string, model *Model, savePath *string) (seq
 		configuration: configuration,
 		model:         model,
 		modelMutex:    sync.Mutex{},
-		savePath:      savePath,
+		saver:         saver,
 	}, nil
 
 }
