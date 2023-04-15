@@ -9,7 +9,7 @@ import (
 	sequential "wheretopark/go/provider/sequential"
 	"wheretopark/providers/cctv"
 
-	"github.com/caarlos0/env/v7"
+	"github.com/caarlos0/env/v8"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 )

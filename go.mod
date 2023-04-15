@@ -3,7 +3,7 @@ module wheretopark
 go 1.18
 
 require (
-	github.com/caarlos0/env/v7 v7.1.0
+	github.com/caarlos0/env/v8 v8.0.0
 	github.com/go-resty/resty/v2 v2.7.0
 	github.com/goccy/go-yaml v1.10.0
 	github.com/google/go-cmp v0.5.9

@@ -8,7 +8,7 @@ import (
 	"time"
 	wheretopark "wheretopark/go"
 
-	"github.com/caarlos0/env/v7"
+	"github.com/caarlos0/env/v8"
 	influxdb2 "github.com/influxdata/influxdb-client-go/v2"
 	"github.com/influxdata/influxdb-client-go/v2/api"
 
