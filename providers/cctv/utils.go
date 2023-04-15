@@ -85,14 +85,14 @@ func ExtractSpots(img gocv.Mat, spots []ParkingSpot) []gocv.Mat {
 	return images
 }
 
-func SaveRawImage(img gocv.Mat, path string) error {
+func SaveInput(img gocv.Mat, path string) error {
 	directory := filepath.Dir(path)
 	if err := os.MkdirAll(directory, os.ModePerm); err != nil {
 		return fmt.Errorf("failed to create directory %s: %w", directory, err)
 	}
 	ok := gocv.IMWrite(path, img)
 	if !ok {
-		return fmt.Errorf("failed to write raw image to %s", path)
+		return fmt.Errorf("failed to write input image to %s", path)
 	}
 	return nil
 }
@@ -140,16 +140,23 @@ func SaveVisualizations(img gocv.Mat, spots []ParkingSpot, predictions []float32
 	return nil
 }
 
-func SavePredictions(img gocv.Mat, basePath string, captureTime time.Time, spots []ParkingSpot, predictions []float32) error {
+func SavePredictions(img gocv.Mat, basePath string, saveItems []SaveItem, captureTime time.Time, spots []ParkingSpot, predictions []float32) error {
 	time := captureTime.UTC().Format("2006-01-02--15-04-05")
-	if err := SaveRawImage(img, fmt.Sprintf("%s/images/%s.jpg", basePath, time)); err != nil {
-		return err
+	savers := map[SaveItem]func() error{
+		SaveItemInput: func() error {
+			return SaveInput(img, fmt.Sprintf("%s/inputs/%s.jpg", basePath, time))
+		},
+		SaveItemResult: func() error {
+			return SaveResults(spots, predictions, fmt.Sprintf("%s/results/%s.json", basePath, time))
+		},
+		SaveItemVisualization: func() error {
+			return SaveVisualizations(img, spots, predictions, fmt.Sprintf("%s/visualizations/%s.jpg", basePath, time))
+		},
 	}
-	if err := SaveResults(spots, predictions, fmt.Sprintf("%s/results/%s.json", basePath, time)); err != nil {
-		return err
-	}
-	if err := SaveVisualizations(img, spots, predictions, fmt.Sprintf("%s/visualizations/%s.jpg", basePath, time)); err != nil {
-		return err
+	for _, saver := range saveItems {
+		if err := savers[saver](); err != nil {
+			return fmt.Errorf("failed saving %s: %w", saver, err)
+		}
 	}
 	return nil
 }
@@ -162,3 +169,11 @@ type SpotResult struct {
 type Result struct {
 	Spots []SpotResult `json:"spots"`
 }
+
+type SaveItem = string
+
+const (
+	SaveItemVisualization SaveItem = "visualizations"
+	SaveItemResult        SaveItem = "results"
+	SaveItemInput         SaveItem = "inputs"
+)

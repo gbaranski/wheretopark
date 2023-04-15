@@ -17,6 +17,7 @@ type Provider struct {
 	model         *Model
 	modelMutex    sync.Mutex
 	savePath      *string
+	saveItems     []SaveItem
 }
 
 func (p *Provider) Name() string {
@@ -78,7 +79,7 @@ func (p *Provider) ProcessCamera(parkingLot ParkingLot, cameraID int, camera Par
 
 	if p.savePath != nil {
 		basePath := fmt.Sprintf("%s/%s/%02d", *p.savePath, id, cameraID)
-		err := SavePredictions(img, basePath, captureTime, camera.Spots, predictions)
+		err := SavePredictions(img, basePath, p.saveItems, captureTime, camera.Spots, predictions)
 		if err != nil {
 			log.Error().
 				Str("name", parkingLot.Name).
