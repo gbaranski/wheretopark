@@ -110,6 +110,7 @@ Dane na temat parkingu zawierają:
 
 # Nagrody
 - Finalista konkursu [Explory](https://www.explory.pl/2023/naukowcy/32-grzegorz-baranski/)
+- III miejsce w konkursie ["Młody Innowator 2022/2023"](https://not.org.pl/olimpiady-i-konkursy/xvi-edycja-konkursu-mlody-innowator-20222023-rozstrzygnieta)
 
 # Mówią o nas
 

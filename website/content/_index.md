@@ -113,6 +113,7 @@ Parking lot data contains:
 # Awards
 
 - [E(x)plory Contest Finalist](https://www.explory.pl/2023/naukowcy/32-grzegorz-baranski/)
+- III place in ["Young Innovator 2022/2023" contest](https://not.org.pl/olimpiady-i-konkursy/xvi-edycja-konkursu-mlody-innowator-20222023-rozstrzygnieta)
 
 # Press
 
