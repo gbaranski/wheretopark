@@ -5,8 +5,11 @@
 	import { SpotType, type ID, type ParkingLot } from "$lib/types";
 	import { currentMap } from "$lib/store";
 	import { markerColor, parkingLotStatus } from "$lib/utils";
+	import MapMarker from "./MapMarker.svelte";
     
     export let parkingLots: Record<ID, ParkingLot>;
+
+    const markers: Record<ID, MapMarker> = {};
 
     onMount(async () => {
         const mapboxgl = await import("mapbox-gl");
@@ -28,9 +31,10 @@
             `;
             const popup = new mapboxgl.Popup({offset: 25}).setHTML(popupHtml);
             const status = parkingLotStatus(parkingLot, SpotType.CAR)[0];
-            const options = {
+            const options: mapboxgl.MarkerOptions = {
                 color: markerColor(parkingLot.state.availableSpots["CAR"], parkingLot.metadata.totalSpots["CAR"], status)
             }
+            const marker = markers[id];
             return new mapboxgl.Marker(options)
                 .setLngLat([longitude, latitude])
                 .setPopup(popup);
@@ -40,6 +44,9 @@
 </script>
 
 <div id="map-container"></div>
+{#each Object.entries(parkingLots) as [id, parkingLot]}
+    <MapMarker parkingLot={parkingLot} bind:this={markers[id]} />
+{/each}
 <style>
     #map-container { position: absolute; top: 0; bottom: 0; width: 100%; }
 </style>
