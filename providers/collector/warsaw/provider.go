@@ -108,33 +108,6 @@ func (p Provider) GetParkingLots() (map[wheretopark.ID]wheretopark.ParkingLot, e
 	return parkingLots, nil
 }
 
-func (p Provider) GetState() (map[wheretopark.ID]wheretopark.State, error) {
-	data, err := GetData()
-	if err != nil {
-		return nil, err
-	}
-	lastUpdate, err := time.ParseInLocation("2006-01-02T15:04:05", data.Result.Timestamp, defaultTimezone)
-	if err != nil {
-		return nil, fmt.Errorf("failed to parse last update time: %w", err)
-	}
-	states := make(map[wheretopark.ID]wheretopark.State)
-
-	for _, vendor := range data.Result.Parks {
-		id := wheretopark.CoordinateToID(vendor.Latitude, vendor.Longitude)
-
-		state := wheretopark.State{
-			LastUpdated: lastUpdate.In(defaultTimezone),
-			AvailableSpots: map[string]uint{
-				wheretopark.SpotTypeCarElectric: vendor.FreePlacesTotal.Electric,
-				wheretopark.SpotTypeCar:         vendor.FreePlacesTotal.Public,
-				wheretopark.SpotTypeCarDisabled: vendor.FreePlacesTotal.Disabled,
-			},
-		}
-		states[id] = state
-	}
-	return states, nil
-}
-
 func NewProvider() (simple.Provider, error) {
 	return Provider{}, nil
 }
