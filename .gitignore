@@ -74,6 +74,7 @@ outTmp/
 /test.output
 /kotlin-native/dist
 kotlin-ide/
+.aws-sam
 
 # Added by cargo
 

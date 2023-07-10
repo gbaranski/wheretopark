@@ -16,7 +16,7 @@ type Provider interface {
 	GetState() (map[wheretopark.ID]wheretopark.State, error)
 }
 
-func obtainMetadatas(logger zerolog.Logger, provider Provider, client *wheretopark.Client) (map[wheretopark.ID]wheretopark.Metadata, error) {
+func obtainMetadatas(logger zerolog.Logger, provider Provider) (map[wheretopark.ID]wheretopark.Metadata, error) {
 	metadatas, err := provider.GetMetadata()
 	if err != nil {
 		return nil, fmt.Errorf("failed to get metadatas: %w", err)
@@ -27,7 +27,7 @@ func obtainMetadatas(logger zerolog.Logger, provider Provider, client *wheretopa
 	return metadatas, nil
 }
 
-func obtainStates(logger zerolog.Logger, provider Provider, client *wheretopark.Client) (map[wheretopark.ID]wheretopark.State, error) {
+func obtainStates(logger zerolog.Logger, provider Provider) (map[wheretopark.ID]wheretopark.State, error) {
 	states, err := provider.GetState()
 	if err != nil {
 		return nil, fmt.Errorf("failed to get states: %w", err)
@@ -39,7 +39,7 @@ func obtainStates(logger zerolog.Logger, provider Provider, client *wheretopark.
 }
 
 func processMetadata(logger zerolog.Logger, provider Provider, client *wheretopark.Client) error {
-	metadatas, err := obtainMetadatas(logger, provider, client)
+	metadatas, err := obtainMetadatas(logger, provider)
 	if err != nil {
 		return err
 	}
@@ -54,7 +54,7 @@ func processMetadata(logger zerolog.Logger, provider Provider, client *wheretopa
 }
 
 func processState(logger zerolog.Logger, provider Provider, client *wheretopark.Client) error {
-	states, err := obtainStates(logger, provider, client)
+	states, err := obtainStates(logger, provider)
 	if err != nil {
 		return err
 	}
@@ -86,6 +86,31 @@ func NewConfig(metadataInterval, stateInterval time.Duration) Config {
 
 const DEFAULT_PROCESS_TIMEOUT = 30 * time.Second
 
+func GetParkingLots(provider Provider) (map[wheretopark.ID]wheretopark.ParkingLot, error) {
+	metadatas, err := obtainMetadatas(log.Logger, provider)
+	if err != nil {
+		return nil, err
+	}
+	states, err := obtainStates(log.Logger, provider)
+	if err != nil {
+		return nil, err
+	}
+
+	parkingLots := make(map[wheretopark.ID]wheretopark.ParkingLot)
+	for id, metadata := range metadatas {
+		state, ok := states[id]
+		if !ok {
+			log.Warn().Str("id", string(id)).Msg("state not found")
+			continue
+		}
+		parkingLots[id] = wheretopark.ParkingLot{
+			Metadata: metadata,
+			State:    state,
+		}
+	}
+	return parkingLots, nil
+}
+
 func runLoop(logger zerolog.Logger, processFn func() error, what string, interval time.Duration) {
 	for {
 		time.Sleep(interval)
@@ -115,11 +140,11 @@ func Run(provider Provider, client *wheretopark.Client) error {
 }
 
 func initProcessing(logger zerolog.Logger, provider Provider, client *wheretopark.Client) error {
-	metadatas, err := obtainMetadatas(logger, provider, client)
+	metadatas, err := obtainMetadatas(logger, provider)
 	if err != nil {
 		return fmt.Errorf("failed to obtain metadatas: %w", err)
 	}
-	states, err := obtainStates(logger, provider, client)
+	states, err := obtainStates(logger, provider)
 	if err != nil {
 		return fmt.Errorf("failed to obtain metadatas: %w", err)
 	}
@@ -137,4 +162,16 @@ func initProcessing(logger zerolog.Logger, provider Provider, client *wheretopar
 		Int("n", len(metadatas)).
 		Msg("updated parking lots")
 	return nil
+}
+
+func HandleRequest(createFn func() (Provider, error)) (map[wheretopark.ID]wheretopark.ParkingLot, error) {
+	provider, err := createFn()
+	if err != nil {
+		return nil, err
+	}
+	parkingLots, err := GetParkingLots(provider)
+	if err != nil {
+		return nil, err
+	}
+	return parkingLots, nil
 }

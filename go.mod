@@ -3,6 +3,7 @@ module wheretopark
 go 1.18
 
 require (
+	github.com/aws/aws-lambda-go v1.41.0
 	github.com/caarlos0/env/v8 v8.0.0
 	github.com/go-resty/resty/v2 v2.7.0
 	github.com/goccy/go-yaml v1.10.0
