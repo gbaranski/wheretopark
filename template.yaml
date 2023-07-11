@@ -1,5 +1,7 @@
 AWSTemplateFormatVersion: '2010-09-09'
-Transform: AWS::Serverless-2016-10-31
+Transform:
+  - 'AWS::LanguageExtensions'
+  - 'AWS::Serverless-2016-10-31'
 Description: >
   wheretopark
   
@@ -12,23 +14,157 @@ Globals:
     MemorySize: 128
 
 Resources:
+  WhereToParkApiCertificate:
+    Type: AWS::CertificateManager::Certificate
+    Properties: 
+      DomainName: api.wheretopark.app
+      ValidationMethod: DNS
+
+  WhereToParkApiGateway:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: production
+      Auth:
+        ApiKeyRequired: true
+      Domain:
+        DomainName: api.wheretopark.app
+        CertificateArn: !Ref WhereToParkApiCertificate
+  
   GetGdanskParkingLots:
-    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Type: AWS::Serverless::Function
     Properties:
       CodeUri: cmd/collector/gdansk/
       Handler: gdansk-getParkingLots
       Runtime: go1.x
       Architectures:
         - x86_64
-      # Events:
-        # CatchAll:
-          # Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
-          # Properties:
-            # Path: /hello
-            # Method: GET
-      # Environment: # More info about Env Vars: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#environment-object
-        # Variables:
-          # PARAM1: VALUE
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /collector/gdansk/parking-lots
+            Method: get
+            RestApiId:
+              Ref: WhereToParkApiGateway
+
+  GetGdyniaParkingLots:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: cmd/collector/gdynia/
+      Handler: gdynia-getParkingLots
+      Runtime: go1.x
+      Architectures:
+        - x86_64
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /collector/gdynia/parking-lots
+            Method: get
+            RestApiId:
+              Ref: WhereToParkApiGateway
+
+  GetGlasgowParkingLots:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: cmd/collector/glasgow/
+      Handler: glasgow-getParkingLots
+      Runtime: go1.x
+      Architectures:
+        - x86_64
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /collector/glasgow/parking-lots
+            Method: get
+            RestApiId:
+              Ref: WhereToParkApiGateway
+
+  GetPoznanParkingLots:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: cmd/collector/poznan/
+      Handler: poznan-getParkingLots
+      Runtime: go1.x
+      Architectures:
+        - x86_64
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /collector/poznan/parking-lots
+            Method: get
+            RestApiId:
+              Ref: WhereToParkApiGateway
+
+  WhereToParkApp:
+    Type: AWS::AppConfig::Application
+    Properties:
+      Name: Where To Park App
+
+  WhereToParkConfigurationProfile:
+    Type: AWS::AppConfig::ConfigurationProfile
+    Properties:
+      Name: Where To Park App Configuration Profile
+      ApplicationId: !Ref WhereToParkApp
+      LocationUri: hosted
+      Type: AWS.Freeform
+      Validators:
+        - Type: JSON_SCHEMA
+          Content:
+            Fn::ToJsonString:
+              $schema: http://json-schema.org/draft-04/schema#
+              type: object
+              properties:
+                collectors:
+                  type: array
+                  items:
+                    type: string
+                    format: uri
+              required:
+                - collectors
+
+  WhereToParkHostedConfigurationVersion:
+    Type: AWS::AppConfig::HostedConfigurationVersion
+    Properties:
+      ApplicationId: !Ref WhereToParkApp
+      ConfigurationProfileId: !Ref WhereToParkConfigurationProfile
+      ContentType: application/json
+      Content: 
+        Fn::ToJsonString: 
+          collectors:
+            - https://api.wheretopark.app/collector/gdansk
+            - https://api.wheretopark.app/collector/gdynia
+            - https://api.wheretopark.app/collector/glasgow
+            - https://api.wheretopark.app/collector/poznan
+
+  WhereToParkEnvironment:
+    Type: AWS::AppConfig::Environment
+    Properties: 
+      ApplicationId: !Ref WhereToParkApp
+      Name: Production
+  
+  
+  WhereToParkDeploymentStrategy:
+    Type: AWS::AppConfig::DeploymentStrategy
+    Properties:
+      Name: WhereToParkDeploymentStrategy
+      DeploymentDurationInMinutes: 0
+      FinalBakeTimeInMinutes: 0
+      GrowthFactor: 100
+      ReplicateTo: NONE
+
+  WhereToParkDeployment:
+    Type: AWS::AppConfig::Deployment
+    Properties: 
+      ApplicationId: !Ref WhereToParkApp
+      EnvironmentId: !Ref WhereToParkEnvironment
+      DeploymentStrategyId: !Ref WhereToParkDeploymentStrategy
+      ConfigurationProfileId: !Ref WhereToParkConfigurationProfile
+      ConfigurationVersion: '1'
+
+
 
 # Outputs:
   # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
