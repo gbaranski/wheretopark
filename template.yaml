@@ -120,8 +120,12 @@ Resources:
                 collectors:
                   type: array
                   items:
-                    type: string
-                    format: uri
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                      url:
+                        type: uri
               required:
                 - collectors
 
@@ -134,10 +138,14 @@ Resources:
       Content: 
         Fn::ToJsonString: 
           collectors:
-            - https://api.wheretopark.app/collector/gdansk
-            - https://api.wheretopark.app/collector/gdynia
-            - https://api.wheretopark.app/collector/glasgow
-            - https://api.wheretopark.app/collector/poznan
+            - name: gdansk
+              url: https://api.wheretopark.app/collector/gdansk
+            - name: gdynia
+              url: https://api.wheretopark.app/collector/gdynia
+            - name: glasgow
+              url: https://api.wheretopark.app/collector/glasgow
+            - name: poznan
+              url: https://api.wheretopark.app/collector/poznan
 
   WhereToParkEnvironment:
     Type: AWS::AppConfig::Environment

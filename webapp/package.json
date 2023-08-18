@@ -38,6 +38,7 @@
 				"vite": "^4.1.2"
 		},
 		"dependencies": {
+				"@aws-sdk/client-appconfigdata": "^3.363.0",
 				"@svelteuidev/composables": "^0.10.0",
 				"@svelteuidev/core": "^0.10.0",
 				"@types/geojson": "^7946.0.10",
