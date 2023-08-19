@@ -6,7 +6,7 @@ export const prerender = false;
 export const ssr = false;
 
 export const load = (async ({getClientAddress}) => {
-    const { getParkingLots } = await import("$lib/server/client");
+    const { getParkingLots } = await import("$lib/client");
     const parkingLotsMap = await getParkingLots();
     const userAddress =  getClientAddress();
     const userGeo = geoip.lookup(userAddress);

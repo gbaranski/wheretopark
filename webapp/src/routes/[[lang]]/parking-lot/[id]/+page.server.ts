@@ -1,11 +1,10 @@
 import type { PageServerLoad } from "./$types";
 
 export const load = (async ({ params }: { params: { id?: string, }}) => {
-    const { getParkingLot } = await import("$lib/server/client");
+    const { getParkingLots } = await import("$lib/client");
+    const parkingLots = await getParkingLots();
 
-    if (params.id == null) throw new Error("Missing id in params");
-    const parkingLot = await getParkingLot(params.id)!;
     return {
-        parkingLot: parkingLot
+        parkingLot: parkingLots[params.id!]
     };
 }) satisfies PageServerLoad;

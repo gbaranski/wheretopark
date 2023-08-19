@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { MAPBOX_ACCESS_TOKEN } from "$lib/environment";
+    import { PUBLIC_MAPBOX_ACCESS_TOKEN } from '$env/static/public';
 	import { onMount } from "svelte";
     import 'mapbox-gl/dist/mapbox-gl.css';
 	import { SpotType, type ID, type ParkingLot } from "$lib/types";
@@ -11,7 +11,7 @@
     onMount(async () => {
         const mapboxgl = await import("mapbox-gl");
         const map = new mapboxgl.Map({
-            accessToken: MAPBOX_ACCESS_TOKEN,
+            accessToken: PUBLIC_MAPBOX_ACCESS_TOKEN,
             container: "map-container",
             style: "mapbox://styles/mapbox/streets-v11",
             center: [18.64, 54.35],

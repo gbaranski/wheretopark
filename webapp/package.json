@@ -41,6 +41,7 @@
 				"@svelteuidev/composables": "^0.10.0",
 				"@svelteuidev/core": "^0.10.0",
 				"@types/geojson": "^7946.0.10",
+				"axios": "^1.4.0",
 				"dayjs": "^1.11.7",
 				"geoip-lite": "^1.4.7",
 				"geojson": "^0.5.0",
