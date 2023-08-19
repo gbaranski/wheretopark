@@ -84,7 +84,8 @@ func GetAllParkingLots(providers []provider.Common, cache *wheretopark.CacheProv
 		providerName := provider.Name()
 		parkingLots, err := GetParkingLots(providers, cache, providerName)
 		if err != nil {
-			return nil, err
+			log.Error().Err(err).Str("provider", providerName).Msg("failed to get parking lots")
+			continue
 		}
 		allParkingLots = wheretopark.MergeParkingLots(allParkingLots, parkingLots)
 	}
