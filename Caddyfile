@@ -1,3 +1,7 @@
+{
+	email "me@gbaranski.com"
+}
+
 api.wheretopark.app {
 	header Access-Control-Allow-Origin "https://web.wheretopark.app"
 	header Access-Control-Allow-Methods "GET"
@@ -9,3 +13,5 @@ api.wheretopark.app {
 		reverse_proxy http://wheretopark_cctv:8080
 	}
 }
+
+import /etc/caddy/conf.d/*
