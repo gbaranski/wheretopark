@@ -1,6 +1,10 @@
 package warsaw
 
-import "github.com/go-resty/resty/v2"
+import (
+	"time"
+
+	"github.com/go-resty/resty/v2"
+)
 
 type FreePlacesTotal struct {
 	Disabled uint `json:"disabled"`
@@ -47,6 +51,10 @@ const (
 )
 
 var client = resty.New()
+
+func init() {
+	client.GetClient().Timeout = 10 * time.Second
+}
 
 func GetData() (*Response, error) {
 	resp, err := client.R().SetResult(&Response{}).Get(DATA_URL)

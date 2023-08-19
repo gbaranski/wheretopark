@@ -1,6 +1,8 @@
 package gdynia
 
 import (
+	"time"
+
 	"github.com/go-resty/resty/v2"
 	geojson "github.com/paulmach/go.geojson"
 )
@@ -35,6 +37,10 @@ const (
 )
 
 var client = resty.New()
+
+func init() {
+	client.GetClient().Timeout = 10 * time.Second
+}
 
 func GetMetadata() (*MetadataResponse, error) {
 	resp, err := client.R().SetResult(&MetadataResponse{}).Get(METADATA_URL)

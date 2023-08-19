@@ -43,6 +43,10 @@ const (
 
 var client = resty.New()
 
+func init() {
+	client.GetClient().Timeout = 10 * time.Second
+}
+
 func getParkingLotData(name string) (*Row, error) {
 	url := fmt.Sprintf(DATA_URL, name)
 	resp, err := client.R().Get(url)

@@ -1,6 +1,8 @@
 package glasgow
 
 import (
+	"time"
+
 	"github.com/go-resty/resty/v2"
 )
 
@@ -53,6 +55,10 @@ const (
 )
 
 var client = resty.New()
+
+func init() {
+	client.GetClient().Timeout = 10 * time.Second
+}
 
 func GetData() (*Response, error) {
 	resp, err := client.R().SetHeader("Ocp-Apim-Subscription-Key", API_KEY).SetHeader("Cache-Control", "no-cache").SetResult(&Response{}).Get(DATA_URL)

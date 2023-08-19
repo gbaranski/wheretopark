@@ -1,6 +1,10 @@
 package gdansk
 
-import "github.com/go-resty/resty/v2"
+import (
+	"time"
+
+	"github.com/go-resty/resty/v2"
+)
 
 type Coordinate struct {
 	Latitude  float64 `json:"latitude"`
@@ -33,6 +37,10 @@ const (
 )
 
 var client = resty.New()
+
+func init() {
+	client.GetClient().Timeout = 10 * time.Second
+}
 
 func GetMetadata() (*Response[Metadata], error) {
 	resp, err := client.R().SetResult(&Response[Metadata]{}).Get(METADATA_URL)
