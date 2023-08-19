@@ -1,10 +1,10 @@
-import type { PageServerLoad } from "./$types";
+import type { PageLoad } from "./$types";
+import { getParkingLots } from "$lib/client";
 
 export const load = (async ({ params }: { params: { id?: string, }}) => {
-    const { getParkingLots } = await import("$lib/client");
     const parkingLots = await getParkingLots();
 
     return {
         parkingLot: parkingLots[params.id!]
     };
-}) satisfies PageServerLoad;
+}) satisfies PageLoad;

@@ -17,6 +17,8 @@ const getParkingLotFromProvider = async (url: string): Promise<Record<ID, Parkin
 }
 
 export const getParkingLots = async (): Promise<Record<ID, ParkingLot>> => {
-    const parkingLots = await Promise.all(providersURLs.map((url) => getParkingLotFromProvider(url)));
-    return Object.assign({}, ...parkingLots);
+    const requests = await Promise.all(providersURLs.map((url) => getParkingLotFromProvider(url)));
+    const parkingLots = Object.assign({}, ...requests);
+    console.log({parkingLots});
+    return parkingLots;
 }
