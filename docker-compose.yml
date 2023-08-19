@@ -35,9 +35,6 @@ services:
       context: ./webapp
     ports:
       - "3000:3000"
-    networks:
-      - default
-      - public
     environment:
       PUBLIC_MAPBOX_ACCESS_TOKEN: pk.eyJ1IjoiZ2JhcmFuc2tpIiwiYSI6ImNsNmh4ZW9hZTBxaG4zY282MzAzbWhqbnAifQ.8_G9b7-m8n0kMr4O0-2mhQ
     healthcheck:
