@@ -33,7 +33,7 @@ func GetParkingLots(providers []provider.Common, cache *wheretopark.CacheProvide
 	states, sFound := cache.GetStates(name)
 
 	cacheHit := mFound && sFound
-	log.Debug().Bool("cacheHit", cacheHit).Msg("cache response")
+	log.Debug().Bool("cacheHit", cacheHit).Str("provider", name).Msg("cache response")
 	if cacheHit {
 		parkingLots, err := wheretopark.JoinMetadatasAndStates(metadatas, states)
 		if err != nil {
