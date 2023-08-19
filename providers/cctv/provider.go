@@ -26,7 +26,7 @@ func (p *Provider) Config() sequential.Config {
 	return sequential.DEFAULT_CONFIG
 }
 
-func (p *Provider) GetMetadata() (map[wheretopark.ID]wheretopark.Metadata, error) {
+func (p *Provider) GetMetadatas() (map[wheretopark.ID]wheretopark.Metadata, error) {
 	metadatas := make(map[wheretopark.ID]wheretopark.Metadata, len(p.configuration.ParkingLots))
 
 	for _, parkingLot := range p.configuration.ParkingLots {
@@ -111,7 +111,7 @@ func (p *Provider) ProcessParkingLot(parkingLot ParkingLot) wheretopark.State {
 	}
 }
 
-func (p *Provider) GetState() (map[wheretopark.ID]wheretopark.State, error) {
+func (p *Provider) GetStates() (map[wheretopark.ID]wheretopark.State, error) {
 	states := make(map[wheretopark.ID]wheretopark.State)
 	statesMutex := sync.RWMutex{}
 	var wg sync.WaitGroup

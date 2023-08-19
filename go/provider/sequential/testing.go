@@ -8,12 +8,12 @@ import (
 )
 
 func ExamineProvider(t *testing.T, provider Provider) {
-	metadata, err := provider.GetMetadata()
+	metadata, err := provider.GetMetadatas()
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	state, err := provider.GetState()
+	state, err := provider.GetStates()
 	if err != nil {
 		t.Fatal(err)
 	}

@@ -12,12 +12,12 @@ import (
 type Provider interface {
 	Name() string
 	Config() Config
-	GetMetadata() (map[wheretopark.ID]wheretopark.Metadata, error)
-	GetState() (map[wheretopark.ID]wheretopark.State, error)
+	GetMetadatas() (map[wheretopark.ID]wheretopark.Metadata, error)
+	GetStates() (map[wheretopark.ID]wheretopark.State, error)
 }
 
 func obtainMetadatas(logger zerolog.Logger, provider Provider, client *wheretopark.Client) (map[wheretopark.ID]wheretopark.Metadata, error) {
-	metadatas, err := provider.GetMetadata()
+	metadatas, err := provider.GetMetadatas()
 	if err != nil {
 		return nil, fmt.Errorf("failed to get metadatas: %w", err)
 	}
@@ -28,7 +28,7 @@ func obtainMetadatas(logger zerolog.Logger, provider Provider, client *wheretopa
 }
 
 func obtainStates(logger zerolog.Logger, provider Provider, client *wheretopark.Client) (map[wheretopark.ID]wheretopark.State, error) {
-	states, err := provider.GetState()
+	states, err := provider.GetStates()
 	if err != nil {
 		return nil, fmt.Errorf("failed to get states: %w", err)
 	}

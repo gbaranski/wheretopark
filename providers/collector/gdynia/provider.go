@@ -31,7 +31,7 @@ func (p Provider) Config() sequential.Config {
 	return sequential.DEFAULT_CONFIG
 }
 
-func (p Provider) GetMetadata() (map[wheretopark.ID]wheretopark.Metadata, error) {
+func (p Provider) GetMetadatas() (map[wheretopark.ID]wheretopark.Metadata, error) {
 	vendorMetadata, err := GetMetadata()
 	if err != nil {
 		return nil, err
@@ -69,7 +69,7 @@ func (p Provider) GetMetadata() (map[wheretopark.ID]wheretopark.Metadata, error)
 	return metadatas, nil
 }
 
-func (p Provider) GetState() (map[wheretopark.ID]wheretopark.State, error) {
+func (p Provider) GetStates() (map[wheretopark.ID]wheretopark.State, error) {
 	vendorState, err := GetState()
 	if err != nil {
 		return nil, err
