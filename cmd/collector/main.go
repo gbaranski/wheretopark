@@ -1,10 +1,10 @@
 package main
 
 import (
-	"net/url"
+	"encoding/json"
+	"fmt"
+	"net/http"
 	"os"
-	"os/signal"
-	"syscall"
 	wheretopark "wheretopark/go"
 	"wheretopark/go/provider"
 	"wheretopark/go/provider/sequential"
@@ -15,59 +15,121 @@ import (
 	"wheretopark/providers/collector/poznan"
 	"wheretopark/providers/collector/warsaw"
 
-	"github.com/caarlos0/env/v8"
+	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 )
 
-type config struct {
-	DatabaseURL      string `env:"DATABASE_URL" envDefault:"ws://localhost:8000"`
-	DatabaseName     string `env:"DATABASE_NAME" envDefault:"development"`
-	DatabaseUser     string `env:"DATABASE_USER" envDefault:"root"`
-	DatabasePassword string `env:"DATABASE_PASSWORD" envDefault:"password"`
+func mustCreateProvider[T provider.Common](createFn func() (T, error)) T {
+	provider, err := createFn()
+	if err != nil {
+		log.Fatal().Err(err).Msg("failed to create provider")
+	}
+	return provider
 }
 
-func runProvider[T provider.Common](createFn func() (T, error), runFn func(T, *wheretopark.Client) error, client *wheretopark.Client) {
-	provider, err := createFn()
-	name := provider.Name()
-	if err != nil {
-		log.Fatal().Err(err).Str("provider", name).Msg("fail to create")
+func GetParkingLots(providers []provider.Common, cache *wheretopark.CacheProvider, name string) (map[wheretopark.ID]wheretopark.ParkingLot, error) {
+	metadatas, mFound := cache.GetMetadatas(name)
+	states, sFound := cache.GetStates(name)
+
+	if mFound && sFound {
+		parkingLots, err := wheretopark.JoinMetadatasAndStates(metadatas, states)
+		if err != nil {
+			return nil, fmt.Errorf("failed to join metadatas and states due to %e", err)
+		}
+		return parkingLots, nil
 	}
-	err = runFn(provider, client)
+	var provider provider.Common
+	for _, p := range providers {
+		if p.Name() == name {
+			provider = p
+		}
+	}
+
+	var parkingLots map[wheretopark.ID]wheretopark.ParkingLot
+	var err error
+
+	if simple, ok := provider.(simple.Provider); ok {
+		parkingLots, err = simple.GetParkingLots()
+		if err != nil {
+			return nil, fmt.Errorf("failed to get parking lots due to %e", err)
+		}
+	} else if sequential, ok := provider.(sequential.Provider); ok {
+		metadatas, err := sequential.GetMetadatas()
+		if err != nil {
+			return nil, fmt.Errorf("failed to get metadatas due to %e", err)
+		}
+		states, err := sequential.GetStates()
+		if err != nil {
+			return nil, fmt.Errorf("failed to get states due to %e", err)
+		}
+		parkingLots, err = wheretopark.JoinMetadatasAndStates(metadatas, states)
+		if err != nil {
+			return nil, fmt.Errorf("failed to join metadatas and states due to %e", err)
+		}
+		return parkingLots, nil
+	}
+
+	err = cache.SetParkingLots(name, parkingLots)
 	if err != nil {
-		log.Fatal().Err(err).Str("provider", name).Msg("fail to run")
+		log.Error().Err(err).Str("provider", name).Msg("failed to update parking lots cache")
+	}
+	return parkingLots, nil
+}
+
+func handleGetParkingLots(
+	providers []provider.Common,
+	cache *wheretopark.CacheProvider,
+	w http.ResponseWriter,
+	r *http.Request,
+) {
+	providerName := chi.URLParam(r, "provider")
+	parkingLots, err := GetParkingLots(providers, cache, providerName)
+	if err != nil {
+		log.Error().Err(err).Str("provider", providerName).Msg("failed to get parking lots")
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	json, err := json.Marshal(parkingLots)
+	if err != nil {
+		log.Error().Err(err).Str("provider", providerName).Msg("failed to marshal response")
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	_, err = w.Write(json)
+	if err != nil {
+		log.Error().Err(err).Str("provider", providerName).Msg("failed to write response")
+		w.WriteHeader(http.StatusInternalServerError)
+		return
 	}
 }
 
 func main() {
+	zerolog.SetGlobalLevel(zerolog.InfoLevel)
 	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
-	config := config{}
-	if err := env.Parse(&config); err != nil {
-		log.Fatal().Err(err).Send()
+	providers := []provider.Common{
+		mustCreateProvider(gdansk.NewProvider),
+		mustCreateProvider(gdynia.NewProvider),
+		mustCreateProvider(warsaw.NewProvider),
+		mustCreateProvider(poznan.NewProvider),
+		mustCreateProvider(glasgow.NewProvider),
 	}
 
-	url, err := url.Parse(config.DatabaseURL)
+	cache, err := wheretopark.NewCacheProvider()
 	if err != nil {
-		log.Fatal().Err(err).Msg("invalid database URL")
+		log.Fatal().Err(err).Msg("failed to create cache")
 	}
-	client, err := wheretopark.NewClient(url, "wheretopark", config.DatabaseName)
-	if err != nil {
-		log.Fatal().Err(err).Msg("failed to create database client")
+	r := chi.NewRouter()
+	r.Use(middleware.Logger)
+	r.Get("/{provider}/parking-lots", func(w http.ResponseWriter, r *http.Request) {
+		handleGetParkingLots(providers, cache, w, r)
+	})
+	port := 8080
+	log.Info().Msg(fmt.Sprintf("starting server on port %d", port))
+	if err := http.ListenAndServe(fmt.Sprintf(":%d", port), r); err != nil {
+		log.Fatal().Err(err).Msg("server fail")
 	}
-	defer client.Close()
-	err = client.SignInWithPassword(config.DatabaseUser, config.DatabasePassword)
-	if err != nil {
-		log.Fatal().Err(err).Msg("failed to sign in")
-	}
-
-	go runProvider(gdansk.NewProvider, sequential.Run, client)
-	go runProvider(gdynia.NewProvider, sequential.Run, client)
-	go runProvider(warsaw.NewProvider, simple.Run, client)
-	go runProvider(poznan.NewProvider, simple.Run, client)
-	// TODO: After getting the business subscription, decrease the interval
-	go runProvider(glasgow.NewProvider, simple.Run, client)
-
-	c := make(chan os.Signal, 1)
-	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
-	<-c
 }

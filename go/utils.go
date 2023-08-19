@@ -59,3 +59,33 @@ func MustLoadLocation(name string) *time.Location {
 	}
 	return location
 }
+
+func ExtractMetadatas(parkingLots map[ID]ParkingLot) map[ID]Metadata {
+	metadatas := make(map[ID]Metadata, len(parkingLots))
+	for id, parkingLot := range parkingLots {
+		metadatas[id] = parkingLot.Metadata
+	}
+	return metadatas
+}
+
+func ExtractStates(parkingLots map[ID]ParkingLot) map[ID]State {
+	states := make(map[ID]State, len(parkingLots))
+	for id, parkingLot := range parkingLots {
+		states[id] = parkingLot.State
+	}
+	return states
+}
+
+func JoinMetadatasAndStates(metadatas map[ID]Metadata, states map[ID]State) (map[ID]ParkingLot, error) {
+	if len(metadatas) != len(states) {
+		return nil, fmt.Errorf("metadatas and states must have the same length")
+	}
+	parkingLots := make(map[ID]ParkingLot, len(metadatas))
+	for id, metadata := range metadatas {
+		parkingLots[id] = ParkingLot{
+			Metadata: metadata,
+			State:    states[id],
+		}
+	}
+	return parkingLots, nil
+}

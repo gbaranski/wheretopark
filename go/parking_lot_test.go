@@ -36,6 +36,7 @@ var (
 			},
 		},
 	}
+	sampleParkingLotID = wheretopark.GeometryToID(sampleParkingLot.Metadata.Geometry)
 )
 
 func TestEncodeDecodeParkingLot(t *testing.T) {
