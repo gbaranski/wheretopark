@@ -1,5 +1,14 @@
 version: "3.8"
 services:
+  caddy:
+    image: caddy:latest
+    container_name: wheretopark_caddy
+    restart: unless-stopped
+    ports:
+      - "1234:1234"
+    volumes:
+      - $PWD/Caddyfile.dev:/etc/caddy/Caddyfile
+
   collector:
     container_name: wheretopark_collector
     restart: unless-stopped
@@ -22,23 +31,23 @@ services:
     ports:
       - "8082:8080"
 
-  webapp:
-    container_name: wheretopark_webapp
-    restart: unless-stopped
-    build:
-      context: ./webapp
-      dockerfile: Dockerfile.dev
-    ports:
-      - "5173:5173"
-    environment:
-      PUBLIC_MAPBOX_ACCESS_TOKEN: pk.eyJ1IjoiZ2JhcmFuc2tpIiwiYSI6ImNsNmh4ZW9hZTBxaG4zY282MzAzbWhqbnAifQ.8_G9b7-m8n0kMr4O0-2mhQ
-    healthcheck:
-      test: curl --fail http://localhost:5173 || exit 1
-      interval: 5s
-      timeout: 10s
-      retries: 10
-    volumes:
-      - ./webapp/src:/app/src:rw
+  # webapp:
+  #   container_name: wheretopark_webapp
+  #   restart: unless-stopped
+  #   build:
+  #     context: ./webapp
+  #     dockerfile: Dockerfile.dev
+  #   ports:
+  #     - "5173:5173"
+  #   environment:
+  #     PUBLIC_MAPBOX_ACCESS_TOKEN: pk.eyJ1IjoiZ2JhcmFuc2tpIiwiYSI6ImNsNmh4ZW9hZTBxaG4zY282MzAzbWhqbnAifQ.8_G9b7-m8n0kMr4O0-2mhQ
+  #   healthcheck:
+  #     test: curl --fail http://localhost:5173 || exit 1
+  #     interval: 5s
+  #     timeout: 10s
+  #     retries: 10
+  #   volumes:
+  #     - ./webapp/src:/app/src:rw
 
 volumes:
   influxdb_data:
