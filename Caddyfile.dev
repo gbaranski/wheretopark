@@ -1,5 +1,5 @@
 http://localhost:1234 {
-	header Access-Control-Allow-Origin "http://localhost:5173"
+	header Access-Control-Allow-Origin "*" 
 	header Access-Control-Allow-Methods "GET"
 	handle_path /collector/* {
 		reverse_proxy http://wheretopark_collector:8080
