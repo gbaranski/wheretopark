@@ -15,8 +15,6 @@ services:
     build:
       context: .
       dockerfile: ./cmd/collector/Dockerfile
-    ports:
-      - "8081:8080"
 
   cctv:
     container_name: wheretopark_cctv
@@ -28,8 +26,6 @@ services:
       MODEL: /opt/wheretopark/cctv/model.onnx
     volumes:
       - $HOME/.local/share/wheretopark/cctv:/opt/wheretopark/cctv
-    ports:
-      - "8082:8080"
 
   # webapp:
   #   container_name: wheretopark_webapp

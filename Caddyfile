@@ -1,0 +1,11 @@
+api.wheretopark.app {
+	header Access-Control-Allow-Origin "https://web.wheretopark.app"
+	header Access-Control-Allow-Methods "GET"
+
+	handle_path /collector/* {
+		reverse_proxy http://wheretopark_collector:8080
+	}
+	handle_path /cctv/* {
+		reverse_proxy http://wheretopark_cctv:8080
+	}
+}

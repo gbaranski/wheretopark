@@ -1,13 +1,20 @@
 version: "3.8"
 services:
+  caddy:
+    image: caddy:latest
+    container_name: wheretopark_caddy
+    restart: unless-stopped
+    ports:
+      - "1234:1234"
+    volumes:
+      - $PWD/Caddyfile:/etc/caddy/Caddyfile
+
   collector:
     container_name: wheretopark_collector
     restart: unless-stopped
     build:
       context: .
       dockerfile: ./cmd/collector/Dockerfile
-    ports:
-      - "8081:8080"
 
   cctv:
     container_name: wheretopark_cctv
@@ -20,8 +27,6 @@ services:
     volumes:
       - $HOME/.local/share/wheretopark/cctv:/opt/wheretopark/cctv
       - $HOME/.cache/wheretopark/cctv:/root/.cache/wheretopark/cctv
-    ports:
-      - "8082:8080"
 
   webapp:
     container_name: wheretopark_webapp
@@ -40,7 +45,3 @@ services:
       interval: 5s
       timeout: 10s
       retries: 10
-
-networks:
-  public:
-    external: true
