@@ -1,81 +1,26 @@
 version: "3.8"
 services:
-  surrealdb:
-    container_name: wheretopark_surrealdb
-    image: surrealdb/surrealdb:latest
-    restart: unless-stopped
-    ports:
-      - "8000:8000"
-    command: 
-      - start
-      - --user=root
-      - --pass=password
-      - --log=debug
-
-  influxdb: 
-    container_name: wheretopark_influxdb
-    image: influxdb:2.6-alpine
-    restart: unless-stopped
-    environment:
-      DOCKER_INFLUXDB_INIT_MODE: setup
-      DOCKER_INFLUXDB_INIT_USERNAME: admin
-      DOCKER_INFLUXDB_INIT_PASSWORD: password
-      DOCKER_INFLUXDB_INIT_ORG: wheretopark
-      DOCKER_INFLUXDB_INIT_BUCKET: development
-      DOCKER_INFLUXDB_INIT_ADMIN_TOKEN: i0SKtlqIDAcilQ4G3j_Q4apwQmVJ4XX6MTXI8om14lBGnqPvQ_5-QWBoHG7-oKR2kqcf2lPswGs6zPvsK5JQ4A==
-    ports:
-      - "8086:8086"
-    volumes:
-      - influxdb_data:/var/lib/influxdb
-  
-  influxer:
-    container_name: wheretopark_influxer
-    restart: unless-stopped
-    build:
-      context: .
-      dockerfile: ./cmd/influxer/Dockerfile
-    environment:
-      DATABASE_URL: ws://surrealdb:8000
-      DATABASE_NAME: development
-      DATABASE_USER: root
-      DATABASE_PASSWORD: password
-      INFLUXDB_URL: http://influxdb:8086
-      INFLUXDB_TOKEN: i0SKtlqIDAcilQ4G3j_Q4apwQmVJ4XX6MTXI8om14lBGnqPvQ_5-QWBoHG7-oKR2kqcf2lPswGs6zPvsK5JQ4A==
-    depends_on:
-      - surrealdb
-      - influxdb
-
-
   collector:
     container_name: wheretopark_collector
     restart: unless-stopped
     build:
       context: .
       dockerfile: ./cmd/collector/Dockerfile
-    environment:
-      DATABASE_URL: ws://surrealdb:8000
-      DATABASE_NAME: development
-      DATABASE_USER: root
-      DATABASE_PASSWORD: password
-    depends_on:
-      - surrealdb
+    ports:
+      - "8081:8080"
 
-  # cctv:
-  #   container_name: wheretopark_cctv
-  #   restart: unless-stopped
-  #   build:
-  #     context: .
-  #     dockerfile: ./cmd/cctv/Dockerfile
-  #   environment:
-  #     DATABASE_URL: ws://surrealdb:8000
-  #     DATABASE_NAME: development
-  #     DATABASE_USER: ${SURREALDB_USER}
-  #     DATABASE_PASSWORD: ${SURREALDB_PASSWORD}
-  #     MODEL: /opt/wheretopark/cctv/model.onnx
-  #   volumes:
-  #     - $HOME/.local/share/wheretopark/cctv:/opt/wheretopark/cctv
-  #   depends_on:
-  #     - surrealdb
+  cctv:
+    container_name: wheretopark_cctv
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: ./cmd/cctv/Dockerfile
+    environment:
+      MODEL: /opt/wheretopark/cctv/model.onnx
+    volumes:
+      - $HOME/.local/share/wheretopark/cctv:/opt/wheretopark/cctv
+    ports:
+      - "8082:8080"
 
   webapp:
     container_name: wheretopark_webapp
@@ -86,15 +31,9 @@ services:
     ports:
       - "5173:5173"
     environment:
-      SECRET_DATABASE_USER: root
-      SECRET_DATABASE_PASSWORD: password
-      SECRET_DATABASE_NAME: development
-      SECRET_DATABASE_URL: http://surrealdb:8000
       PUBLIC_MAPBOX_ACCESS_TOKEN: pk.eyJ1IjoiZ2JhcmFuc2tpIiwiYSI6ImNsNmh4ZW9hZTBxaG4zY282MzAzbWhqbnAifQ.8_G9b7-m8n0kMr4O0-2mhQ
-    depends_on:
-      - surrealdb
     healthcheck:
-      test: curl --fail http://localhost:3000 || exit 1
+      test: curl --fail http://localhost:5173 || exit 1
       interval: 5s
       timeout: 10s
       retries: 10

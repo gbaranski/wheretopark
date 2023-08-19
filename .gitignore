@@ -74,6 +74,7 @@ outTmp/
 /test.output
 /kotlin-native/dist
 kotlin-ide/
+data/model.onnx
 
 # Added by cargo
 

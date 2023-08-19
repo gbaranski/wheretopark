@@ -1,57 +1,30 @@
 version: "3.8"
 services:
-  surrealdb:
-    container_name: wheretopark_surrealdb
-    image: surrealdb/surrealdb:latest
-    env_file: .env
-    restart: unless-stopped
-    ports:
-      - "9221:8000"
-    command: 
-      - start
-      - --user=${SURREALDB_USER}
-      - --pass=${SURREALDB_PASSWORD}
-    networks:
-      - default
-      - public
-
   collector:
     container_name: wheretopark_collector
-    env_file: .env
     restart: unless-stopped
     build:
       context: .
       dockerfile: ./cmd/collector/Dockerfile
-    environment:
-      DATABASE_URL: ws://surrealdb:8000
-      DATABASE_NAME: production
-      DATABASE_USER: ${SURREALDB_USER}
-      DATABASE_PASSWORD: ${SURREALDB_PASSWORD}
-    depends_on:
-      - surrealdb
+    ports:
+      - "8081:8080"
 
   cctv:
     container_name: wheretopark_cctv
-    env_file: .env
     restart: unless-stopped
     build:
       context: .
       dockerfile: ./cmd/cctv/Dockerfile
     environment:
-      DATABASE_URL: ws://surrealdb:8000
-      DATABASE_NAME: production
-      DATABASE_USER: ${SURREALDB_USER}
-      DATABASE_PASSWORD: ${SURREALDB_PASSWORD}
       MODEL: /opt/wheretopark/cctv/model.onnx
     volumes:
       - $HOME/.local/share/wheretopark/cctv:/opt/wheretopark/cctv
       - $HOME/.cache/wheretopark/cctv:/root/.cache/wheretopark/cctv
-    depends_on:
-      - surrealdb
+    ports:
+      - "8082:8080"
 
   webapp:
     container_name: wheretopark_webapp
-    env_file: .env
     restart: unless-stopped
     build:
       context: ./webapp
@@ -61,13 +34,7 @@ services:
       - default
       - public
     environment:
-      SECRET_DATABASE_USER: ${SURREALDB_USER}
-      SECRET_DATABASE_PASSWORD: ${SURREALDB_PASSWORD}
-      SECRET_DATABASE_NAME: production
-      SECRET_DATABASE_URL: http://surrealdb:8000
       PUBLIC_MAPBOX_ACCESS_TOKEN: pk.eyJ1IjoiZ2JhcmFuc2tpIiwiYSI6ImNsNmh4ZW9hZTBxaG4zY282MzAzbWhqbnAifQ.8_G9b7-m8n0kMr4O0-2mhQ
-    depends_on:
-      - surrealdb
     healthcheck:
       test: curl --fail http://localhost:3000 || exit 1
       interval: 5s

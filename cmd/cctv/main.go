@@ -14,15 +14,6 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-type environment struct {
-	Port          int              `env:"PORT" envDefault:"8080"`
-	Configuration *string          `env:"CONFIGURATION"`
-	Model         string           `env:"MODEL" envDefault:"$HOME/.local/share/wheretopark/cctv/model.onnx" envExpand:"true"`
-	SavePath      *string          `env:"SAVE_PATH" envExpand:"true"`
-	SaveItems     []cctv.SaveItem  `env:"SAVE_ITEMS" envSeparator:","`
-	SaveIDs       []wheretopark.ID `env:"SAVE_IDS" envSeparator:","`
-}
-
 func GetParkingLots(provider sequential.Provider, cache *wheretopark.CacheProvider, name string) (map[wheretopark.ID]wheretopark.ParkingLot, error) {
 	metadatas, mFound := cache.GetMetadatas(name)
 	states, sFound := cache.GetStates(name)
@@ -81,6 +72,15 @@ func handleGetParkingLots(
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
+}
+
+type environment struct {
+	Port          int              `env:"PORT" envDefault:"8080"`
+	Configuration *string          `env:"CONFIGURATION"`
+	Model         string           `env:"MODEL" envDefault:"$HOME/.local/share/wheretopark/cctv/model.onnx" envExpand:"true"`
+	SavePath      *string          `env:"SAVE_PATH" envExpand:"true"`
+	SaveItems     []cctv.SaveItem  `env:"SAVE_ITEMS" envSeparator:","`
+	SaveIDs       []wheretopark.ID `env:"SAVE_IDS" envSeparator:","`
 }
 
 func main() {

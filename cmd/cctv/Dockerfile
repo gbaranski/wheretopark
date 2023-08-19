@@ -16,5 +16,5 @@ RUN go build -v -o cctv ./cmd/cctv
 FROM gocv/opencv:4.7.0
 
 COPY --from=builder /app/cctv /app/cctv
-# ENTRYPOINT ldd /app/cctv 
+
 CMD ["/app/cctv"]

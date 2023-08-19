@@ -14,6 +14,7 @@ import (
 	"wheretopark/providers/collector/poznan"
 	"wheretopark/providers/collector/warsaw"
 
+	"github.com/caarlos0/env/v8"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/rs/zerolog/log"
@@ -112,8 +113,17 @@ func returnParkingLots(w http.ResponseWriter, r *http.Request, fn func() (map[wh
 	}
 }
 
+type environment struct {
+	Port int `env:"PORT" envDefault:"8080"`
+}
+
 func main() {
 	wheretopark.InitLogging()
+
+	environment := environment{}
+	if err := env.Parse(&environment); err != nil {
+		log.Fatal().Err(err).Send()
+	}
 
 	providers := []provider.Common{
 		mustCreateProvider(gdansk.NewProvider),
@@ -143,9 +153,8 @@ func main() {
 			return GetParkingLots(providers, cache, providerName)
 		})
 	})
-	port := 8080
-	log.Info().Msg(fmt.Sprintf("starting server on port %d", port))
-	if err := http.ListenAndServe(fmt.Sprintf(":%d", port), r); err != nil {
+	log.Info().Msg(fmt.Sprintf("starting server on port %d", environment.Port))
+	if err := http.ListenAndServe(fmt.Sprintf(":%d", environment.Port), r); err != nil {
 		log.Fatal().Err(err).Msg("server fail")
 	}
 }
