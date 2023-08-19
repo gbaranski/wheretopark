@@ -15,7 +15,7 @@ type CacheProvider struct {
 }
 
 func NewCacheProvider() (*CacheProvider, error) {
-	cache, err := bigcache.New(context.Background(), bigcache.DefaultConfig(time.Minute))
+	cache, err := bigcache.New(context.Background(), bigcache.DefaultConfig(time.Minute*5))
 	if err != nil {
 		return nil, err
 	}

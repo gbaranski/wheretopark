@@ -2,8 +2,11 @@ package wheretopark
 
 import (
 	"fmt"
+	"os"
 	"time"
 
+	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/log"
 	"github.com/shopspring/decimal"
 )
 
@@ -88,4 +91,31 @@ func JoinMetadatasAndStates(metadatas map[ID]Metadata, states map[ID]State) (map
 		}
 	}
 	return parkingLots, nil
+}
+
+func MergeParkingLots(parkingLots ...map[ID]ParkingLot) map[ID]ParkingLot {
+	result := make(map[ID]ParkingLot)
+	for _, parkingLot := range parkingLots {
+		for id, value := range parkingLot {
+			result[id] = value
+		}
+	}
+	return result
+}
+
+var logLevelMappings = map[string]zerolog.Level{
+	"trace": zerolog.TraceLevel,
+	"debug": zerolog.DebugLevel,
+	"info":  zerolog.InfoLevel,
+	"warn":  zerolog.WarnLevel,
+	"error": zerolog.ErrorLevel,
+	"fatal": zerolog.FatalLevel,
+	"panic": zerolog.PanicLevel,
+}
+
+func InitLogging() {
+	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
+	logLevelString := os.Getenv("LOG_LEVEL")
+	logLevel := logLevelMappings[logLevelString]
+	zerolog.SetGlobalLevel(logLevel)
 }

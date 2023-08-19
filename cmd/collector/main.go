@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"os"
 	wheretopark "wheretopark/go"
 	"wheretopark/go/provider"
 	"wheretopark/go/provider/sequential"
@@ -17,7 +16,6 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
-	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 )
 
@@ -33,7 +31,9 @@ func GetParkingLots(providers []provider.Common, cache *wheretopark.CacheProvide
 	metadatas, mFound := cache.GetMetadatas(name)
 	states, sFound := cache.GetStates(name)
 
-	if mFound && sFound {
+	cacheHit := mFound && sFound
+	log.Debug().Bool("cacheHit", cacheHit).Msg("cache response")
+	if cacheHit {
 		parkingLots, err := wheretopark.JoinMetadatasAndStates(metadatas, states)
 		if err != nil {
 			return nil, fmt.Errorf("failed to join metadatas and states due to %e", err)
@@ -68,7 +68,6 @@ func GetParkingLots(providers []provider.Common, cache *wheretopark.CacheProvide
 		if err != nil {
 			return nil, fmt.Errorf("failed to join metadatas and states due to %e", err)
 		}
-		return parkingLots, nil
 	}
 
 	err = cache.SetParkingLots(name, parkingLots)
@@ -78,38 +77,44 @@ func GetParkingLots(providers []provider.Common, cache *wheretopark.CacheProvide
 	return parkingLots, nil
 }
 
-func handleGetParkingLots(
-	providers []provider.Common,
-	cache *wheretopark.CacheProvider,
-	w http.ResponseWriter,
-	r *http.Request,
-) {
-	providerName := chi.URLParam(r, "provider")
-	parkingLots, err := GetParkingLots(providers, cache, providerName)
+func GetAllParkingLots(providers []provider.Common, cache *wheretopark.CacheProvider) (map[wheretopark.ID]wheretopark.ParkingLot, error) {
+	allParkingLots := make(map[wheretopark.ID]wheretopark.ParkingLot)
+	for _, provider := range providers {
+		providerName := provider.Name()
+		parkingLots, err := GetParkingLots(providers, cache, providerName)
+		if err != nil {
+			return nil, err
+		}
+		allParkingLots = wheretopark.MergeParkingLots(allParkingLots, parkingLots)
+	}
+	return allParkingLots, nil
+}
+
+func returnParkingLots(w http.ResponseWriter, r *http.Request, fn func() (map[wheretopark.ID]wheretopark.ParkingLot, error)) {
+	parkingLots, err := fn()
 	if err != nil {
-		log.Error().Err(err).Str("provider", providerName).Msg("failed to get parking lots")
+		log.Error().Err(err).Msg("failed to get parking lots")
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-
 	json, err := json.Marshal(parkingLots)
 	if err != nil {
-		log.Error().Err(err).Str("provider", providerName).Msg("failed to marshal response")
+		log.Error().Err(err).Msg("failed to marshal response")
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 	w.Header().Set("Content-Type", "application/json")
 	_, err = w.Write(json)
 	if err != nil {
-		log.Error().Err(err).Str("provider", providerName).Msg("failed to write response")
+		log.Error().Err(err).Msg("failed to write response")
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 }
 
 func main() {
-	zerolog.SetGlobalLevel(zerolog.InfoLevel)
-	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
+	wheretopark.InitLogging()
+
 	providers := []provider.Common{
 		mustCreateProvider(gdansk.NewProvider),
 		mustCreateProvider(gdynia.NewProvider),
@@ -120,12 +125,23 @@ func main() {
 
 	cache, err := wheretopark.NewCacheProvider()
 	if err != nil {
-		log.Fatal().Err(err).Msg("failed to create cache")
+		log.Fatal().Err(err).Msg("create cache fail")
 	}
 	r := chi.NewRouter()
+	r.Use(middleware.RequestID)
+	r.Use(middleware.RealIP)
 	r.Use(middleware.Logger)
+	r.Use(middleware.Recoverer)
+	r.Get("/parking-lots", func(w http.ResponseWriter, r *http.Request) {
+		returnParkingLots(w, r, func() (map[wheretopark.ID]wheretopark.ParkingLot, error) {
+			return GetAllParkingLots(providers, cache)
+		})
+	})
 	r.Get("/{provider}/parking-lots", func(w http.ResponseWriter, r *http.Request) {
-		handleGetParkingLots(providers, cache, w, r)
+		returnParkingLots(w, r, func() (map[wheretopark.ID]wheretopark.ParkingLot, error) {
+			providerName := chi.URLParam(r, "provider")
+			return GetParkingLots(providers, cache, providerName)
+		})
 	})
 	port := 8080
 	log.Info().Msg(fmt.Sprintf("starting server on port %d", port))
