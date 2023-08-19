@@ -27,18 +27,3 @@ services:
     volumes:
       - $HOME/.local/share/wheretopark/cctv:/opt/wheretopark/cctv
       - $HOME/.cache/wheretopark/cctv:/root/.cache/wheretopark/cctv
-
-  webapp:
-    container_name: wheretopark_webapp
-    restart: unless-stopped
-    build:
-      context: ./webapp
-    ports:
-      - "3000:3000"
-    environment:
-      PUBLIC_MAPBOX_ACCESS_TOKEN: pk.eyJ1IjoiZ2JhcmFuc2tpIiwiYSI6ImNsNmh4ZW9hZTBxaG4zY282MzAzbWhqbnAifQ.8_G9b7-m8n0kMr4O0-2mhQ
-    healthcheck:
-      test: curl --fail http://localhost:3000 || exit 1
-      interval: 5s
-      timeout: 10s
-      retries: 10
