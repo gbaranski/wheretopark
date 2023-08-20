@@ -1,9 +1,8 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
-	"net/http"
+	"sync"
 	wheretopark "wheretopark/go"
 	"wheretopark/go/provider"
 	"wheretopark/go/provider/sequential"
@@ -15,8 +14,6 @@ import (
 	"wheretopark/providers/collector/warsaw"
 
 	"github.com/caarlos0/env/v8"
-	"github.com/go-chi/chi/v5"
-	"github.com/go-chi/chi/v5/middleware"
 	"github.com/rs/zerolog/log"
 )
 
@@ -28,11 +25,16 @@ func mustCreateProvider[T provider.Common](createFn func() (T, error)) T {
 	return provider
 }
 
-func GetParkingLots(providers []provider.Common, cache *wheretopark.CacheProvider, name string) (map[wheretopark.ID]wheretopark.ParkingLot, error) {
-	metadatas, mFound := cache.GetMetadatas(name)
-	states, sFound := cache.GetStates(name)
+type CollectorServer struct {
+	providers []provider.Common
+	cache     *wheretopark.PluralCache
+}
 
-	cacheHit := mFound && sFound
+func (s CollectorServer) GetParkingLotsByIdentifier(name string) (map[wheretopark.ID]wheretopark.ParkingLot, error) {
+	metadatas := s.cache.GetMetadatas(name)
+	states := s.cache.GetStates(name)
+
+	cacheHit := metadatas != nil && states != nil
 	log.Debug().Bool("cacheHit", cacheHit).Str("provider", name).Msg("cache response")
 	if cacheHit {
 		parkingLots, err := wheretopark.JoinMetadatasAndStates(metadatas, states)
@@ -42,7 +44,7 @@ func GetParkingLots(providers []provider.Common, cache *wheretopark.CacheProvide
 		return parkingLots, nil
 	}
 	var provider provider.Common
-	for _, p := range providers {
+	for _, p := range s.providers {
 		if p.Name() == name {
 			provider = p
 		}
@@ -71,51 +73,41 @@ func GetParkingLots(providers []provider.Common, cache *wheretopark.CacheProvide
 		}
 	}
 
-	err = cache.SetParkingLots(name, parkingLots)
+	err = s.cache.SetParkingLots(name, parkingLots)
 	if err != nil {
 		log.Error().Err(err).Str("provider", name).Msg("failed to update parking lots cache")
 	}
 	return parkingLots, nil
 }
 
-func GetAllParkingLots(providers []provider.Common, cache *wheretopark.CacheProvider) (map[wheretopark.ID]wheretopark.ParkingLot, error) {
-	allParkingLots := make(map[wheretopark.ID]wheretopark.ParkingLot)
-	for _, provider := range providers {
-		providerName := provider.Name()
-		parkingLots, err := GetParkingLots(providers, cache, providerName)
-		if err != nil {
-			log.Error().Err(err).Str("provider", providerName).Msg("failed to get parking lots")
-			continue
-		}
-		allParkingLots = wheretopark.MergeParkingLots(allParkingLots, parkingLots)
-	}
-	return allParkingLots, nil
-}
+func (s CollectorServer) GetAllParkingLots() chan map[wheretopark.ID]wheretopark.ParkingLot {
+	allParkingLots := make(chan map[wheretopark.ID]wheretopark.ParkingLot, len(s.providers))
 
-func returnParkingLots(w http.ResponseWriter, r *http.Request, fn func() (map[wheretopark.ID]wheretopark.ParkingLot, error)) {
-	parkingLots, err := fn()
-	if err != nil {
-		log.Error().Err(err).Msg("failed to get parking lots")
-		w.WriteHeader(http.StatusInternalServerError)
-		return
+	var wg sync.WaitGroup
+	for _, provider := range s.providers {
+		wg.Add(1)
+		providerName := provider.Name()
+		go func() {
+			parkingLots, err := s.GetParkingLotsByIdentifier(providerName)
+			if err != nil {
+				log.Error().Err(err).Str("provider", providerName).Msg("failed to get parking lots")
+				return
+			}
+			log.Debug().Str("provider", providerName).Msg("got parking lots")
+			allParkingLots <- parkingLots
+			wg.Done()
+		}()
 	}
-	json, err := json.Marshal(parkingLots)
-	if err != nil {
-		log.Error().Err(err).Msg("failed to marshal response")
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-	w.Header().Set("Content-Type", "application/json")
-	_, err = w.Write(json)
-	if err != nil {
-		log.Error().Err(err).Msg("failed to write response")
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
+	go func() {
+		wg.Wait()
+		close(allParkingLots)
+
+	}()
+	return allParkingLots
 }
 
 type environment struct {
-	Port int `env:"PORT" envDefault:"8080"`
+	Port uint `env:"PORT" envDefault:"8080"`
 }
 
 func main() {
@@ -134,28 +126,14 @@ func main() {
 		mustCreateProvider(glasgow.NewProvider),
 	}
 
-	cache, err := wheretopark.NewCacheProvider()
+	cache, err := wheretopark.NewPluralCache()
 	if err != nil {
 		log.Fatal().Err(err).Msg("create cache fail")
 	}
-	r := chi.NewRouter()
-	r.Use(middleware.RequestID)
-	r.Use(middleware.RealIP)
-	r.Use(middleware.Logger)
-	r.Use(middleware.Recoverer)
-	r.Get("/parking-lots", func(w http.ResponseWriter, r *http.Request) {
-		returnParkingLots(w, r, func() (map[wheretopark.ID]wheretopark.ParkingLot, error) {
-			return GetAllParkingLots(providers, cache)
-		})
-	})
-	r.Get("/{provider}/parking-lots", func(w http.ResponseWriter, r *http.Request) {
-		returnParkingLots(w, r, func() (map[wheretopark.ID]wheretopark.ParkingLot, error) {
-			providerName := chi.URLParam(r, "provider")
-			return GetParkingLots(providers, cache, providerName)
-		})
-	})
-	log.Info().Msg(fmt.Sprintf("starting server on port %d", environment.Port))
-	if err := http.ListenAndServe(fmt.Sprintf(":%d", environment.Port), r); err != nil {
-		log.Fatal().Err(err).Msg("server fail")
+
+	server := CollectorServer{
+		providers: providers,
+		cache:     cache,
 	}
+	wheretopark.RunServer(server, uint(environment.Port))
 }

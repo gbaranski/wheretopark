@@ -10,38 +10,23 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-type CacheProvider struct {
-	c *bigcache.BigCache
-}
-
-func NewCacheProvider() (*CacheProvider, error) {
-	cache, err := bigcache.New(context.Background(), bigcache.DefaultConfig(time.Minute*5))
-	if err != nil {
-		return nil, err
-	}
-
-	return &CacheProvider{
-		c: cache,
-	}, nil
-}
-
-func getValueFromCache[T any](cache *bigcache.BigCache, key string) (map[ID]T, bool) {
+func getValueFromCache[T any](cache *bigcache.BigCache, key string) *T {
 	data, err := cache.Get(key)
 	if err != nil {
 		if err != bigcache.ErrEntryNotFound {
 			log.Error().Err(err).Msg(fmt.Sprintf("failed to get %s from cache", key))
 		}
-		return nil, false
+		return nil
 	}
 	log.Trace().Str("key", key).Msg(fmt.Sprintf("got `%s` from cache", data))
-	var values map[ID]T
+	var values *T
 	if err := json.Unmarshal([]byte(data), &values); err != nil {
 		log.Fatal().Err(err).Msg("failed to unmarshal values")
 	}
-	return values, true
+	return values
 }
 
-func setValueToCache[T any](cache *bigcache.BigCache, key string, value map[ID]T) error {
+func setValueToCache[T any](cache *bigcache.BigCache, key string, value T) error {
 	data, err := json.Marshal(value)
 	if err != nil {
 		log.Fatal().Err(err).Msg("failed to marshal value")
@@ -50,22 +35,69 @@ func setValueToCache[T any](cache *bigcache.BigCache, key string, value map[ID]T
 	return cache.Set(key, data)
 }
 
-func (p *CacheProvider) GetMetadatas(provider string) (map[ID]Metadata, bool) {
-	return getValueFromCache[Metadata](p.c, fmt.Sprintf("%s/metadatas", provider))
-
+type SingularCache struct {
+	c *bigcache.BigCache
 }
 
-func (p *CacheProvider) GetStates(provider string) (map[ID]State, bool) {
-	return getValueFromCache[State](p.c, fmt.Sprintf("%s/states", provider))
+func NewSingularCache() (*SingularCache, error) {
+	cache, err := bigcache.New(context.Background(), bigcache.DefaultConfig(time.Minute*5))
+	if err != nil {
+		return nil, err
+	}
+
+	return &SingularCache{
+		c: cache,
+	}, nil
 }
 
-func (p *CacheProvider) SetParkingLots(provider string, parkingLots map[ID]ParkingLot) error {
+func (p *SingularCache) GetState(id ID) *State {
+	return getValueFromCache[State](p.c, fmt.Sprintf("%s/state", id))
+}
+
+func (p *SingularCache) SetState(id ID, state State) error {
+	return setValueToCache[State](p.c, fmt.Sprintf("%s/state", id), state)
+}
+
+type PluralCache struct {
+	c *bigcache.BigCache
+}
+
+func NewPluralCache() (*PluralCache, error) {
+	cache, err := bigcache.New(context.Background(), bigcache.DefaultConfig(time.Minute*5))
+	if err != nil {
+		return nil, err
+	}
+
+	return &PluralCache{
+		c: cache,
+	}, nil
+}
+
+func (p *PluralCache) GetMetadatas(provider string) map[ID]Metadata {
+	metadatas := getValueFromCache[map[ID]Metadata](p.c, fmt.Sprintf("%s/metadatas", provider))
+	if metadatas != nil {
+		return *metadatas
+	} else {
+		return nil
+	}
+}
+
+func (p *PluralCache) GetStates(provider string) map[ID]State {
+	states := getValueFromCache[map[ID]State](p.c, fmt.Sprintf("%s/states", provider))
+	if states != nil {
+		return *states
+	} else {
+		return nil
+	}
+}
+
+func (p *PluralCache) SetParkingLots(provider string, parkingLots map[ID]ParkingLot) error {
 	metadatas := ExtractMetadatas(parkingLots)
 	states := ExtractStates(parkingLots)
-	if err := setValueToCache[Metadata](p.c, fmt.Sprintf("%s/metadatas", provider), metadatas); err != nil {
+	if err := setValueToCache[map[ID]Metadata](p.c, fmt.Sprintf("%s/metadatas", provider), metadatas); err != nil {
 		return fmt.Errorf("failed to set metadatas")
 	}
-	if err := setValueToCache[State](p.c, fmt.Sprintf("%s/states", provider), states); err != nil {
+	if err := setValueToCache[map[ID]State](p.c, fmt.Sprintf("%s/states", provider), states); err != nil {
 		return fmt.Errorf("failed to set metadatas")
 	}
 	return nil

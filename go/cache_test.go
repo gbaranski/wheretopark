@@ -7,31 +7,48 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestCacheProvider(t *testing.T) {
-	provider, err := wheretopark.NewCacheProvider()
+func TestPluralCache(t *testing.T) {
+	cache, err := wheretopark.NewPluralCache()
 	if err != nil {
 		t.Fatal(err)
 	}
-	metadatas, found := provider.GetMetadatas("test")
-	assert.Empty(t, metadatas)
-	assert.False(t, found)
-	states, found := provider.GetStates("test")
-	assert.Empty(t, states)
-	assert.False(t, found)
+	metadatas := cache.GetMetadatas("test")
+	assert.Nil(t, metadatas)
+	states := cache.GetStates("test")
+	assert.Nil(t, states)
 
 	parkingLots := map[wheretopark.ID]wheretopark.ParkingLot{
 		sampleParkingLotID: sampleParkingLot,
 	}
-	err = provider.SetParkingLots("test", parkingLots)
+	err = cache.SetParkingLots("test", parkingLots)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	metadatas, found = provider.GetMetadatas("test")
-	assert.True(t, found)
+	metadatas = cache.GetMetadatas("test")
+	assert.NotNil(t, metadatas)
 	equalJson[wheretopark.Metadata](t, metadatas[sampleParkingLotID], sampleParkingLot.Metadata, "metadata mismatch")
-	states, found = provider.GetStates("test")
-	assert.True(t, found)
+	states = cache.GetStates("test")
+	assert.NotNil(t, states)
 	equalJson[wheretopark.State](t, states[sampleParkingLotID], sampleParkingLot.State, "state mismatch")
+
+}
+
+func TestSingularCache(t *testing.T) {
+	cache, err := wheretopark.NewSingularCache()
+	if err != nil {
+		t.Fatal(err)
+	}
+	state := cache.GetState("abcdefg")
+	assert.Nil(t, state)
+
+	err = cache.SetState("abcdefg", sampleParkingLot.State)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	state = cache.GetState("abcdefg")
+	assert.NotNil(t, state)
+	equalJson[wheretopark.State](t, *state, sampleParkingLot.State, "state mismatch")
 
 }

@@ -37,6 +37,10 @@ func (p *Provider) GetMetadatas() (map[wheretopark.ID]wheretopark.Metadata, erro
 	return metadatas, nil
 }
 
+func (p *Provider) GetConfiguredParkingLots() []ParkingLot {
+	return p.configuration.ParkingLots
+}
+
 func (p *Provider) ProcessCamera(parkingLot ParkingLot, cameraID int, camera ParkingLotCamera) (uint, error) {
 	id := wheretopark.GeometryToID(parkingLot.Geometry)
 	log.Info().
@@ -111,6 +115,17 @@ func (p *Provider) ProcessParkingLot(parkingLot ParkingLot) wheretopark.State {
 	}
 }
 
+// Returns nil if parking lot configuration could not be found
+func (p *Provider) ProcessParkingLotByID(id wheretopark.ID) *wheretopark.State {
+	for _, parkingLot := range p.configuration.ParkingLots {
+		if id == wheretopark.GeometryToID(parkingLot.Geometry) {
+			state := p.ProcessParkingLot(parkingLot)
+			return &state
+		}
+	}
+	return nil
+}
+
 func (p *Provider) GetStates() (map[wheretopark.ID]wheretopark.State, error) {
 	states := make(map[wheretopark.ID]wheretopark.State)
 	statesMutex := sync.RWMutex{}
@@ -131,7 +146,7 @@ func (p *Provider) GetStates() (map[wheretopark.ID]wheretopark.State, error) {
 	return states, nil
 }
 
-func NewProvider(configurationPath *string, model *Model, saver Saver) (sequential.Provider, error) {
+func NewProvider(configurationPath *string, model *Model, saver Saver) (*Provider, error) {
 	var configuration Configuration
 	if configurationPath == nil {
 		configuration = DefaultConfiguration

@@ -22,6 +22,7 @@ require (
 )
 
 require (
+	github.com/ajg/form v1.5.1 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/deepmap/oapi-codegen v1.8.2 // indirect
 	github.com/fatih/color v1.15.0 // indirect
@@ -39,6 +40,7 @@ require (
 )
 
 require (
+	github.com/go-chi/render v1.0.3
 	github.com/goccy/go-json v0.9.11
 	golang.org/x/net v0.2.0 // indirect
 )

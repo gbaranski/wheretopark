@@ -1,77 +1,71 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
-	"net/http"
+	"sync"
 	wheretopark "wheretopark/go"
-	"wheretopark/go/provider/sequential"
 	"wheretopark/providers/cctv"
 
 	"github.com/caarlos0/env/v8"
-	"github.com/go-chi/chi/v5"
-	"github.com/go-chi/chi/v5/middleware"
 	"github.com/rs/zerolog/log"
 )
 
-func GetParkingLots(provider sequential.Provider, cache *wheretopark.CacheProvider, name string) (map[wheretopark.ID]wheretopark.ParkingLot, error) {
-	metadatas, mFound := cache.GetMetadatas(name)
-	states, sFound := cache.GetStates(name)
-
-	if mFound && sFound {
-		parkingLots, err := wheretopark.JoinMetadatasAndStates(metadatas, states)
-		if err != nil {
-			return nil, fmt.Errorf("failed to join metadatas and states due to %e", err)
-		}
-		return parkingLots, nil
-	}
-
-	metadatas, err := provider.GetMetadatas()
-	if err != nil {
-		return nil, fmt.Errorf("failed to get metadatas due to %e", err)
-	}
-	states, err = provider.GetStates()
-	if err != nil {
-		return nil, fmt.Errorf("failed to get states due to %e", err)
-	}
-	parkingLots, err := wheretopark.JoinMetadatasAndStates(metadatas, states)
-	if err != nil {
-		return nil, fmt.Errorf("failed to join metadatas and states due to %e", err)
-	}
-	err = cache.SetParkingLots(name, parkingLots)
-	if err != nil {
-		log.Error().Err(err).Str("provider", name).Msg("failed to update parking lots cache")
-	}
-	return parkingLots, nil
+type CctvServer struct {
+	provider *cctv.Provider
+	cache    *wheretopark.SingularCache
 }
 
-func handleGetParkingLots(
-	provider sequential.Provider,
-	cache *wheretopark.CacheProvider,
-	w http.ResponseWriter,
-	r *http.Request,
-) {
-	providerName := chi.URLParam(r, "provider")
-	parkingLots, err := GetParkingLots(provider, cache, providerName)
+func (s CctvServer) GetParkingLotsByIdentifier(id wheretopark.ID) (map[wheretopark.ID]wheretopark.ParkingLot, error) {
+	metadatas, err := s.provider.GetMetadatas()
 	if err != nil {
-		log.Error().Err(err).Str("provider", providerName).Msg("failed to get parking lots")
-		w.WriteHeader(http.StatusInternalServerError)
-		return
+		return nil, err
 	}
+	metadata, found := metadatas[id]
+	if !found {
+		return nil, fmt.Errorf("metadata for `%s` not found", id)
+	}
+	state := s.cache.GetState(id)
+	log.Debug().Bool("cacheHit", state != nil).Str("id", id).Msg("cache response")
+	if state == nil {
+		state = s.provider.ProcessParkingLotByID(id)
+		if state == nil {
+			return nil, fmt.Errorf("failed to process parking lot `%s`", id)
+		}
+		if err := s.cache.SetState(id, *state); err != nil {
+			log.Error().Err(err).Str("id", id).Msg("failed to set cache")
+		}
+	}
+	parkingLot := wheretopark.ParkingLot{
+		Metadata: metadata,
+		State:    *state,
+	}
+	return map[wheretopark.ID]wheretopark.ParkingLot{id: parkingLot}, nil
+}
 
-	json, err := json.Marshal(parkingLots)
-	if err != nil {
-		log.Error().Err(err).Str("provider", providerName).Msg("failed to marshal response")
-		w.WriteHeader(http.StatusInternalServerError)
-		return
+func (s CctvServer) GetAllParkingLots() chan map[wheretopark.ID]wheretopark.ParkingLot {
+	configurations := s.provider.GetConfiguredParkingLots()
+	allParkingLots := make(chan map[wheretopark.ID]wheretopark.ParkingLot, len(configurations))
+
+	var wg sync.WaitGroup
+	for _, cfg := range configurations {
+		wg.Add(1)
+		id := wheretopark.GeometryToID(cfg.Metadata.Geometry)
+		go func(cfg cctv.ParkingLot) {
+			parkingLots, err := s.GetParkingLotsByIdentifier(id)
+			if err != nil {
+				log.Error().Err(err).Str("id", id).Msg("failed to get parking lots")
+				return
+			}
+			allParkingLots <- parkingLots
+			wg.Done()
+		}(cfg)
 	}
-	w.Header().Set("Content-Type", "application/json")
-	_, err = w.Write(json)
-	if err != nil {
-		log.Error().Err(err).Str("provider", providerName).Msg("failed to write response")
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
+	go func() {
+		wg.Wait()
+		close(allParkingLots)
+
+	}()
+	return allParkingLots
 }
 
 type environment struct {
@@ -99,18 +93,13 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	cache, err := wheretopark.NewCacheProvider()
+	cache, err := wheretopark.NewSingularCache()
 	if err != nil {
 		log.Fatal().Err(err).Msg("create cache fail")
 	}
-
-	r := chi.NewRouter()
-	r.Use(middleware.Logger)
-	r.Get("/parking-lots", func(w http.ResponseWriter, r *http.Request) {
-		handleGetParkingLots(provider, cache, w, r)
-	})
-	log.Info().Msg(fmt.Sprintf("starting server on port %d", environment.Port))
-	if err := http.ListenAndServe(fmt.Sprintf(":%d", environment.Port), r); err != nil {
-		log.Fatal().Err(err).Msg("server fail")
+	server := CctvServer{
+		provider: provider,
+		cache:    cache,
 	}
+	wheretopark.RunServer(server, uint(environment.Port))
 }
