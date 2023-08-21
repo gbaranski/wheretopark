@@ -5,7 +5,9 @@ services:
     container_name: wheretopark_caddy
     restart: unless-stopped
     ports:
-      - "1234:1234"
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
     volumes:
       - $PWD/Caddyfile:/etc/caddy/Caddyfile
 
