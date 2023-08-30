@@ -33,8 +33,8 @@
             accessToken: PUBLIC_MAPBOX_ACCESS_TOKEN,
             container: "map-container",
             style: "mapbox://styles/mapbox/streets-v11",
-            center: [18.64, 54.35],
-            zoom: 10,
+            center: [19.21, 52.11],
+            zoom: 5,
         });
         currentMap.set(map);
     });

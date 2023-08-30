@@ -1,16 +1,5 @@
 <script lang="ts">
-	import { currentMap } from "$lib/store";
 	import List from "$components/List.svelte";
-	import type { LayoutData } from "$types/layout";
-
-    currentMap.subscribe((map) => {
-        if (map == null) return;
-        const [longitude, latitude] = [18.64, 54.35];
-		map.flyTo({
-			center: [longitude, latitude],
-			zoom: 10
-		});
-    });
 </script>
 
 <svelte:head>
