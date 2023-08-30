@@ -3,22 +3,13 @@
 	import { onMount } from "svelte";
     import 'mapbox-gl/dist/mapbox-gl.css';
 	import { SpotType, type ID, type ParkingLot } from "$lib/types";
-	import { currentMap } from "$lib/store";
+	import { currentMap, parkingLots as parkingLotsStore } from "$lib/store";
 	import { markerColor, parkingLotStatus } from "$lib/utils";
+    import mapboxgl from "mapbox-gl";
     
-    export let parkingLots: Record<ID, ParkingLot>;
-
-    onMount(async () => {
-        const mapboxgl = await import("mapbox-gl");
-        const map = new mapboxgl.Map({
-            accessToken: PUBLIC_MAPBOX_ACCESS_TOKEN,
-            container: "map-container",
-            style: "mapbox://styles/mapbox/streets-v11",
-            center: [18.64, 54.35],
-            zoom: 10,
-        });
-        currentMap.set(map);
-        
+    let map: mapboxgl.Map;
+    $: parkingLots = $parkingLotsStore;
+    $: {
         Object.entries(parkingLots).map(([id, parkingLot]) => {
             const [longitude, latitude] = parkingLot.metadata.geometry.coordinates;
             const popupHtml = `
@@ -35,7 +26,17 @@
                 .setLngLat([longitude, latitude])
                 .setPopup(popup);
         }).forEach((marker) => marker.addTo(map));
+    }
 
+    onMount(async () => {
+        map = new mapboxgl.Map({
+            accessToken: PUBLIC_MAPBOX_ACCESS_TOKEN,
+            container: "map-container",
+            style: "mapbox://styles/mapbox/streets-v11",
+            center: [18.64, 54.35],
+            zoom: 10,
+        });
+        currentMap.set(map);
     });
 </script>
 

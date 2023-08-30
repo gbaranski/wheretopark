@@ -15,6 +15,10 @@ services:
     build:
       context: .
       dockerfile: ./cmd/collector/Dockerfile
+    environment:
+      LOG_LEVEL: trace
+    ports:
+      - "8001:8080"
 
   cctv:
     container_name: wheretopark_cctv
@@ -24,8 +28,11 @@ services:
       dockerfile: ./cmd/cctv/Dockerfile
     environment:
       MODEL: /opt/wheretopark/cctv/model.onnx
+      LOG_LEVEL: trace
     volumes:
       - $HOME/.local/share/wheretopark/cctv:/opt/wheretopark/cctv
+    ports:
+      - "8002:8080"
 
   # webapp:
   #   container_name: wheretopark_webapp

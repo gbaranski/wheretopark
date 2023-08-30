@@ -93,10 +93,10 @@ func JoinMetadatasAndStates(metadatas map[ID]Metadata, states map[ID]State) (map
 	return parkingLots, nil
 }
 
-func MergeParkingLots(parkingLots ...map[ID]ParkingLot) map[ID]ParkingLot {
-	result := make(map[ID]ParkingLot)
-	for _, parkingLot := range parkingLots {
-		for id, value := range parkingLot {
+func MergeMaps[K comparable, T any](values ...map[K]T) map[K]T {
+	result := make(map[K]T)
+	for _, subvalues := range values {
+		for id, value := range subvalues {
 			result[id] = value
 		}
 	}

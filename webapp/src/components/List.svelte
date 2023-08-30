@@ -1,8 +1,8 @@
 <script lang="ts">
-	import { SpotType, type ID, type ParkingLot } from "$lib/types";
+	import { parkingLots as parkingLotsStore } from "$lib/store";
+	import { SpotType } from "$lib/types";
     import { Card, Title, Text } from '@svelteuidev/core';
-
-    export let parkingLots: Record<ID, ParkingLot>;
+    $: parkingLots = $parkingLotsStore;
 </script>
 
 {#each Object.entries(parkingLots) as [id, parkingLot]}

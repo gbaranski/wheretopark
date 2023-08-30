@@ -2,8 +2,6 @@
 	import { currentMap } from "$lib/store";
 	import List from "$components/List.svelte";
 	import type { LayoutData } from "$types/layout";
-	
-    export let data: LayoutData;
 
     currentMap.subscribe((map) => {
         if (map == null) return;
@@ -21,4 +19,4 @@
 	<meta name="keywords" content="Parking Lot, Smart City, Gdańsk, Gdynia, Sopot, Tricity"/>
 </svelte:head>
 
-<List parkingLots={data.parkingLots}/>
+<List />

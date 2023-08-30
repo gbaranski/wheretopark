@@ -4,10 +4,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"time"
 
-	"github.com/go-chi/chi/v5"
-	"github.com/go-chi/chi/v5/middleware"
-	"github.com/go-chi/render"
+	"github.com/gin-contrib/logger"
+	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog/log"
 )
 
@@ -17,44 +17,43 @@ type Server interface {
 }
 
 func RunServer(s Server, port uint) {
-	r := chi.NewRouter()
-	r.Use(middleware.RequestID)
-	r.Use(middleware.RealIP)
-	r.Use(middleware.Logger)
-	r.Use(middleware.Recoverer)
-	r.Get("/parking-lots", func(w http.ResponseWriter, r *http.Request) {
+	r := gin.Default()
+	r.Use(logger.SetLogger())
+	r.GET("/parking-lots", func(c *gin.Context) {
+		c.Writer.WriteHeader(http.StatusOK)
+		c.Writer.Header().Set("Content-Type", "application/json")
 		stream := s.GetAllParkingLots()
 		for parkingLots := range stream {
-			render.JSON(w, r, parkingLots)
+			json, err := json.Marshal(parkingLots)
+			if err != nil {
+				log.Error().Err(err).Msg("failed to marshal parking lots")
+				break
+			}
+			_, err = c.Writer.WriteString(string(json) + "\r\n")
+			if err != nil {
+				log.Error().Err(err).Msg("failed to write response")
+				break
+			}
 			log.Debug().Int("n", len(parkingLots)).Msg("sending parking lots to client")
+			c.Writer.Flush()
+
+			time.Sleep(1 * time.Second)
 		}
 	})
-	r.Get("/{identifier}/parking-lots", func(w http.ResponseWriter, r *http.Request) {
-		identifier := chi.URLParam(r, "identifier")
+	r.GET("/:identifier/parking-lots", func(c *gin.Context) {
+		identifier := c.Param("identifier")
 		parkingLots, err := s.GetParkingLotsByIdentifier(identifier)
 		if err != nil {
 			log.Error().Err(err).Str("identifier", identifier).Msg("getParkingLots failure")
-			w.WriteHeader(http.StatusInternalServerError)
-			return
-		}
-		json, err := json.Marshal(parkingLots)
-		if err != nil {
-			log.Error().Err(err).Str("identifier", identifier).Msg("JSON Marshall failure")
-			w.WriteHeader(http.StatusInternalServerError)
-			return
-		}
-		w.Header().Set("Content-Type", "application/json")
-		_, err = w.Write(json)
-		if err != nil {
-			log.Error().Err(err).Str("identifier", identifier).Msg("Write Response failure")
-			w.WriteHeader(http.StatusInternalServerError)
+			c.Status(http.StatusInternalServerError)
 			return
 		}
 
+		c.JSON(http.StatusOK, parkingLots)
 	})
 
 	log.Info().Msg(fmt.Sprintf("starting server on port %d", port))
-	if err := http.ListenAndServe(fmt.Sprintf(":%d", port), r); err != nil {
+	if err := r.Run(fmt.Sprintf(":%d", port)); err != nil {
 		log.Fatal().Err(err).Msg("server fail")
 	}
 }

@@ -17,6 +17,8 @@ services:
     build:
       context: .
       dockerfile: ./cmd/collector/Dockerfile
+    environment:
+      GIN_MODE: release
 
   cctv:
     container_name: wheretopark_cctv
@@ -26,6 +28,7 @@ services:
       dockerfile: ./cmd/cctv/Dockerfile
     environment:
       MODEL: /opt/wheretopark/cctv/model.onnx
+      GIN_MODE: release
     volumes:
       - $HOME/.local/share/wheretopark/cctv:/opt/wheretopark/cctv
       - $HOME/.cache/wheretopark/cctv:/root/.cache/wheretopark/cctv

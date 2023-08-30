@@ -1,10 +1,7 @@
 <script lang="ts">
-	import type { LayoutData } from './$types';
-    import { Text, Title } from '@svelteuidev/core';
+    import { Text } from '@svelteuidev/core';
     import { SvelteUIProvider } from '@svelteuidev/core';
     import Map from '$components/Map.svelte'
-
-    export let data: LayoutData;
 </script>
 
 
@@ -32,7 +29,7 @@
 </SvelteUIProvider>
 
 <div class="split slave">
-    <Map parkingLots={data.parkingLots}/>
+    <Map/>
 </div>
 
 <style>

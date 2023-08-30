@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"hash/fnv"
 	"time"
 
 	"github.com/allegro/bigcache/v3"
@@ -18,7 +19,11 @@ func getValueFromCache[T any](cache *bigcache.BigCache, key string) *T {
 		}
 		return nil
 	}
-	log.Trace().Str("key", key).Msg(fmt.Sprintf("got `%s` from cache", data))
+
+	hash := fnv.New32a()
+	hash.Write(data)
+
+	log.Trace().Str("key", key).Uint32("sum", hash.Sum32()).Msg(fmt.Sprintf("got `%s` from cache", data))
 	var values *T
 	if err := json.Unmarshal([]byte(data), &values); err != nil {
 		log.Fatal().Err(err).Msg("failed to unmarshal values")
@@ -31,7 +36,9 @@ func setValueToCache[T any](cache *bigcache.BigCache, key string, value T) error
 	if err != nil {
 		log.Fatal().Err(err).Msg("failed to marshal value")
 	}
-	log.Trace().Str("key", key).Msg(fmt.Sprintf("set `%s` to cache", data))
+	hash := fnv.New32a()
+	hash.Write(data)
+	log.Trace().Str("key", key).Uint32("sum", hash.Sum32()).Msg(fmt.Sprintf("set `%s` to cache", data))
 	return cache.Set(key, data)
 }
 
