@@ -5,7 +5,7 @@ import { dev } from '$app/environment';
 const serverURL = dev ? "http://localhost:1234" : "https://api.wheretopark.app";
 const providersURLs = [
     `${serverURL}/collector`,
-    // `${serverURL}/cctv`,
+    `${serverURL}/cctv`,
 ];
 
 const getParkingLotFromProvider = async function* (fetch: typeof window.fetch, url: string): AsyncGenerator<Record<ID, ParkingLot>> {
