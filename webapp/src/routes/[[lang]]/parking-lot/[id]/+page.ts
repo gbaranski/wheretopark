@@ -1,10 +1,16 @@
+import { parkingLots } from "$lib/store";
 import type { PageLoad } from "./$types";
-import { getParkingLots } from "$lib/client";
 
-export const load = (async ({ params }: { params: { id?: string, }}) => {
-    const parkingLots = await getParkingLots();
+const waitForParkingLot = (id: string) => new Promise((resolve) => {
+    parkingLots.subscribe((parkingLots) => {
+        const parkingLot = parkingLots[id];
+        if (parkingLot) resolve(parkingLot);
+    })
+});
 
+export const load = (async ({ params }: { params: { id: string, }}) => {
+    const parkingLot = waitForParkingLot(params.id);
     return {
-        parkingLot: parkingLots[params.id!]
+        parkingLot,
     };
 }) satisfies PageLoad;
