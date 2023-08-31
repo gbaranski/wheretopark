@@ -7,11 +7,10 @@
 	import { markerColor, parkingLotStatus } from '$lib/utils';
 	import { goto } from '$app/navigation';
 
-	let map: mapboxgl.Map;
 
 	onMount(async () => {
 		const mapboxgl = await import('mapbox-gl');
-		map = new mapboxgl.Map({
+		const map = new mapboxgl.Map({
 			accessToken: PUBLIC_MAPBOX_ACCESS_TOKEN,
 			container: 'map-container',
 			style: 'mapbox://styles/mapbox/navigation-day-v1',

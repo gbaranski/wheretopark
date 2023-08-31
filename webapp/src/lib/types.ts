@@ -29,6 +29,8 @@ export enum Feature {
     GUARDED,
 }
 
+export const features = Object.values(Feature).filter((v) => typeof v === "string") as string[];
+
 export enum PaymentMethod {
     CASH,
     CARD,

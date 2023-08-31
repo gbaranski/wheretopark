@@ -1,6 +1,7 @@
 <script lang="ts">
 	import Logo from '$components/Logo.svelte';
-import NavbarMenu from '$components/NavbarMenu.svelte';
+	import Map from '$components/Map.svelte';
+	import NavbarMenu from '$components/NavbarMenu.svelte';
 	import '../../app.css';
 </script>
 
@@ -19,7 +20,7 @@ import NavbarMenu from '$components/NavbarMenu.svelte';
 	></script>
 </svelte:head>
 
-<div class="navbar absolute z-20 bg-base-100">
+<div class="navbar absolute z-30 bg-base-100">
 	<div class="navbar-start">
 		<div class="max-md:hidden">
 			<Logo/>
@@ -62,6 +63,58 @@ import NavbarMenu from '$components/NavbarMenu.svelte';
 		</div>
 	</div>
 </div>
-<div class="pt-10">
-	<slot />
+
+
+<div>
+	<div class="split master">
+		<slot />
+	</div>
+	<div class="split slave">
+		<Map />
+	</div>
 </div>
+
+<style>
+	.split {
+		height: 100%;
+		position: fixed;
+		z-index: 1;
+		top: 0;
+		bottom: 0;
+		overflow-x: hidden;
+	}
+	
+	.master {
+		width: 450px;
+		left: 0;
+		top: 4em;
+	}
+	
+	.slave {
+		width: calc(100% - 450px);
+		right: 0;
+	}
+	
+	@media only screen and (orientation:portrait) {
+		.split {
+			position: static;
+			overflow: visible;
+		}
+		
+		:global(#map-container) {
+			height: 60%;
+		}
+		
+		.master {
+			width: 100%;
+			position: absolute;
+			top: calc(100% - 40%);
+		}
+	
+		.slave {
+			bottom: 0;
+			width: 100%;
+			height: 400px;
+		}
+	}
+	</style>

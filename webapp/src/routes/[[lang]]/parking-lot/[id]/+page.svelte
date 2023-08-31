@@ -21,24 +21,15 @@
 	import ResourceIcon from '$components/ResourceIcon.svelte';
 
 	export let data: { parkingLot: ParkingLot };
-	const [status, statusComment] = parkingLotStatus(data.parkingLot, SpotType.CAR);
-
-	$: metadata = data.parkingLot.metadata as Metadata;
-	$: state = data.parkingLot.state as State;
-	$: features = metadata?.features?.map((feature) => Feature[feature as keyof typeof Feature]);
+	$: metadata = data.parkingLot.metadata;
+	$: state = data.parkingLot.state;
+	$: [status, statusComment] = parkingLotStatus(data.parkingLot, SpotType.CAR);
+	$: features = metadata.features.map((feature) => Feature[feature as keyof typeof Feature]);
 	$: category = getCategory(features || []);
 	$: comment = preferredComment(metadata.comment || {});
 
 	let selectedWeekday = getWeekday();
 	$: applicableRules = rulesForDay(metadata.rules, SpotType.CAR, selectedWeekday);
-
-	$: {
-		const [longitude, latitude] = metadata.geometry.coordinates;
-		$currentMap?.flyTo({
-			center: [longitude, latitude],
-			zoom: 15
-		});
-	}
 </script>
 
 <svelte:head>
@@ -54,8 +45,8 @@
 		content="{metadata.name}, {metadata.address}, Parking Lot, Smart City, Gdańsk, Gdynia, Sopot, Tricity"
 	/>
 </svelte:head>
-<div class="pt-10 pl-5 w-11/12 md:w-5/12">
-	<h1 class="font-sans text-xl font-extrabold">{metadata.name}</h1>
+<div class="pt-10 pl-5 w-11/12">
+	<h1 class="font-sans text-3xl font-extrabold">{metadata.name}</h1>
 	<h2 class="font-mono text-sm font-light mb-2">{category}</h2>
 	<div class="join w-full">
 		<a
@@ -109,7 +100,7 @@
 		</div>
 		<div class="stat">
 			<div class="stat-title">Current status</div>
-			<div class="stat-value">Open</div>
+			<div class="stat-value">{status}</div>
 			<div class="stat-desc">{statusComment}</div>
 		</div>
 	</div>
@@ -136,6 +127,7 @@
 
 	<div class="divider"></div>
 
+	<h2 class="text-2xl font-bold mb-3">Additional info</h2>
 	<div class="flex flex-col gap-y-2 font-mono text-sm">
 		<p class="inline-flex">
 			<svg
@@ -189,17 +181,24 @@
 			{@const url = new URL(resource)}
 			<div class="inline-flex">
 				<ResourceIcon resource={url} />
-				<span class="ml-2">
+				<a class="link ml-2" href={url.toString()}>
 					{resourceText(url)}
-				</span>
+				</a>
 			</div>
 		{/each}
 	</div>
 
-	<!-- <Divider variant="dashed" /> -->
 	{#if comment}
+		<div class="divider"></div>
+		<h2 class="text-2xl font-bold mb-3">Description</h2>
+		<article class="prose">
+			<Markdown source={comment} />
+		</article>
 		<!-- <Text weight="light" size={14}>
-            <Markdown source={comment} />
         </Text> -->
 	{/if}
+
+	<!-- <div class="mt-10 w-full" on:click={onMapPress}> -->
+	<!-- <MiniMap center={coordinates} /> -->
+	<!-- </div> -->
 </div>
