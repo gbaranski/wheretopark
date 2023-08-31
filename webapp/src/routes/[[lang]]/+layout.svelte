@@ -67,6 +67,7 @@
 
 <div>
 	<div class="split master">
+		<p class="text-xs pt-5 px-5" >This webapp is currently under heavy development 🏗 . You might find a lot of bugs or even dragons</p>
 		<slot />
 	</div>
 	<div class="split slave">
