@@ -27,6 +27,14 @@
 	$: features = metadata.features.map((feature) => Feature[feature as keyof typeof Feature]);
 	$: category = getCategory(features || []);
 	$: comment = preferredComment(metadata.comment || {});
+	
+	$: {
+        const [longitude, latitude] = metadata.geometry.coordinates;
+        $currentMap?.flyTo({
+            center: [longitude, latitude],
+            zoom: 15
+        });
+    }
 
 	let selectedWeekday = getWeekday();
 	$: applicableRules = rulesForDay(metadata.rules, SpotType.CAR, selectedWeekday);
