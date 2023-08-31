@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"time"
 
 	"github.com/gin-contrib/logger"
 	"github.com/gin-gonic/gin"
@@ -37,7 +36,6 @@ func RunServer(s Server, port uint) {
 			log.Debug().Int("n", len(parkingLots)).Msg("sending parking lots to client")
 			c.Writer.Flush()
 
-			time.Sleep(1 * time.Second)
 		}
 	})
 	r.GET("/:identifier/parking-lots", func(c *gin.Context) {
