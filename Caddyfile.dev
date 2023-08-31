@@ -1,10 +1,25 @@
 http://localhost:1234 {
 	header Access-Control-Allow-Origin "*" 
 	header Access-Control-Allow-Methods "GET"
-	handle_path /collector/* {
+	
+	handle_path /v1/providers {
+		header Content-Type "application/json"
+		respond `[
+			{
+				"name": "collector",
+				"url": "http://localhost:1234/v1/collector"
+			},
+			{
+				"name": "cctv",
+				"url": "http://localhost:1234/v1/cctv"
+			}
+		]`
+	}
+
+	handle_path /v1/collector/* {
 		reverse_proxy http://wheretopark_collector:8080
 	}
-	handle_path /cctv/* {
+	handle_path /v1/cctv/* {
 		reverse_proxy http://wheretopark_cctv:8080
 	}
 }
