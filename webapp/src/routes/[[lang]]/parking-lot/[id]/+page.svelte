@@ -2,7 +2,6 @@
 	import { currentMap } from "$lib/store";
 	import { SpotType, type ParkingLot, Feature, type State, type Metadata } from "$lib/types";
 	import { capitalizeFirstLetter, getCategory, googleMapsLink, humanizeDuration, parkingLotStatus, parkingLotStatusColor, preferredComment, resourceIcon, resourceText, spotTypeIcon, timeFromNow } from "$lib/utils";
-    import { Title, Text, Divider, Tooltip, Anchor, Badge } from '@svelteuidev/core';
     import { LL } from '$lib/i18n/i18n-svelte';
     import Markdown from "svelte-markdown";
 
@@ -30,40 +29,41 @@
 	<meta name="keywords" content="{metadata.name}, {metadata.address}, Parking Lot, Smart City, Gdańsk, Gdynia, Sopot, Tricity"/>
 </svelte:head>
 <div class="container">
+    <button class="btn btn-primary rounded-full w-64">Button</button>
     <span style="display: flex;">
-        <Text root={"span"} size={26} override={{flex: 1}}>{metadata.name}</Text>
-        <Anchor root="a" external override={{textAlign: 'right'}} href={googleMapsLink(metadata.geometry)}>
+        <h1>{metadata.name}</h1>
+        <!-- <Anchor root="a" external override={{textAlign: 'right'}} href={googleMapsLink(metadata.geometry)}>
             <i class="material-icons">directions</i>
-        </Anchor>
+        </Anchor> -->
     </span>
-    <Text size={14} weight={"semibold"}>{category}</Text>
-    <Divider/>
+    <!-- <Text size={14} weight={"semibold"}>{category}</Text>
+    <Divider/> -->
     
     <div class="field">
         <i class="material-icons">place</i>
-        <Text size={14} root="span" >
-            {metadata.address}
-        </Text>
+        <!-- <Text size={14} root="span" > -->
+            <!-- {metadata.address} -->
+        <!-- </Text> -->
     </div>
 
     <div class="field">
         <i class="material-icons">directions_car</i>
-        <Tooltip label="Last updated {timeFromNow(state.lastUpdated)}">
+        <!-- <Tooltip label="Last updated {timeFromNow(state.lastUpdated)}">
             <Text size={14} root="span" weight={400}>
                 {$LL.AVAILABLE_SPOTS({count: state.availableSpots[SpotType[SpotType.CAR]]})}
             </Text>
-        </Tooltip>
+        </Tooltip> -->
     </div>
     
     <div class="field">
         <i class="material-icons">schedule</i>
-        <Text size={14} root="span" override={{color: parkingLotStatusColor(status)}}>
+        <!-- <Text size={14} root="span" override={{color: parkingLotStatusColor(status)}}>
             {status}
-        </Text>
+        </Text> -->
         {#if statusComment != undefined}
-            <Text size={14} root="span">
+            <!-- <Text size={14} root="span">
             -  {statusComment}
-            </Text>
+            </Text> -->
         {/if}
     </div>
 
@@ -73,9 +73,9 @@
                 
             {#each metadata.paymentMethods as paymentMethod}
                 <span style="margin-right: 1px;">
-                    <Badge size="sm" variant="outline" >
+                    <!-- <Badge size="sm" variant="outline" >
                         {paymentMethod}
-                    </Badge>
+                    </Badge> -->
                 </span>
             {/each}
         </div>
@@ -84,9 +84,9 @@
     {#each metadata.resources as resource}
         <div class="field">
                 <i class="material-icons">{resourceIcon(resource)}</i>
-                <Anchor size={14} root="a" external href={resource} color="inherit">
+                <!-- <Anchor size={14} root="a" external href={resource} color="inherit">
                         {resourceText(resource)}
-                </Anchor>
+                </Anchor> -->
         </div>
     {/each}
 
@@ -94,14 +94,14 @@
         <i class="material-icons" style="position: absolute;">paid</i>
         {#each metadata.rules as rule, i}
             <div style="margin-left: 32px; margin-top: 10px;">
-                <Text root="span" weight="semibold">{rule.hours}</Text>
+                <!-- <Text root="span" weight="semibold">{rule.hours}</Text> -->
                 {#each rule.applies || [] as spotType}
                     <i class="material-icons" style="float: right; font-size: 18px;">{spotTypeIcon(spotType)}</i>
                 {/each}
 
                 <div style="margin-left: 10px;">
                     {#each rule.pricing as pricing}
-                        <Text weight="light" size={16}>{pricing.repeating ? "Each " : ""}{humanizeDuration(pricing.duration)} - {pricing.price}{metadata.currency}</Text>
+                        <!-- <Text weight="light" size={16}>{pricing.repeating ? "Each " : ""}{humanizeDuration(pricing.duration)} - {pricing.price}{metadata.currency}</Text> -->
                     {/each}
                 </div>
             </div>
@@ -109,11 +109,11 @@
     </div>
     
 
-    <Divider variant="dashed" />
+    <!-- <Divider variant="dashed" /> -->
     {#if comment}
-        <Text weight="light" size={14}>
+        <!-- <Text weight="light" size={14}>
             <Markdown source={comment} />
-        </Text>
+        </Text> -->
     {/if}
 </div>
 <style>

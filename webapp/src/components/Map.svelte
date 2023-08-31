@@ -2,20 +2,19 @@
 	import { PUBLIC_MAPBOX_ACCESS_TOKEN } from '$env/static/public';
 	import { onMount } from 'svelte';
 	import 'mapbox-gl/dist/mapbox-gl.css';
-	import { SpotType, type ID, type ParkingLot } from '$lib/types';
+	import { SpotType } from '$lib/types';
 	import { currentMap, parkingLots as parkingLotsStore } from '$lib/store';
 	import { markerColor, parkingLotStatus } from '$lib/utils';
 	import { goto } from '$app/navigation';
 
 	let map: mapboxgl.Map;
-	$: parkingLots = $parkingLotsStore;
 
 	onMount(async () => {
 		const mapboxgl = await import('mapbox-gl');
 		map = new mapboxgl.Map({
 			accessToken: PUBLIC_MAPBOX_ACCESS_TOKEN,
 			container: 'map-container',
-			style: 'mapbox://styles/mapbox/streets-v11',
+			style: 'mapbox://styles/mapbox/navigation-day-v1',
 			center: [19.21, 52.11],
 			zoom: 5
 		});
