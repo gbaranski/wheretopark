@@ -1,140 +1,205 @@
 <script lang="ts">
-	import { currentMap } from "$lib/store";
-	import { SpotType, type ParkingLot, Feature, type State, type Metadata } from "$lib/types";
-	import { capitalizeFirstLetter, getCategory, googleMapsLink, humanizeDuration, parkingLotStatus, parkingLotStatusColor, preferredComment, resourceIcon, resourceText, spotTypeIcon, timeFromNow } from "$lib/utils";
-    import { LL } from '$lib/i18n/i18n-svelte';
-    import Markdown from "svelte-markdown";
+	import { currentMap } from '$lib/store';
+	import { SpotType, type ParkingLot, Feature, type State, type Metadata } from '$lib/types';
+	import {
+		capitalizeFirstLetter,
+		getCategory,
+		getWeekday,
+		googleMapsLink,
+		humanizeDuration,
+		parkingLotStatus,
+		parkingLotStatusColor,
+		preferredComment,
+		resourceText,
+		rulesForDay,
+		spotTypeIcon,
+		timeFromNow,
+		weekdays
+	} from '$lib/utils';
+	import { LL } from '$lib/i18n/i18n-svelte';
+	import Markdown from 'svelte-markdown';
+	import ResourceIcon from '$components/ResourceIcon.svelte';
 
-    export let data: {parkingLot: ParkingLot};
-    const [status, statusComment] = parkingLotStatus(data.parkingLot, SpotType.CAR);
+	export let data: { parkingLot: ParkingLot };
+	const [status, statusComment] = parkingLotStatus(data.parkingLot, SpotType.CAR);
 
-    $: metadata = data.parkingLot.metadata as Metadata;
-    $: state = data.parkingLot.state as State;
-    $: features = metadata?.features?.map((feature) => Feature[feature as keyof typeof Feature]);
-    $: category = getCategory(features || []);
-    $: comment = preferredComment(metadata.comment || {});
-    
-    $: {
-        const [longitude, latitude] = metadata.geometry.coordinates;
-        $currentMap?.flyTo({
-            center: [longitude, latitude],
-            zoom: 15
-        });
-    }
+	$: metadata = data.parkingLot.metadata as Metadata;
+	$: state = data.parkingLot.state as State;
+	$: features = metadata?.features?.map((feature) => Feature[feature as keyof typeof Feature]);
+	$: category = getCategory(features || []);
+	$: comment = preferredComment(metadata.comment || {});
+
+	let selectedWeekday = getWeekday();
+	$: applicableRules = rulesForDay(metadata.rules, SpotType.CAR, selectedWeekday);
+
+	$: {
+		const [longitude, latitude] = metadata.geometry.coordinates;
+		$currentMap?.flyTo({
+			center: [longitude, latitude],
+			zoom: 15
+		});
+	}
 </script>
 
 <svelte:head>
-    <title>Parking {metadata.name.replace("Parking", "")}</title>
-	<meta name="description" content="Details of {capitalizeFirstLetter(category)} parking lot in {metadata.name} at {metadata.address}, containing prices, opening hours and it's availability of parking spots."/>
-	<meta name="keywords" content="{metadata.name}, {metadata.address}, Parking Lot, Smart City, Gdańsk, Gdynia, Sopot, Tricity"/>
+	<title>Parking {metadata.name.replace('Parking', '')}</title>
+	<meta
+		name="description"
+		content="Details of {capitalizeFirstLetter(
+			category
+		)} parking lot in {metadata.name} at {metadata.address}, containing prices, opening hours and it's availability of parking spots."
+	/>
+	<meta
+		name="keywords"
+		content="{metadata.name}, {metadata.address}, Parking Lot, Smart City, Gdańsk, Gdynia, Sopot, Tricity"
+	/>
 </svelte:head>
-<div class="container">
-    <button class="btn btn-primary rounded-full w-64">Button</button>
-    <span style="display: flex;">
-        <h1>{metadata.name}</h1>
-        <!-- <Anchor root="a" external override={{textAlign: 'right'}} href={googleMapsLink(metadata.geometry)}>
-            <i class="material-icons">directions</i>
-        </Anchor> -->
-    </span>
-    <!-- <Text size={14} weight={"semibold"}>{category}</Text>
-    <Divider/> -->
-    
-    <div class="field">
-        <i class="material-icons">place</i>
-        <!-- <Text size={14} root="span" > -->
-            <!-- {metadata.address} -->
-        <!-- </Text> -->
-    </div>
+<div class="pt-10 pl-5 w-11/12 md:w-5/12">
+	<h1 class="font-sans text-xl font-extrabold">{metadata.name}</h1>
+	<h2 class="font-mono text-sm font-light mb-2">{category}</h2>
+	<div class="join w-full">
+		<a
+			class="btn btn-primary rounded-md w-2/3"
+			href={googleMapsLink(metadata.geometry)}
+			target="_blank"
+		>
+			<svg
+				xmlns="http://www.w3.org/2000/svg"
+				fill="none"
+				viewBox="0 0 24 24"
+				stroke-width="1.5"
+				stroke="currentColor"
+				class="w-6 h-6"
+			>
+				<path
+					stroke-linecap="round"
+					stroke-linejoin="round"
+					d="M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 00-3.213-9.193 2.056 2.056 0 00-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 00-10.026 0 1.106 1.106 0 00-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-12"
+				/>
+			</svg>
+			Navigate
+		</a>
+		<button class="btn btn-neutral rounded-md w-1/3 ml-5">
+			<svg
+				xmlns="http://www.w3.org/2000/svg"
+				fill="none"
+				viewBox="0 0 24 24"
+				stroke-width="1.5"
+				stroke="currentColor"
+				class="w-6 h-6"
+			>
+				<path
+					stroke-linecap="round"
+					stroke-linejoin="round"
+					d="M6.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM12.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM18.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0z"
+				/>
+			</svg>
+			More
+		</button>
+	</div>
+	<div class="stats w-full ml-0 left-0 p-0">
+		<div class="stat">
+			<div class="stat-title">Available spaces</div>
+			<div class="stat-value text-primary font-mono">
+				{state.availableSpots[SpotType[SpotType.CAR]]}
+			</div>
+			<div class="stat-desc">
+				Updated <span class="text-success">{timeFromNow(state.lastUpdated)}</span>
+			</div>
+		</div>
+		<div class="stat">
+			<div class="stat-title">Current status</div>
+			<div class="stat-value">Open</div>
+			<div class="stat-desc">{statusComment}</div>
+		</div>
+	</div>
 
-    <div class="field">
-        <i class="material-icons">directions_car</i>
-        <!-- <Tooltip label="Last updated {timeFromNow(state.lastUpdated)}">
-            <Text size={14} root="span" weight={400}>
-                {$LL.AVAILABLE_SPOTS({count: state.availableSpots[SpotType[SpotType.CAR]]})}
-            </Text>
-        </Tooltip> -->
-    </div>
-    
-    <div class="field">
-        <i class="material-icons">schedule</i>
-        <!-- <Text size={14} root="span" override={{color: parkingLotStatusColor(status)}}>
-            {status}
-        </Text> -->
-        {#if statusComment != undefined}
-            <!-- <Text size={14} root="span">
-            -  {statusComment}
-            </Text> -->
-        {/if}
-    </div>
+	<div class="divider"></div>
 
-    {#if (metadata.paymentMethods?.length || 0) > 0}
-        <div class="field">
-            <i class="material-icons">payment</i>
-                
-            {#each metadata.paymentMethods as paymentMethod}
-                <span style="margin-right: 1px;">
-                    <!-- <Badge size="sm" variant="outline" >
-                        {paymentMethod}
-                    </Badge> -->
-                </span>
-            {/each}
-        </div>
-    {/if}
+	<select class="select select-bordered w-full max-w-xs" bind:value={selectedWeekday}>
+		<option disabled>Pick a day</option>
+		{#each weekdays as weekday, i}
+			<option value={i}>{weekday}</option>
+		{/each}
+	</select>
 
-    {#each metadata.resources as resource}
-        <div class="field">
-                <i class="material-icons">{resourceIcon(resource)}</i>
-                <!-- <Anchor size={14} root="a" external href={resource} color="inherit">
-                        {resourceText(resource)}
-                </Anchor> -->
-        </div>
-    {/each}
+	{#each applicableRules as rule}
+		<p class="text-xl font-bold mt-5">{rule.humanHours}</p>
+		{#each rule.pricing as pricing}
+			<div>
+				{pricing.repeating ? 'Each ' : ''}
+				{humanizeDuration(pricing.duration)} - {pricing.price}
+				{metadata.currency}
+			</div>
+		{/each}
+	{/each}
 
-    <div class="field">
-        <i class="material-icons" style="position: absolute;">paid</i>
-        {#each metadata.rules as rule, i}
-            <div style="margin-left: 32px; margin-top: 10px;">
-                <!-- <Text root="span" weight="semibold">{rule.hours}</Text> -->
-                {#each rule.applies || [] as spotType}
-                    <i class="material-icons" style="float: right; font-size: 18px;">{spotTypeIcon(spotType)}</i>
-                {/each}
+	<div class="divider"></div>
 
-                <div style="margin-left: 10px;">
-                    {#each rule.pricing as pricing}
-                        <!-- <Text weight="light" size={16}>{pricing.repeating ? "Each " : ""}{humanizeDuration(pricing.duration)} - {pricing.price}{metadata.currency}</Text> -->
-                    {/each}
-                </div>
-            </div>
-        {/each}
-    </div>
-    
+	<div class="flex flex-col gap-y-2 font-mono text-sm">
+		<p class="inline-flex">
+			<svg
+				xmlns="http://www.w3.org/2000/svg"
+				fill="none"
+				viewBox="0 0 24 24"
+				stroke-width="1.5"
+				stroke="currentColor"
+				class="w-5 h-5"
+			>
+				<path
+					stroke-linecap="round"
+					stroke-linejoin="round"
+					d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z"
+				/>
+				<path
+					stroke-linecap="round"
+					stroke-linejoin="round"
+					d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"
+				/>
+			</svg>
+			<span class="ml-2">
+				{metadata.address}
+			</span>
+		</p>
 
-    <!-- <Divider variant="dashed" /> -->
-    {#if comment}
-        <!-- <Text weight="light" size={14}>
+		{#if (metadata.paymentMethods?.length || 0) > 0}
+			<p class="inline-flex">
+				<svg
+					xmlns="http://www.w3.org/2000/svg"
+					fill="none"
+					viewBox="0 0 24 24"
+					stroke-width="1.5"
+					stroke="currentColor"
+					class="w-6 h-6"
+				>
+					<path
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5z"
+					/>
+				</svg>
+
+				{#each metadata.paymentMethods as paymentMethod}
+					<div class="badge badge-neutral badge-lg ml-2 font-mono text-xs">{paymentMethod}</div>
+				{/each}
+			</p>
+		{/if}
+
+		{#each metadata.resources as resource}
+			{@const url = new URL(resource)}
+			<div class="inline-flex">
+				<ResourceIcon resource={url} />
+				<span class="ml-2">
+					{resourceText(url)}
+				</span>
+			</div>
+		{/each}
+	</div>
+
+	<!-- <Divider variant="dashed" /> -->
+	{#if comment}
+		<!-- <Text weight="light" size={14}>
             <Markdown source={comment} />
         </Text> -->
-    {/if}
+	{/if}
 </div>
-<style>
-    .container {
-        padding: 20px;
-    }
-    
-    .field {
-        margin-bottom: 10px;
-        
-    }
-    
-    .field > i {
-        font-size: 18px !important;
-        margin-right: 10px;
-        vertical-align: middle;
-    }
-    
-    div.field > :global(*) {
-        font-weight: 500;
-        vertical-align: middle;
-    }
-    
-</style>
