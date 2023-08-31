@@ -5,6 +5,7 @@
 	import { SpotType, type ID, type ParkingLot } from '$lib/types';
 	import { currentMap, parkingLots as parkingLotsStore } from '$lib/store';
 	import { markerColor, parkingLotStatus } from '$lib/utils';
+	import { goto } from '$app/navigation';
 
 	let map: mapboxgl.Map;
 	$: parkingLots = $parkingLotsStore;
@@ -23,12 +24,6 @@
 			Object.entries(parkingLots)
 				.map(([id, parkingLot]) => {
 					const [longitude, latitude] = parkingLot.metadata.geometry.coordinates;
-					const popupHtml = `
-                <h4>${parkingLot.metadata.name}</h4>
-                <p>${parkingLot.state.availableSpots['CAR']} available car spots</p>
-                <a href="/parking-lot/${id}">Open</a>
-            `;
-					const popup = new mapboxgl.Popup({ offset: 25 }).setHTML(popupHtml);
 					const status = parkingLotStatus(parkingLot, SpotType.CAR)[0];
 					const options = {
 						color: markerColor(
@@ -37,7 +32,11 @@
 							status
 						)
 					};
-					return new mapboxgl.Marker(options).setLngLat([longitude, latitude]).setPopup(popup);
+					const marker = new mapboxgl.Marker(options).setLngLat([longitude, latitude]);
+					marker.getElement().addEventListener('click', () => {
+						goto(`/parking-lot/${id}`);
+					})
+					return marker;
 				})
 				.forEach((marker) => marker.addTo(map));
 		});
