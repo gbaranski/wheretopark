@@ -103,19 +103,19 @@
 		}
 		
 		:global(#map-container) {
-			height: 60%;
+			height: 70%;
 		}
 		
 		.master {
 			width: 100%;
 			position: absolute;
-			top: calc(100% - 40%);
+			top: calc(100% - 30%);
 		}
 	
 		.slave {
 			bottom: 0;
 			width: 100%;
-			height: 400px;
+			height: 70%;
 		}
 	}
 	</style>
