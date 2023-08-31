@@ -9,8 +9,4 @@
 // https://help.apple.com/xcode/#/dev745c5c974
 
 PROTOCOL = https:/
-DATABASE_URL = $(PROTOCOL)/database.wheretopark.app
-DATABASE_NAMESPACE = wheretopark
-DATABASE_NAME = production
-DATABASE_USERNAME = root
-DATABASE_PASSWORD = LeARKSTahAnteMIg
+SERVER_URL = $(PROTOCOL)/api.wheretopark.app

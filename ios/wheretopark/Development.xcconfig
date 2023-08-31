@@ -9,8 +9,4 @@
 // https://help.apple.com/xcode/#/dev745c5c974
 
 PROTOCOL = http:/
-DATABASE_URL = $(PROTOCOL)/localhost:8000
-DATABASE_NAMESPACE = wheretopark
-DATABASE_NAME = development
-DATABASE_USERNAME = root
-DATABASE_PASSWORD = changeThisPassword
+SERVER_URL = $(PROTOCOL)/localhost:1234

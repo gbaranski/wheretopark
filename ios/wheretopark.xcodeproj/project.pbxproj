@@ -17,9 +17,9 @@
 		68239DB5290ED14300C25ED6 /* wheretoparkTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68239DB4290ED14300C25ED6 /* wheretoparkTests.swift */; };
 		68239DBF290ED14300C25ED6 /* wheretoparkUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68239DBE290ED14300C25ED6 /* wheretoparkUITests.swift */; };
 		68239DC1290ED14300C25ED6 /* wheretoparkUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68239DC0290ED14300C25ED6 /* wheretoparkUITestsLaunchTests.swift */; };
+		689160A62AA0235600FB38E5 /* ServerClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 689160A52AA0235600FB38E5 /* ServerClient.swift */; };
 		68BBFA94290ED67E0012512D /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68BBFA93290ED67E0012512D /* LocationManager.swift */; };
 		68BBFA96290ED6B10012512D /* AppEnvironment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68BBFA95290ED6B10012512D /* AppEnvironment.swift */; };
-		68BBFA98290ED6CB0012512D /* DatabaseClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68BBFA97290ED6CB0012512D /* DatabaseClient.swift */; };
 		68BBFA9A290ED78F0012512D /* MailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68BBFA99290ED78F0012512D /* MailView.swift */; };
 		68BBFA9C290ED7AD0012512D /* MapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68BBFA9B290ED7AD0012512D /* MapView.swift */; };
 		68BBFA9E290ED7CC0012512D /* LoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68BBFA9D290ED7CC0012512D /* LoadingView.swift */; };
@@ -67,9 +67,9 @@
 		68239DBA290ED14300C25ED6 /* wheretoparkUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = wheretoparkUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		68239DBE290ED14300C25ED6 /* wheretoparkUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = wheretoparkUITests.swift; sourceTree = "<group>"; };
 		68239DC0290ED14300C25ED6 /* wheretoparkUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = wheretoparkUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		689160A52AA0235600FB38E5 /* ServerClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerClient.swift; sourceTree = "<group>"; };
 		68BBFA93290ED67E0012512D /* LocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
 		68BBFA95290ED6B10012512D /* AppEnvironment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppEnvironment.swift; sourceTree = "<group>"; };
-		68BBFA97290ED6CB0012512D /* DatabaseClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseClient.swift; sourceTree = "<group>"; };
 		68BBFA99290ED78F0012512D /* MailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MailView.swift; sourceTree = "<group>"; };
 		68BBFA9B290ED7AD0012512D /* MapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapView.swift; sourceTree = "<group>"; };
 		68BBFA9D290ED7CC0012512D /* LoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingView.swift; sourceTree = "<group>"; };
@@ -137,28 +137,28 @@
 		68239DA1290ED14200C25ED6 /* wheretopark */ = {
 			isa = PBXGroup;
 			children = (
-				68BBFAB1290EF7BC0012512D /* Info.plist */,
-				68239DA2290ED14200C25ED6 /* wheretoparkApp.swift */,
-				68239DA4290ED14200C25ED6 /* ContentView.swift */,
-				68239DA6290ED14300C25ED6 /* Assets.xcassets */,
 				68239DA8290ED14300C25ED6 /* wheretopark.entitlements */,
-				68239DA9290ED14300C25ED6 /* Preview Content */,
-				681660E4290ED4F1002CFFB7 /* AppState.swift */,
-				681660E6290ED515002CFFB7 /* ParkingLot.swift */,
-				68BBFA93290ED67E0012512D /* LocationManager.swift */,
+				68BBFAB1290EF7BC0012512D /* Info.plist */,
 				68BBFA95290ED6B10012512D /* AppEnvironment.swift */,
-				68BBFA97290ED6CB0012512D /* DatabaseClient.swift */,
+				681660E4290ED4F1002CFFB7 /* AppState.swift */,
+				68BBFAA1290ED8940012512D /* BottomSheet.swift */,
+				68239DA4290ED14200C25ED6 /* ContentView.swift */,
+				68BBFAA3290ED8AB0012512D /* DetailsView.swift */,
+				68BBFAA8290ED8F60012512D /* FavouriteManager.swift */,
+				68BBFA9D290ED7CC0012512D /* LoadingView.swift */,
+				68BBFA93290ED67E0012512D /* LocationManager.swift */,
 				68BBFA99290ED78F0012512D /* MailView.swift */,
 				68BBFA9B290ED7AD0012512D /* MapView.swift */,
-				68BBFA9D290ED7CC0012512D /* LoadingView.swift */,
-				68BBFAA1290ED8940012512D /* BottomSheet.swift */,
-				68BBFAA3290ED8AB0012512D /* DetailsView.swift */,
+				681660E6290ED515002CFFB7 /* ParkingLot.swift */,
 				6815B6FC292474BC002836E0 /* PreviewView.swift */,
-				68BBFAA8290ED8F60012512D /* FavouriteManager.swift */,
+				689160A52AA0235600FB38E5 /* ServerClient.swift */,
 				68BBFAAA290ED9700012512D /* Utilities.swift */,
+				68239DA2290ED14200C25ED6 /* wheretoparkApp.swift */,
+				68239DA6290ED14300C25ED6 /* Assets.xcassets */,
 				68BBFAAF290EF7450012512D /* Development.xcconfig */,
 				68BBFAB0290EF7760012512D /* Production.xcconfig */,
 				68E23190291569A3004EA1B2 /* Localizable.strings */,
+				68239DA9290ED14300C25ED6 /* Preview Content */,
 			);
 			path = wheretopark;
 			sourceTree = "<group>";
@@ -334,9 +334,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				68BBFA98290ED6CB0012512D /* DatabaseClient.swift in Sources */,
 				681660E5290ED4F1002CFFB7 /* AppState.swift in Sources */,
 				68239DA5290ED14200C25ED6 /* ContentView.swift in Sources */,
+				689160A62AA0235600FB38E5 /* ServerClient.swift in Sources */,
 				68BBFAAB290ED9700012512D /* Utilities.swift in Sources */,
 				68BBFA9E290ED7CC0012512D /* LoadingView.swift in Sources */,
 				68BBFA94290ED67E0012512D /* LocationManager.swift in Sources */,

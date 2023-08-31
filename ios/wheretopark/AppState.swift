@@ -13,7 +13,7 @@ typealias ParkingLotID = String
 
 @MainActor class AppState: ObservableObject {
     let environment = AppEnvironment()
-    let databaseClient = DatabaseClient()
+    let serverClient = ServerClient()
     
     @Published private(set) var isPerformingTask = false
     @Published var fetchError: FetchError? = nil
@@ -33,7 +33,7 @@ typealias ParkingLotID = String
         isPerformingTask = true
         defer { isPerformingTask = false }
         do {
-            self.parkingLots = try await databaseClient.parkingLots()
+            self.parkingLots = try await serverClient.parkingLots()
             self.fetchError = nil
             self.fetchFailed = false
         } catch {
