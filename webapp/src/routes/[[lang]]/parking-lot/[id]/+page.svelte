@@ -2,23 +2,20 @@
 	import { currentMap } from '$lib/store';
 	import { SpotType, type ParkingLot, Feature, type State, type Metadata } from '$lib/types';
 	import {
-	availabilityColor,
+		availabilityColor,
 		capitalizeFirstLetter,
 		getCategory,
 		getWeekday,
 		googleMapsLink,
 		humanizeDuration,
-		markerColor,
 		parkingLotStatus,
 		statusColor,
 		preferredComment,
 		resourceText,
 		rulesForDay,
-		spotTypeIcon,
 		timeFromNow,
 		weekdays
 	} from '$lib/utils';
-	import { LL } from '$lib/i18n/i18n-svelte';
 	import Markdown from 'svelte-markdown';
 	import ResourceIcon from '$components/ResourceIcon.svelte';
 
@@ -29,20 +26,43 @@
 	$: features = metadata.features.map((feature) => Feature[feature as keyof typeof Feature]);
 	$: category = getCategory(features || []);
 	$: comment = preferredComment(metadata.comment || {});
-	$: avColor = availabilityColor(state.availableSpots["CAR"], metadata.totalSpots["CAR"]);
+	$: avColor = availabilityColor(state.availableSpots['CAR'], metadata.totalSpots['CAR']);
 	$: stColor = statusColor(status);
-	$: console.log({color: availabilityColor})
-	
+
 	$: {
-        const [longitude, latitude] = metadata.geometry.coordinates;
-        $currentMap?.flyTo({
-            center: [longitude, latitude],
-            zoom: 15
-        });
-    }
+		const [longitude, latitude] = metadata.geometry.coordinates;
+		$currentMap?.flyTo({
+			center: [longitude, latitude],
+			zoom: 15
+		});
+	}
 
 	let selectedWeekday = getWeekday();
 	$: applicableRules = rulesForDay(metadata.rules, SpotType.CAR, selectedWeekday);
+
+	const onShare = async () => {
+		if (isSharing) {
+			isSharing = false;
+			return;
+		};
+		try {
+			if (navigator.canShare != null && navigator.canShare()) {
+				await navigator.share({
+					url: window.location.href,
+					title: metadata.name,
+					text: `Check out ${metadata.name} parking lot in wheretopark.app!`
+				});
+			} else {
+				console.log("copied to clipboard")
+				await navigator.clipboard.writeText(window.location.href);
+				isSharing = true;
+			}
+		} catch (error) {
+			console.log(error);
+		}
+	};
+
+	let isSharing = false;
 </script>
 
 <svelte:head>
@@ -83,28 +103,58 @@
 			</svg>
 			Navigate
 		</a>
-		<button class="btn btn-neutral rounded-md w-1/3 ml-5">
-			<svg
-				xmlns="http://www.w3.org/2000/svg"
-				fill="none"
-				viewBox="0 0 24 24"
-				stroke-width="1.5"
-				stroke="currentColor"
-				class="w-6 h-6"
-			>
-				<path
-					stroke-linecap="round"
-					stroke-linejoin="round"
-					d="M6.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM12.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM18.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0z"
-				/>
-			</svg>
-			More
-		</button>
+
+		<div class="dropdown dropdown-end w-full ml-5">
+			<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
+			<!-- svelte-ignore a11y-label-has-associated-control -->
+			<label tabindex="0" class="btn btn-neutral rounded-md w-full">
+				<svg
+					xmlns="http://www.w3.org/2000/svg"
+					fill="none"
+					viewBox="0 0 24 24"
+					stroke-width="1.5"
+					stroke="currentColor"
+					class="w-6 h-6"
+				>
+					<path
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						d="M6.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM12.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM18.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0z"
+					/>
+				</svg>
+			</label>
+			<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
+			<ul tabindex="0" class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52">
+				<li>
+					<label class="swap justify-start">
+						<input type="checkbox" value={isSharing} on:change={onShare} />
+						<span class="swap-off inline-flex gap-2">
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								fill="none"
+								viewBox="0 0 24 24"
+								stroke-width="1.5"
+								stroke="currentColor"
+								class="w-5 h-5"
+							>
+								<path
+									stroke-linecap="round"
+									stroke-linejoin="round"
+									d="M7.217 10.907a2.25 2.25 0 100 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186l9.566-5.314m-9.566 7.5l9.566 5.314m0 0a2.25 2.25 0 103.935 2.186 2.25 2.25 0 00-3.935-2.186zm0-12.814a2.25 2.25 0 103.933-2.185 2.25 2.25 0 00-3.933 2.185z"
+								/>
+							</svg>
+							<span>Share</span>
+						</span>
+						<div class="swap-on">Copied to clipboard</div>
+					</label>
+				</li>
+			</ul>
+		</div>
 	</div>
 	<div class="stats w-full ml-0 left-0 p-0">
 		<div class="stat">
 			<div class="stat-title text-xs font-mono font-semibold">AVAILABLE SPACES</div>
-			<div class="stat-value font-mono font-extrabold" style='color:{avColor}'>
+			<div class="stat-value font-mono font-extrabold" style="color:{avColor}">
 				{state.availableSpots[SpotType[SpotType.CAR]]}
 			</div>
 			<div class="stat-desc">
@@ -113,13 +163,13 @@
 		</div>
 		<div class="stat">
 			<div class="stat-title text-xs font-mono font-semibold">CURRENT STATUS</div>
-			<div class="stat-value font-mono" style='color:{stColor}'>{status}</div>
+			<div class="stat-value font-mono" style="color:{stColor}">{status}</div>
 			<div class="stat-desc">{statusComment}</div>
 		</div>
 	</div>
 
 	<div class="divider"></div>
-	
+
 	<div class="flex flex-auto flex-row justify-between">
 		<div>
 			{#each applicableRules as rule}
