@@ -14,7 +14,10 @@
 		resourceText,
 		rulesForDay,
 		timeFromNow,
-		weekdays
+		weekdays,
+
+		feedbackLink
+
 	} from '$lib/utils';
 	import Markdown from 'svelte-markdown';
 	import ResourceIcon from '$components/ResourceIcon.svelte';
@@ -262,4 +265,11 @@
 			<Markdown source={comment} />
 		</article>
 	{/if}
+	
+	<div class="divider"></div>
+	<div class="text-center">
+		<a class="link link-accent text-sm font-mono pb-5" href={feedbackLink(data.parkingLot)}>
+			Send feedback
+		</a>
+	</div>
 </div>

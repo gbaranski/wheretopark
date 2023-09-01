@@ -241,3 +241,16 @@ export const markerColor = (
     ? availabilityColor(available, total)
     : statusColor(status);
 };
+
+import mailtoLink from 'mailto-link';
+
+export const feedbackLink = (parkingLot: ParkingLot) => mailtoLink({
+  to: "contact@wheretopark.app",
+  subject: `User feedback regarding ${parkingLot.metadata.name}`,
+  body: `Hello, 
+Issue report within wheretopark.app:
+Name: ${parkingLot.metadata.name}
+Address: ${parkingLot.metadata.address}
+Date: ${new Date().toISOString()}
+What happened: `,
+});

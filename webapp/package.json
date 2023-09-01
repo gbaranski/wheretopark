@@ -47,6 +47,7 @@
 				"flag-icons": "^6.11.0",
 				"geojson": "^0.5.0",
 				"haversine": "^1.1.1",
+				"mailto-link": "^2.0.0",
 				"mapbox-gl": "^2.15.0",
 				"opening_hours": "^3.8.0",
 				"svelte-markdown": "^0.3.0"
