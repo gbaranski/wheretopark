@@ -10,7 +10,6 @@ const waitForParkingLot = (id: string) => new Promise((resolve) => {
 
 export const load = (async ({ params }: { params: { id: string, }}) => {
     const parkingLot = await waitForParkingLot(params.id);
-    console.log({parkingLot});
     return {
         parkingLot,
     };

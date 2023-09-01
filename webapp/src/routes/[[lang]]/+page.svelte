@@ -1,6 +1,6 @@
 <script lang="ts">
 	import Map from '$components/Map.svelte';
-	import { Feature, features } from '$lib/types';
+	import { allFeaturesString } from '$lib/parkingLot';
 	import { capitalizeFirstLetter } from '$lib/utils';
 
 	const setCurrentLocation = () => {};
@@ -62,7 +62,7 @@
 		<span class="label-text font-mono">Open right now</span>
 		<input type="checkbox" class="checkbox" />
 	</label>
-	{#each features as feature}
+	{#each allFeaturesString as feature}
 		<label class="label cursor-pointer">
 			<span class="label-text font-mono">{capitalizeFirstLetter(feature.toLowerCase())}</span>
 			<input type="checkbox" class="checkbox" />

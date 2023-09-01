@@ -1,39 +1,24 @@
 <script lang="ts">
 	import { currentMap } from '$lib/store';
-	import { SpotType, type ParkingLot, Feature, type State, type Metadata } from '$lib/types';
+	import { SpotType, type ParkingLot } from '$lib/parkingLot';
 	import {
-		availabilityColor,
 		capitalizeFirstLetter,
-		getCategory,
 		getWeekday,
 		googleMapsLink,
 		humanizeDuration,
-		parkingLotStatus,
-		statusColor,
-		preferredComment,
-		resourceText,
-		rulesForDay,
-		timeFromNow,
 		weekdays,
-
-		feedbackLink
-
 	} from '$lib/utils';
 	import Markdown from 'svelte-markdown';
 	import ResourceIcon from '$components/ResourceIcon.svelte';
 
 	export let data: { parkingLot: ParkingLot };
-	$: metadata = data.parkingLot.metadata;
-	$: state = data.parkingLot.state;
-	$: [status, statusComment] = parkingLotStatus(data.parkingLot, SpotType.CAR);
-	$: features = metadata.features.map((feature) => Feature[feature as keyof typeof Feature]);
-	$: category = getCategory(features || []);
-	$: comment = preferredComment(metadata.comment || {});
-	$: avColor = availabilityColor(state.availableSpots['CAR'], metadata.totalSpots['CAR']);
-	$: stColor = statusColor(status);
+	$: parkingLot = data.parkingLot;
+	$: status = parkingLot.status(SpotType.car);
+	$: avColor = parkingLot.availabilityColorFor(SpotType.car);
+	$: stColor = status.color();
 
 	$: {
-		const [longitude, latitude] = metadata.geometry.coordinates;
+		const [longitude, latitude] = parkingLot.geometry.coordinates;
 		$currentMap?.flyTo({
 			center: [longitude, latitude],
 			zoom: 15
@@ -41,7 +26,7 @@
 	}
 
 	let selectedWeekday = getWeekday();
-	$: applicableRules = rulesForDay(metadata.rules, SpotType.CAR, selectedWeekday);
+	$: applicableRules = parkingLot.rulesForDay(SpotType.car, selectedWeekday)
 
 	const onShare = async () => {
 		if (isSharing) {
@@ -52,8 +37,8 @@
 			if (navigator.canShare != null && navigator.canShare()) {
 				await navigator.share({
 					url: window.location.href,
-					title: metadata.name,
-					text: `Check out ${metadata.name} parking lot in wheretopark.app!`
+					title: parkingLot.name,
+					text: `Check out ${parkingLot.name} parking lot in wheretopark.app!`
 				});
 			} else {
 				console.log("copied to clipboard")
@@ -69,25 +54,25 @@
 </script>
 
 <svelte:head>
-	<title>Parking {metadata.name.replace('Parking', '')}</title>
+	<title>Parking {parkingLot.name.replace('Parking', '')}</title>
 	<meta
 		name="description"
 		content="Details of {capitalizeFirstLetter(
-			category
-		)} parking lot in {metadata.name} at {metadata.address}, containing prices, opening hours and it's availability of parking spots."
+			parkingLot.category()
+		)} parking lot in {parkingLot.name} at {parkingLot.address}, containing prices, opening hours and it's availability of parking spots."
 	/>
 	<meta
 		name="keywords"
-		content="{metadata.name}, {metadata.address}, Parking Lot, Smart City, Gdańsk, Gdynia, Sopot, Tricity"
+		content="{parkingLot.name}, {parkingLot.address}, Parking Lot, Occupancy"
 	/>
 </svelte:head>
 <div class="pt-10 pl-5 w-11/12">
-	<h1 class="font-sans text-3xl font-extrabold">{metadata.name}</h1>
-	<h2 class="font-mono text-sm font-light mb-2">{category}</h2>
+	<h1 class="font-sans text-3xl font-extrabold">{parkingLot.name}</h1>
+	<h2 class="font-mono text-sm font-light mb-2">{parkingLot.category()}</h2>
 	<div class="join w-full">
 		<a
 			class="btn btn-primary rounded-md w-2/3"
-			href={googleMapsLink(metadata.geometry)}
+			href={googleMapsLink(parkingLot.geometry)}
 			target="_blank"
 		>
 			<svg
@@ -158,16 +143,16 @@
 		<div class="stat">
 			<div class="stat-title text-xs font-mono font-semibold">AVAILABLE SPACES</div>
 			<div class="stat-value font-mono font-extrabold" style="color:{avColor}">
-				{state.availableSpots[SpotType[SpotType.CAR]]}
+				{parkingLot.availableSpotsFor(SpotType.car)}
 			</div>
 			<div class="stat-desc">
-				Updated <span class="text-success">{timeFromNow(state.lastUpdated)}</span>
+				Updated <span class="text-success">{parkingLot.lastUpdated.fromNow()}</span>
 			</div>
 		</div>
 		<div class="stat">
 			<div class="stat-title text-xs font-mono font-semibold">CURRENT STATUS</div>
-			<div class="stat-value font-mono" style="color:{stColor}">{status}</div>
-			<div class="stat-desc">{statusComment}</div>
+			<div class="stat-value font-mono" style="color:{stColor}">{status.text}</div>
+			<div class="stat-desc">{status.comment}</div>
 		</div>
 	</div>
 
@@ -181,7 +166,7 @@
 					<div>
 						{pricing.repeating ? 'Each ' : ''}
 						{humanizeDuration(pricing.duration)} - {pricing.price}
-						{metadata.currency}
+						{parkingLot.currency}
 					</div>
 				{/each}
 			{/each}
@@ -220,11 +205,11 @@
 				/>
 			</svg>
 			<span class="ml-2">
-				{metadata.address}
+				{parkingLot.address}
 			</span>
 		</p>
 
-		{#if (metadata.paymentMethods?.length || 0) > 0}
+		{#if (parkingLot.paymentMethods?.length || 0) > 0}
 			<p class="inline-flex">
 				<svg
 					xmlns="http://www.w3.org/2000/svg"
@@ -241,34 +226,34 @@
 					/>
 				</svg>
 
-				{#each metadata.paymentMethods as paymentMethod}
+				{#each parkingLot.paymentMethods as paymentMethod}
 					<div class="badge badge-neutral badge-lg ml-2 font-mono text-xs">{paymentMethod}</div>
 				{/each}
 			</p>
 		{/if}
 
-		{#each metadata.resources as resource}
+		{#each parkingLot.resources as resource}
 			{@const url = new URL(resource)}
 			<div class="inline-flex">
 				<ResourceIcon resource={url} />
 				<a class="link ml-2" href={url.toString()}>
-					{resourceText(url)}
+					{resource.text()}
 				</a>
 			</div>
 		{/each}
 	</div>
 
-	{#if comment}
+	{#if status.comment}
 		<div class="divider"></div>
 		<h2 class="text-2xl font-bold mb-3">Description</h2>
 		<article class="prose prose-sm">
-			<Markdown source={comment} />
+			<Markdown source={status.comment} />
 		</article>
 	{/if}
 	
 	<div class="divider"></div>
 	<div class="text-center">
-		<a class="link link-accent text-sm font-mono pb-5" href={feedbackLink(data.parkingLot)}>
+		<a class="link link-accent text-sm font-mono pb-5" href={parkingLot.feedbackLink().toString()}>
 			Send feedback
 		</a>
 	</div>

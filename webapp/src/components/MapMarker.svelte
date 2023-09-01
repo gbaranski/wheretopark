@@ -1,10 +1,9 @@
 <script lang="ts">
-	import { SpotType, type ParkingLot } from "$lib/types";
-	import { markerColor, parkingLotStatus } from "$lib/utils";
+	import { SpotType, type ParkingLot } from "$lib/parkingLot";
 
     export let parkingLot: ParkingLot;
-    const status = parkingLotStatus(parkingLot, SpotType.CAR)[0];
-    const color = markerColor(parkingLot.state.availableSpots["CAR"], parkingLot.metadata.totalSpots["CAR"], status);
+    const status = parkingLot.status(SpotType.car);
+    const color = status.isOpen() ? parkingLot.availabilityColorFor(SpotType.car) : status.color()
 </script>
 
 <div class="flex flex-auto justify-center flex-col">
