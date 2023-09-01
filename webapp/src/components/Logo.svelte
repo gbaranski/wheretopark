@@ -1,7 +1,7 @@
 <a href="/" class="btn btn-ghost normal-case text-xl">
-    <span class="font-mono">
-        <span class="text-xl text-slate-300 font-bold">where</span>
-        <span class="text-xl text-yellow-600 font-bold">to</span>
-        <span class="text-xl text-slate-300 font-bold">park</span>
+    <span class="font-mono font-bold text-xl">
+        <span class="text-secondary">where</span>
+        <span class="text-primary">to</span>
+        <span class="text-secondary">park</span>
     </span>
 </a>

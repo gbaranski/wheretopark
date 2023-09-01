@@ -6,7 +6,7 @@
 
 <li>
     <span class="flex flex-row content-between">
-        <a href="https://wheretopark.app" target="_blank" class="basis-full font-mono text-xs">How does it work?</a>
+        <a href="https://wheretopark.app" target="_blank" class="basis-full font-mono text-sm">How does it work?</a>
         <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
@@ -25,7 +25,7 @@
 </li>
 <li>
     <span class="flex flex-row content-between">
-        <a href="https://wheretopark.app" target="_blank" class="basis-full font-mono text-xs">Add parking lot</a>
+        <a href="https://wheretopark.app" target="_blank" class="basis-full font-mono text-sm">Add parking lot</a>
         <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
@@ -40,7 +40,7 @@
 </li>
 {#if languageSwitcher}
     <li>
-        <span class="font-mono text-xs flex flex-row content-between">
+        <span class="font-mono text-sm flex flex-row content-between">
             <span class="basis-full">
                 Switch to Polish               
             </span>

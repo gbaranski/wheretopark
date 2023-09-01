@@ -98,8 +98,8 @@
 	</div>
 	<div class="stats w-full ml-0 left-0 p-0">
 		<div class="stat">
-			<div class="stat-title">Available spaces</div>
-			<div class="stat-value text-primary font-mono">
+			<div class="stat-title text-xs font-mono font-semibold">AVAILABLE SPACES</div>
+			<div class="stat-value text-primary font-mono font-extrabold">
 				{state.availableSpots[SpotType[SpotType.CAR]]}
 			</div>
 			<div class="stat-desc">
@@ -107,8 +107,8 @@
 			</div>
 		</div>
 		<div class="stat">
-			<div class="stat-title">Current status</div>
-			<div class="stat-value">{status}</div>
+			<div class="stat-title text-xs font-mono font-semibold">CURRENT STATUS</div>
+			<div class="stat-value font-mono">{status}</div>
 			<div class="stat-desc">{statusComment}</div>
 		</div>
 	</div>
@@ -199,14 +199,8 @@
 	{#if comment}
 		<div class="divider"></div>
 		<h2 class="text-2xl font-bold mb-3">Description</h2>
-		<article class="prose">
+		<article class="prose prose-sm">
 			<Markdown source={comment} />
 		</article>
-		<!-- <Text weight="light" size={14}>
-        </Text> -->
 	{/if}
-
-	<!-- <div class="mt-10 w-full" on:click={onMapPress}> -->
-	<!-- <MiniMap center={coordinates} /> -->
-	<!-- </div> -->
 </div>
