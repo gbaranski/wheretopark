@@ -2,13 +2,15 @@
 	import { currentMap } from '$lib/store';
 	import { SpotType, type ParkingLot, Feature, type State, type Metadata } from '$lib/types';
 	import {
+	availabilityColor,
 		capitalizeFirstLetter,
 		getCategory,
 		getWeekday,
 		googleMapsLink,
 		humanizeDuration,
+		markerColor,
 		parkingLotStatus,
-		parkingLotStatusColor,
+		statusColor,
 		preferredComment,
 		resourceText,
 		rulesForDay,
@@ -27,6 +29,9 @@
 	$: features = metadata.features.map((feature) => Feature[feature as keyof typeof Feature]);
 	$: category = getCategory(features || []);
 	$: comment = preferredComment(metadata.comment || {});
+	$: avColor = availabilityColor(state.availableSpots["CAR"], metadata.totalSpots["CAR"]);
+	$: stColor = statusColor(status);
+	$: console.log({color: availabilityColor})
 	
 	$: {
         const [longitude, latitude] = metadata.geometry.coordinates;
@@ -99,7 +104,7 @@
 	<div class="stats w-full ml-0 left-0 p-0">
 		<div class="stat">
 			<div class="stat-title text-xs font-mono font-semibold">AVAILABLE SPACES</div>
-			<div class="stat-value text-primary font-mono font-extrabold">
+			<div class="stat-value font-mono font-extrabold" style='color:{avColor}'>
 				{state.availableSpots[SpotType[SpotType.CAR]]}
 			</div>
 			<div class="stat-desc">
@@ -108,30 +113,34 @@
 		</div>
 		<div class="stat">
 			<div class="stat-title text-xs font-mono font-semibold">CURRENT STATUS</div>
-			<div class="stat-value font-mono">{status}</div>
+			<div class="stat-value font-mono" style='color:{stColor}'>{status}</div>
 			<div class="stat-desc">{statusComment}</div>
 		</div>
 	</div>
 
 	<div class="divider"></div>
+	
+	<div class="flex flex-auto flex-row justify-between">
+		<div>
+			{#each applicableRules as rule}
+				<p class="text-xl font-bold mt-5">{rule.humanHours}</p>
+				{#each rule.pricing as pricing}
+					<div>
+						{pricing.repeating ? 'Each ' : ''}
+						{humanizeDuration(pricing.duration)} - {pricing.price}
+						{metadata.currency}
+					</div>
+				{/each}
+			{/each}
+		</div>
 
-	<select class="select select-bordered w-full max-w-xs" bind:value={selectedWeekday}>
-		<option disabled>Pick a day</option>
-		{#each weekdays as weekday, i}
-			<option value={i}>{weekday}</option>
-		{/each}
-	</select>
-
-	{#each applicableRules as rule}
-		<p class="text-xl font-bold mt-5">{rule.humanHours}</p>
-		{#each rule.pricing as pricing}
-			<div>
-				{pricing.repeating ? 'Each ' : ''}
-				{humanizeDuration(pricing.duration)} - {pricing.price}
-				{metadata.currency}
-			</div>
-		{/each}
-	{/each}
+		<select class="select select-bordered max-w-xs mt-4" bind:value={selectedWeekday}>
+			<option disabled>Pick a day</option>
+			{#each weekdays as weekday, i}
+				<option value={i}>{weekday}</option>
+			{/each}
+		</select>
+	</div>
 
 	<div class="divider"></div>
 

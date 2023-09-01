@@ -162,16 +162,16 @@ export const parkingLotStatus = (
   }
 };
 
-export const parkingLotStatusColor = (status: ParkingLotStatus) => {
+export const statusColor = (status: ParkingLotStatus) => {
   switch (status) {
     case ParkingLotStatus.Open:
-      return "text-success";
+      return "#91F5AD";
     case ParkingLotStatus.ClosesSoon:
-      return "text-warning";
+      return "#ec8004";
     case ParkingLotStatus.OpensSoon:
-      return "text-warning";
+      return "#ec8004";
     case ParkingLotStatus.Closed:
-      return "text-error";
+      return "#EF2D56";
   }
 };
 
@@ -227,9 +227,9 @@ export const distanceBetweenPoints = (a: GeoJSON.Point, b: GeoJSON.Point) => {
 
 export const availabilityColor = (available: number, total: number) => {
   const percent = available / total;
-  if (percent > 0.3) return "green";
-  else if (percent > 0.1) return "orange";
-  else return "red";
+  if (percent > 0.3) return "#91F5AD";
+  else if (percent > 0.1) return "#ec8004";
+  else return "#EF2D56";
 };
 
 export const markerColor = (
@@ -239,5 +239,5 @@ export const markerColor = (
 ) => {
   return status == ParkingLotStatus.Open
     ? availabilityColor(available, total)
-    : parkingLotStatusColor(status);
+    : statusColor(status);
 };

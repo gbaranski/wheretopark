@@ -6,6 +6,7 @@
 	import { currentMap, parkingLots as parkingLotsStore } from '$lib/store';
 	import { markerColor, parkingLotStatus } from '$lib/utils';
 	import { goto } from '$app/navigation';
+	import MapMarker from './MapMarker.svelte';
 
 
 	onMount(async () => {
@@ -30,7 +31,9 @@
 							status
 						)
 					};
-					const marker = new mapboxgl.Marker(options).setLngLat([longitude, latitude]);
+					const markerElement = document.createElement('div');
+					new MapMarker({  target: markerElement, props: {parkingLot} });
+					const marker = new mapboxgl.Marker(markerElement).setLngLat([longitude, latitude]);
 					marker.getElement().addEventListener('click', () => {
 						goto(`/parking-lot/${id}`);
 					})
