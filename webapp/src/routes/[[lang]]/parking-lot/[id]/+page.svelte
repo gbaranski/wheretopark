@@ -227,7 +227,7 @@
 				</svg>
 
 				{#each parkingLot.paymentMethods as paymentMethod}
-					<div class="badge badge-neutral badge-lg ml-2 font-mono text-xs">{paymentMethod}</div>
+					<div class="badge badge-secondary badge-lg ml-2 font-mono text-xs">{paymentMethod}</div>
 				{/each}
 			</p>
 		{/if}
