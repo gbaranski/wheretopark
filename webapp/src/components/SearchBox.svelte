@@ -27,7 +27,7 @@
                 center: [coordinates[0], coordinates[1]],
                 zoom: 15
             })
-            searchTerm = `${suggestion.name}, ${suggestion.place_formatted}}`
+            searchTerm = `${suggestion.name}, ${suggestion.place_formatted}`
             suggestions = [];
         }
 	});
