@@ -66,7 +66,7 @@
 		content="{parkingLot.name}, {parkingLot.address}, Parking Lot, Occupancy"
 	/>
 </svelte:head>
-<div class="pt-10 pl-5 w-11/12">
+<div class="pt-5 pl-5 w-11/12">
 	<h1 class="font-sans text-3xl font-extrabold">{parkingLot.name}</h1>
 	<h2 class="font-mono text-sm font-light mb-2">{parkingLot.category()}</h2>
 	<div class="join w-full">

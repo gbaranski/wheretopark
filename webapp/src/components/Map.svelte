@@ -45,13 +45,4 @@
 	});
 </script>
 
-<div id="map-container"></div>
-
-<style>
-	#map-container {
-		position: absolute;
-		top: 100px;
-		bottom: 0;
-		width: 100%;
-	}
-</style>
+<div id="map-container" class="absolute top-16 lg:top-20 w-full"></div>

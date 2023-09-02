@@ -67,7 +67,7 @@
 
 <div>
 	<div class="split master">
-		<p class="text-xs pt-5 px-5" >This webapp is currently under heavy development 🏗 . You might find a lot of bugs or even dragons</p>
+		<!-- <p class="text-xs pt-5 px-5" >This webapp is currently under heavy development 🏗 . You might find a lot of bugs or even dragons</p> -->
 		<slot />
 	</div>
 	<div class="split slave">
@@ -109,7 +109,7 @@
 		.master {
 			width: 100%;
 			position: absolute;
-			top: calc(100% - 30%);
+			top: calc(100% - 20%);
 		}
 	
 		.slave {
