@@ -45,4 +45,7 @@
 	});
 </script>
 
-<div id="map-container" class="absolute top-16 lg:top-20 w-full"></div>
+<div
+	id="map-container"
+	class="w-full h-4/6 absolute top-16 lg:right-0 lg:h-[calc(100%-4rem)] lg:w-7/12 xl:w-8/12 2xl:w-9/12"
+></div>

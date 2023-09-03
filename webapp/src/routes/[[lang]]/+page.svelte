@@ -13,7 +13,7 @@
 	<meta name="keywords" content="Parking Lot, Smart City, Gdańsk, Gdynia, Sopot, Tricity" />
 </svelte:head>
 
-<div class="absolute w-full z-10 mx-auto px-5 bg-base-100 rounded-2xl">
+<div>
 	<SearchBox />
 	<div class="divider"></div>
 	<h1 class="font-mono text-lg font-bold">Search Filters</h1>

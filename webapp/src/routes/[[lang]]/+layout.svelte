@@ -20,7 +20,7 @@
 	></script>
 </svelte:head>
 
-<div class="navbar absolute z-30 bg-base-100">
+<div class="navbar absolute z-30 bg-base-100 ">
 	<div class="navbar-start">
 		<div class="max-md:hidden">
 			<Logo/>
@@ -64,58 +64,13 @@
 	</div>
 </div>
 
-
-<div>
-	<div class="split master">
-		<!-- <p class="text-xs pt-5 px-5" >This webapp is currently under heavy development 🏗 . You might find a lot of bugs or even dragons</p> -->
-		<slot />
-	</div>
-	<div class="split slave">
-		<Map />
+<div class="w-screen h-screen">
+	<div class="flex flex-col h-full w-full lg:flex-row">
+		<div class="">
+			<Map />
+		</div>
+		<div class="p-5 mt-[75vh] lg:overflow-y-scroll lg:mt-16 lg:w-5/12 xl:w-4/12 2xl:w-3/12">
+			<slot />
+		</div>
 	</div>
 </div>
-
-<style>
-	.split {
-		height: 100%;
-		position: fixed;
-		z-index: 1;
-		top: 0;
-		bottom: 0;
-		overflow-x: hidden;
-	}
-	
-	.master {
-		width: 450px;
-		left: 0;
-		top: 4em;
-	}
-	
-	.slave {
-		width: calc(100% - 450px);
-		right: 0;
-	}
-	
-	@media only screen and (orientation:portrait) {
-		.split {
-			position: static;
-			overflow: visible;
-		}
-		
-		:global(#map-container) {
-			height: 70%;
-		}
-		
-		.master {
-			width: 100%;
-			position: absolute;
-			top: calc(100% - 20%);
-		}
-	
-		.slave {
-			bottom: 0;
-			width: 100%;
-			height: 70%;
-		}
-	}
-	</style>
