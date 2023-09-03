@@ -1,5 +1,5 @@
 import { type ID, ParkingLot } from "./parkingLot";
-import { parkingLots as parkingLotsStore } from "$lib/store";
+import { isLoading, parkingLots as parkingLotsStore } from "$lib/store";
 import { dev } from "$app/environment";
 
 const serverURL = dev ? "http://localhost:1234" : "https://api.wheretopark.app";
@@ -64,4 +64,6 @@ export const updateParkingLots = async (fetch: typeof window.fetch) => {
     }
   });
   await Promise.all(promises);
+  console.log("finished");
+  isLoading.set(false);
 };

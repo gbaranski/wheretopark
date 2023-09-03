@@ -1,10 +1,7 @@
 <script lang="ts">
 	import SearchBox from '$components/SearchBox.svelte';
-import { allFeaturesString } from '$lib/parkingLot';
+	import { allFeaturesString } from '$lib/parkingLot';
 	import { capitalizeFirstLetter } from '$lib/utils';
-
-	const setCurrentLocation = () => {
-	};
 </script>
 
 <svelte:head>
@@ -16,8 +13,8 @@ import { allFeaturesString } from '$lib/parkingLot';
 	<meta name="keywords" content="Parking Lot, Smart City, Gdańsk, Gdynia, Sopot, Tricity" />
 </svelte:head>
 
-<div class="absolute w-full z-10 mx-auto p-5 bg-base-100 rounded-2xl">
-	<SearchBox/>
+<div class="absolute w-full z-10 mx-auto px-5 bg-base-100 rounded-2xl">
+	<SearchBox />
 	<div class="divider"></div>
 	<h1 class="font-mono text-lg font-bold">Search Filters</h1>
 	<label class="label cursor-pointer">
@@ -32,6 +29,10 @@ import { allFeaturesString } from '$lib/parkingLot';
 	{/each}
 	<label class="label cursor-pointer">
 		<span class="label-text font-mono">Min. available spaces</span>
-		<input type="text" placeholder="e.g 20" class="input input-bordered w-1/3 max-w-xs font-mono text-sm" />
+		<input
+			type="text"
+			placeholder="e.g 20"
+			class="input input-bordered w-1/3 max-w-xs font-mono text-sm"
+		/>
 	</label>
 </div>
