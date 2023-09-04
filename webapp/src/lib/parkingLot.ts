@@ -32,8 +32,21 @@ export class Status {
   public static closesSoon = new Status("Closes soon");
   
   isOpen() {
-    return this.text == Status.open.text;
+    return this.text === Status.open.text;
   }
+
+  isClosed() {
+    return this.text === Status.closed.text;
+  }
+  
+  isOpeningSoon() {
+    return this.text === Status.opensSoon.text;
+  }
+
+  isClosingSoon() {
+    return this.text === Status.closesSoon.text;
+  }
+
   
   withComment(comment: string): Status & {comment: string} {
     return Object.assign(Object.create(Status.prototype), this, { comment });
@@ -133,9 +146,7 @@ export enum Feature {
   GUARDED = "GUARDED",
 }
 
-export const allFeaturesString = Object.values(Feature).filter((v) =>
-  typeof v === "string"
-) as string[];
+export const allFeatures = [Feature.UNCOVERED, Feature.COVERED, Feature.UNDERGROUND, Feature.GUARDED];
 
 export enum PaymentMethod {
   CASH = "CASH",
