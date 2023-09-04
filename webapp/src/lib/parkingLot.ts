@@ -294,7 +294,7 @@ export class ParkingLot {
       if (hoursToChange == undefined) {
         return Status.open.withComment("24/7");
       } else if (hoursToChange > 1) {
-        return Status.closesSoon.withComment(
+        return Status.open.withComment(
           `Closes ${nextChange!.format("HH:mm")}`,
         );
       } else {
