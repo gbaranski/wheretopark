@@ -61,7 +61,7 @@
 			parkingLot.category()
 		)} parking lot in {parkingLot.name} at {parkingLot.address}, containing prices, opening hours and it's availability of parking spots."
 	/>
-	<meta name="keywords" content="{parkingLot.name}, {parkingLot.address}, Parking Lot, Occupancy" />
+	<meta name="keywords" content="{parkingLot.name}, {parkingLot.address}, Parking Lot, Occupancy, Real-time" />
 </svelte:head>
 
 <h1 class="font-sans text-3xl font-extrabold">{parkingLot.name}</h1>
