@@ -61,10 +61,31 @@
 			parkingLot.category()
 		)} parking lot in {parkingLot.name} at {parkingLot.address}, containing prices, opening hours and it's availability of parking spots."
 	/>
-	<meta name="keywords" content="{parkingLot.name}, {parkingLot.address}, Parking Lot, Occupancy, Real-time" />
+	<meta
+		name="keywords"
+		content="{parkingLot.name}, {parkingLot.address}, Parking Lot, Occupancy, Real-time"
+	/>
 </svelte:head>
 
-<h1 class="font-sans text-3xl font-extrabold">{parkingLot.name}</h1>
+<div class="flex flex-row">
+	<h1 class="font-sans text-3xl font-extrabold">{parkingLot.name}</h1>
+	<a href="/app">
+		<svg
+			xmlns="http://www.w3.org/2000/svg"
+			fill="none"
+			viewBox="0 0 24 24"
+			stroke-width="1.5"
+			stroke="currentColor"
+			class="w-6 h-6"
+		>
+			<path
+				stroke-linecap="round"
+				stroke-linejoin="round"
+				d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3"
+			/>
+		</svg>
+	</a>
+</div>
 <h2 class="font-mono text-sm font-light mb-2">{parkingLot.category()}</h2>
 <div class="join w-full">
 	<a

@@ -4,7 +4,7 @@
 	export let loadable: boolean;
 </script>
 
-<a href="/app" class="btn btn-ghost normal-case text-xl">
+<a href="/" class="btn btn-ghost normal-case text-xl">
 	<span class="font-mono font-bold text-xl">
 		<span class="text-secondary">where</span>
 		{#if loadable && $isLoading}
