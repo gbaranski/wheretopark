@@ -1,4 +1,4 @@
-FROM gocv/opencv:4.7.0 as builder
+FROM gocv/opencv:4.8.0 as builder
 
 ENV GOPATH /go
 
@@ -13,7 +13,9 @@ COPY providers/cctv ./providers/cctv
 
 RUN go build -v -o cctv ./cmd/cctv
 
-FROM gocv/opencv:4.7.0
+FROM gocv/opencv:4.8.0
+
+RUN apt-get update && apt-get -y install ffmpeg
 
 COPY --from=builder /app/cctv /app/cctv
 

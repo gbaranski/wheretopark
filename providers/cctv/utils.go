@@ -1,10 +1,13 @@
 package cctv
 
 import (
+	"bytes"
 	"fmt"
 	"image"
 	"image/color"
 
+	"github.com/rs/zerolog/log"
+	ffmpeg "github.com/u2takey/ffmpeg-go"
 	"gocv.io/x/gocv"
 )
 
@@ -88,4 +91,30 @@ func contains(s []string, e string) bool {
 		}
 	}
 	return false
+}
+
+func GetImageFromCamera(url string) (gocv.Mat, error) {
+	buf := bytes.NewBuffer(nil)
+
+	stream := ffmpeg.Input(url).
+		Filter("select", ffmpeg.Args{fmt.Sprintf("gte(n,%d)", 1)}).
+		Output("pipe:", ffmpeg.KwArgs{"frames:v": 1, "update": 1, "format": "image2"}).
+		Silent(true)
+
+	if log.Trace().Enabled() {
+		stream = stream.WithOutput(buf, log.With().Str("level", "trace").Logger())
+	} else {
+		stream = stream.WithOutput(buf)
+	}
+	if err := stream.Run(); err != nil {
+		return gocv.NewMat(), fmt.Errorf("unable to capture frame: %v", err)
+	}
+	img, err := gocv.IMDecode(buf.Bytes(), gocv.IMReadColor)
+	if err != nil {
+		return gocv.NewMat(), fmt.Errorf("unable to create image: %v", err)
+	}
+	if img.Empty() {
+		return gocv.NewMat(), fmt.Errorf("empty image")
+	}
+	return img, nil
 }

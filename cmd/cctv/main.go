@@ -93,6 +93,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+
 	cache, err := wheretopark.NewSingularCache()
 	if err != nil {
 		log.Fatal().Err(err).Msg("create cache fail")

@@ -1,6 +1,7 @@
 package cctv
 
 import (
+	"fmt"
 	"sync"
 	"sync/atomic"
 	"time"
@@ -8,7 +9,6 @@ import (
 	"wheretopark/go/provider/sequential"
 
 	"github.com/rs/zerolog/log"
-	"gocv.io/x/gocv"
 )
 
 type Provider struct {
@@ -47,21 +47,14 @@ func (p *Provider) ProcessCamera(parkingLot ParkingLot, cameraID int, camera Par
 		Str("name", parkingLot.Name).
 		Int("camera", cameraID).
 		Msg("processing parking lot")
-	img := gocv.NewMat()
-	defer img.Close()
-	stream, err := gocv.OpenVideoCapture(camera.URL)
-	if err != nil {
-		return 0, err
-	}
-	defer stream.Close()
+
 	captureTime := time.Now()
-	if ok := stream.Read(&img); !ok {
-		log.Error().
-			Str("name", parkingLot.Name).
-			Int("camera", cameraID).
-			Msg("unable to read stream")
-		return 0, nil
+	img, err := GetImageFromCamera(camera.URL)
+	if err != nil {
+		return 0, fmt.Errorf("unable to get image from camera: %v", err)
 	}
+	defer img.Close()
+
 	spotImages := ExtractSpots(img, camera.Spots)
 	defer func() {
 		for _, spotImage := range spotImages {
