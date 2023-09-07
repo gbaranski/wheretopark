@@ -17,6 +17,7 @@ type Server interface {
 
 func RunServer(s Server, port uint) {
 	r := gin.Default()
+	r.ForwardedByClientIP = true
 	r.Use(logger.SetLogger())
 	r.GET("/parking-lots", func(c *gin.Context) {
 		c.Writer.WriteHeader(http.StatusOK)
