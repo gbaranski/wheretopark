@@ -1,9 +1,22 @@
-<script lang="ts">
-	import Logo from '$components/Logo.svelte';
-	import Map from '$components/Map.svelte';
-	import NavbarMenu from '$components/NavbarMenu.svelte';
+<script>
 	import '$/app.css';
+	import Logo from "$components/Logo.svelte";
+	import NavbarMenu from "$components/NavbarMenu.svelte";
 </script>
+
+<svelte:head>
+	<script
+		defer
+		data-domain="wheretopark.app"
+		src="https://plausible.gbaranski.com/js/plausible.js"
+	></script>
+	<title>Where To Park</title>
+	<meta
+		name="description"
+		content="List of parking lots in Gdańsk, Sopot and Gdynia, with prices, opening hours and it's availability of parking spots."
+	/>
+	<meta name="keywords" content="Parking Lot, Smart City, Gdańsk, Gdynia, Sopot, Tricity" />
+</svelte:head>
 
 <div class="navbar absolute z-30 bg-base-100 ">
 	<div class="navbar-start">
@@ -49,13 +62,4 @@
 	</div>
 </div>
 
-<div class="w-screen h-screen">
-	<div class="flex flex-col h-full w-full lg:flex-row">
-		<div class="">
-			<Map />
-		</div>
-		<div class="p-5 mt-[75vh] lg:overflow-y-scroll lg:mt-16 lg:w-5/12 xl:w-4/12 2xl:w-3/12">
-			<slot />
-		</div>
-	</div>
-</div>
+<slot></slot>
