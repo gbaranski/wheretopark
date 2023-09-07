@@ -9,15 +9,13 @@ api.wheretopark.app {
 	handle_path /v1/providers {
 		header Cache-Control "max-age=3600" # 1 hour
 		header Content-Type "application/json"
-		respond `[
-			{
-				"name": "collector",
-				"url": "https://api.wheretopark.app/v1/collector"
-			},
-			{
-				"name": "cctv",
-				"url": "https://api.wheretopark.app/v1/cctv"
-			}
+		respond `[ {
+			"name": "collector",
+			"url": "https://api.wheretopark.app/v1/collector"
+		}		, {
+			"name": "cctv",
+			"url": "https://api.wheretopark.app/v1/cctv"
+		}
 		]`
 	}
 
