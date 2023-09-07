@@ -116,6 +116,9 @@ var logLevelMappings = map[string]zerolog.Level{
 func InitLogging() {
 	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
 	logLevelString := os.Getenv("LOG_LEVEL")
-	logLevel := logLevelMappings[logLevelString]
+	logLevel, exists := logLevelMappings[logLevelString]
+	if !exists {
+		logLevel = zerolog.InfoLevel
+	}
 	zerolog.SetGlobalLevel(logLevel)
 }
