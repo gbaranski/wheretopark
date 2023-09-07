@@ -139,8 +139,16 @@
 <div class="stats w-full ml-0 left-0 p-0">
 	<div class="stat">
 		<div class="stat-title text-xs font-mono font-semibold">AVAILABLE SPACES</div>
-		<div class="stat-value font-mono font-extrabold" style="color:{avColor}">
-			{parkingLot.availableSpotsFor(SpotType.car)}
+		<div class="stat-value font-mono font-extrabold text-left justify-start">
+			<span style="color:{avColor}">
+				{parkingLot.availableSpotsFor(SpotType.car)}
+			</span>
+			<span class="font-light text-xs text-left -ml-5">
+				/
+				<span class="font-bold">
+					{parkingLot.totalSpotsFor(SpotType.car)}
+				</span>
+			</span>
 		</div>
 		<div class="stat-desc">
 			Updated <span class="text-success">{parkingLot.lastUpdated.fromNow()}</span>
