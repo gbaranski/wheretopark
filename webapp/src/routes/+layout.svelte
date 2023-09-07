@@ -1,7 +1,10 @@
 <script>
 	import '$/app.css';
-	import Logo from "$components/Logo.svelte";
-	import NavbarMenu from "$components/NavbarMenu.svelte";
+	import Logo from '$components/Logo.svelte';
+	import NavbarMenu from '$components/NavbarMenu.svelte';
+	import { page } from '$app/stores';
+
+	$: isApp = $page.url.pathname.startsWith('/app');
 </script>
 
 <svelte:head>
@@ -18,15 +21,15 @@
 	<meta name="keywords" content="Parking Lot, Smart City, Gdańsk, Gdynia, Sopot, Tricity" />
 </svelte:head>
 
-<div class="navbar absolute z-30 bg-base-100 ">
+<div class="navbar absolute z-30 bg-base-100">
 	<div class="navbar-start">
 		<div class="max-md:hidden">
-			<Logo/>
+			<Logo loadable={isApp} />
 		</div>
 	</div>
 	<div class="navbar-center">
 		<div class="md:hidden">
-			<Logo/>
+			<Logo loadable={isApp} />
 		</div>
 		<ul class="menu menu-horizontal px-1 hidden md:flex">
 			<NavbarMenu />
@@ -62,4 +65,6 @@
 	</div>
 </div>
 
-<slot></slot>
+<div class="pt-[4.5rem] w-screen h-screen flex flex-col lg:flex-row">
+	<slot />
+</div>
