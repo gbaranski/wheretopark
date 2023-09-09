@@ -1,3 +1,54 @@
+<script lang="ts">
+	import { getRandomBetween, mailFromOperator } from '$/lib/utils';
+	import { inview } from 'svelte-inview';
+
+	let counter = 0;
+	const onCounterVisible = () => {
+		if (counter > 0) return;
+		const interval = setInterval(() => {
+			counter = getRandomBetween(0, 100);
+		}, 10);
+		setTimeout(() => {
+			clearInterval(interval);
+			counter = 10;
+		}, 3000);
+	};
+
+	const cities = ['gdansk', 'gdynia', 'glasgow', 'klodzko', 'poznan', 'sopot', 'warsaw'];
+
+	const awards = [
+		{
+			name: 'explory',
+			description: 'Finalist of a high-tech contest for innovative ideas',
+			link: 'https://www.explory.pl/2023/naukowcy/32-grzegorz-baranski/'
+		},
+		{
+			name: 'young-innovator',
+			description: 'III Place in Young Innovator 2022/2023 for HS Students',
+			link: 'https://not.org.pl/olimpiady-i-konkursy/xvi-edycja-konkursu-mlody-innowator-20222023?department=centrala'
+		}
+	];
+	
+	const news = [
+		{
+			name: 'eska.pl',
+			link: 'https://www.eska.pl/trojmiasto/licealista-z-gdanska-tworzy-aplikacje-ktora-ulatwi-znalezienie-miejsca-na-parkingu-aa-MCvr-56JZ-Gnus.html',
+		},
+		{
+			name: 'otwartedane.gdynia.pl',
+			link: 'https://otwartedane.gdynia.pl/where-to-park-aplikacja-do-szukania-wolnych-miejsc-parkingowych/',
+		},
+		{
+			name: 'mlodagdynia.pl',
+			link: 'https://mlodagdynia.pl/pl/19_wiadomosci-z-regionu/53682_wolne-miejsca-na-parkingu-pomoze-aplikacja-trojmiejskiego-licealisty.html',
+		},
+		{
+			name: 'blog.citydata.pl',
+			link: 'https://blog.citydata.pl/where-to-park-aplikacja-do-szukania-wolnych-miejsc-parkingowych/',
+		}
+	];
+</script>
+
 <div class="flex flex-col text-center w-full pt-24 p-12">
 	<h1 class="font-extrabold text-5xl lg:text-7xl">
 		Where <span class="text-primary">To</span> Park
@@ -48,7 +99,7 @@
 	<div class="flex justify-evenly items-center flex-col-reverse lg:flex-row gap-8">
 		<div class="">
 			<h2 class="font-extrabold text-4xl">Powered by AI &nbsp;🤖</h2>
-			Our system automatically marks <span class="text-green-600">green</span> free spaces, and
+			Our system automatically marks<span class="text-green-600">green</span> free spaces, and
 			<span class="text-red-600">red</span> occupied.
 		</div>
 		<img
@@ -58,50 +109,50 @@
 		/>
 	</div>
 
-    
 	<div class="self-center divider w-96 p-12" />
 	<h2 class="font-extrabold text-4xl">We have parkings lots in</h2>
 	<div class="pt-10 flex flex-row flex-wrap gap-16 justify-center">
-        {#each cities as city}
-            <img src={`/assets/city/${city}.webp`} alt="{city} logo" class="w-32 object-scale-down"/>
-        {/each}
+		{#each cities as city}
+			<img src={`/assets/city/${city}.webp`} alt="{city} logo" class="w-32 object-scale-down" />
+		{/each}
 	</div>
-    
+
 	<div class="self-center divider w-96 p-12" />
-    <div>
+	<h2 class="font-extrabold text-4xl">Awards</h2>
+	<div class="pt-10 flex flex-row flex-wrap gap-16 justify-center">
+		{#each awards as award}
+			<a class="w-32" href="{award.link}" target="_blank">
+				<img
+					src={`/assets/award/${award.name}.webp`}
+					alt="{award.name} logo"
+					class="h-32 object-scale-down pb-2"
+				/>
+				<span class="link link-secondary">{award.description}</span>
+			</a>
+		{/each}
+	</div>
+
+	<div class="self-center divider w-96 p-12" />
+	<h2 class="font-extrabold text-4xl">Talks about us</h2>
+	<div class="pt-10 flex flex-row flex-wrap gap-16 justify-center">
+		{#each news as entry}
+			<a class="w-32" href="{entry.link}" target="_blank">
+				<img
+					src={`/assets/news/${entry.name}.webp`}
+					alt="{entry.name} logo"
+					class="h-32 object-scale-down"
+				/>
+			</a>
+		{/each}
+	</div>
+
+	<div class="self-center divider w-96 p-12" />
+	<div>
 		<div class="pb-10">
 			<h2 class="font-extrabold text-4xl">Are you a parking operator?</h2>
 		</div>
-        <a href="{mailFromOperator}" class="btn btn-primary">Contact us</a>
-    </div>
-    
-    <div class="pb-12"/>
-        
+		<a href={mailFromOperator} class="btn btn-primary">Contact us</a>
+	</div>
+
+	<div class="pb-12" />
 </div>
-
-<script lang="ts">
-	import { getRandomBetween, mailFromOperator } from '$/lib/utils';
-	import { inview } from 'svelte-inview';
-
-	let counter = 0;
-	const onCounterVisible = () => {
-        if(counter > 0) return;
-		const interval = setInterval(() => {
-			counter = getRandomBetween(0, 100);
-		}, 10);
-		setTimeout(() => {
-			clearInterval(interval);
-			counter = 10;
-		}, 3000);
-	};
-    
-    const cities = [
-        'gdansk',
-        'gdynia',
-        'glasgow',
-        'klodzko',
-        'poznan',
-        'sopot',
-        'warsaw',
-    ];
-</script>
