@@ -99,7 +99,7 @@
 	<div class="flex justify-evenly items-center flex-col-reverse lg:flex-row gap-8">
 		<div class="">
 			<h2 class="font-extrabold text-4xl">Powered by AI &nbsp;🤖</h2>
-			Our system automatically marks<span class="text-green-600">green</span> free spaces, and
+			Our system automatically marks <span class="text-green-600">green</span> free spaces, and
 			<span class="text-red-600">red</span> occupied.
 		</div>
 		<img
