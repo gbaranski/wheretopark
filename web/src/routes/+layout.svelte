@@ -3,6 +3,29 @@
 	import Logo from '$components/Logo.svelte';
 	import NavbarMenu from '$components/NavbarMenu.svelte';
 	import { page } from '$app/stores';
+	import { pwaInfo } from 'virtual:pwa-info';
+	import { onMount } from 'svelte';
+
+	onMount(async () => {
+		if (pwaInfo) {
+			const { registerSW } = await import('virtual:pwa-register');
+			registerSW({
+				immediate: true,
+				onRegistered(r) {
+					// uncomment following code if you want check for updates
+					// r && setInterval(() => {
+					//    console.log('Checking for sw update')
+					//    r.update()
+					// }, 20000 /* 20s for testing purposes */)
+					console.log(`SW Registered: ${r}`);
+				},
+				onRegisterError(error) {
+					console.log('SW registration error', error);
+				}
+			});
+		}
+	});
+	$: webManifest = pwaInfo ? pwaInfo.webManifest.linkTag : '';
 
 	$: isApp = $page.url.pathname.startsWith('/app');
 </script>
@@ -18,7 +41,11 @@
 		name="description"
 		content="List of parking lots in Gdańsk, Sopot and Gdynia, with prices, opening hours and it's availability of parking spots."
 	/>
-	<meta name="keywords" content="Parking Lot, Smart City, Gdańsk, Gdynia, Sopot, Tricity" />
+	<meta
+		name="keywords"
+		content="Parking Lot, Smart City, Gdańsk, Gdynia, Sopot, Warsaw, Kłodzko, Glasgow"
+	/>
+	{@html webManifest}
 </svelte:head>
 
 <div class="navbar absolute z-30 bg-base-100">
