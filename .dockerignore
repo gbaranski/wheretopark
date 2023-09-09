@@ -5,9 +5,9 @@ README.md
 .git
 
 **/*/node_modules
-webapp/npm-debug.log
-webapp/.next
-webapp/.env.*
+web/npm-debug.log
+web/.next
+web/.env.*
 .env.dev
 .env
 build

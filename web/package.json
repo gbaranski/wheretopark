@@ -1,5 +1,5 @@
 {
-		"name": "wheretopark-webapp",
+		"name": "wheretopark-web",
 		"version": "0.3.0",
 		"type": "module",
 		"private": true,
