@@ -1,6 +1,9 @@
 import { parkingLots } from "$lib/store";
 import type { PageLoad } from "./$types";
 
+export const ssr = false;
+export const prerender = false;
+
 const waitForParkingLot = (id: string) => new Promise((resolve) => {
     parkingLots.subscribe((parkingLots) => {
         const parkingLot = parkingLots[id];

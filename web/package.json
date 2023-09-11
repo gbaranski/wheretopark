@@ -14,9 +14,12 @@
 				"format": "prettier --plugin-search-dir . --write ."
 		},
 		"devDependencies": {
+				"@capacitor/cli": "^5.3.0",
+				"@capacitor/core": "^5.3.0",
 				"@mapbox/search-js-core": "1.0.0-beta.17",
 				"@mapbox/search-js-web": "1.0.0-beta.17",
 				"@sveltejs/adapter-cloudflare": "^2.3.2",
+				"@sveltejs/adapter-static": "^2.0.3",
 				"@sveltejs/kit": "1.22.6",
 				"@tailwindcss/typography": "^0.5.9",
 				"@types/geojson": "^7946.0.10",
@@ -52,5 +55,9 @@
 				"typescript": "^5.1.6",
 				"vite": "^4.4.9",
 				"vitest": "^0.34.3"
+		},
+		"dependencies": {
+				"@capacitor/android": "^5.3.0",
+				"@capacitor/ios": "^5.3.0"
 		}
 }

@@ -118,7 +118,7 @@
 	</div>
 
 	<div class="self-center divider w-96 p-12" />
-	<h2 class="font-extrabold text-4xl">Awards</h2>
+	<h2 class="font-extrabold text-4xl">Awards &nbsp;🏆</h2>
 	<div class="pt-10 flex flex-row flex-wrap gap-16 justify-center">
 		{#each awards as award}
 			<a class="w-32" href="{award.link}" target="_blank">
@@ -133,7 +133,7 @@
 	</div>
 
 	<div class="self-center divider w-96 p-12" />
-	<h2 class="font-extrabold text-4xl">Talks about us</h2>
+	<h2 class="font-extrabold text-4xl">Talks about us &nbsp;📢</h2>
 	<div class="pt-10 flex flex-row flex-wrap gap-16 justify-center">
 		{#each news as entry}
 			<a class="w-32" href="{entry.link}" target="_blank">
