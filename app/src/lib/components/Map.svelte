@@ -11,6 +11,7 @@
 	import MapMarker from './MapMarker.svelte';
 	import 'mapbox-gl/dist/mapbox-gl.css';
 	import { SpotType, type ID, ParkingLot, Feature } from '$lib/parkingLot';
+	import { geolocation } from '$lib/utils';
 
 	onMount(async () => {
 		const mapboxgl = await import('mapbox-gl');
@@ -21,18 +22,17 @@
 			center: [19.21, 52.11],
 			zoom: 5
 		});
-		// Add geolocate control to the map.
-		map.addControl(
-			new mapboxgl.GeolocateControl({
-				positionOptions: {
-					enableHighAccuracy: true
-				},
-				// When active the map will receive updates to the device's location as it changes.
-				trackUserLocation: true,
-				// Draw an arrow next to the location dot to indicate which direction the device is heading.
-				showUserHeading: true
-			})
-		);
+		const geolocateControl = new mapboxgl.GeolocateControl({
+			positionOptions: {
+				enableHighAccuracy: true
+			},
+			// When active the map will receive updates to the device's location as it changes.
+			trackUserLocation: true,
+			// Draw an arrow next to the location dot to indicate which direction the device is heading.
+			showUserHeading: true,
+			geolocation: geolocation()
+		});
+		map.addControl(geolocateControl, 'bottom-right');
 		currentMap.set(map);
 		const currentMarkers: mapboxgl.Marker[] = [];
 		const updateMap = (parkingLots: Record<ID, ParkingLot>, filters: SearchFilters) => {
@@ -43,8 +43,7 @@
 			Object.entries(parkingLots)
 				.filter(([_, parkingLot]) => {
 					const status = parkingLot.status(SpotType.car);
-					if (filters.openNow && (status.isOpen() || status.isOpeningSoon()))
-						return false;
+					if (filters.openNow && (status.isOpen() || status.isOpeningSoon())) return false;
 
 					const requiredFeatures = Object.entries(filters.hasFeatures).filter(
 						([_, required]) => required
@@ -79,7 +78,4 @@
 	});
 </script>
 
-<div
-	id="map-container"
-	class="w-full h-full absolute"
-/>
+<div id="map-container" class="w-full h-full absolute" />

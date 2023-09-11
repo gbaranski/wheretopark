@@ -4,21 +4,22 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
-dependencies:
+devDependencies:
   '@capacitor/android':
     specifier: ^5.3.0
     version: 5.3.0(@capacitor/core@5.3.0)
-  '@capacitor/ios':
-    specifier: ^5.3.0
-    version: 5.3.0(@capacitor/core@5.3.0)
-
-devDependencies:
   '@capacitor/cli':
     specifier: ^5.3.0
     version: 5.3.0
   '@capacitor/core':
     specifier: ^5.3.0
     version: 5.3.0
+  '@capacitor/geolocation':
+    specifier: ^5.0.6
+    version: 5.0.6(@capacitor/core@5.3.0)
+  '@capacitor/ios':
+    specifier: ^5.3.0
+    version: 5.3.0(@capacitor/core@5.3.0)
   '@mapbox/search-js-core':
     specifier: 1.0.0-beta.17
     version: 1.0.0-beta.17
@@ -67,12 +68,9 @@ devDependencies:
   eslint-config-prettier:
     specifier: ^9.0.0
     version: 9.0.0(eslint@8.47.0)
-  eslint-plugin-svelte3:
-    specifier: ^4.0.0
-    version: 4.0.0(eslint@8.47.0)(svelte@4.2.0)
-  flag-icons:
-    specifier: ^6.11.0
-    version: 6.11.0
+  eslint-plugin-svelte:
+    specifier: ^2.33.1
+    version: 2.33.1(eslint@8.47.0)(svelte@4.2.0)
   geojson:
     specifier: ^0.5.0
     version: 0.5.0
@@ -170,7 +168,7 @@ packages:
       '@capacitor/core': ^5.3.0
     dependencies:
       '@capacitor/core': 5.3.0
-    dev: false
+    dev: true
 
   /@capacitor/cli@5.3.0:
     resolution: {integrity: sha512-ku23HPqUHUnSgo/SyEWxVviEAxb4ieWvAVMI3KfrrBoinAhTOvNSZwT346rIpxZ9Xj3Qp41UjdIz0ME+DYwhfA==}
@@ -202,6 +200,15 @@ packages:
     resolution: {integrity: sha512-mvhh1yJtcUTZ0hUUriBKKpxq47hn75bjxH3tYPRgAFu1z3gowCg+OtG4Rce3W5gr5fSfCjQgOSL0Vp7k9hPUWw==}
     dependencies:
       tslib: 2.6.2
+    dev: true
+
+  /@capacitor/geolocation@5.0.6(@capacitor/core@5.3.0):
+    resolution: {integrity: sha512-3pB3CBa38aDMk7zouGbjOMBytcaqRMBosMcqNrOQjE5LMBAPUI1cEGrUzmkj+scP0SIyYGA95Tkj0BAnzvNWag==}
+    peerDependencies:
+      '@capacitor/core': ^5.0.0
+    dependencies:
+      '@capacitor/core': 5.3.0
+    dev: true
 
   /@capacitor/ios@5.3.0(@capacitor/core@5.3.0):
     resolution: {integrity: sha512-AxcW6kp2dOhJ7D6Jz7FAiVi+tq8rv3K3VrfZ0rcGJGlqZfrOJ1m8ImcQ7cO9Fec7wf7a/XSwMOqWemYZFLOO8w==}
@@ -209,7 +216,7 @@ packages:
       '@capacitor/core': ^5.3.0
     dependencies:
       '@capacitor/core': 5.3.0
-    dev: false
+    dev: true
 
   /@cloudflare/workers-types@4.20230814.0:
     resolution: {integrity: sha512-+jHiGjZg2UpULZSSHmHLqUG45TLg1s+uppSMlGvMn0u/xyFsRX9HX6b8Ydg/oHSp3jfSuPtX05GSvtgRAmrWTg==}
@@ -1551,14 +1558,32 @@ packages:
       eslint: 8.47.0
     dev: true
 
-  /eslint-plugin-svelte3@4.0.0(eslint@8.47.0)(svelte@4.2.0):
-    resolution: {integrity: sha512-OIx9lgaNzD02+MDFNLw0GEUbuovNcglg+wnd/UY0fbZmlQSz7GlQiQ1f+yX0XvC07XPcDOnFcichqI3xCwp71g==}
+  /eslint-plugin-svelte@2.33.1(eslint@8.47.0)(svelte@4.2.0):
+    resolution: {integrity: sha512-veYmyjsbt8ikXdaa6pLsgytdlzJpZZKw9vRaQlRBNKaLNmrbsdJulwiWfcDZ7tYJdaVpRB4iDFn/fuPeebxUVg==}
+    engines: {node: ^14.17.0 || >=16.0.0}
     peerDependencies:
-      eslint: '>=8.0.0'
-      svelte: ^3.2.0
+      eslint: ^7.0.0 || ^8.0.0-0
+      svelte: ^3.37.0 || ^4.0.0
+    peerDependenciesMeta:
+      svelte:
+        optional: true
     dependencies:
+      '@eslint-community/eslint-utils': 4.4.0(eslint@8.47.0)
+      '@jridgewell/sourcemap-codec': 1.4.15
+      debug: 4.3.4
       eslint: 8.47.0
+      esutils: 2.0.3
+      known-css-properties: 0.28.0
+      postcss: 8.4.29
+      postcss-load-config: 3.1.4(postcss@8.4.29)
+      postcss-safe-parser: 6.0.0(postcss@8.4.29)
+      postcss-selector-parser: 6.0.13
+      semver: 7.5.4
       svelte: 4.2.0
+      svelte-eslint-parser: 0.33.0(svelte@4.2.0)
+    transitivePeerDependencies:
+      - supports-color
+      - ts-node
     dev: true
 
   /eslint-scope@7.2.2:
@@ -1727,10 +1752,6 @@ packages:
     dependencies:
       locate-path: 6.0.0
       path-exists: 4.0.0
-    dev: true
-
-  /flag-icons@6.11.0:
-    resolution: {integrity: sha512-oK+QhV5UMWq+lmyOnfXUfVhSgHy29gQ0gQpmORdNP6ucAsKzIGm39ncvyThJyvt76Au2qsepDTE9waHRuaYPUw==}
     dev: true
 
   /flat-cache@3.0.4:
@@ -2064,6 +2085,10 @@ packages:
   /kleur@4.1.5:
     resolution: {integrity: sha512-o+NO+8WrRiQEE4/7nwRJhN1HWpVmJm511pBHUxPLtp0BUISzlBplORYSmTclCnJvQq2tKu/sgl3xVpkc7ZWuQQ==}
     engines: {node: '>=6'}
+    dev: true
+
+  /known-css-properties@0.28.0:
+    resolution: {integrity: sha512-9pSL5XB4J+ifHP0e0jmmC98OGC1nL8/JjS+fi6mnTlIf//yt/MfVLtKg7S6nCtj/8KTcWX7nRlY0XywoYY1ISQ==}
     dev: true
 
   /levn@0.4.1:
@@ -2553,6 +2578,23 @@ packages:
       postcss: 8.4.29
     dev: true
 
+  /postcss-load-config@3.1.4(postcss@8.4.29):
+    resolution: {integrity: sha512-6DiM4E7v4coTE4uzA8U//WhtPwyhiim3eyjEMFCnUpzbrkK9wJHgKDT2mR+HbtSrd/NubVaYTOpSpjUl8NQeRg==}
+    engines: {node: '>= 10'}
+    peerDependencies:
+      postcss: '>=8.0.9'
+      ts-node: '>=9.0.0'
+    peerDependenciesMeta:
+      postcss:
+        optional: true
+      ts-node:
+        optional: true
+    dependencies:
+      lilconfig: 2.1.0
+      postcss: 8.4.29
+      yaml: 1.10.2
+    dev: true
+
   /postcss-load-config@4.0.1(postcss@8.4.29):
     resolution: {integrity: sha512-vEJIc8RdiBRu3oRAI0ymerOn+7rPuMvRXslTvZUKZonDHFIczxztIyJ1urxM1x9JXEikvpWWTUUqal5j/8QgvA==}
     engines: {node: '>= 14'}
@@ -2578,6 +2620,24 @@ packages:
     dependencies:
       postcss: 8.4.29
       postcss-selector-parser: 6.0.13
+    dev: true
+
+  /postcss-safe-parser@6.0.0(postcss@8.4.29):
+    resolution: {integrity: sha512-FARHN8pwH+WiS2OPCxJI8FuRJpTVnn6ZNFiqAM2aeW2LwTHWWmWgIyKC6cUo0L8aeKiF/14MNvnpls6R2PBeMQ==}
+    engines: {node: '>=12.0'}
+    peerDependencies:
+      postcss: ^8.3.3
+    dependencies:
+      postcss: 8.4.29
+    dev: true
+
+  /postcss-scss@4.0.8(postcss@8.4.29):
+    resolution: {integrity: sha512-Cr0X8Eu7xMhE96PJck6ses/uVVXDtE5ghUTKNUYgm8ozgP2TkgV3LWs3WgLV1xaSSLq8ZFiXaUrj0LVgG1fGEA==}
+    engines: {node: '>=12.0'}
+    peerDependencies:
+      postcss: ^8.4.29
+    dependencies:
+      postcss: 8.4.29
     dev: true
 
   /postcss-selector-parser@6.0.10:
@@ -3027,6 +3087,23 @@ packages:
       - sugarss
     dev: true
 
+  /svelte-eslint-parser@0.33.0(svelte@4.2.0):
+    resolution: {integrity: sha512-5awZ6Bs+Tb/zQwa41PSdcLynAVQTwW0HGyCBjtbAQ59taLZqDgQSMzRlDmapjZdDtzERm0oXDZNE0E+PKJ6ryg==}
+    engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
+    peerDependencies:
+      svelte: ^3.37.0 || ^4.0.0
+    peerDependenciesMeta:
+      svelte:
+        optional: true
+    dependencies:
+      eslint-scope: 7.2.2
+      eslint-visitor-keys: 3.4.3
+      espree: 9.6.1
+      postcss: 8.4.29
+      postcss-scss: 4.0.8(postcss@8.4.29)
+      svelte: 4.2.0
+    dev: true
+
   /svelte-hmr@0.15.3(svelte@4.2.0):
     resolution: {integrity: sha512-41snaPswvSf8TJUhlkoJBekRrABDXDMdpNpT2tfHIv4JuhgvHqLMhEPGtaQn0BmbNSTkuz2Ed20DF2eHw0SmBQ==}
     engines: {node: ^12.20 || ^14.13.1 || >= 16}
@@ -3245,6 +3322,7 @@ packages:
 
   /tslib@2.6.2:
     resolution: {integrity: sha512-AEYxH93jGFPn/a2iVAwW87VuUIkR1FVUKB77NwMF7nBTDkDrrT/Hpt/IrCJ0QXhW27jTBDcf5ZY7w6RiqTMw2Q==}
+    dev: true
 
   /type-check@0.4.0:
     resolution: {integrity: sha512-XleUoc9uwGXqjWwXaUTZAmzMcFZ5858QA2vvx1Ur5xIcixXIP+8LnFDgRplU30us6teqdlskFfu+ae4K79Ooew==}
@@ -3520,6 +3598,11 @@ packages:
 
   /yallist@4.0.0:
     resolution: {integrity: sha512-3wdGidZyq5PB084XLES5TpOSRA3wjXAlIWMhum2kRcv/41Sn2emQ0dycQW4uZXLejwKvg6EsvbdlVL+FYEct7A==}
+    dev: true
+
+  /yaml@1.10.2:
+    resolution: {integrity: sha512-r3vXyErRCYJ7wg28yvBY5VSoAF8ZvlcW9/BwUzEtUsjvX/DKs24dIkuwjtuprwJJHsbyUbLApepYTR1BN4uHrg==}
+    engines: {node: '>= 6'}
     dev: true
 
   /yaml@2.3.2:

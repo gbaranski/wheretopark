@@ -12,11 +12,15 @@
 				"test": "vitest",
 				"lint": "prettier --plugin-search-dir . --check . && eslint .",
 				"format": "prettier --plugin-search-dir . --write .",
-				"ios": "vite build && cap sync && cap run ios --target 386D2304-3B45-4A74-A2ED-209FC23DCBF6"
+				"ios:build": "vite build && cap sync",
+				"ios:run": "vite build && cap sync && cap run ios --target 386D2304-3B45-4A74-A2ED-209FC23DCBF6"
 		},
 		"devDependencies": {
+				"@capacitor/android": "^5.3.0",
 				"@capacitor/cli": "^5.3.0",
 				"@capacitor/core": "^5.3.0",
+				"@capacitor/geolocation": "^5.0.6",
+				"@capacitor/ios": "^5.3.0",
 				"@mapbox/search-js-core": "1.0.0-beta.17",
 				"@mapbox/search-js-web": "1.0.0-beta.17",
 				"@sveltejs/adapter-cloudflare": "^2.3.2",
@@ -33,8 +37,7 @@
 				"dayjs": "^1.11.9",
 				"eslint": "^8.47.0",
 				"eslint-config-prettier": "^9.0.0",
-				"eslint-plugin-svelte3": "^4.0.0",
-				"flag-icons": "^6.11.0",
+				"eslint-plugin-svelte": "^2.33.1",
 				"geojson": "^0.5.0",
 				"haversine": "^1.1.1",
 				"mailto-link": "^2.0.0",
@@ -56,9 +59,5 @@
 				"typescript": "^5.1.6",
 				"vite": "^4.4.9",
 				"vitest": "^0.34.3"
-		},
-		"dependencies": {
-				"@capacitor/android": "^5.3.0",
-				"@capacitor/ios": "^5.3.0"
 		}
 }
