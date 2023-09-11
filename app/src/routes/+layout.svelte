@@ -1,7 +1,7 @@
 <script>
-	import '$/app.css';
-	import Logo from '$components/Logo.svelte';
-	import Map from '$components/Map.svelte';
+	import '../app.css';
+	import Logo from '$lib/components/Logo.svelte';
+	import Map from '$lib/components/Map.svelte';
 </script>
 
 <svelte:head>

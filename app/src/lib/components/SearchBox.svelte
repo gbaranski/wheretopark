@@ -3,7 +3,7 @@
 	import { onMount } from 'svelte';
     import type { SearchBoxSuggestion } from '@mapbox/search-js-core/dist/searchbox/types'
 	import { currentMap } from '$lib/store';
-	import type { ChangeEventHandler, FormEventHandler } from 'svelte/elements';
+	import type { FormEventHandler } from 'svelte/elements';
 
 	// function after input change, with applied debounce mechanism
 	let searchFor: (input: string) => Promise<void>;

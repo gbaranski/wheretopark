@@ -1,5 +1,5 @@
 <script lang="ts">
-	import SearchBox from '$components/SearchBox.svelte';
+	import SearchBox from '$lib/components/SearchBox.svelte';
 	import { allFeatures } from '$lib/parkingLot';
 	import { searchFilters } from '$lib/store';
 	import { capitalizeFirstLetter } from '$lib/utils';

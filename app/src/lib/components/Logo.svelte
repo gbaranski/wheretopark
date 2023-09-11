@@ -1,14 +1,7 @@
 <script>
-	import { isLoading } from '$/lib/store';
-	import logo from '../../../svelte/logo.png';
+	import { isLoading } from '$lib/store';
+	import logo from '../../../../svelte/logo.png';
 </script>
-
-<a href="/" class="btn btn-ghost normal-case text-xl">
-	<span class="font-mono font-bold text-xl">
-		<span class="text-secondary">where</span>
-		<span class="text-secondary">park</span>
-	</span>
-</a>
 
 <a href="/" class="btn btn-ghost normal-case text-xl h-16">
 	<img src={logo} alt="where to park icon" class="h-12 m-1" />
@@ -16,7 +9,7 @@
 		<span class="text-primary"> where </span>
 
 		{#if $isLoading}
-			<span class="loading loading-bars loading-md text-primary align-top"></span>
+			<span class="loading loading-bars loading-md text-success align-top"></span>
 		{:else}
 			<span class="text-success text-opacity-80"> to </span>
 		{/if}

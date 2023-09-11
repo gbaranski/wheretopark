@@ -9,7 +9,7 @@
 		weekdays
 	} from '$lib/utils';
 	import Markdown from 'svelte-markdown';
-	import ResourceIcon from '$components/ResourceIcon.svelte';
+	import ResourceIcon from '$lib/components/ResourceIcon.svelte';
 
 	export let data: { parkingLot: ParkingLot };
 	$: parkingLot = data.parkingLot;

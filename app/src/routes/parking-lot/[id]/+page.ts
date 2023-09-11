@@ -1,6 +1,6 @@
-import type { ParkingLot } from "$/lib/parkingLot";
+import type { ParkingLot } from "$lib/parkingLot";
 import { parkingLots } from "$lib/store";
-import type { PageLoad } from "../../app/parking-lot/[id]/$types";
+import type { PageLoad } from "./$types";
 
 export const ssr = false;
 export const prerender = false;

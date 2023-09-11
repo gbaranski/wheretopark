@@ -10,7 +10,7 @@
 	import { goto } from '$app/navigation';
 	import MapMarker from './MapMarker.svelte';
 	import 'mapbox-gl/dist/mapbox-gl.css';
-	import { SpotType, type ID, ParkingLot, Status, Feature } from '$lib/parkingLot';
+	import { SpotType, type ID, ParkingLot, Feature } from '$lib/parkingLot';
 
 	onMount(async () => {
 		const mapboxgl = await import('mapbox-gl');
