@@ -1,7 +1,9 @@
 <script>
-    import "../app.css";
+	import '../app.css';
 	import Logo from '$lib/Logo.svelte';
 	import NavbarMenu from '$lib/NavbarMenu.svelte';
+	import { serializeSchema } from '$lib/utils';
+	import { frequentlyAskedQuestions, gregoryBaranski, organisationSchema, softwareApplication } from '$lib/schemas';
 </script>
 
 <svelte:head>
@@ -16,6 +18,11 @@
 		content="List of parking lots in Gdańsk, Sopot and Gdynia, with prices, opening hours and it's availability of parking spots."
 	/>
 	<meta name="keywords" content="Parking Lot, Smart City, Gdańsk, Gdynia, Sopot, Tricity" />
+
+	{@html serializeSchema(softwareApplication)}
+	{@html serializeSchema(frequentlyAskedQuestions)}
+	{@html serializeSchema(organisationSchema)}
+	{@html serializeSchema(gregoryBaranski)}
 </svelte:head>
 
 <div class="navbar absolute z-30 bg-base-100">
@@ -63,5 +70,5 @@
 </div>
 
 <div class="pt-[4.5rem] w-screen h-screen flex flex-col lg:flex-row">
-	<slot/>
+	<slot />
 </div>
