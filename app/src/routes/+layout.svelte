@@ -2,6 +2,9 @@
 	import '../app.css';
 	import Logo from '$lib/components/Logo.svelte';
 	import Map from '$lib/components/Map.svelte';
+	import { Capacitor } from '@capacitor/core';
+
+	const isNative = Capacitor.isNativePlatform();
 </script>
 
 <svelte:head>
@@ -25,9 +28,11 @@
 	<div
 		class="px-5 py-3 h-1/3 lg:overflow-y-scroll lg:h-full lg:w-7/12 xl:w-5/12 2xl:w-4/12 lg:order-1"
 	>
-		<div class="pb-3 text-center">
-			<Logo />
-		</div>
+		{#if !isNative}
+			<div class="pb-3 text-center">
+				<Logo />
+			</div>
+		{/if}
 		<slot />
 	</div>
 </div>
