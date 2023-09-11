@@ -28,6 +28,7 @@ import {
   Geolocation as NativeGeolocation,
   type Position as NativePosition,
 } from "@capacitor/geolocation";
+import type { Thing, WithContext } from "schema-dts";
 
 dayjs.extend(localeData);
 dayjs.extend(relativeTime);
@@ -46,9 +47,9 @@ export const getWeekday = (): number => {
   return dayjs().day();
 };
 
-export const googleMapsLink = (geometry: GeoJSON.Point) => {
+export const googleMapsLink = (geometry: GeoJSON.Point): URL => {
   const [longitude, latitude] = geometry.coordinates;
-  return `https://google.com/maps/place/${latitude},${longitude}`;
+  return new URL(`https://google.com/maps/place/${latitude},${longitude}`);
 };
 
 export const distanceBetweenPoints = (a: GeoJSON.Point, b: GeoJSON.Point) => {
@@ -116,3 +117,12 @@ export const nativeGeolocation: Geolocation = {
     return 1;
   },
 };
+
+
+export const serializeSchema = <T extends Thing>(thing: WithContext<T>): string => {
+  return `<script type="application/ld+json">${JSON.stringify(
+    thing,
+    null,
+    2
+  )}</script>`
+}

@@ -1,11 +1,12 @@
 <script lang="ts">
-	import { currentMap } from '$lib/store';
-	import { SpotType, type ParkingLot } from '$lib/parkingLot';
+	import { currentMap, parkingLots } from '$lib/store';
+	import { ParkingLot, SpotType } from '$lib/parkingLot';
 	import {
 		capitalizeFirstLetter,
 		getWeekday,
 		googleMapsLink,
 		humanizeDuration,
+		serializeSchema,
 		weekdays
 	} from '$lib/utils';
 	import Markdown from 'svelte-markdown';
@@ -51,18 +52,27 @@
 	};
 
 	let isSharing = false;
+	
+	$: serializedSchema = serializeSchema(parkingLot.schema());
 </script>
 
 <svelte:head>
 	<title>Parking {parkingLot.name.replace('Parking', '')}</title>
 	<meta
 		name="description"
-		content="Name: {parkingLot.name}, Address: {parkingLot.address}, Category: {parkingLot.category()}, Available spots: {parkingLot.availableSpotsFor(SpotType.car)}, Total spots: {parkingLot.totalSpotsFor(SpotType.car)}, Last updated: {parkingLot.lastUpdated.fromNow()}. Hours: {status}"
+		content="Name: {parkingLot.name}, Address: {parkingLot.address}, Category: {parkingLot.category()}, Available spots: {parkingLot.availableSpotsFor(
+			SpotType.car
+		)}, Total spots: {parkingLot.totalSpotsFor(
+			SpotType.car
+		)}, Last updated: {parkingLot.lastUpdated.fromNow()}. Hours: {status}"
 	/>
 	<meta
 		name="keywords"
 		content="{parkingLot.name}, {parkingLot.address}, Parking Lot, Occupancy, Real-time"
 	/>
+	{#if serializedSchema}
+		{@html serializedSchema}
+	{/if}
 </svelte:head>
 
 <div class="flex flex-row justify-between">
@@ -88,7 +98,7 @@
 <div class="join w-full">
 	<a
 		class="btn btn-primary rounded-md w-2/3"
-		href={googleMapsLink(parkingLot.geometry)}
+		href={googleMapsLink(parkingLot.geometry).toString()}
 		target="_blank"
 	>
 		<svg

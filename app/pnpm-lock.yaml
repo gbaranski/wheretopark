@@ -95,6 +95,9 @@ devDependencies:
   prettier-plugin-svelte:
     specifier: ^3.0.3
     version: 3.0.3(prettier@3.0.2)(svelte@4.2.0)
+  schema-dts:
+    specifier: ^1.1.2
+    version: 1.1.2(typescript@5.1.6)
   select-madu:
     specifier: ^2.2.0
     version: 2.2.0
@@ -2864,6 +2867,14 @@ packages:
 
   /sax@1.2.4:
     resolution: {integrity: sha512-NqVDv9TpANUjFm0N8uM5GxL36UgKi9/atZw+x7YFnQ8ckwFGKrl4xX4yWtrey3UJm5nP1kUbnYgLopqWNSRhWw==}
+    dev: true
+
+  /schema-dts@1.1.2(typescript@5.1.6):
+    resolution: {integrity: sha512-MpNwH0dZJHinVxk9bT8XUdjKTxMYrA5bLtrrGmFA6PTLwlOKnhi67XoRd6/ty+Djt6ZC0slR57qFhZDNMI6DhQ==}
+    peerDependencies:
+      typescript: '>=4.1.0'
+    dependencies:
+      typescript: 5.1.6
     dev: true
 
   /select-madu@2.2.0:

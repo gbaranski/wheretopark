@@ -1,6 +1,8 @@
 import OpeningHours, { type argument_hash } from "opening_hours";
 import dayjs, { Dayjs } from "dayjs";
 import mailtoLink from "mailto-link";
+import { googleMapsLink } from "./utils";
+import type { ParkingFacility, WithContext } from "schema-dts";
 
 export type Coordinate = {
   latitude: number;
@@ -30,7 +32,7 @@ export class Status {
   public static closed = new Status("Closed");
   public static opensSoon = new Status("Opens soon");
   public static closesSoon = new Status("Closes soon");
-  
+
   isOpen() {
     return this.text === Status.open.text;
   }
@@ -38,7 +40,7 @@ export class Status {
   isClosed() {
     return this.text === Status.closed.text;
   }
-  
+
   isOpeningSoon() {
     return this.text === Status.opensSoon.text;
   }
@@ -47,11 +49,10 @@ export class Status {
     return this.text === Status.closesSoon.text;
   }
 
-  
-  withComment(comment: string): Status & {comment: string} {
+  withComment(comment: string): Status & { comment: string } {
     return Object.assign(Object.create(Status.prototype), this, { comment });
   }
-  
+
   color(): string {
     switch (this.text) {
       case Status.open.text:
@@ -88,7 +89,7 @@ export class Status {
 //       })
 //       .filter((v) => v != undefined);
 //     const map = Object.fromEntries(array);
-    
+
 //     return SpotsMap(Object.fromEntries(map));
 //   }
 // }
@@ -146,7 +147,12 @@ export enum Feature {
   GUARDED = "GUARDED",
 }
 
-export const allFeatures = [Feature.UNCOVERED, Feature.COVERED, Feature.UNDERGROUND, Feature.GUARDED];
+export const allFeatures = [
+  Feature.UNCOVERED,
+  Feature.COVERED,
+  Feature.UNDERGROUND,
+  Feature.GUARDED,
+];
 
 export enum PaymentMethod {
   CASH = "CASH",
@@ -208,11 +214,11 @@ export class ParkingLot {
       json.metadata.comment,
       json.metadata.currency,
       json.metadata.timezone,
-      json.metadata.rules.map((r: Record<string, any>): Rule => ({
+      json.metadata.rules?.map((r: Record<string, any>): Rule => ({
         hours: r.hours,
         applies: r.applies?.map((s: string) => SpotType.fromCodename(s)),
         pricing: r.pricing,
-      })),
+      })) || [],
       dayjs(json.state.lastUpdated),
       json.state.availableSpots,
     );
@@ -248,6 +254,11 @@ export class ParkingLot {
     return "Unknown";
   }
 
+  openingHours(): string {
+    console.log(this.rules);
+    return this.rules.map((rule) => rule.hours).join(", ");
+  }
+
   rulesForDay(
     spotType: SpotType,
     day: number,
@@ -259,7 +270,7 @@ export class ParkingLot {
         rule.applies === undefined || rule.applies.includes(spotType)
       )
       .map((rule) => ({ rule, openingHours: new OpeningHours(rule.hours) }))
-      .filter(({ rule, openingHours }) => openingHours.getState(date))
+      .filter(({ openingHours }) => openingHours.getState(date))
       .map(({ rule, openingHours }) => {
         const matchingRuleIndex = openingHours.getMatchingRule(date);
         console.assert(matchingRuleIndex != undefined);
@@ -271,7 +282,7 @@ export class ParkingLot {
       });
   }
 
-  status(spotType: SpotType): Status & {comment: string} {
+  status(spotType: SpotType): Status & { comment: string } {
     const rules = this.rules.filter((rule) =>
       rule.applies === undefined || rule.applies.includes(spotType)
     );
@@ -358,9 +369,56 @@ export class ParkingLot {
     });
     return new URL(url);
   }
-  
+
   link(): URL {
     return new URL(`https://web.wheretopark.app/parking-lot/${this.id}`);
+  }
+
+  googleMapsLink(): URL {
+    return googleMapsLink(this.geometry);
+  }
+
+  // Checks if the parking lot is free sometimes
+  accessibleforFree(): boolean {
+    return this.rules.some((rule) =>
+      rule.pricing.some((pricing) => pricing.price === 0)
+    );
+  }
+
+  phoneNumber(): string | undefined {
+    const resource = this.resources.find((resource) =>
+      resource.protocol === "tel:"
+    );
+    return resource?.pathname;
+  }
+
+  schema(): WithContext<ParkingFacility> {
+    return {
+      "@context": "https://schema.org",
+      "@type": "ParkingFacility",
+      // inherited from https://schema.org/CivicStructure
+      openingHours: this.openingHours(),
+      // inherited from https://schema.org/Place
+      address: this.address,
+      geo: {
+        "@type": "GeoCoordinates",
+        latitude: this.geometry.coordinates[1],
+        longitude: this.geometry.coordinates[0],
+      },
+      hasMap: this.googleMapsLink().toString(),
+      isAccessibleForFree: this.accessibleforFree(),
+      isicV4: "6810",
+      maximumAttendeeCapacity: this.totalSpotsFor(SpotType.car),
+      publicAccess: true,
+      telephone: this.phoneNumber(),
+
+      // inherited from https://schema.org/Thing
+      description:
+        `${this.category()} parking lot in ${this.address}`,
+      identifier: this.id,
+      name: this.name,
+      url: this.link().toString(),
+    };
   }
 }
 
