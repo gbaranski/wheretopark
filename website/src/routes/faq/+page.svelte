@@ -17,7 +17,7 @@
 			</li>
 			<li>
 				<span class="font-bold">Web</span> app is available at
-				<a href="/app" target="_blank" class="link link-info"> https://wheretopark.app/web </a>.
+				<a href="https://web.wheretopark.app" target="_blank" class="link link-info"> https://web.wheretopark.app </a>.
 			</li>
 			<li>
 				<span class="font-bold">Android</span> app will

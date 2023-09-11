@@ -21,26 +21,33 @@
 </script>
 
 <div class="flex flex-col text-center w-full pt-24 p-12">
-	<h1 class="font-extrabold text-5xl lg:text-7xl">
-		Where <span class="text-primary">To</span> Park
-	</h1>
-	<div class="self-center divider w-32" />
-	<h2 class="font-regular text-lg lg:text-xl">
-		With the help of our AI we'll find you an available parking spot nearby!
+	<div class="flex items-center justify-center">
+		<div class="w-max">
+			<h1
+				class="animate-typing overflow-hidden whitespace-nowrap border-r-4 border-r-secondary pr-5 text-2xl lg:text-5xl font-extrabold lg:leading-[4rem]"
+			>
+				Your parking assistant &nbsp;
+			</h1>
+		</div>
+	</div>
+	<h2 class="font-regular text-lg lg:text-xl pt-2">
+		With the help of our AI we'll find you <b>an available</b> parking spot nearby!
 	</h2>
 	<br />
-	<a
-		href="https://apps.apple.com/us/app/where-to-park/id6444453582?itsct=apps_box_badge&amp;itscg=30200"
-		class="block overflow-hidden self-center"
-		><img
-			src="https://tools.applemediaservices.com/api/badges/download-on-the-app-store/white/en-us?size=250x83&amp;releaseDate=1668988800&h=a0d7d9ddd291f5ab79945e444e83a9f9"
-			alt="Download on the App Store"
-			class="w-48"
-		/></a
-	>
+	<div>
+		<a
+			href="https://apps.apple.com/us/app/where-to-park/id6444453582?itsct=apps_box_badge&amp;itscg=30200"
+			style="display: inline-block; overflow: hidden; border-radius: 13px; width: 250px; height: 83px;"
+			><img
+				src="https://tools.applemediaservices.com/api/badges/download-on-the-app-store/white/en-us?size=250x83&amp;releaseDate=1668988800"
+				alt="Download on the App Store"
+				style="border-radius: 13px; width: 250px; height: 83px;"
+			/></a
+		>
+	</div>
 	<p class="pt-2">
 		or
-		<a class="link link-info" href="/app">open app in the browser</a>
+		<a class="link link-info" href="https://web.wheretopark.app">open app in the browser</a>
 	</p>
 
 	<div class="self-center divider w-96 p-12" />
@@ -69,15 +76,11 @@
 	<div class="self-center divider w-96 p-12" />
 	<div class="flex justify-evenly items-center flex-col-reverse lg:flex-row gap-8">
 		<div class="">
-			<h2 class="font-extrabold text-4xl">Powered by AI &nbsp;🤖</h2>
-			Our system automatically marks <span class="text-green-600">green</span> free spaces, and
+			<h2 class="font-extrabold text -4xl">Powered by AI &nbsp;🤖</h2>
+			Our system automatically marks<span class="text-green-600">green</span> free spaces, and
 			<span class="text-red-600">red</span> occupied.
 		</div>
-		<img
-			class="w-96 lg:w-2/3 rounded-lg"
-			src={exampleParkingLot}
-			alt="animation of our ai"
-		/>
+		<img class="w-96 lg:w-2/3 rounded-lg" src={exampleParkingLot} alt="animation of our ai" />
 	</div>
 
 	<div class="self-center divider w-96 p-12" />
