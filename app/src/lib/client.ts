@@ -64,6 +64,5 @@ export const updateParkingLots = async (fetch: typeof window.fetch) => {
     }
   });
   await Promise.all(promises);
-  console.log("finished");
   isLoading.set(false);
 };
