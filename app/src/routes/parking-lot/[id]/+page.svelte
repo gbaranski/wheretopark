@@ -57,9 +57,7 @@
 	<title>Parking {parkingLot.name.replace('Parking', '')}</title>
 	<meta
 		name="description"
-		content="Details of {capitalizeFirstLetter(
-			parkingLot.category()
-		)} parking lot in {parkingLot.name} at {parkingLot.address}, containing prices, opening hours and it's availability of parking spots."
+		content="Name: {parkingLot.name}, Address: {parkingLot.address}, Category: {parkingLot.category()}, Available spots: {parkingLot.availableSpotsFor(SpotType.car)}, Total spots: {parkingLot.totalSpotsFor(SpotType.car)}, Last updated: {parkingLot.lastUpdated.fromNow()}. Hours: {status}"
 	/>
 	<meta
 		name="keywords"

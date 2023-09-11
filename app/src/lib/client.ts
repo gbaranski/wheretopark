@@ -53,6 +53,21 @@ const getParkingLotFromProvider = async function* (
   }
 };
 
+export const getParkingLots = async (fetch: typeof window.fetch): Promise<Record<ID, ParkingLot>> => {
+  const allParkingLots: Record<ID, ParkingLot> = {};
+  const providers = await getProviders(fetch);
+  const promises = providers.map(async (provider) => {
+    const providerParkingLots = getParkingLotFromProvider(fetch, provider);
+    for await (const parkingLots of providerParkingLots) {
+      Object.entries(parkingLots).forEach(([id, parkingLot]) => {
+        allParkingLots[id] = parkingLot;
+      });
+    }
+  });
+  await Promise.all(promises);
+  return allParkingLots;
+}
+
 export const updateParkingLots = async (fetch: typeof window.fetch) => {
   const providers = await getProviders(fetch);
   const promises = providers.map(async (provider) => {

@@ -358,6 +358,10 @@ export class ParkingLot {
     });
     return new URL(url);
   }
+  
+  link(): URL {
+    return new URL(`https://web.wheretopark.app/parking-lot/${this.id}`);
+  }
 }
 
 export type ID = string;

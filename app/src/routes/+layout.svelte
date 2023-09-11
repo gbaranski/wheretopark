@@ -2,23 +2,23 @@
 	import '../app.css';
 	import Logo from '$lib/components/Logo.svelte';
 	import Map from '$lib/components/Map.svelte';
-	import { Capacitor } from '@capacitor/core';
-
-	const isNative = Capacitor.isNativePlatform();
 </script>
 
 <svelte:head>
+	<!-- SEO -->
+	<title>Where To Park</title>
+	<meta
+		name="description"
+		content="Where To Park App with real-time availability of parking lots in Poland and Scotland. Provided with opening hours, prices and other useful information."
+	/>
+	<meta name="keywords" content="Parking Lot, Smart City, Gdańsk, Gdynia, Sopot, Warsaw, Warszawa, Poznań, Glasgow" />
+	<!-- SEO -->
+
 	<script
 		defer
 		data-domain="web.wheretopark.app"
 		src="https://plausible.gbaranski.com/js/plausible.js"
 	></script>
-	<title>Where To Park</title>
-	<meta
-		name="description"
-		content="List of parking lots in Gdańsk, Sopot and Gdynia, with prices, opening hours and it's availability of parking spots."
-	/>
-	<meta name="keywords" content="Parking Lot, Smart City, Gdańsk, Gdynia, Sopot, Tricity" />
 </svelte:head>
 
 <div class="absolute z-30 navbar bg-base-100 lg:hidden justify-center h-16">
