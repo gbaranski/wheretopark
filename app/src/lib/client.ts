@@ -1,8 +1,13 @@
 import { type ID, ParkingLot } from "./parkingLot";
 import { isLoading, parkingLots as parkingLotsStore } from "$lib/store";
 import { dev } from "$app/environment";
+import { Capacitor } from "@capacitor/core";
 
-const serverURL = dev ? "http://localhost:1234" : "https://api.wheretopark.app";
+const productionServer = "https://api.wheretopark.app";
+const developmentServer = "http://localhost:1234";
+const serverURL = dev
+  ? Capacitor.isNativePlatform() ? productionServer : developmentServer
+  : productionServer;
 
 type Provider = {
   name: string;
@@ -53,7 +58,9 @@ const getParkingLotFromProvider = async function* (
   }
 };
 
-export const getParkingLots = async (fetch: typeof window.fetch): Promise<Record<ID, ParkingLot>> => {
+export const getParkingLots = async (
+  fetch: typeof window.fetch,
+): Promise<Record<ID, ParkingLot>> => {
   const allParkingLots: Record<ID, ParkingLot> = {};
   const providers = await getProviders(fetch);
   const promises = providers.map(async (provider) => {
@@ -66,7 +73,7 @@ export const getParkingLots = async (fetch: typeof window.fetch): Promise<Record
   });
   await Promise.all(promises);
   return allParkingLots;
-}
+};
 
 export const updateParkingLots = async (fetch: typeof window.fetch) => {
   const providers = await getProviders(fetch);
