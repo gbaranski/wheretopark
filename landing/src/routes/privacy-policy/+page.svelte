@@ -1,0 +1,51 @@
+<svelte:head>
+	<title>Privacy Policy</title>
+</svelte:head>
+
+<div class="container mx-auto py-10 px-4">
+	<h1 class="text-3xl font-semibold mb-6">Privacy Policy</h1>
+	<p class="mb-4">Last Updated: 13.09.2023</p>
+
+	<p class="mb-4">
+		Your privacy is important to us. This Privacy Policy explains how we collect, use, disclose, and
+		safeguard your information when you use our mobile application (the "App").
+	</p>
+
+	<h2 class="text-2xl font-semibold mt-6 mb-4">Information We Collect</h2>
+	<p class="mb-4">We may collect the following types of information:</p>
+	<ul class="list-disc ml-6 mb-4">
+		<li>Geolocation data to provide location-based services on the map.</li>
+		<!-- Add other types of data you collect -->
+	</ul>
+
+	<h2 class="text-2xl font-semibold mt-6 mb-4">How We Use Your Information</h2>
+	<p class="mb-4">We may use the information we collect for various purposes, including:</p>
+	<ul class="list-disc ml-6 mb-4">
+		<li>Providing and improving our services.</li>
+		<li>Customizing content and features.</li>
+		<!-- Add other purposes for which you use the data -->
+	</ul>
+
+	<h2 class="text-2xl font-semibold mt-6 mb-4">Disclosure of Your Information</h2>
+	<p class="mb-4">We may share your information with:</p>
+	<ul class="list-disc ml-6 mb-4">
+		<li>Third-party service providers to help us operate and improve our services.</li>
+		<!-- Add other parties with whom you share data -->
+	</ul>
+
+	<h2 class="text-2xl font-semibold mt-6 mb-4">Security</h2>
+	<p class="mb-4">
+		We take reasonable measures to protect your information from unauthorized access or disclosure.
+	</p>
+
+	<h2 class="text-2xl font-semibold mt-6 mb-4">Changes to This Privacy Policy</h2>
+	<p class="mb-4">
+		We may update our Privacy Policy from time to time. Any changes will be posted on this page, and
+		the date of the latest revision will be indicated at the top.
+	</p>
+
+	<h2 class="text-2xl font-semibold mt-6 mb-4">Contact Us</h2>
+	<p class="pb-10">
+		If you have any questions or concerns about our Privacy Policy, please contact us at me@gbaranski.com.
+	</p>
+</div>
