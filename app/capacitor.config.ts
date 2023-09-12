@@ -5,7 +5,15 @@ const config: CapacitorConfig = {
   appName: 'Where To Park',
   webDir: 'build',
   server: {
-    androidScheme: 'https'
+    androidScheme: 'https',
+    url: "http://192.168.1.2:5173",
+    cleartext: true,
+  },
+  backgroundColor: "#ffffff",
+  ios: {
+    backgroundColor: "#ffffff",
+    contentInset: "always",
+    scrollEnabled: true,
   }
 };
 
