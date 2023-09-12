@@ -9,7 +9,7 @@
 <svelte:head>
 	<script
 		defer
-		data-domain="web.wheretopark.app"
+		data-domain="wheretopark.app"
 		src="https://plausible.gbaranski.com/js/plausible.js"
 	></script>
 	<title>Where To Park</title>
