@@ -10,7 +10,8 @@
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"lint": "prettier --plugin-search-dir . --check . && eslint .",
 		"format": "prettier --plugin-search-dir . --write .",
-		"deploy:cloudflare": "vite build && wrangler pages deploy --project-name wheretopark-landing build"
+		"deploy:cloudflare": "vite build && wrangler pages deploy --branch production --project-name wheretopark-landing build",
+		"devploy:cloudflare": "vite build && wrangler pages deploy --branch preview --project-name wheretopark-landing build"
 	},
 	"devDependencies": {
 		"@sveltejs/adapter-static": "^2.0.3",
