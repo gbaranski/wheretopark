@@ -1,8 +1,11 @@
 import type { ParkingLot } from "$lib/parkingLot";
 import { parkingLots } from "$lib/store";
 import type { PageLoad } from "./$types";
+import { building } from '$app/environment';
 
-export const ssr = false;
+
+const isCapacitor = building && process.env.CAPACITOR == "true";
+export const ssr = isCapacitor ? false : true;
 export const prerender = false;
 
 const waitForParkingLot = (id: string): Promise<ParkingLot> => new Promise((resolve) => {
