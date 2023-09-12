@@ -11,7 +11,10 @@
 		name="description"
 		content="Where To Park App with real-time availability of parking lots in Poland and Scotland. Provided with opening hours, prices and other useful information."
 	/>
-	<meta name="keywords" content="Parking Lot, Smart City, Gdańsk, Gdynia, Sopot, Warsaw, Warszawa, Poznań, Glasgow" />
+	<meta
+		name="keywords"
+		content="Parking Lot, Smart City, Gdańsk, Gdynia, Sopot, Warsaw, Warszawa, Poznań, Glasgow"
+	/>
 	<!-- SEO -->
 
 	<script
@@ -21,20 +24,28 @@
 	></script>
 </svelte:head>
 
-<div class="absolute z-30 navbar bg-base-100 lg:hidden justify-center h-16">
-	<Logo/>
+<div class="safe-area-padding">
+	<div class="absolute z-30 navbar bg-base-100 lg:hidden justify-center h-16">
+		<Logo />
+	</div>
+
+	<div class="w-screen h-screen flex flex-col lg:flex-row max-lg:pt-16">
+		<div class="w-full h-full lg:order-2">
+			<Map />
+		</div>
+		<div
+			class="px-5 py-3 h-1/3 lg:overflow-y-scroll lg:h-full lg:w-7/12 xl:w-5/12 2xl:w-4/12 lg:order-1"
+		>
+			<div class="pb-3 text-center max-lg:hidden">
+				<Logo />
+			</div>
+			<slot />
+		</div>
+	</div>
 </div>
 
-<div class="w-screen h-screen flex flex-col lg:flex-row max-lg:pt-16">
-	<div class="w-full h-full lg:order-2">
-		<Map />
-	</div>
-	<div
-		class="px-5 py-3 h-1/3 lg:overflow-y-scroll lg:h-full lg:w-7/12 xl:w-5/12 2xl:w-4/12 lg:order-1"
-	>
-		<div class="pb-3 text-center max-lg:hidden">
-			<Logo />
-		</div>
-		<slot />
-	</div>
-</div>
+<style>
+	.safe-area-padding {
+		margin-top: env(safe-area-inset-top);
+	}
+</style>
