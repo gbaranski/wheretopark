@@ -1,6 +1,5 @@
-// import adapter from '@sveltejs/adapter-cloudflare';
+import cloudflareAdapter from '@sveltejs/adapter-cloudflare';
 import staticAdapter from '@sveltejs/adapter-static';
-import nodeAdapter from '@sveltejs/adapter-node';
 import { vitePreprocess } from '@sveltejs/kit/vite';
 
 const isCapacitor = process.env.CAPACITOR == "true";
@@ -18,7 +17,7 @@ const config = {
 			fallback: 'index.html',
 			precompress: false,
 			strict: true
-		}) : nodeAdapter(),
+		}) : cloudflareAdapter(),
 	}
 };
 
