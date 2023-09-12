@@ -1,2 +1,4 @@
 User-agent: *
-Disallow: 
+Allow: /
+
+Sitemap: https://web.wheretopark.app/sitemap.xml
