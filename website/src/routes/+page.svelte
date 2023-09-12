@@ -51,24 +51,41 @@
 	</p>
 
 	<div class="self-center divider w-96 p-12" />
-	<div class="flex justify-evenly items-center flex-col lg:flex-row">
-		<h2 class="font-extrabold text-3xl">What problem are we solving?</h2>
-		<div class="divider self-center w-8 lg:hidden" />
-		<div>
-			<h2 class="font-extrabold text-5xl text-info">
-				<span use:inview on:inview_enter={onCounterVisible}>{counter}</span> minutes
-			</h2>
-			<p>
-				The average amount of <span class="font-bold">time wasted</span> each time you want to park.
-			</p>
+	<div class="flex justify-evenly items-center flex-col">
+		<h2 class="font-extrabold text-3xl pb-5">What problem are we solving?</h2>
+		<div class="flex justify-evenly flex-row flex-wrap gap-10">
+			<div>
+				<h2 class="font-extrabold text-5xl text-info">
+					<span use:inview on:inview_enter={onCounterVisible}>{counter}</span> minutes
+				</h2>
+				<p>
+					Average <span class="font-bold">time wasted</span> each time you want to park.
+				</p>
+			</div>
+			<div>
+				<h2 class="font-extrabold text-5xl text-warning">
+					93.7%
+				</h2>
+				<p>
+					Of drivers <b>circulate around</b> parking lots
+				</p>
+			</div>
+			<div>
+				<h2 class="font-extrabold text-5xl text-error">
+					730 tons of CO<sub>2</sub>
+				</h2>
+				<p>
+					Annual contribution to <b>air pollution</b> in Los Angeles alone.
+				</p>
+			</div>
 		</div>
 	</div>
 
 	<div class="self-center divider w-96 p-12" />
 	<div class="flex justify-evenly items-center flex-col lg:flex-row-reverse gap-8">
 		<div class="">
-			<h2 class="font-extrabold text-4xl">Our solution</h2>
-			<h3 class="">Easy access to information about available parking lots nearby</h3>
+			<h2 class="font-extrabold text-5xl">Our solution</h2>
+			<h3 class="text-xl">Easy access to information about available parking lots nearby</h3>
 		</div>
 		<img class="w-96 lg:w-2/3 rounded-2xl" src={appPreview} alt="preview of the app" width="384px" height="207px" />
 	</div>
@@ -76,7 +93,7 @@
 	<div class="self-center divider w-96 p-12" />
 	<div class="flex justify-evenly items-center flex-col-reverse lg:flex-row gap-8">
 		<div class="">
-			<h2 class="font-extrabold text -4xl">Powered by AI &nbsp;🤖</h2>
+			<h2 class="font-extrabold text-4xl">Powered by AI &nbsp;🤖</h2>
 			Our system automatically marks&nbsp;<span class="text-green-600">green</span> free spaces, and
 			<span class="text-red-600">red</span> occupied.
 		</div>
