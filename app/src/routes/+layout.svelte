@@ -2,6 +2,18 @@
 	import '../app.css';
 	import Logo from '$lib/components/Logo.svelte';
 	import Map from '$lib/components/Map.svelte';
+	import { App } from '@capacitor/app';
+	import { goto } from '$app/navigation';
+	import { onMount } from 'svelte';
+	import { Capacitor } from '@capacitor/core';
+
+	onMount(() => {
+		if (Capacitor.isNativePlatform()) {
+			App.addListener('appUrlOpen', (data) => {
+				goto(data.url);
+			});
+		}
+	});
 </script>
 
 <svelte:head>
@@ -40,7 +52,7 @@
 				<Logo />
 			</div>
 			<slot />
-			<div class="pb-safe"/>
+			<div class="pb-safe" />
 		</div>
 	</div>
 </div>
