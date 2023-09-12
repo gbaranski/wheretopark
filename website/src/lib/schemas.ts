@@ -33,7 +33,7 @@ export const organisationSchema: WithContext<Organization> = {
   email: "contact@wheretopark.app",
   founder: gregoryBaranski,
   foundingDate: "2022-05-01",
-  logo: "https://wheretopark.app/logo.png",
+  logo: "https://wheretopark.app/logo.webp",
 
   name: "Where To Park",
   url: "https://wheretopark.app",
