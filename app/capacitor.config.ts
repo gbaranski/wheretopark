@@ -12,6 +12,9 @@ const config: CapacitorConfig = {
     cleartext: liveReload ? true : undefined,
   },
   backgroundColor: "#ffffff",
+  ios: {
+    allowsLinkPreview: false,
+  }
 };
 
 export default config;
