@@ -63,9 +63,7 @@
 				</p>
 			</div>
 			<div>
-				<h2 class="font-extrabold text-5xl text-warning">
-					93.7%
-				</h2>
+				<h2 class="font-extrabold text-5xl text-warning">93.7%</h2>
 				<p>
 					Of drivers <b>circulate around</b> parking lots
 				</p>
@@ -87,17 +85,35 @@
 			<h2 class="font-extrabold text-5xl">Our solution</h2>
 			<h3 class="text-xl">Easy access to information about available parking lots nearby</h3>
 		</div>
-		<img class="w-96 lg:w-2/3 rounded-2xl" src={appPreview} alt="preview of the app" width="384px" height="207px" />
+		<img
+			class="w-96 lg:w-2/3 rounded-2xl"
+			src={appPreview}
+			alt="preview of the app"
+			width="384px"
+			height="207px"
+		/>
 	</div>
 
 	<div class="self-center divider w-96 p-12" />
 	<div class="flex justify-evenly items-center flex-col-reverse lg:flex-row gap-8">
 		<div class="">
 			<h2 class="font-extrabold text-4xl">Powered by AI &nbsp;🤖</h2>
-			Our system automatically marks&nbsp;<span class="text-green-600">green</span> free spaces, and
-			<span class="text-red-600">red</span> occupied.
+			<h3 class="text-xl">
+				Our system automatically marks
+				<span class="text-green-600">green</span>
+				free spaces,
+				and 
+				<span class="text-red-600">red</span> 
+				occupied.
+			</h3>
 		</div>
-		<img class="w-96 lg:w-2/3 rounded-lg" src={exampleParkingLot} alt="animation of our ai" width="384px" height="216px"/>
+		<img
+			class="w-96 lg:w-2/3 rounded-lg"
+			src={exampleParkingLot}
+			alt="animation of our ai"
+			width="384px"
+			height="216px"
+		/>
 	</div>
 
 	<div class="self-center divider w-96 p-12" />
