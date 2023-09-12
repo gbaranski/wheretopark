@@ -72,6 +72,7 @@
 					marker.addTo(map);
 					currentMarkers.push(marker);
 				});
+			map.resize();
 		};
 		parkingLotsStore.subscribe((parkingLots) => updateMap(parkingLots, $searchFilters));
 		searchFilters.subscribe((filters) => updateMap($parkingLotsStore, filters));
