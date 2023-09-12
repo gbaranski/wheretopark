@@ -24,7 +24,7 @@
 	></script>
 </svelte:head>
 
-<div class="h-screen">
+<div class="h-screen pt-safe">
 	<div class="absolute z-30 navbar bg-base-100 lg:hidden justify-center h-16">
 		<Logo />
 	</div>
@@ -40,6 +40,16 @@
 				<Logo />
 			</div>
 			<slot />
+			<div class="pb-safe"/>
 		</div>
 	</div>
 </div>
+
+<style>
+	.pt-safe {
+		margin-top: env(safe-area-inset-top);
+	}
+	.pb-safe {
+		padding-bottom: env(safe-area-inset-bottom);
+	}
+</style>
