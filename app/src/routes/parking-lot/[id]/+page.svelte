@@ -77,7 +77,7 @@
 
 <div class="flex flex-row justify-between">
 	<h1 class="font-sans text-3xl font-extrabold">{parkingLot.name}</h1>
-	<a href="/" class="pt-1">
+	<a href="/" class="pt-1" data-sveltekit-noscroll>
 		<svg
 			xmlns="http://www.w3.org/2000/svg"
 			fill="none"

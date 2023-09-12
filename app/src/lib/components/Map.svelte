@@ -64,7 +64,7 @@
 					new MapMarker({ target: markerElement, props: { parkingLot } });
 					const marker = new mapboxgl.Marker(markerElement).setLngLat([longitude, latitude]);
 					marker.getElement().addEventListener('click', () => {
-						goto(`/parking-lot/${id}`);
+						goto(`/parking-lot/${id}`, { noScroll: true });
 					});
 					return marker;
 				})
