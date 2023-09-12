@@ -70,24 +70,30 @@
 			<h2 class="font-extrabold text-4xl">Our solution</h2>
 			<h3 class="">Easy access to information about available parking lots nearby</h3>
 		</div>
-		<img class="w-96 lg:w-2/3 rounded-2xl" src={appPreview} alt="preview of the app" />
+		<img class="w-96 lg:w-2/3 rounded-2xl" src={appPreview} alt="preview of the app" width="384px" height="207px" />
 	</div>
 
 	<div class="self-center divider w-96 p-12" />
 	<div class="flex justify-evenly items-center flex-col-reverse lg:flex-row gap-8">
 		<div class="">
 			<h2 class="font-extrabold text -4xl">Powered by AI &nbsp;🤖</h2>
-			Our system automatically marks<span class="text-green-600">green</span> free spaces, and
+			Our system automatically marks&nbsp;<span class="text-green-600">green</span> free spaces, and
 			<span class="text-red-600">red</span> occupied.
 		</div>
-		<img class="w-96 lg:w-2/3 rounded-lg" src={exampleParkingLot} alt="animation of our ai" />
+		<img class="w-96 lg:w-2/3 rounded-lg" src={exampleParkingLot} alt="animation of our ai" width="384px" height="216px"/>
 	</div>
 
 	<div class="self-center divider w-96 p-12" />
 	<h2 class="font-extrabold text-4xl">We have parkings lots in</h2>
 	<div class="pt-10 flex flex-row flex-wrap gap-16 justify-center">
 		{#each cities as city}
-			<img src={city.image} alt="{city} logo" class="w-32 object-scale-down" />
+			<img
+				src={city.image}
+				alt="{city} logo"
+				class="w-32 object-scale-down"
+				width="128px"
+				height="128px"
+			/>
 		{/each}
 	</div>
 
@@ -100,6 +106,8 @@
 					src={award.image}
 					alt="{new URL(award.link).hostname} logo"
 					class="h-32 object-scale-down pb-2"
+					width="128px"
+					height="128px"
 				/>
 				<span class="link link-secondary">{award.description}</span>
 			</a>
@@ -115,6 +123,8 @@
 					src={entry.image}
 					alt="{new URL(entry.link).hostname} logo"
 					class="h-32 object-scale-down"
+					height="128px"
+					width="128px"
 				/>
 			</a>
 		{/each}
