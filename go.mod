@@ -1,6 +1,8 @@
 module wheretopark
 
-go 1.18
+go 1.21
+
+toolchain go1.21.1
 
 require (
 	github.com/allegro/bigcache/v3 v3.1.0
