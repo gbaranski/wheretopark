@@ -52,7 +52,7 @@
 	};
 
 	let isSharing = false;
-	
+
 	$: serializedSchema = serializeSchema(parkingLot.schema());
 </script>
 
@@ -140,16 +140,16 @@
 		<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
 		<ul tabindex="0" class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52">
 			<li>
-				<label class="swap justify-start">
+				<label class="swap btn btn-ghost justify-start">
 					<input type="checkbox" value={isSharing} on:change={onShare} />
-					<span class="swap-off inline-flex gap-2">
+					<span class="swap-off inline-flex gap-3 items-center">
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
 							fill="none"
 							viewBox="0 0 24 24"
 							stroke-width="1.5"
 							stroke="currentColor"
-							class="w-5 h-5"
+							class="w-6 h-6"
 						>
 							<path
 								stroke-linecap="round"
@@ -165,7 +165,7 @@
 		</ul>
 	</div>
 </div>
-<div class="stats w-full ml-0 left-0 p-0">
+<div class="stats w-full ml-0 left-0">
 	<div class="stat">
 		<div class="stat-title text-xs font-mono font-semibold">AVAILABLE SPACES</div>
 		<div class="stat-value font-mono font-extrabold text-left justify-start">
