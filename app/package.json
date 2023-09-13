@@ -12,9 +12,14 @@
 				"test": "vitest",
 				"lint": "prettier --plugin-search-dir . --check . && eslint .",
 				"format": "prettier --plugin-search-dir . --write .",
+
 				"ios:build": "CAPACITOR=true vite build && cap sync",
 				"ios:run": "CAPACITOR=true vite build && cap sync && cap run ios",
-				"ios:dev": "LIVE_RELOAD=true cap copy && vite dev --host"
+				"ios:dev": "LIVE_RELOAD=true cap copy && vite dev --host",
+
+				"android:build": "CAPACITOR=true vite build && cap sync",
+				"android:run": "CAPACITOR=true vite build && cap sync && cap run android",
+				"android:dev": "LIVE_RELOAD=true cap copy && vite dev --host"
 		},
 		"devDependencies": {
 				"@capacitor/android": "^5.3.0",
