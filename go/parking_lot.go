@@ -80,7 +80,7 @@ func (d *Dimensions) Empty() bool {
 }
 
 type Metadata struct {
-	LastUpdated    time.Time               `json:"lastUpdated"`
+	LastUpdated    *time.Time              `json:"lastUpdated,omitempty"`
 	Name           string                  `json:"name"`
 	Address        string                  `json:"address"`
 	Geometry       *geojson.Geometry       `json:"geometry"`
@@ -124,10 +124,11 @@ func (m *Metadata) UnmarshalJSON(data []byte) error {
 	if aux.LastUpdated < time.DateOnly {
 		return fmt.Errorf("invalid date format: %s", aux.LastUpdated)
 	}
-	m.LastUpdated, err = time.Parse(time.DateOnly, aux.LastUpdated[:len(time.DateOnly)])
+	lastUpdated, err := time.Parse(time.DateOnly, aux.LastUpdated[:len(time.DateOnly)])
 	if err != nil {
 		return err
 	}
+	m.LastUpdated = &lastUpdated
 	m.Currency, err = currency.ParseISO(aux.Currency)
 	if err != nil {
 		return err

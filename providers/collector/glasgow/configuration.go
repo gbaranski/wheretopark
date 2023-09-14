@@ -338,7 +338,7 @@ func init() {
 		}
 
 		configuration.ParkingLots[k] = wheretopark.Metadata{
-			LastUpdated:    defaultLastUpdated,
+			LastUpdated:    &defaultLastUpdated,
 			Name:           v.Name,
 			Address:        v.Address,
 			Geometry:       &geojson.Geometry{},

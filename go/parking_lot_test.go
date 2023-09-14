@@ -15,7 +15,7 @@ import (
 var (
 	sampleParkingLot = wheretopark.ParkingLot{
 		Metadata: wheretopark.Metadata{
-			LastUpdated:    wheretopark.MustParseDate("2021-03-22"),
+			// LastUpdated:    wheretopark.MustParseDate("2021-03-22"),
 			Name:           "Galeria Bałtycka",
 			Address:        "ul. Dmowskiego",
 			Geometry:       geojson.NewPointGeometry([]float64{18.60024, 54.38268}),

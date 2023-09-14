@@ -563,7 +563,7 @@ W tym przypadku podstawą będzie niebieska naklejka na szybie pojazdu z symbole
 func init() {
 	for k, v := range configuration.ParkingLots {
 		configuration.ParkingLots[k] = wheretopark.Metadata{
-			LastUpdated:    defaultLastUpdated,
+			LastUpdated:    &defaultLastUpdated,
 			Name:           v.Name,
 			Address:        v.Address,
 			Geometry:       v.Geometry,

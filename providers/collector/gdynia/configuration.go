@@ -46,7 +46,7 @@ var configuration = Configuration{
 func init() {
 	for k, v := range configuration.ParkingLots {
 		configuration.ParkingLots[k] = wheretopark.Metadata{
-			LastUpdated:    defaultLastUpdated,
+			LastUpdated:    &defaultLastUpdated,
 			Name:           "",
 			Address:        "",
 			Geometry:       &geojson.Geometry{},
