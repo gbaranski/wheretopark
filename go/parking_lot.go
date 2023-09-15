@@ -50,7 +50,8 @@ type PaymentMethod = string
 type LanguageCode = string
 
 type PricingRule struct {
-	Duration  string          `json:"duration"`
+	Duration  string          `json:"duration"`        // ISO8601 Duration
+	Limit     string          `json:"limit,omitempty"` // ISO8601 Duration
 	Price     decimal.Decimal `json:"price"`
 	Repeating bool            `json:"repeating,omitempty"`
 }
@@ -105,12 +106,18 @@ type metadataJSON struct {
 }
 
 func (m Metadata) MarshalJSON() ([]byte, error) {
-	return json.Marshal(&metadataJSON{
-		metadataAlias: (*metadataAlias)(&m),
-		LastUpdated:   m.LastUpdated.Format(time.DateOnly),
-		Currency:      m.Currency.String(),
-		Timezone:      m.Timezone.String(),
-	})
+	var lastUpdated string
+	if m.LastUpdated != nil {
+		lastUpdated = m.LastUpdated.Format(time.DateOnly)
+	}
+	return json.Marshal(
+		&metadataJSON{
+			metadataAlias: (*metadataAlias)(&m),
+			LastUpdated:   lastUpdated,
+			Currency:      m.Currency.String(),
+			Timezone:      m.Timezone.String(),
+		},
+	)
 }
 
 func (m *Metadata) UnmarshalJSON(data []byte) error {
@@ -121,14 +128,16 @@ func (m *Metadata) UnmarshalJSON(data []byte) error {
 	if err != nil {
 		return err
 	}
-	if aux.LastUpdated < time.DateOnly {
-		return fmt.Errorf("invalid date format: %s", aux.LastUpdated)
+	if aux.LastUpdated > "" {
+		if aux.LastUpdated < time.DateOnly {
+			return fmt.Errorf("invalid date format: %s", aux.LastUpdated)
+		}
+		lastUpdated, err := time.Parse(time.DateOnly, aux.LastUpdated[:len(time.DateOnly)])
+		if err != nil {
+			return err
+		}
+		m.LastUpdated = &lastUpdated
 	}
-	lastUpdated, err := time.Parse(time.DateOnly, aux.LastUpdated[:len(time.DateOnly)])
-	if err != nil {
-		return err
-	}
-	m.LastUpdated = &lastUpdated
 	m.Currency, err = currency.ParseISO(aux.Currency)
 	if err != nil {
 		return err
@@ -203,7 +212,7 @@ func (p *ParkingLot) Validate() error {
 }
 
 func (m *Metadata) Validate() error {
-	if m.LastUpdated.Unix() == 0 {
+	if m.LastUpdated != nil && m.LastUpdated.Unix() == 0 {
 		return fmt.Errorf("lastUpdated must not be set to zero")
 	}
 	if m.Name == "" {

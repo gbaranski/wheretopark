@@ -18,9 +18,23 @@ func ExamineProvider(t *testing.T, provider Provider) {
 		t.Fatal(err)
 	}
 
-	assert.Equal(t, len(metadata), len(state))
 	assert.NotEmpty(t, metadata)
 	assert.NotEmpty(t, state)
+
+	for id := range metadata {
+		_, exists := state[id]
+		if !exists {
+			delete(metadata, id)
+		}
+	}
+	for id := range state {
+		_, exists := metadata[id]
+		if !exists {
+			delete(state, id)
+		}
+	}
+
+	assert.Equal(t, len(metadata), len(state))
 
 	for id, metadata := range metadata {
 		state := state[id]

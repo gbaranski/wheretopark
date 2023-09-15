@@ -10,6 +10,7 @@ import (
 	"wheretopark/providers/collector/gdansk"
 	"wheretopark/providers/collector/gdynia"
 	"wheretopark/providers/collector/glasgow"
+	"wheretopark/providers/collector/lacity"
 	"wheretopark/providers/collector/poznan"
 	"wheretopark/providers/collector/warsaw"
 
@@ -124,6 +125,7 @@ func main() {
 		mustCreateProvider(warsaw.NewProvider),
 		mustCreateProvider(poznan.NewProvider),
 		mustCreateProvider(glasgow.NewProvider),
+		mustCreateProvider(lacity.NewProvider),
 	}
 
 	cache, err := wheretopark.NewPluralCache()

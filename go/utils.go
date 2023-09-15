@@ -80,6 +80,18 @@ func ExtractStates(parkingLots map[ID]ParkingLot) map[ID]State {
 }
 
 func JoinMetadatasAndStates(metadatas map[ID]Metadata, states map[ID]State) (map[ID]ParkingLot, error) {
+	for id := range metadatas {
+		_, exists := states[id]
+		if !exists {
+			delete(metadatas, id)
+		}
+	}
+	for id := range states {
+		_, exists := metadatas[id]
+		if !exists {
+			delete(states, id)
+		}
+	}
 	if len(metadatas) != len(states) {
 		return nil, fmt.Errorf("metadatas and states must have the same length")
 	}
