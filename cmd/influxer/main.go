@@ -1,90 +1,74 @@
 package main
 
-import (
-	"context"
-	"fmt"
-	"net/url"
-	"os"
-	"time"
-	wheretopark "wheretopark/go"
+// type config struct {
+// 	DatabaseURL      string `env:"DATABASE_URL" envDefault:"ws://localhost:8000"`
+// 	DatabaseName     string `env:"DATABASE_NAME" envDefault:"development"`
+// 	DatabaseUser     string `env:"DATABASE_USER" envDefault:"root"`
+// 	DatabasePassword string `env:"DATABASE_PASSWORD" envDefault:"password"`
+// 	InfluxURL        string `env:"INFLUXDB_URL" envDefault:"http://localhost:8086"`
+// 	InfluxToken      string `env:"INFLUXDB_TOKEN"`
+// }
 
-	"github.com/caarlos0/env/v8"
-	influxdb2 "github.com/influxdata/influxdb-client-go/v2"
-	"github.com/influxdata/influxdb-client-go/v2/api"
+// func process(influx api.WriteAPIBlocking) error {
+// 	parkingLots, err := client.GetAllParkingLots()
+// 	if err != nil {
+// 		log.Fatal().Err(err).Msg("failed to fetch all parking lots")
+// 	}
 
-	"github.com/rs/zerolog"
-	"github.com/rs/zerolog/log"
-)
+// 	for id, parkingLot := range parkingLots {
+// 		point := influxdb2.NewPointWithMeasurement("parking_lot").
+// 			AddTag("id", id).
+// 			AddTag("name", parkingLot.Metadata.Name).
+// 			AddField("availableSpots", parkingLot.State.AvailableSpots["CAR"]).
+// 			AddField("totalSpots", parkingLot.Metadata.TotalSpots["CAR"]).
+// 			SetTime(parkingLot.State.LastUpdated)
 
-type config struct {
-	DatabaseURL      string `env:"DATABASE_URL" envDefault:"ws://localhost:8000"`
-	DatabaseName     string `env:"DATABASE_NAME" envDefault:"development"`
-	DatabaseUser     string `env:"DATABASE_USER" envDefault:"root"`
-	DatabasePassword string `env:"DATABASE_PASSWORD" envDefault:"password"`
-	InfluxURL        string `env:"INFLUXDB_URL" envDefault:"http://localhost:8086"`
-	InfluxToken      string `env:"INFLUXDB_TOKEN"`
-}
+// 		err := influx.WritePoint(context.Background(), point)
+// 		if err != nil {
+// 			return err
+// 		}
+// 	}
+// 	err = influx.Flush(context.Background())
+// 	if err != nil {
+// 		return fmt.Errorf("failed to flush: %w", err)
+// 	}
 
-func process(client *wheretopark.Client, influx api.WriteAPIBlocking) error {
-	parkingLots, err := client.GetAllParkingLots()
-	if err != nil {
-		log.Fatal().Err(err).Msg("failed to fetch all parking lots")
-	}
+// 	log.Info().Msgf("processed %d parking lots", len(parkingLots))
+// 	return nil
+// }
 
-	for id, parkingLot := range parkingLots {
-		point := influxdb2.NewPointWithMeasurement("parking_lot").
-			AddTag("id", id).
-			AddTag("name", parkingLot.Metadata.Name).
-			AddField("availableSpots", parkingLot.State.AvailableSpots["CAR"]).
-			AddField("totalSpots", parkingLot.Metadata.TotalSpots["CAR"]).
-			SetTime(parkingLot.State.LastUpdated)
+// func main() {
+// 	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
+// 	config := config{}
+// 	if err := env.Parse(&config); err != nil {
+// 		log.Fatal().Err(err).Send()
+// 	}
 
-		err := influx.WritePoint(context.Background(), point)
-		if err != nil {
-			return err
-		}
-	}
-	err = influx.Flush(context.Background())
-	if err != nil {
-		return fmt.Errorf("failed to flush: %w", err)
-	}
+// 	url, err := url.Parse(config.DatabaseURL)
+// 	if err != nil {
+// 		log.Fatal().Err(err).Msg("invalid database URL")
+// 	}
+// 	client, err := wheretopark.NewClient(url, "wheretopark", config.DatabaseName)
+// 	if err != nil {
+// 		log.Fatal().Err(err).Msg("failed to create database client")
+// 	}
+// 	defer client.Close()
+// 	err = client.SignInWithPassword(config.DatabaseUser, config.DatabasePassword)
+// 	if err != nil {
+// 		log.Fatal().Err(err).Msg("failed to sign in")
+// 	}
 
-	log.Info().Msgf("processed %d parking lots", len(parkingLots))
-	return nil
-}
+// 	influxClient := influxdb2.NewClient(config.InfluxURL, config.InfluxToken)
+// 	defer influxClient.Close()
+// 	writeAPI := influxClient.WriteAPIBlocking("wheretopark", config.DatabaseName)
+// 	writeAPI.EnableBatching()
 
-func main() {
-	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
-	config := config{}
-	if err := env.Parse(&config); err != nil {
-		log.Fatal().Err(err).Send()
-	}
+// 	for {
+// 		err := process(client, writeAPI)
+// 		if err != nil {
+// 			log.Err(err).Msg("failed to process")
+// 		}
+// 		time.Sleep(time.Minute)
+// 	}
 
-	url, err := url.Parse(config.DatabaseURL)
-	if err != nil {
-		log.Fatal().Err(err).Msg("invalid database URL")
-	}
-	client, err := wheretopark.NewClient(url, "wheretopark", config.DatabaseName)
-	if err != nil {
-		log.Fatal().Err(err).Msg("failed to create database client")
-	}
-	defer client.Close()
-	err = client.SignInWithPassword(config.DatabaseUser, config.DatabasePassword)
-	if err != nil {
-		log.Fatal().Err(err).Msg("failed to sign in")
-	}
-
-	influxClient := influxdb2.NewClient(config.InfluxURL, config.InfluxToken)
-	defer influxClient.Close()
-	writeAPI := influxClient.WriteAPIBlocking("wheretopark", config.DatabaseName)
-	writeAPI.EnableBatching()
-
-	for {
-		err := process(client, writeAPI)
-		if err != nil {
-			log.Err(err).Msg("failed to process")
-		}
-		time.Sleep(time.Minute)
-	}
-
-}
+// }

@@ -1,6 +1,7 @@
 package wheretopark_test
 
 import (
+	"encoding/json"
 	"testing"
 	wheretopark "wheretopark/go"
 
@@ -50,5 +51,17 @@ func TestSingularCache(t *testing.T) {
 	state = cache.GetState("abcdefg")
 	assert.NotNil(t, state)
 	equalJson[wheretopark.State](t, *state, sampleParkingLot.State, "state mismatch")
+}
+
+func equalJson[T any](t *testing.T, a T, b T, msg string) {
+	aJson, err := json.Marshal(a)
+	if err != nil {
+		t.Fatal(err)
+	}
+	bJson, err := json.Marshal(b)
+	if err != nil {
+		t.Fatal(err)
+	}
+	assert.Equal(t, aJson, bJson, msg)
 
 }
