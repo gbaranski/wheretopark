@@ -22,31 +22,32 @@ func RunProvider(p Provider, port uint) error {
 	}
 
 	r := httprouter.New()
-	// r.GET("/:id/parking-lots", func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	// 	identifier := ps.ByName("id")
-	// 	source := p.Sources()[identifier]
-	// 	ctx := log.With().Str("source", identifier).Logger().WithContext(context.TODO())
-	// 	parkingLots, err := source.ParkingLots(ctx)
-	// 	if err != nil {
-	// 		log.Error().Err(err).Str("identifier", identifier).Msg("get parking lots from source failure")
-	// 		w.WriteHeader(http.StatusInternalServerError)
-	// 		return
-	// 	}
+	r.GET("/parking-lots/:identifier", func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+		identifier := ps.ByName("identifier")
+		source := p.Sources()[identifier]
+		ctx := log.With().Str("source", identifier).Logger().WithContext(context.TODO())
+		parkingLots, err := source.ParkingLots(ctx)
+		if err != nil {
+			log.Error().Err(err).Str("identifier", identifier).Msg("get parking lots from source failure")
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
 
-	// 	json, err := json.Marshal(parkingLots)
-	// 	if err != nil {
-	// 		w.WriteHeader(http.StatusInternalServerError)
-	// 		log.Error().Err(err).Str("identifier", identifier).Msg("failed to marshal parking lots")
-	// 		return
-	// 	}
-	// 	_, err = w.Write(json)
-	// 	if err != nil {
-	// 		log.Error().Err(err).Str("identifier", identifier).Msg("failed to write response")
-	// 		return
-	// 	}
-	// })
+		json, err := json.Marshal(parkingLots)
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			log.Error().Err(err).Str("identifier", identifier).Msg("failed to marshal parking lots")
+			return
+		}
+		_, err = w.Write(json)
+		if err != nil {
+			log.Error().Err(err).Str("identifier", identifier).Msg("failed to write response")
+			return
+		}
+	})
 	r.GET("/parking-lots", func(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
 
 		var mu sync.Mutex
 		var wg sync.WaitGroup
@@ -81,7 +82,6 @@ func RunProvider(p Provider, port uint) error {
 			}(identifier, source)
 		}
 		wg.Wait()
-		w.WriteHeader(http.StatusOK)
 	})
 
 	log.Info().Msg(fmt.Sprintf("starting server on port %d", port))
