@@ -14,20 +14,20 @@ func TestCache(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	metadatas := cache.GetParkingLots("test")
-	assert.Nil(t, metadatas)
+	parkingLots := cache.GetParkingLots("test")
+	assert.Nil(t, parkingLots)
 
-	parkingLots := map[wheretopark.ID]wheretopark.ParkingLot{
+	sampleParkingLots := map[wheretopark.ID]wheretopark.ParkingLot{
 		sampleParkingLotID: sampleParkingLot,
 	}
-	err = cache.SetParkingLots("test", parkingLots)
+	err = cache.SetParkingLots("test", sampleParkingLots)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	parkingLots = cache.GetParkingLots("test")
-	assert.NotNil(t, parkingLots)
-	equalJson[wheretopark.ParkingLot](t, metadatas[sampleParkingLotID], sampleParkingLot, "parking lot mismatch")
+	assert.NotNil(t, sampleParkingLots)
+	equalJson[map[wheretopark.ID]wheretopark.ParkingLot](t, parkingLots, sampleParkingLots, "parking lot mismatch")
 }
 
 func equalJson[T any](t *testing.T, a T, b T, msg string) {
