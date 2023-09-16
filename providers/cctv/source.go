@@ -45,6 +45,10 @@ func (s *Source) State(ctx context.Context) (map[wheretopark.ID]wheretopark.Stat
 		}(id, camera)
 	}
 	wg.Wait()
+	log.Ctx(ctx).
+		Info().
+		Str("duration", time.Since(captureTime).String()).
+		Msg("finished processing cameras")
 	state := wheretopark.State{
 		LastUpdated: captureTime,
 		AvailableSpots: map[wheretopark.SpotType]uint{
