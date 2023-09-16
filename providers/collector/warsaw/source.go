@@ -1,10 +1,11 @@
 package warsaw
 
 import (
+	"context"
 	"fmt"
 	"time"
 	wheretopark "wheretopark/go"
-	"wheretopark/go/provider/simple"
+	"wheretopark/providers/collector/client"
 
 	"github.com/rs/zerolog/log"
 	"github.com/shopspring/decimal"
@@ -13,34 +14,33 @@ import (
 	geojson "github.com/paulmach/go.geojson"
 )
 
-type Provider struct{}
+type Source struct{}
 
-func (p Provider) Config() simple.Config {
-	return simple.DEFAULT_CONFIG
-}
+var (
+	// API key from https://api.um.warszawa.pl
+	API_KEY  = "8840e9a0-0a23-4d9a-90f8-8c9a49b88e3b"
+	DATA_URL = wheretopark.MustParseURL("https://api.um.warszawa.pl/api/action/parking_get_list/?apikey=" + API_KEY)
+)
 
-func (p Provider) Name() string {
-	return "warsaw"
-}
-
-func (p Provider) GetParkingLots() (map[wheretopark.ID]wheretopark.ParkingLot, error) {
-	data, err := GetData()
+func (s Source) ParkingLots(ctx context.Context) (map[wheretopark.ID]wheretopark.ParkingLot, error) {
+	vendor, err := client.Get[Response](DATA_URL, nil)
 	if err != nil {
 		return nil, err
 	}
-	lastUpdate, err := time.ParseInLocation("2006-01-02T15:04:05", data.Result.Timestamp, defaultTimezone)
+
+	lastUpdate, err := time.ParseInLocation("2006-01-02T15:04:05", vendor.Result.Timestamp, defaultTimezone)
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse last update time: %w", err)
 	}
 
 	parkingLots := make(map[wheretopark.ID]wheretopark.ParkingLot)
-	for _, vendor := range data.Result.Parks {
+	for _, vendor := range vendor.Result.Parks {
 		id := wheretopark.CoordinateToID(vendor.Latitude, vendor.Longitude)
 		configuration, exists := configuration.ParkingLots[id]
 		if !exists {
-			log.Warn().
+			log.Ctx(ctx).
+				Warn().
 				Str("name", vendor.Name).
-				Str("provider", p.Name()).
 				Msg("missing configuration")
 			continue
 		}
@@ -108,6 +108,6 @@ func (p Provider) GetParkingLots() (map[wheretopark.ID]wheretopark.ParkingLot, e
 	return parkingLots, nil
 }
 
-func NewProvider() (simple.Provider, error) {
-	return Provider{}, nil
+func New() Source {
+	return Source{}
 }

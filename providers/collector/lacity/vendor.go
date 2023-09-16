@@ -3,10 +3,8 @@ package lacity
 import (
 	"fmt"
 	"strings"
-	"time"
 	wheretopark "wheretopark/go"
 
-	"github.com/go-resty/resty/v2"
 	"github.com/shopspring/decimal"
 )
 
@@ -30,7 +28,7 @@ type Coordinate struct {
 	Longitude float64 `json:"longitude,string"`
 }
 
-type SpaceMetadata struct {
+type Metadata = []struct {
 	SpaceID          string     `json:"spaceid"`
 	BlockFace        string     `json:"blockface"`
 	MeterType        MeterType  `json:"metertype"`
@@ -47,18 +45,18 @@ const (
 	OccupancyStateOccupied OccupancyState = "OCCUPIED"
 )
 
-type SpaceState struct {
+type State = []struct {
 	SpaceID        string         `json:"spaceid"`
 	EventTime      string         `json:"eventtime"` // ISO8601
 	OccupancyState OccupancyState `json:"occupancystate"`
 }
 
-func (m *SpaceMetadata) ParseTimeLimit() (string, error) {
+func parseTimeLimit(meteredTimeLimit string) (string, error) {
 	// The values of MeteredTimeLimit can be:
 	// 1HR
 	// 1HR30MIN
 	// 30MIN
-	former, latter, _ := strings.Cut(m.MeteredTimeLimit, "-")
+	former, latter, _ := strings.Cut(meteredTimeLimit, "-")
 	duration := "PT"
 	if strings.HasSuffix(former, "HR") {
 		var hours uint
@@ -75,7 +73,7 @@ func (m *SpaceMetadata) ParseTimeLimit() (string, error) {
 		}
 		duration += fmt.Sprintf("%dM", minutes)
 	} else {
-		return "", fmt.Errorf("unknown time limit format: %s", m.MeteredTimeLimit)
+		return "", fmt.Errorf("unknown time limit format: %s", meteredTimeLimit)
 	}
 
 	if strings.HasSuffix(latter, "MIN") {
@@ -90,9 +88,9 @@ func (m *SpaceMetadata) ParseTimeLimit() (string, error) {
 	return duration, nil
 }
 
-func (m *SpaceMetadata) ParseRateFlat() (decimal.Decimal, error) {
+func parseFlatRate(rateRange string) (decimal.Decimal, error) {
 	var strRate string
-	_, err := fmt.Sscanf(m.RateRange, "$%s", &strRate)
+	_, err := fmt.Sscanf(rateRange, "$%s", &strRate)
 	if err != nil {
 		return decimal.Zero, fmt.Errorf("parse rate(%s) fail: %w", strRate, err)
 	}
@@ -104,8 +102,8 @@ func (m *SpaceMetadata) ParseRateFlat() (decimal.Decimal, error) {
 	return rate, nil
 }
 
-func (m *SpaceMetadata) ParseRateJump() (decimal.Decimal, decimal.Decimal, string, string, error) {
-	former, latter, _ := strings.Cut(m.RateRange, " - ")
+func parseJumpRate(rateRange string) (decimal.Decimal, decimal.Decimal, string, string, error) {
+	former, latter, _ := strings.Cut(rateRange, " - ")
 	var strMinRate, strMaxRate float32
 	var maxRateHours uint
 	_, err := fmt.Sscanf(former, "$%f/H", &strMinRate)
@@ -123,8 +121,8 @@ func (m *SpaceMetadata) ParseRateJump() (decimal.Decimal, decimal.Decimal, strin
 	return minRate, maxRate, "PT1H", fmt.Sprintf("PT%dH", maxRateHours), nil
 }
 
-func (m *SpaceMetadata) ParseRateTimeOfDay() (decimal.Decimal, decimal.Decimal, error) {
-	parts := strings.Split(m.RateRange, " - ")
+func parseTimeOfDayRange(rateRange string) (decimal.Decimal, decimal.Decimal, error) {
+	parts := strings.Split(rateRange, " - ")
 	var strMinRate, strMaxRate string
 	_, err := fmt.Sscanf(parts[0], "$%s", &strMinRate)
 	if err != nil {
@@ -146,14 +144,14 @@ func (m *SpaceMetadata) ParseRateTimeOfDay() (decimal.Decimal, decimal.Decimal, 
 	return minRate, maxRate, nil
 }
 
-func (m *SpaceMetadata) Rules() ([]wheretopark.Rule, error) {
-	timeLimit, err := m.ParseTimeLimit()
+func rulesFor(meteredTimeLimit string, rateType RateType, rateRange string) ([]wheretopark.Rule, error) {
+	timeLimit, err := parseTimeLimit(meteredTimeLimit)
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse time limit: %w", err)
 	}
-	switch m.RateType {
+	switch rateType {
 	case RateTypeFlat:
-		flatRate, err := m.ParseRateFlat()
+		flatRate, err := parseFlatRate(rateRange)
 		if err != nil {
 			return nil, fmt.Errorf("failed to parse flat rate: %w", err)
 		}
@@ -170,7 +168,7 @@ func (m *SpaceMetadata) Rules() ([]wheretopark.Rule, error) {
 			},
 		}, nil
 	case RateTypeJump:
-		minRate, maxRate, minRateDuration, maxRateDuration, err := m.ParseRateJump()
+		minRate, maxRate, minRateDuration, maxRateDuration, err := parseJumpRate(rateRange)
 		if err != nil {
 			return nil, fmt.Errorf("failed to parse jump rate: %w", err)
 		}
@@ -194,7 +192,7 @@ func (m *SpaceMetadata) Rules() ([]wheretopark.Rule, error) {
 			},
 		}, nil
 	case RateTypeTimeOfDay:
-		minRate, maxRate, err := m.ParseRateTimeOfDay()
+		minRate, maxRate, err := parseTimeOfDayRange(rateRange)
 		if err != nil {
 			return nil, fmt.Errorf("failed to parse time of day rate: %w", err)
 		}
@@ -218,35 +216,33 @@ func (m *SpaceMetadata) Rules() ([]wheretopark.Rule, error) {
 			},
 		}, nil
 	default:
-		return nil, fmt.Errorf("unknown rate type: %s", m.RateType)
+		return nil, fmt.Errorf("unknown rate type: %s", rateType)
 	}
 }
 
-const (
-	METADATA_URL = "https://data.lacity.org/resource/s49e-q6j2.json"
-	STATE_URL    = "https://data.lacity.org/resource/e7h6-4a3e.json"
-)
+// func getGroups(metadata Metadata) map[string][]SpaceMetadata {
+// 	groups := map[string][]SpaceMetadata{}
+// 	for _, space := range vSpaces {
+// 		if groups[space.BlockFace] == nil {
+// 			groups[space.BlockFace] = []SpaceMetadata{}
+// 		}
+// 		groups[space.BlockFace] = append(groups[space.BlockFace], space)
+// 	}
+// 	return groups
+// }
 
-var client = resty.New()
+// func sortGroups(groups map[string][]SpaceMetadata) {
+// 	for _, group := range groups {
+// 		sort.SliceStable(group, func(i, j int) bool {
+// 			return group[i].SpaceID < group[j].SpaceID
+// 		})
+// 	}
+// }
 
-func init() {
-	client.GetClient().Timeout = 10 * time.Second
-}
-
-func GetSpaceMetadatas() ([]SpaceMetadata, error) {
-	resp, err := client.R().SetResult([]SpaceMetadata{}).Get(METADATA_URL)
-	if err != nil {
-		return nil, err
-	}
-	response := resp.Result().(*[]SpaceMetadata)
-	return *response, nil
-}
-
-func GetSpaceStates() ([]SpaceState, error) {
-	resp, err := client.R().SetResult([]SpaceState{}).Get(STATE_URL)
-	if err != nil {
-		return nil, err
-	}
-	response := resp.Result().(*[]SpaceState)
-	return *response, nil
-}
+// func spaceIDs(spaces []SpaceMetadata) []string {
+// 	ids := make([]string, len(spaces))
+// 	for i, space := range spaces {
+// 		ids[i] = space.SpaceID
+// 	}
+// 	return ids
+// }

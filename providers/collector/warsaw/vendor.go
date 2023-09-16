@@ -1,11 +1,5 @@
 package warsaw
 
-import (
-	"time"
-
-	"github.com/go-resty/resty/v2"
-)
-
 type FreePlacesTotal struct {
 	Disabled uint `json:"disabled"`
 	Public   uint `json:"public"`
@@ -42,25 +36,4 @@ type Result struct {
 
 type Response struct {
 	Result Result `json:"result"`
-}
-
-const (
-	// API key from https://api.um.warszawa.pl
-	API_KEY  = "8840e9a0-0a23-4d9a-90f8-8c9a49b88e3b"
-	DATA_URL = "https://api.um.warszawa.pl/api/action/parking_get_list/?apikey=" + API_KEY
-)
-
-var client = resty.New()
-
-func init() {
-	client.GetClient().Timeout = 10 * time.Second
-}
-
-func GetData() (*Response, error) {
-	resp, err := client.R().SetResult(&Response{}).Get(DATA_URL)
-	if err != nil {
-		return nil, err
-	}
-	response := resp.Result().(*Response)
-	return response, nil
 }

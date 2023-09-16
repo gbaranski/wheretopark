@@ -1,10 +1,11 @@
 package glasgow
 
 import (
+	"context"
 	"fmt"
 	"time"
 	wheretopark "wheretopark/go"
-	"wheretopark/go/provider/simple"
+	"wheretopark/providers/collector/client"
 
 	"github.com/rs/zerolog/log"
 	"golang.org/x/text/currency"
@@ -12,34 +13,32 @@ import (
 	geojson "github.com/paulmach/go.geojson"
 )
 
-type Provider struct{}
+type Source struct{}
 
-func (p Provider) Config() simple.Config {
-	return simple.NewConfig(time.Hour * 1)
-}
+var (
+	// https://developer.glasgow.gov.uk/api-details#api=55c36a318b3a0306f0009483&operation=563cea91aab82f1168298575
+	DATA_URL = wheretopark.MustParseURL("https://api.glasgow.gov.uk/datextraffic/carparks?format=json")
+	API_KEY  = "ccaa1e24db6e4a9bb791f99433cc7ab7"
+)
 
-func (p Provider) Name() string {
-	return "glasgow"
-}
-
-func (p Provider) GetParkingLots() (map[wheretopark.ID]wheretopark.ParkingLot, error) {
-	data, err := GetData()
+func (s Source) ParkingLots(ctx context.Context) (map[wheretopark.ID]wheretopark.ParkingLot, error) {
+	vendor, err := client.Get[Response](DATA_URL, nil)
 	if err != nil {
 		return nil, err
 	}
-	parkingLots := make(map[wheretopark.ID]wheretopark.ParkingLot)
-	for _, vendor := range data.LogicalModel.PayloadPublication.SituationItems {
 
+	parkingLots := make(map[wheretopark.ID]wheretopark.ParkingLot)
+	for _, vendor := range vendor.LogicalModel.PayloadPublication.SituationItems {
 		latitude, longitude :=
 			vendor.Record.GroupOfLocations.LocationContainedInGroup.PointByCoordinates.PointByCoordinates.Latitude,
 			vendor.Record.GroupOfLocations.LocationContainedInGroup.PointByCoordinates.PointByCoordinates.Longitude
 		id := wheretopark.CoordinateToID(latitude, longitude)
 		configuration, exists := configuration.ParkingLots[vendor.Record.ID]
 		if !exists {
-			log.Warn().
+			log.Ctx(ctx).
+				Warn().
 				Str("id", vendor.Record.ID).
 				Str("name", vendor.Record.Identity).
-				Str("provider", p.Name()).
 				Msg("missing configuration")
 			continue
 		}
@@ -81,6 +80,6 @@ func (p Provider) GetParkingLots() (map[wheretopark.ID]wheretopark.ParkingLot, e
 	return parkingLots, nil
 }
 
-func NewProvider() (simple.Provider, error) {
-	return Provider{}, nil
+func New() Source {
+	return Source{}
 }

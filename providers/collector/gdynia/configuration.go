@@ -57,13 +57,14 @@ func init() {
 			PaymentMethods: defaultPaymentMethods,
 			Comment:        defaultComment,
 			Currency:       currency.Unit{},
-			Timezone:       defaultLocation,
+			Timezone:       defaultTimezone,
 			Rules:          v.Rules,
 		}
 	}
 }
 
 var (
+	defaultTimezone    = wheretopark.MustLoadLocation("Europe/Warsaw")
 	defaultLastUpdated = wheretopark.MustParseDate("2022-12-17")
 	defaultResources   = []string{
 		"https://www.wtp.waw.pl/parkingi/parking-pr-zeran-pkp/",

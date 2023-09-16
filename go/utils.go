@@ -2,6 +2,7 @@ package wheretopark
 
 import (
 	"fmt"
+	"net/url"
 	"os"
 	"time"
 
@@ -61,6 +62,14 @@ func MustLoadLocation(name string) *time.Location {
 		panic(err)
 	}
 	return location
+}
+
+func MustParseURL(v string) *url.URL {
+	url, err := url.Parse(v)
+	if err != nil {
+		panic(err)
+	}
+	return url
 }
 
 func ExtractMetadatas(parkingLots map[ID]ParkingLot) map[ID]Metadata {

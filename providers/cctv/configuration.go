@@ -65,16 +65,16 @@ func ParseConfiguration(content string) (*Configuration, error) {
 }
 
 type Configuration struct {
-	ParkingLots []ParkingLot `json:"parkingLots"`
+	ParkingLots []CameraParkingLot `json:"parkingLots"`
 }
 
-type ParkingLot struct {
+type CameraParkingLot struct {
 	wheretopark.Metadata `json:",inline"`
 
 	Cameras []ParkingLotCamera `json:"cameras"`
 }
 
-func (p *ParkingLot) UnmarshalJSON(data []byte) error {
+func (p *CameraParkingLot) UnmarshalJSON(data []byte) error {
 	var metadata wheretopark.Metadata
 	err := json.Unmarshal(data, &metadata)
 	if err != nil {

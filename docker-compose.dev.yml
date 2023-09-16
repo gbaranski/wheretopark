@@ -27,7 +27,7 @@ services:
       context: .
       dockerfile: ./cmd/cctv/Dockerfile
     environment:
-      MODEL: /opt/wheretopark/cctv/model.onnx
+      MODEL_PATH: /opt/wheretopark/cctv/model.onnx
       LOG_LEVEL: trace
     volumes:
       - $HOME/.local/share/wheretopark/cctv:/opt/wheretopark/cctv

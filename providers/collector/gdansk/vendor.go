@@ -1,0 +1,27 @@
+package gdansk
+
+type Coordinate struct {
+	Latitude  float64 `json:"latitude"`
+	Longitude float64 `json:"longitude"`
+}
+
+type Metadata struct {
+	LastUpdate  string `json:"lastUpdate"`
+	ParkingLots []struct {
+		ID             string     `json:"id"`
+		Name           string     `json:"name"`
+		ShortName      string     `json:"shortName"`
+		Address        string     `json:"address"`
+		StreetEntrance string     `json:"streetEntrance"`
+		Location       Coordinate `json:"location"`
+	} `json:"parkingLots"`
+}
+
+type State struct {
+	LastUpdate  string `json:"lastUpdate"`
+	ParkingLots []struct {
+		ID             string `json:"parkingId"`
+		AvailableSpots uint   `json:"availableSpots"`
+		LastUpdate     string `json:"lastUpdate"`
+	} `json:"parkingLots"`
+}

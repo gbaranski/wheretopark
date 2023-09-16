@@ -1,49 +1,38 @@
 package gdynia
 
 import (
+	"context"
 	"time"
 	wheretopark "wheretopark/go"
-	"wheretopark/go/provider/sequential"
+	"wheretopark/providers/collector/client"
 
 	"github.com/rs/zerolog/log"
 	"golang.org/x/text/currency"
 )
 
-var defaultLocation *time.Location
+var (
+	METADATA_URL = wheretopark.MustParseURL("http://api.zdiz.gdynia.pl/ri/rest/parkings")
+	STATE_URL    = wheretopark.MustParseURL("http://api.zdiz.gdynia.pl/ri/rest/parking_places")
+)
 
-func init() {
-	location, err := time.LoadLocation("Europe/Warsaw")
-	if err != nil {
-		panic(err)
-	}
-	defaultLocation = location
-}
-
-type Provider struct {
+type Source struct {
 	mapping map[int]wheretopark.ID
 }
 
-func (p Provider) Name() string {
-	return "gdynia"
-}
-
-func (p Provider) Config() sequential.Config {
-	return sequential.DEFAULT_CONFIG
-}
-
-func (p Provider) GetMetadatas() (map[wheretopark.ID]wheretopark.Metadata, error) {
-	vendorMetadata, err := GetMetadata()
+func (s Source) Metadata(ctx context.Context) (map[wheretopark.ID]wheretopark.Metadata, error) {
+	vendor, err := client.Get[Metadata](METADATA_URL, nil)
 	if err != nil {
 		return nil, err
 	}
+
 	metadatas := make(map[wheretopark.ID]wheretopark.Metadata)
-	for _, vendor := range vendorMetadata.Parkings {
+	for _, vendor := range vendor.ParkingLots {
 		configuration, exists := configuration.ParkingLots[vendor.ID]
 		if !exists {
-			log.Warn().
+			log.Ctx(ctx).
+				Warn().
 				Int("id", vendor.ID).
 				Str("name", vendor.Name).
-				Str("provider", p.Name()).
 				Msg("missing configuration")
 			continue
 		}
@@ -60,30 +49,37 @@ func (p Provider) GetMetadatas() (map[wheretopark.ID]wheretopark.Metadata, error
 			PaymentMethods: configuration.PaymentMethods,
 			Comment:        configuration.Comment,
 			Currency:       currency.PLN,
-			Timezone:       defaultLocation,
+			Timezone:       defaultTimezone,
 			Rules:          configuration.Rules,
 		}
 		metadatas[id] = metadata
-		p.mapping[vendor.ID] = id
+		s.mapping[vendor.ID] = id
 	}
 	return metadatas, nil
 }
 
-func (p Provider) GetStates() (map[wheretopark.ID]wheretopark.State, error) {
-	vendorState, err := GetState()
+func (s Source) State(ctx context.Context) (map[wheretopark.ID]wheretopark.State, error) {
+	vendor, err := client.Get[State](STATE_URL, nil)
 	if err != nil {
 		return nil, err
 	}
+
 	states := make(map[wheretopark.ID]wheretopark.State)
-	for _, vendor := range *vendorState {
-		id, exists := p.mapping[vendor.ParkingID]
+	for _, vendor := range *vendor {
+		id, exists := s.mapping[vendor.ParkingID]
 		if !exists {
-			log.Warn().Int("id", vendor.ID).Msg("no mapping")
+			log.Ctx(ctx).
+				Debug().
+				Int("id", vendor.ID).
+				Msg("no mapping")
 			continue
 		}
-		lastUpdate, err := time.ParseInLocation("2006-01-02 15:04:05", vendor.InsertTime, defaultLocation)
+		lastUpdate, err := time.ParseInLocation("2006-01-02 15:04:05", vendor.InsertTime, defaultTimezone)
 		if err != nil {
-			log.Error().Err(err).Msg("failed to parse time")
+			log.Ctx(ctx).
+				Error().
+				Err(err).
+				Msg("failed to parse time")
 			continue
 		}
 		state := wheretopark.State{
@@ -97,9 +93,8 @@ func (p Provider) GetStates() (map[wheretopark.ID]wheretopark.State, error) {
 	return states, nil
 }
 
-func NewProvider() (sequential.Provider, error) {
-	return Provider{
+func New() Source {
+	return Source{
 		mapping: make(map[int]wheretopark.ID),
-	}, nil
-
+	}
 }

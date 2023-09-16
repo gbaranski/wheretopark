@@ -1,11 +1,5 @@
 package glasgow
 
-import (
-	"time"
-
-	"github.com/go-resty/resty/v2"
-)
-
 type PointCoordinates struct {
 	Latitude  float64 `json:"d2lm$latitude,string"`
 	Longitude float64 `json:"d2lm$longitude,string"`
@@ -46,25 +40,4 @@ type LogicalModel struct {
 
 type Response struct {
 	LogicalModel LogicalModel `json:"d2lm$d2LogicalModel"`
-}
-
-const (
-	// https://developer.glasgow.gov.uk/api-details#api=55c36a318b3a0306f0009483&operation=563cea91aab82f1168298575
-	DATA_URL = "https://api.glasgow.gov.uk/datextraffic/carparks?format=json"
-	API_KEY  = "ccaa1e24db6e4a9bb791f99433cc7ab7"
-)
-
-var client = resty.New()
-
-func init() {
-	client.GetClient().Timeout = 10 * time.Second
-}
-
-func GetData() (*Response, error) {
-	resp, err := client.R().SetHeader("Ocp-Apim-Subscription-Key", API_KEY).SetHeader("Cache-Control", "no-cache").SetResult(&Response{}).Get(DATA_URL)
-	if err != nil {
-		return nil, err
-	}
-	response := resp.Result().(*Response)
-	return response, nil
 }
