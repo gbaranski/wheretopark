@@ -75,7 +75,7 @@ func (s Source) Metadata(ctx context.Context) (map[wheretopark.ID]wheretopark.Me
 				Msg("metadata duplicate")
 		}
 		metadatas[id] = metadata
-		s.mapping[id] = space.SpaceID
+		s.mapping[space.SpaceID] = id
 	}
 	return metadatas, nil
 }
