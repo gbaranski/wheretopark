@@ -203,9 +203,12 @@ func (p *ParkingLot) Validate() error {
 	if err := p.State.Validate(); err != nil {
 		return err
 	}
+	if p.State.AvailableSpots == nil {
+		return fmt.Errorf("availableSpots must not be empty")
+	}
 	for spotType := range p.State.AvailableSpots {
 		if _, exists := p.Metadata.TotalSpots[spotType]; !exists {
-			fmt.Printf("spotType %s from availableSpots is not defined in totalSpots", spotType)
+			return fmt.Errorf("spotType %s from availableSpots is not defined in totalSpots", spotType)
 		}
 	}
 	return nil
