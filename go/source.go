@@ -42,6 +42,7 @@ func (s SequentialSourceProxy) ParkingLots(ctx context.Context) (map[ID]ParkingL
 		state, exists := state[id]
 		if !exists {
 			log.Debug().Str("id", id).Msg("missing state")
+			continue
 		}
 		parkingLot := ParkingLot{
 			State:    state,
