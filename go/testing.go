@@ -13,7 +13,7 @@ func ExamineParkingLots(t *testing.T, parkingLots map[ID]ParkingLot) {
 	for id, parkingLot := range parkingLots {
 		t.Logf("%+v", parkingLot)
 		if err := parkingLot.Validate(); err != nil {
-			t.Fatalf("invalid parking lot %s : %e", id, err)
+			t.Fatalf("invalid parking lot %s : %s", id, err)
 		}
 	}
 }
