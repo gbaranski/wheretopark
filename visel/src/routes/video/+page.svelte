@@ -3,8 +3,8 @@
 	import type { PageData } from './$types';
 	import type { WebAnnotation } from '@recogito/annotorious';
 	import { page } from '$app/stores';
-	import { encode, decode, type ParkingSpot} from '$lib';
-	import {v4 as uuidv4} from 'uuid';
+	import { encode, decode, type ParkingSpot, type SpotType, spotTypes } from '$lib';
+	import { v4 as uuidv4 } from 'uuid';
 
 	export let data: PageData;
 
@@ -12,9 +12,9 @@
 	let code: string = encode([]);
 	let error: string | undefined = undefined;
 	let updateAnnotations: ((spots: ParkingSpot[]) => void) | undefined = undefined;
-	
+
 	const onCodeUpdate = () => {
-		console.log("on code update");
+		console.log('on code update');
 		try {
 			const newSpots = decode(code);
 			error = undefined;
@@ -23,7 +23,7 @@
 		} catch (e: any) {
 			error = e.toString();
 		}
-	}
+	};
 
 	$: [code] && onCodeUpdate();
 
@@ -40,7 +40,7 @@
 		});
 
 		updateAnnotations = (spots: ParkingSpot[]) => {
-			console.log("updateAnnotations()")
+			console.log('updateAnnotations()');
 			anno.clearAnnotations();
 			const annotations = spots.map(
 				(spot): WebAnnotation => ({
@@ -51,6 +51,11 @@
 							type: 'TextualBody',
 							purpose: 'tagging',
 							value: 'ParkingSpot'
+						},
+						{
+							type: 'TextualBody',
+							purpose: 'tagging',
+							value: (spot.type ?? 'CAR') as SpotType
 						}
 					],
 					id: uuidv4(),
@@ -73,23 +78,27 @@
 
 		const updateSpots = () => {
 			setTimeout(() => {
+				const annotations: WebAnnotation[] = anno.getAnnotations();
+				console.log({ annotations });
+				spots = annotations.map((a): ParkingSpot => {
+					const type = a.body.find(
+						(b) => b.purpose === 'tagging' && (spotTypes as string[]).includes(b.value)
+					)?.value as SpotType | undefined;
 
-			const annotations: WebAnnotation[] = anno.getAnnotations();
-			console.log({annotations})
-			spots = annotations.map((a): ParkingSpot => {
-				const html = a.target.selector.value;
-				// take value from inside of the quotes:
-				const strPoints = html.match(/"([^']+)"/)?.pop();
-				if (!strPoints) throw new Error(`couldn't find points in ${html}`);
-				const points = strPoints.split(' ').map((xy): [number, number] => {
-					const [x, y] = xy.split(',');
-					return [parseInt(x), parseInt(y)];
+					const html = a.target.selector.value;
+					// take value from inside of the quotes:
+					const strPoints = html.match(/"([^']+)"/)?.pop();
+					if (!strPoints) throw new Error(`couldn't find points in ${html}`);
+					const points = strPoints.split(' ').map((xy): [number, number] => {
+						const [x, y] = xy.split(',');
+						return [parseInt(x), parseInt(y)];
+					});
+					return {
+						points,
+						type: type === 'CAR_DISABLED' ? type : undefined
+					};
 				});
-				return {
-					points,
-				};
-			});
-			}, 1000)
+			}, 1000);
 		};
 		anno.on('createSelection', async function (selection: WebAnnotation) {
 			selection.body = [

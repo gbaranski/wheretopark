@@ -1,7 +1,7 @@
 import yaml from "js-yaml";
 
-export type SpotType = "CAR_DISABLED";
-const spotTypes: string[] = ['CAR_DISABLED'];
+export type SpotType = "CAR"| "CAR_DISABLED";
+export const spotTypes: SpotType[] = ['CAR', 'CAR_DISABLED'];
 
 export type ParkingSpot = {
   points: [number, number][];
@@ -37,11 +37,14 @@ export const decode = (code: string): ParkingSpot[] => {
     
     if ('type' in spot) {
       if (typeof spot.type != 'string') throw new Error("type is not a string");
-      if (!spotTypes.includes(spot.type)) throw new Error("type is not a valid type");
+      if (!(spotTypes as string[]).includes(spot.type)) throw new Error("type is not a valid type");
     }
   });
 
 
   console.log({raw})
-  return raw.spots.map((spot) => spot.points.map(([x, y]: [number, number]) => ({ x, y })));
+  return raw.spots.map((spot) => ({
+    points: spot.points,
+    type: spot.type,
+  }));
 }
