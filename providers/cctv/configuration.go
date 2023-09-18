@@ -44,28 +44,37 @@ func ParseConfiguration(content string) (*Configuration, error) {
 	if err != nil {
 		return nil, err
 	}
-	var configuration Configuration
-	err = json.Unmarshal(configurationJson, &configuration)
+	var internalConfiguration internalConfiguration
+	err = json.Unmarshal(configurationJson, &internalConfiguration)
 	if err != nil {
 		return nil, err
 	}
 
-	for i := range configuration.ParkingLots {
-		parkingLot := &configuration.ParkingLots[i]
-		parkingLot.TotalSpots = make(map[string]uint)
+	configuration := Configuration{
+		ParkingLots: make(map[string]CameraParkingLot, len(internalConfiguration.ParkingLots)),
+	}
+
+	for _, parkingLot := range internalConfiguration.ParkingLots {
+		id := wheretopark.GeometryToID(parkingLot.Geometry)
 		totalSpots := 0
 		for _, camera := range parkingLot.Cameras {
 			totalSpots += len(camera.Spots)
 		}
-
-		parkingLot.TotalSpots["CAR"] = uint(totalSpots)
+		parkingLot.TotalSpots = map[wheretopark.SpotType]uint{
+			wheretopark.SpotTypeCar: uint(totalSpots),
+		}
+		configuration.ParkingLots[id] = parkingLot
 	}
 
 	return &configuration, nil
 }
 
+type internalConfiguration struct {
+	ParkingLots []CameraParkingLot `yaml:"parkingLots"`
+}
+
 type Configuration struct {
-	ParkingLots []CameraParkingLot `json:"parkingLots"`
+	ParkingLots map[wheretopark.ID]CameraParkingLot `json:"parkingLots"`
 }
 
 type CameraParkingLot struct {

@@ -6,13 +6,11 @@ import (
 
 type Provider struct {
 	configuration Configuration
-	model         *Model
+	model         Model
 	saver         Saver
 }
 
-func NewProvider(modelPath string, saveBasePath *string, saveItems []SaveItem, saveIDs []wheretopark.ID) (*Provider, error) {
-	model := NewModel(modelPath)
-	saver := NewSaver(saveBasePath, saveItems, saveIDs)
+func NewProvider(model Model, saver Saver) (*Provider, error) {
 	return &Provider{
 		configuration: DefaultConfiguration,
 		model:         model,
@@ -22,8 +20,7 @@ func NewProvider(modelPath string, saveBasePath *string, saveItems []SaveItem, s
 
 func (p *Provider) Sources() map[string]wheretopark.Source {
 	sources := make(map[string]wheretopark.Source, len(p.configuration.ParkingLots))
-	for _, parkingLot := range p.configuration.ParkingLots {
-		id := wheretopark.GeometryToID(parkingLot.Geometry)
+	for id, parkingLot := range p.configuration.ParkingLots {
 		source := Source{
 			id:       id,
 			metadata: parkingLot.Metadata,

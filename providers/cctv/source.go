@@ -15,7 +15,7 @@ type Source struct {
 	id       wheretopark.ID
 	metadata wheretopark.Metadata
 	cameras  []ParkingLotCamera
-	model    *Model
+	model    Model
 	saver    Saver
 }
 
@@ -74,9 +74,10 @@ func (s *Source) processCamera(camera ParkingLotCamera) (uint, error) {
 		}
 	}()
 	predictions := s.model.PredictMany(spotImages)
+
 	availableSpots := 0
 	for _, prediction := range predictions {
-		if prediction > 0.5 {
+		if IsVacant(prediction) {
 			availableSpots += 1
 		}
 	}

@@ -12,9 +12,9 @@ type Model struct {
 	mu  *sync.Mutex
 }
 
-func NewModel(path string) *Model {
+func NewModel(path string) Model {
 	net := gocv.ReadNet(path, "")
-	return &Model{
+	return Model{
 		net,
 		&sync.Mutex{},
 	}
@@ -37,6 +37,7 @@ func (m *Model) Predict(img gocv.Mat) float32 {
 }
 
 func (m *Model) PredictMany(images []gocv.Mat) []float32 {
+	// TODO: try batch
 	predictions := make([]float32, len(images))
 	for i, img := range images {
 		prediction := m.Predict(img)

@@ -14,8 +14,10 @@ func TestProvider(t *testing.T) {
 		t.Fatal(err)
 	}
 	modelPath := fmt.Sprintf("%s/.local/share/wheretopark/cctv/model.onnx", homeDirectory)
+	model := cctv.NewModel(modelPath)
+	saver := cctv.NewSaver(nil, nil, nil)
 
-	provider, err := cctv.NewProvider(modelPath, nil, nil, nil)
+	provider, err := cctv.NewProvider(model, saver)
 	if err != nil {
 		t.Fatal(err)
 	}

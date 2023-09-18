@@ -58,13 +58,20 @@ func CropSpot(cvFrame gocv.Mat, spot *ParkingSpot) gocv.Mat {
 	return cvOutput
 }
 
-func VisualizeSpotPrediction(img *gocv.Mat, spot ParkingSpot, prediction float32) {
-	occupied := prediction < 0.5
-	var drawingColor color.RGBA
-	if occupied {
-		drawingColor = color.RGBA{R: 255, G: 0, B: 0, A: 255}
+func IsVacant(prediction float32) bool {
+	if prediction > 0.5 {
+		return true
 	} else {
+		return false
+	}
+}
+
+func VisualizeSpotPrediction(img *gocv.Mat, spot ParkingSpot, prediction float32) {
+	var drawingColor color.RGBA
+	if IsVacant(prediction) {
 		drawingColor = color.RGBA{R: 0, G: 255, B: 0, A: 255}
+	} else {
+		drawingColor = color.RGBA{R: 255, G: 0, B: 0, A: 255}
 	}
 	points := spot.ImagePoints()
 	cvPoints := gocv.NewPointVectorFromPoints(points)
