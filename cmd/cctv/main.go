@@ -8,7 +8,7 @@ import (
 	"wheretopark/providers/cctv"
 
 	"github.com/caarlos0/env/v8"
-	"github.com/julienschmidt/httprouter"
+	"github.com/go-chi/chi/v5"
 	"github.com/rs/zerolog/log"
 	"gocv.io/x/gocv"
 )
@@ -68,8 +68,8 @@ func main() {
 		log.Info().Str("id", id).Str("name", parkingLot.Name).Int("cameras", len(parkingLot.Cameras)).Msg("registering parking lot")
 	}
 
-	r.GET("/visualize/:id/:camera", func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-		id := wheretopark.ID(p.ByName("id"))
+	r.Get("/visualize/{id}/{camera}", func(w http.ResponseWriter, r *http.Request) {
+		id := wheretopark.ID(chi.URLParam(r, "id"))
 		parkingLot, exists := cctv.DefaultConfiguration.ParkingLots[id]
 		if !exists {
 			w.WriteHeader(http.StatusNotFound)
@@ -77,7 +77,7 @@ func main() {
 			return
 		}
 
-		cameraID, err := strconv.Atoi(p.ByName("camera"))
+		cameraID, err := strconv.Atoi(chi.URLParam(r, "camera"))
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
 			w.Write([]byte("invalid camera ID"))

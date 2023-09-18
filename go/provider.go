@@ -7,7 +7,8 @@ import (
 	"net/http"
 	"sync"
 
-	"github.com/julienschmidt/httprouter"
+	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
 	"github.com/rs/zerolog/log"
 )
 
@@ -16,24 +17,37 @@ type Provider interface {
 }
 
 func RunProvider(p Provider, port uint) error {
-	router := httprouter.New()
+	router, err := GetProviderRouter(p)
+	if err != nil {
+		return err
+	}
 	return RunRouter(router, port)
 }
 
-func RunRouter(r *httprouter.Router, port uint) error {
+func RunRouter(r chi.Router, port uint) error {
 	log.Info().Msg(fmt.Sprintf("starting server on port %d", port))
 	return http.ListenAndServe(fmt.Sprintf(":%d", port), r)
 }
 
-func GetProviderRouter(p Provider) (*httprouter.Router, error) {
+func GetProviderRouter(p Provider) (chi.Router, error) {
 	cache, err := NewCache()
 	if err != nil {
 		return nil, fmt.Errorf("failed to create cache: %w", err)
 	}
 
-	r := httprouter.New()
-	r.GET("/parking-lots/:identifier", func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-		identifier := ps.ByName("identifier")
+	r := chi.NewRouter()
+	r.Use(middleware.RealIP)
+	r.Use(middleware.Logger)
+	r.Use(middleware.Recoverer)
+	// r.Mount("/debug", middleware.Profiler())
+
+	r.Get("/ping", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "text/plain")
+		w.WriteHeader(http.StatusOK)
+		w.Write([]byte("pong"))
+	})
+	r.Get("/parking-lots/{identifier}", func(w http.ResponseWriter, r *http.Request) {
+		identifier := chi.URLParam(r, "identifier")
 		source := p.Sources()[identifier]
 		ctx := log.With().Str("source", identifier).Logger().WithContext(context.TODO())
 		parkingLots, err := source.ParkingLots(ctx)
@@ -55,7 +69,7 @@ func GetProviderRouter(p Provider) (*httprouter.Router, error) {
 			return
 		}
 	})
-	r.GET("/parking-lots", func(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	r.Get("/parking-lots", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
@@ -93,5 +107,6 @@ func GetProviderRouter(p Provider) (*httprouter.Router, error) {
 		}
 		wg.Wait()
 	})
+
 	return r, nil
 }
