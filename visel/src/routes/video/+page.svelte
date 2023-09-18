@@ -3,23 +3,23 @@
 	import type { PageData } from './$types';
 	import type { WebAnnotation } from '@recogito/annotorious';
 	import { page } from '$app/stores';
-	import { generateCode, type Polygon, parseCode } from '$lib';
+	import { encode, decode, type ParkingSpot} from '$lib';
 	import {v4 as uuidv4} from 'uuid';
 
 	export let data: PageData;
 
-	let polygons: Polygon[] = [];
-	let code: string = generateCode([]);
+	let spots: ParkingSpot[] = [];
+	let code: string = encode([]);
 	let error: string | undefined = undefined;
-	let updateAnnotations: ((polygons: Polygon[]) => void) | undefined = undefined;
+	let updateAnnotations: ((spots: ParkingSpot[]) => void) | undefined = undefined;
 	
 	const onCodeUpdate = () => {
 		console.log("on code update");
 		try {
-			const newPolygons = parseCode(code);
+			const newSpots = decode(code);
 			error = undefined;
-			polygons = newPolygons;
-			if (updateAnnotations) updateAnnotations(polygons);
+			spots = newSpots;
+			if (updateAnnotations) updateAnnotations(spots);
 		} catch (e: any) {
 			error = e.toString();
 		}
@@ -28,7 +28,7 @@
 	$: [code] && onCodeUpdate();
 
 	const generateYAML = () => {
-		code = generateCode(polygons);
+		code = encode(spots);
 	};
 
 	onMount(async () => {
@@ -39,11 +39,11 @@
 			drawOnSingleClick: true
 		});
 
-		updateAnnotations = (polygons: Polygon[]) => {
+		updateAnnotations = (spots: ParkingSpot[]) => {
 			console.log("updateAnnotations()")
 			anno.clearAnnotations();
-			const annotations = polygons.map(
-				(poly): WebAnnotation => ({
+			const annotations = spots.map(
+				(spot): WebAnnotation => ({
 					'@context': 'http://www.w3.org/ns/anno.jsonld',
 					type: 'Annotation',
 					body: [
@@ -58,8 +58,8 @@
 						source: $page.url.toString(),
 						selector: {
 							type: 'SvgSelector',
-							value: `<svg><polygon points="${poly
-								.map(({ x, y }) => `${x},${y}`)
+							value: `<svg><polygon points="${spot.points
+								.map(([x, y]) => `${x},${y}`)
 								.join(' ')}"></polygon></svg>`
 						}
 					}
@@ -71,24 +71,23 @@
 			}
 		};
 
-		const updatePolygons = () => {
+		const updateSpots = () => {
 			setTimeout(() => {
 
 			const annotations: WebAnnotation[] = anno.getAnnotations();
 			console.log({annotations})
-			polygons = annotations.map((a) => {
+			spots = annotations.map((a): ParkingSpot => {
 				const html = a.target.selector.value;
 				// take value from inside of the quotes:
 				const strPoints = html.match(/"([^']+)"/)?.pop();
 				if (!strPoints) throw new Error(`couldn't find points in ${html}`);
-				const points = strPoints.split(' ').map((xy) => {
+				const points = strPoints.split(' ').map((xy): [number, number] => {
 					const [x, y] = xy.split(',');
-					return {
-						x: parseInt(x),
-						y: parseInt(y)
-					};
+					return [parseInt(x), parseInt(y)];
 				});
-				return points;
+				return {
+					points,
+				};
 			});
 			}, 1000)
 		};
@@ -102,11 +101,11 @@
 			];
 			await anno.updateSelected(selection);
 			anno.saveSelected();
-			updatePolygons();
+			updateSpots();
 		});
-		anno.on('createAnnotation', updatePolygons);
-		anno.on('updateAnnotation', updatePolygons);
-		anno.on('deleteAnnotation', updatePolygons);
+		anno.on('createAnnotation', updateSpots);
+		anno.on('updateAnnotation', updateSpots);
+		anno.on('deleteAnnotation', updateSpots);
 		anno.setDrawingTool('polygon');
 	});
 

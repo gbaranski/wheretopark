@@ -1,28 +1,20 @@
 import yaml from "js-yaml";
 
-export type Polygon = { x: number; y: number }[];
+export type SpotType = "CAR_DISABLED";
+const spotTypes: string[] = ['CAR_DISABLED'];
 
-type Code = {
-  spots: {
-    points: [number, number][];
-  }[];
-};
+export type ParkingSpot = {
+  points: [number, number][];
+  type?: SpotType;
+}
 
-export const generateCode = (
-  polygons: Polygon[],
-): string => {
-  const code: Code = {
-    spots: polygons.map((poly) => ({
-      points: poly.map(({ x, y }) => [x, y]),
-    })),
-  };
+export const encode = (parkingSpots: ParkingSpot[]): string => {
   return yaml.dump({
-    spots: code.spots,
-    
+    spots: parkingSpots,
   }, {flowLevel: 3});
 };
 
-export const parseCode = (code: string): Polygon[] => {
+export const decode = (code: string): ParkingSpot[] => {
   const raw = yaml.load(code);
   if (raw === null) throw new Error("null provided");
   if (typeof raw != 'object') throw new Error("object not provided");
@@ -42,6 +34,11 @@ export const parseCode = (code: string): Polygon[] => {
       if (typeof point[0] != 'number') throw new Error("point[0] is not a number");
       if (typeof point[1] != 'number') throw new Error("point[1] is not a number");
     });
+    
+    if ('type' in spot) {
+      if (typeof spot.type != 'string') throw new Error("type is not a string");
+      if (!spotTypes.includes(spot.type)) throw new Error("type is not a valid type");
+    }
   });
 
 
