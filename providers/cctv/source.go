@@ -43,7 +43,8 @@ func (s *Source) State(ctx context.Context) (map[wheretopark.ID]wheretopark.Stat
 			defer wg.Done()
 			camAvailableSpots, err := s.processCamera(camera)
 			if err != nil {
-				log.Error().Err(err).Int("id", id).Msg("processing camera fail")
+				log.Ctx(ctx).Error().Err(err).Int("id", id).Msg("processing camera fail")
+				return
 			}
 			for spotType, count := range camAvailableSpots {
 				atomic.AddUint32(availableSpotsPtr[spotType], uint32(count))
