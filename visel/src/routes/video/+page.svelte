@@ -128,6 +128,7 @@
 {/if}
 <button on:click={generateYAML}>Generate YAML</button>
 <textarea placeholder="YAML code" bind:value={code} id="raw" />
+<code>{data.src}</code>
 
 <style>
 	#parking-lot {
