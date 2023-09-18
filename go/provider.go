@@ -16,9 +16,19 @@ type Provider interface {
 }
 
 func RunProvider(p Provider, port uint) error {
+	router := httprouter.New()
+	return RunRouter(router, port)
+}
+
+func RunRouter(r *httprouter.Router, port uint) error {
+	log.Info().Msg(fmt.Sprintf("starting server on port %d", port))
+	return http.ListenAndServe(fmt.Sprintf(":%d", port), r)
+}
+
+func GetProviderRouter(p Provider) (*httprouter.Router, error) {
 	cache, err := NewCache()
 	if err != nil {
-		return fmt.Errorf("failed to create cache: %w", err)
+		return nil, fmt.Errorf("failed to create cache: %w", err)
 	}
 
 	r := httprouter.New()
@@ -83,7 +93,5 @@ func RunProvider(p Provider, port uint) error {
 		}
 		wg.Wait()
 	})
-
-	log.Info().Msg(fmt.Sprintf("starting server on port %d", port))
-	return http.ListenAndServe(fmt.Sprintf(":%d", port), r)
+	return r, nil
 }
