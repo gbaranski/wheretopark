@@ -64,6 +64,10 @@ func main() {
 		log.Fatal().Err(err).Msg("get router failure")
 	}
 
+	for id, parkingLot := range cctv.DefaultConfiguration.ParkingLots {
+		log.Info().Str("id", id).Str("name", parkingLot.Name).Int("cameras", len(parkingLot.Cameras)).Msg("registering parking lot")
+	}
+
 	r.GET("/visualize/:id/:camera", func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		id := wheretopark.ID(p.ByName("id"))
 		parkingLot, exists := cctv.DefaultConfiguration.ParkingLots[id]
