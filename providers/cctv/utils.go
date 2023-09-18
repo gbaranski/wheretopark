@@ -67,11 +67,13 @@ func IsVacant(prediction float32) bool {
 }
 
 func VisualizeSpotPrediction(img *gocv.Mat, spot ParkingSpot, prediction float32) {
-	var drawingColor color.RGBA
+	drawingColor := color.RGBA{
+		A: 255,
+	}
 	if IsVacant(prediction) {
-		drawingColor = color.RGBA{R: 0, G: 255, B: 0, A: 255}
+		drawingColor.G = 255
 	} else {
-		drawingColor = color.RGBA{R: 255, G: 0, B: 0, A: 255}
+		drawingColor.R = 255
 	}
 	points := spot.ImagePoints()
 	cvPoints := gocv.NewPointVectorFromPoints(points)
@@ -80,7 +82,24 @@ func VisualizeSpotPrediction(img *gocv.Mat, spot ParkingSpot, prediction float32
 	defer cvPointsVector.Close()
 	cvMinAreaRect := gocv.MinAreaRect(cvPoints)
 	gocv.Polylines(img, cvPointsVector, true, drawingColor, 2)
-	gocv.PutText(img, fmt.Sprintf("%.2f", prediction), cvMinAreaRect.Center, gocv.FontHersheyPlain, 1.0, drawingColor, 1)
+	gocv.PutText(
+		img,
+		fmt.Sprintf("%.2f", prediction),
+		cvMinAreaRect.Center,
+		gocv.FontHersheyDuplex,
+		1,
+		drawingColor,
+		3,
+	)
+	gocv.PutText(
+		img,
+		spot.Type,
+		cvMinAreaRect.Center.Add(image.Point{X: 0, Y: 16}),
+		gocv.FontHersheyDuplex,
+		0.5,
+		color.RGBA{R: 0, G: 0, B: 255},
+		2,
+	)
 }
 
 func ExtractSpots(img gocv.Mat, spots []ParkingSpot) []gocv.Mat {
