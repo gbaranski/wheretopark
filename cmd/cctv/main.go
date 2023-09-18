@@ -83,19 +83,14 @@ func main() {
 			w.Write([]byte("invalid camera ID"))
 			return
 		}
-		var camera *cctv.ParkingLotCamera
-		for i, currentCamera := range parkingLot.Cameras {
-			if i+1 == cameraID {
-				camera = &currentCamera
-			}
-		}
-		if camera == nil {
+		if cameraID > len(parkingLot.Cameras)-1 {
 			w.WriteHeader(http.StatusNotFound)
 			w.Write([]byte("camera not found"))
 			return
 		}
+		camera := parkingLot.Cameras[cameraID]
 
-		img, err := generateVisualizationFor(model, camera)
+		img, err := generateVisualizationFor(model, &camera)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			w.Write([]byte(fmt.Sprintf("generate visualization failure: %s", err)))
