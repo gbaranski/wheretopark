@@ -56,13 +56,13 @@ func ParseConfiguration(content string) (*Configuration, error) {
 
 	for _, parkingLot := range internalConfiguration.ParkingLots {
 		id := wheretopark.GeometryToID(parkingLot.Geometry)
-		totalSpots := 0
+		totalSpots := make(map[wheretopark.SpotType]uint, len(parkingLot.Cameras))
 		for _, camera := range parkingLot.Cameras {
-			totalSpots += len(camera.Spots)
+			for _, spot := range camera.Spots {
+				totalSpots[spot.Type]++
+			}
 		}
-		parkingLot.TotalSpots = map[wheretopark.SpotType]uint{
-			wheretopark.SpotTypeCar: uint(totalSpots),
-		}
+		parkingLot.TotalSpots = totalSpots
 		configuration.ParkingLots[id] = parkingLot
 	}
 
@@ -108,7 +108,14 @@ type ParkingLotCamera struct {
 }
 
 type ParkingSpot struct {
-	Points []Point `json:"points"`
+	Points []Point              `json:"points"`
+	Type   wheretopark.SpotType `json:"type,omitempty"`
+}
+
+func (s *ParkingSpot) UnmarshalJSON(data []byte) error {
+	s.Type = wheretopark.SpotTypeCar // set default value before unmarshaling
+	type Alias ParkingSpot           // create alias to prevent endless loop
+	return json.Unmarshal(data, (*Alias)(s))
 }
 
 type Point struct {

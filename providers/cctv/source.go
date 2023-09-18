@@ -26,7 +26,11 @@ func (s *Source) Metadata(context.Context) (map[wheretopark.ID]wheretopark.Metad
 }
 
 func (s *Source) State(ctx context.Context) (map[wheretopark.ID]wheretopark.State, error) {
-	var availableSpots uint32
+	availableSpotsPtr := make(map[wheretopark.SpotType]*uint32, len(wheretopark.SpotTypes))
+	for _, spotType := range wheretopark.SpotTypes {
+		availableSpotsPtr[spotType] = new(uint32)
+	}
+
 	var wg sync.WaitGroup
 	captureTime := time.Now()
 	for id, camera := range s.cameras {
@@ -41,7 +45,9 @@ func (s *Source) State(ctx context.Context) (map[wheretopark.ID]wheretopark.Stat
 			if err != nil {
 				log.Error().Err(err).Int("id", id).Msg("processing camera fail")
 			}
-			atomic.AddUint32(&availableSpots, uint32(camAvailableSpots))
+			for spotType, count := range camAvailableSpots {
+				atomic.AddUint32(availableSpotsPtr[spotType], uint32(count))
+			}
 		}(id, camera)
 	}
 	wg.Wait()
@@ -49,21 +55,28 @@ func (s *Source) State(ctx context.Context) (map[wheretopark.ID]wheretopark.Stat
 		Info().
 		Str("duration", time.Since(captureTime).String()).
 		Msg("finished processing cameras")
+
+	availableSpots := make(map[wheretopark.SpotType]uint)
+	// TODO: Make clients to comply with missing spot type car
+	availableSpots[wheretopark.SpotTypeCar] = 0
+	for spotType, countPtr := range availableSpotsPtr {
+		if *countPtr > 0 {
+			availableSpots[spotType] = uint(*countPtr)
+		}
+	}
 	state := wheretopark.State{
-		LastUpdated: captureTime,
-		AvailableSpots: map[wheretopark.SpotType]uint{
-			wheretopark.SpotTypeCar: uint(availableSpots),
-		},
+		LastUpdated:    captureTime,
+		AvailableSpots: availableSpots,
 	}
 	return map[wheretopark.ID]wheretopark.State{
 		s.id: state,
 	}, nil
 }
 
-func (s *Source) processCamera(camera ParkingLotCamera) (uint, error) {
+func (s *Source) processCamera(camera ParkingLotCamera) (map[wheretopark.SpotType]uint, error) {
 	img, err := GetImageFromCamera(camera.URL)
 	if err != nil {
-		return 0, fmt.Errorf("unable to get image from camera: %v", err)
+		return nil, fmt.Errorf("unable to get image from camera: %v", err)
 	}
 	defer img.Close()
 
@@ -75,10 +88,11 @@ func (s *Source) processCamera(camera ParkingLotCamera) (uint, error) {
 	}()
 	predictions := s.model.PredictMany(spotImages)
 
-	availableSpots := 0
-	for _, prediction := range predictions {
+	availableSpots := map[wheretopark.SpotType]uint{}
+	for i, prediction := range predictions {
 		if IsVacant(prediction) {
-			availableSpots += 1
+			spotType := camera.Spots[i].Type
+			availableSpots[spotType]++
 		}
 	}
 
@@ -89,5 +103,5 @@ func (s *Source) processCamera(camera ParkingLotCamera) (uint, error) {
 	// 		Int("camera", cameraID).
 	// 		Msg("unable to save predictions")
 	// }
-	return uint(availableSpots), nil
+	return availableSpots, nil
 }
