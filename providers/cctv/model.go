@@ -37,11 +37,18 @@ func (m *Model) Predict(img gocv.Mat) float32 {
 }
 
 func (m *Model) PredictMany(images []gocv.Mat) []float32 {
-	// TODO: try batch
+	blob := gocv.NewMat()
+	defer blob.Close()
+	gocv.BlobFromImages(images, &blob, 1.0, image.Pt(128, 128), gocv.NewScalar(0, 0, 0, 0), true, false, gocv.MatTypeCV8UC3)
+	blob.DivideUChar(255)
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	m.net.SetInput(blob, "input_1")
+	prob := m.net.Forward("")
+	defer prob.Close()
 	predictions := make([]float32, len(images))
-	for i, img := range images {
-		prediction := m.Predict(img)
-		predictions[i] = prediction
+	for i := 0; i < prob.Size()[0]; i++ {
+		predictions[i] = prob.GetFloatAt(i, 0)
 	}
 	return predictions
 }

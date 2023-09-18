@@ -86,19 +86,19 @@ func VisualizeSpotPrediction(img *gocv.Mat, spot ParkingSpot, prediction float32
 		img,
 		fmt.Sprintf("%.2f", prediction),
 		cvMinAreaRect.Center,
-		gocv.FontHersheyDuplex,
-		1,
-		drawingColor,
-		3,
+		gocv.FontHersheyScriptSimplex,
+		0.5,
+		color.RGBA{R: 0, G: 0, B: 255},
+		2,
 	)
 	gocv.PutText(
 		img,
 		spot.Type,
 		cvMinAreaRect.Center.Add(image.Point{X: 0, Y: 16}),
-		gocv.FontHersheyDuplex,
+		gocv.FontHersheySimplex,
 		0.5,
 		color.RGBA{R: 0, G: 0, B: 255},
-		2,
+		1,
 	)
 }
 
