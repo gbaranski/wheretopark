@@ -1,12 +1,26 @@
-use image::{
-    imageops::{self, FilterType},
-    Pixel, RgbImage,
-};
-use ndarray::{ArrayBase, CowArray, Dim, IxDynImpl, OwnedRepr};
-use ort::{
-    download::vision::ObjectDetectionImageSegmentation, tensor::TensorDataToType, Environment,
-    ExecutionProvider, GraphOptimizationLevel, LoggingLevel, Session, SessionBuilder, Value,
-};
+use image::imageops;
+use image::imageops::resize;
+use image::imageops::FilterType;
+use image::GrayImage;
+use image::Pixel;
+use image::RgbImage;
+use imageproc::contours::find_contours_with_threshold;
+use imageproc::contours::Contour;
+use itertools::izip;
+use ndarray::ArrayBase;
+use ndarray::CowArray;
+use ndarray::Dim;
+use ndarray::IxDynImpl;
+use ndarray::OwnedRepr;
+use ort::download::vision::ObjectDetectionImageSegmentation;
+use ort::tensor::TensorDataToType;
+use ort::Environment;
+use ort::ExecutionProvider;
+use ort::GraphOptimizationLevel;
+use ort::LoggingLevel;
+use ort::Session;
+use ort::SessionBuilder;
+use ort::Value;
 
 #[derive(Debug)]
 pub struct Point {
@@ -20,11 +34,22 @@ pub struct BoundingBox {
     pub max: Point,
 }
 
+impl BoundingBox {
+    pub fn width(&self) -> f32 {
+        self.max.x - self.min.x
+    }
+
+    pub fn height(&self) -> f32 {
+        self.max.y - self.min.y
+    }
+}
+
 #[derive(Debug)]
-pub struct Object {
+pub struct Vehicle {
     pub bbox: BoundingBox,
     pub label: i64,
     pub score: f32,
+    pub contours: Vec<Contour<u32>>,
 }
 
 pub struct Model {
@@ -72,7 +97,7 @@ impl Model {
         Ok(Self { session })
     }
 
-    pub fn infere(&self, image: &RgbImage) -> anyhow::Result<Vec<Object>> {
+    pub fn infere(&self, image: &RgbImage) -> anyhow::Result<Vec<Vehicle>> {
         let input = preprocess(image);
         let outputs = self.session.run(vec![Value::from_array(
             self.session.allocator(),
@@ -81,28 +106,57 @@ impl Model {
         let boxes = try_extract::<f32>(&outputs[0])?;
         let labels = try_extract::<i64>(&outputs[1])?;
         let scores = try_extract::<f32>(&outputs[2])?;
-        dbg!(&boxes);
+        let masks = try_extract::<f32>(&outputs[3])?;
 
-        let objects = boxes
-            .outer_iter()
-            .enumerate()
-            .map(|(i, bbox)| {
-                let bbox = BoundingBox{
-                    min: Point {
-                        x: bbox[0],
-                        y: bbox[1],
-                    },
-                    max: Point {
-                        x: bbox[2],
-                        y: bbox[3],
-                    },
-                };
-                let label = labels[i];
-                let score = scores[i];
-                Object { bbox, label, score }
-            })
-            .collect::<Vec<_>>();
+        let objects = izip!(
+            boxes.outer_iter(),
+            labels.outer_iter(),
+            scores.outer_iter(),
+            masks.outer_iter()
+        )
+        .map(|(bbox, label, score, mask)| {
+            let bbox = BoundingBox {
+                min: Point {
+                    x: bbox[0],
+                    y: bbox[1],
+                },
+                max: Point {
+                    x: bbox[2],
+                    y: bbox[3],
+                },
+            };
+            let label = label[[]];
+            let score = score[[]];
+            (bbox, label, score, mask)
+        })
+        .filter(|(_, label, _, _)| *label == 3)
+        .filter(|(_, _, score, _)| *score > 0.7)
+        .map(|(bbox, label, score, mask)| {
+            assert_eq!(mask.shape(), [1, 28, 28]);
+            let mut mask_image = GrayImage::new(28, 28);
 
-        Ok(objects)
+            for (x, y, pixel) in mask_image.enumerate_pixels_mut() {
+                let value = mask[[0, x as usize, y as usize]];
+                *pixel = image::Luma([(value * 255.0) as u8]);
+            }
+            // mask_image.save("mask.png").unwrap();
+            let mask_image = resize(
+                &mask_image,
+                bbox.width() as u32,
+                bbox.height() as u32,
+                FilterType::Lanczos3,
+            );
+            // mask_image.save("mask-resized.png").unwrap();
+            let contours = find_contours_with_threshold(&mask_image, 128u8);
+
+            Vehicle {
+                bbox,
+                label,
+                score,
+                contours,
+            }
+        });
+
+        Ok(objects.collect())
     }
 }
