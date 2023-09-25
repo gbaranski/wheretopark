@@ -5,7 +5,6 @@ use image::GrayImage;
 use image::Pixel;
 use image::RgbImage;
 use imageproc::contours::find_contours_with_threshold;
-use imageproc::contours::Contour;
 use itertools::izip;
 use ndarray::ArrayBase;
 use ndarray::CowArray;
@@ -22,35 +21,9 @@ use ort::Session;
 use ort::SessionBuilder;
 use ort::Value;
 
-#[derive(Debug)]
-pub struct Point {
-    pub x: f32,
-    pub y: f32,
-}
-
-#[derive(Debug)]
-pub struct BoundingBox {
-    pub min: Point,
-    pub max: Point,
-}
-
-impl BoundingBox {
-    pub fn width(&self) -> f32 {
-        self.max.x - self.min.x
-    }
-
-    pub fn height(&self) -> f32 {
-        self.max.y - self.min.y
-    }
-}
-
-#[derive(Debug)]
-pub struct Vehicle {
-    pub bbox: BoundingBox,
-    pub label: i64,
-    pub score: f32,
-    pub contours: Vec<Contour<u32>>,
-}
+use crate::BoundingBox;
+use crate::Point;
+use crate::Vehicle;
 
 pub struct Model {
     session: Session,
@@ -81,6 +54,8 @@ fn try_extract<'a, T: TensorDataToType>(
     let array = view.view();
     Ok(array.into_owned())
 }
+
+const VEHICLE_LABELS: [i64; 3] = [3, 6, 8];
 
 impl Model {
     pub fn new() -> anyhow::Result<Self> {
@@ -129,7 +104,7 @@ impl Model {
             let score = score[[]];
             (bbox, label, score, mask)
         })
-        .filter(|(_, label, _, _)| *label == 3)
+        .filter(|(_, label, _, _)| VEHICLE_LABELS.contains(label))
         .filter(|(_, _, score, _)| *score > 0.7)
         .map(|(bbox, label, score, mask)| {
             assert_eq!(mask.shape(), [1, 28, 28]);

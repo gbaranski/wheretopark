@@ -2116,9 +2116,11 @@ dependencies = [
  "m3u8-rs",
  "ndarray",
  "nshare",
+ "num",
  "ort",
  "reqwest",
  "tokio",
+ "tracing",
  "tracing-subscriber",
 ]
 

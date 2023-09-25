@@ -1,11 +1,10 @@
 use image::io::Reader as ImageReader;
 use image::DynamicImage;
 use image::ImageFormat;
-use reqwest::Url;
 use std::io::Cursor;
 use tokio::process::Command;
 
-pub async fn capture(url: Url) -> anyhow::Result<DynamicImage> {
+pub async fn capture(url: &str) -> anyhow::Result<DynamicImage> {
     let mut command = Command::new("ffmpeg");
     // set input URL
     command.arg("-i");
