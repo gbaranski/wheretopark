@@ -1,4 +1,3 @@
-use image::imageops;
 use image::imageops::resize;
 use image::imageops::FilterType;
 use image::GrayImage;
@@ -25,19 +24,16 @@ use crate::BoundingBox;
 use crate::Point;
 use crate::Vehicle;
 
+#[derive(Debug)]
 pub struct Model {
     session: Session,
 }
 
-fn preprocess(image: &RgbImage) -> ArrayBase<OwnedRepr<f32>, Dim<[usize; 3]>> {
-    // TODO: Resize images as written in https://github.com/onnx/models/tree/main/vision/object_detection_segmentation/mask-rcnn#preprocessing-steps
-    let width = 1280;
-    let height = 32 * 22;
-    let image = imageops::resize(image, width, height, FilterType::Triangle);
 
+fn preprocess(image: &RgbImage) -> ArrayBase<OwnedRepr<f32>, Dim<[usize; 3]>> {
     let mean = [102.9801, 115.9465, 122.7717];
     let image =
-        ndarray::Array::from_shape_fn([3, height as usize, width as usize], |(channel, y, x)| {
+        ndarray::Array::from_shape_fn([3, image.height() as usize, image.width() as usize], |(channel, y, x)| {
             let pixel = image.get_pixel(x as u32, y as u32);
             let channels = pixel.channels();
             channels[channel] as f32 - mean[channel]

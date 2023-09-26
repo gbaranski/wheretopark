@@ -1,3 +1,5 @@
+use std::sync::Arc;
+
 use image::buffer::ConvertBuffer;
 use image::Pixel;
 use image::RgbImage;
@@ -59,18 +61,18 @@ impl BoundingBox {
 }
 
 pub fn compute_iou(
-    box1: &BoundingBox,
-    boxes2: &Vec<BoundingBox>,
+    position1: &SpotPosition,
+    positions2: &[SpotPosition],
     area1: f32,
     areas2: &Vec<f32>,
 ) -> Vec<f32> {
-    let mut overlaps: Vec<f32> = vec![0.0; boxes2.len()];
+    let mut overlaps: Vec<f32> = vec![0.0; positions2.len()];
 
-    for (i, box2) in boxes2.iter().enumerate() {
-        let x1 = f32::max(box1.min.x, box2.min.x);
-        let y1 = f32::max(box1.min.y, box2.min.y);
-        let x2 = f32::min(box1.max.x, box2.max.x);
-        let y2 = f32::min(box1.max.y, box2.max.y);
+    for (i, box2) in positions2.iter().enumerate() {
+        let x1 = f32::max(position1.bbox.min.x, box2.bbox.min.x);
+        let y1 = f32::max(position1.bbox.min.y, box2.bbox.min.y);
+        let x2 = f32::min(position1.bbox.max.x, box2.bbox.max.x);
+        let y2 = f32::min(position1.bbox.max.y, box2.bbox.max.y);
 
         let intersection = f32::max(0.0, x2 - x1) * f32::max(0.0, y2 - y1);
         let union = area1 + areas2[i] - intersection;
@@ -81,14 +83,14 @@ pub fn compute_iou(
     overlaps
 }
 
-pub fn compute_overlaps(boxes1: &Vec<BoundingBox>, boxes2: &Vec<BoundingBox>) -> Vec<Vec<f32>> {
-    let mut overlaps: Vec<Vec<f32>> = vec![vec![0.0; boxes2.len()]; boxes1.len()];
+pub fn compute_overlaps(pos1: &[SpotPosition], pos2: &[SpotPosition]) -> Vec<Vec<f32>> {
+    let mut overlaps: Vec<Vec<f32>> = vec![vec![0.0; pos2.len()]; pos1.len()];
 
-    let areas1: Vec<f32> = boxes1.iter().map(|box1| box1.area()).collect();
-    let areas2: Vec<f32> = boxes2.iter().map(|box2| box2.area()).collect();
+    let areas1: Vec<f32> = pos1.iter().map(|box1| box1.bbox.area()).collect();
+    let areas2: Vec<f32> = pos2.iter().map(|box2| box2.bbox.area()).collect();
 
-    for (i, box1) in boxes1.iter().enumerate() {
-        let overlaps_row = compute_iou(box1, boxes2, areas1[i], &areas2);
+    for (i, box1) in pos1.iter().enumerate() {
+        let overlaps_row = compute_iou(box1, pos2, areas1[i], &areas2);
         overlaps[i] = overlaps_row;
     }
 
@@ -103,10 +105,21 @@ pub struct Vehicle {
     pub contours: Vec<Contour<u32>>,
 }
 
-#[derive(Debug)]
-pub struct ParkingSpot {
+#[derive(Debug, Clone)]
+pub struct SpotPosition {
     pub bbox: BoundingBox,
+    pub contours: Arc<Vec<Contour<u32>>>,
+}
+
+#[derive(Debug)]
+pub struct SpotState {
     pub score: f32,
+}
+
+#[derive(Debug)]
+pub struct Spot {
+    pub position: SpotPosition,
+    pub state: SpotState,
 }
 
 fn draw_contours<T: AsPrimitive<i32> + std::ops::Add<Output = T>, P: Pixel>(
@@ -154,14 +167,14 @@ pub fn visualize_vehicles(image: &RgbImage, vehicles: &[Vehicle]) -> RgbImage {
     image.0.convert()
 }
 
-pub fn visualize_spots(image: &RgbImage, spots: &[ParkingSpot]) -> RgbImage {
+pub fn visualize_spots(image: &RgbImage, spots: &[Spot]) -> RgbImage {
     let image: RgbaImage = image.convert();
     let mut image = Blend(image);
     spots.iter().for_each(|spot| {
-        let rect = Rect::at(spot.bbox.min.x as i32, spot.bbox.min.y as i32)
-            .of_size(spot.bbox.width() as u32, spot.bbox.height() as u32);
+        let rect = Rect::at(spot.position.bbox.min.x as i32, spot.position.bbox.min.y as i32)
+            .of_size(spot.position.bbox.width() as u32, spot.position.bbox.height() as u32);
 
-        let color = if spot.score < 0.15 { GREEN } else { RED };
+        let color = if spot.state.score < 0.15 { GREEN } else { RED };
         draw_hollow_rect_mut(&mut image, rect, color);
     });
     image.0.convert()

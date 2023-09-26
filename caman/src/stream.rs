@@ -1,3 +1,4 @@
+use image::imageops::FilterType;
 use image::io::Reader as ImageReader;
 use image::DynamicImage;
 use image::ImageFormat;
@@ -32,6 +33,9 @@ pub async fn capture(url: &str) -> anyhow::Result<DynamicImage> {
     let mut reader = ImageReader::new(cursor);
     reader.set_format(ImageFormat::Png);
     let image = reader.decode()?;
+    // this resize is required due to  https://github.com/onnx/models/tree/main/vision/object_detection_segmentation/mask-rcnn#preprocessing-steps
+    // moved here because its just easier to work with later
+    let image = image.resize_exact(1280, 32*22, FilterType::Lanczos3);
 
     Ok(image)
 }
