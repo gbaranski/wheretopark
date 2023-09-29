@@ -5,7 +5,6 @@ mod utils;
 mod worker;
 
 pub use model::Model;
-use url::Url;
 pub use utils::BoundingBox;
 pub use utils::Point;
 pub use utils::Spot;
@@ -14,8 +13,10 @@ pub use utils::Vehicle;
 use dashmap::DashMap;
 use serde::Deserialize;
 use serde::Serialize;
+use std::path::PathBuf;
 use std::sync::Arc;
 use std::time::Duration;
+use url::Url;
 use worker::Worker;
 
 #[derive(Debug, Deserialize)]
@@ -40,13 +41,24 @@ pub type CameraMap = Arc<DashMap<String, Camera>>;
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
     tracing_subscriber::fmt::init();
-    let model = Model::new()?;
+    let project_directories =
+        directories::ProjectDirs::from("app", "wheretopark", "caman").unwrap();
+
+    let model_path: PathBuf;
+    if let Some(path) = std::option_env!("MODEL_PATH") {
+        model_path = path.parse().unwrap();
+    } else {
+        model_path = project_directories
+            .data_dir()
+            .join("mask_rcnn_inception_resnet_v2_1024x1024_coco17_gpu-8.onnx");
+    }
+    let model = Model::new(model_path)?;
     let cameras = Arc::new(DashMap::new());
     cameras.insert(
         "u35s2dpn4t_0".to_string(),
         Camera {
             metadata: CameraMetadata {
-                url: Url::parse("https://cam4out.klemit.net/hls/camn826.m3u8").unwrap(),
+                url: Url::parse("https://cam5out.klemit.net/hls/cammt853.m3u8").unwrap(),
             },
             state: CameraState::default(),
         },
@@ -56,7 +68,7 @@ async fn main() -> anyhow::Result<()> {
     // server::run(ServerState::new(cameras)).await;
     loop {
         if let Err(err) = worker.work().await {
-            tracing::error!(%err, "work fail");
+            tracing::error!("work fail: {:#}", err);
         }
         tokio::time::sleep(Duration::from_secs(5)).await;
     }

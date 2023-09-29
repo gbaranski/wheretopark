@@ -5,6 +5,9 @@ use image::ImageFormat;
 use std::io::Cursor;
 use tokio::process::Command;
 
+use crate::model::HEIGHT;
+use crate::model::WIDTH;
+
 pub async fn capture(url: &str) -> anyhow::Result<DynamicImage> {
     let mut command = Command::new("ffmpeg");
     // set input URL
@@ -35,7 +38,7 @@ pub async fn capture(url: &str) -> anyhow::Result<DynamicImage> {
     let image = reader.decode()?;
     // this resize is required due to  https://github.com/onnx/models/tree/main/vision/object_detection_segmentation/mask-rcnn#preprocessing-steps
     // moved here because its just easier to work with later
-    let image = image.resize_exact(1280, 32*22, FilterType::Lanczos3);
+    let image = image.resize_exact(WIDTH, HEIGHT, FilterType::Lanczos3);
 
     Ok(image)
 }

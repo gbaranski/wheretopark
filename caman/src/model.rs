@@ -5,12 +5,14 @@ use image::Pixel;
 use image::RgbImage;
 use imageproc::contours::find_contours_with_threshold;
 use itertools::izip;
+use itertools::Itertools;
 use ndarray::ArrayBase;
+use ndarray::Axis;
 use ndarray::CowArray;
+use ndarray::CowRepr;
 use ndarray::Dim;
 use ndarray::IxDynImpl;
 use ndarray::OwnedRepr;
-use ort::download::vision::ObjectDetectionImageSegmentation;
 use ort::tensor::TensorDataToType;
 use ort::Environment;
 use ort::ExecutionProvider;
@@ -19,6 +21,8 @@ use ort::LoggingLevel;
 use ort::Session;
 use ort::SessionBuilder;
 use ort::Value;
+use std::collections::HashMap;
+use std::path::Path;
 
 use crate::BoundingBox;
 use crate::Point;
@@ -29,17 +33,21 @@ pub struct Model {
     session: Session,
 }
 
+pub const HEIGHT: u32 = 1024;
+pub const WIDTH: u32 = 1024;
 
-fn preprocess(image: &RgbImage) -> ArrayBase<OwnedRepr<f32>, Dim<[usize; 3]>> {
-    let mean = [102.9801, 115.9465, 122.7717];
+fn generate_input(image: &RgbImage) -> anyhow::Result<ArrayBase<CowRepr<'_, u8>, Dim<IxDynImpl>>> {
+    assert_eq!(image.width(), WIDTH);
+    assert_eq!(image.height(), HEIGHT);
     let image =
-        ndarray::Array::from_shape_fn([3, image.height() as usize, image.width() as usize], |(channel, y, x)| {
+        ndarray::Array::from_shape_fn([HEIGHT as usize, WIDTH as usize, 3], |(y, x, channel)| {
             let pixel = image.get_pixel(x as u32, y as u32);
             let channels = pixel.channels();
-            channels[channel] as f32 - mean[channel]
+            channels[channel]
         });
-
-    image
+    let image = image.insert_axis(Axis(0));
+    let input = CowArray::from(image.into_dyn());
+    Ok(input)
 }
 
 fn try_extract<'a, T: TensorDataToType>(
@@ -51,10 +59,10 @@ fn try_extract<'a, T: TensorDataToType>(
     Ok(array.into_owned())
 }
 
-const VEHICLE_LABELS: [i64; 3] = [3, 6, 8];
+const VEHICLE_LABELS: [u8; 3] = [3, 6, 8];
 
 impl Model {
-    pub fn new() -> anyhow::Result<Self> {
+    pub fn new(model_path: impl AsRef<Path>) -> anyhow::Result<Self> {
         let environment = Environment::builder()
             .with_name("MaskRCNN")
             .with_log_level(LoggingLevel::Verbose)
@@ -64,47 +72,65 @@ impl Model {
         let session = SessionBuilder::new(&environment)?
             .with_optimization_level(GraphOptimizationLevel::Level1)?
             .with_intra_threads(1)?
-            .with_model_downloaded(ObjectDetectionImageSegmentation::MaskRcnn)?;
+            .with_model_from_file(model_path)?;
+
+        let mut inputs = session.inputs.iter().map(|i| i.name.as_str());
+        let mut outputs = session.outputs.iter().map(|o| o.name.as_str());
+        tracing::debug!("inputs: {}", inputs.join(", "));
+        tracing::debug!("outputs: {}", outputs.join(", "));
+
         Ok(Self { session })
     }
 
     pub fn infere(&self, image: &RgbImage) -> anyhow::Result<Vec<Vehicle>> {
-        let input = preprocess(image);
-        let outputs = self.session.run(vec![Value::from_array(
-            self.session.allocator(),
-            &CowArray::from(input.into_dyn()),
-        )?])?;
-        let boxes = try_extract::<f32>(&outputs[0])?;
-        let labels = try_extract::<i64>(&outputs[1])?;
-        let scores = try_extract::<f32>(&outputs[2])?;
-        let masks = try_extract::<f32>(&outputs[3])?;
+        let input = generate_input(image)?;
+        let outputs = self
+            .session
+            .run(vec![Value::from_array(self.session.allocator(), &input)?])?;
+
+        let outputs: HashMap<&str, ArrayBase<OwnedRepr<f32>, Dim<IxDynImpl>>> = self
+            .session
+            .outputs
+            .iter()
+            .enumerate()
+            .map(|(i, o)| {
+                let value = try_extract::<f32>(&outputs[i])?;
+                anyhow::Ok((o.name.as_str(), value))
+            })
+            .collect::<anyhow::Result<_>>()?;
+
+        let boxes = &outputs["detection_boxes"];
+        let classes = &outputs["detection_classes"];
+        let masks = &outputs["detection_masks"];
+        let scores = &outputs["detection_scores"];
 
         let objects = izip!(
-            boxes.outer_iter(),
-            labels.outer_iter(),
-            scores.outer_iter(),
-            masks.outer_iter()
+            boxes.axis_iter(Axis(1)),
+            classes.axis_iter(Axis(1)),
+            scores.axis_iter(Axis(1)),
+            masks.axis_iter(Axis(1))
         )
-        .map(|(bbox, label, score, mask)| {
+        .map(|(bbox, class, score, mask)| {
+            let bbox = bbox.as_slice().unwrap();
             let bbox = BoundingBox {
                 min: Point {
-                    x: bbox[0],
-                    y: bbox[1],
+                    x: bbox[1] * image.width() as f32,
+                    y: bbox[0] * image.height() as f32,
                 },
                 max: Point {
-                    x: bbox[2],
-                    y: bbox[3],
+                    x: bbox[3] * image.width() as f32,
+                    y: bbox[2] * image.height() as f32,
                 },
             };
-            let label = label[[]];
-            let score = score[[]];
-            (bbox, label, score, mask)
+            let class = class[0] as u8;
+            let score = score[0];
+            (bbox, class, score, mask)
         })
-        .filter(|(_, label, _, _)| VEHICLE_LABELS.contains(label))
-        .filter(|(_, _, score, _)| *score > 0.7)
-        .map(|(bbox, label, score, mask)| {
-            assert_eq!(mask.shape(), [1, 28, 28]);
-            let mut mask_image = GrayImage::new(28, 28);
+        .filter(|(_, class, _, _)| VEHICLE_LABELS.contains(class))
+        .filter(|(_, _, score, _)| *score > 0.5)
+        .map(|(bbox, _, score, mask)| {
+            assert_eq!(mask.shape(), [1, 33, 33]);
+            let mut mask_image = GrayImage::new(33, 33);
 
             for (x, y, pixel) in mask_image.enumerate_pixels_mut() {
                 let value = mask[[0, x as usize, y as usize]];
@@ -122,7 +148,6 @@ impl Model {
 
             Vehicle {
                 bbox,
-                label,
                 score,
                 contours,
             }

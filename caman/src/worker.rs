@@ -44,8 +44,10 @@ impl Worker {
         metadata: &CameraMetadata,
     ) -> anyhow::Result<CameraState> {
         let image = capture(metadata.url.as_str()).await?;
+        tracing::debug!(id=%id, "captured image");
         let image = image.into_rgb8();
         let vehicles = self.model.infere(&image)?;
+        tracing::debug!(id=%id, "inference finished");
         let image_vehicles = utils::visualize_vehicles(&image, &vehicles);
         image_vehicles.save(format!("{id}-vehicles.jpeg"))?;
 

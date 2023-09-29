@@ -100,7 +100,6 @@ pub fn compute_overlaps(pos1: &[SpotPosition], pos2: &[SpotPosition]) -> Vec<Vec
 #[derive(Debug)]
 pub struct Vehicle {
     pub bbox: BoundingBox,
-    pub label: i64,
     pub score: f32,
     pub contours: Vec<Contour<u32>>,
 }
