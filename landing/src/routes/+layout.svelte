@@ -3,14 +3,19 @@
 	import Logo from '$lib/Logo.svelte';
 	import NavbarMenu from '$lib/NavbarMenu.svelte';
 	import { serializeSchema } from '$lib/utils';
-	import { frequentlyAskedQuestions, gregoryBaranski, organisationSchema, softwareApplication } from '$lib/schemas';
+	import {
+		frequentlyAskedQuestions,
+		gregoryBaranski,
+		organisationSchema,
+		softwareApplication
+	} from '$lib/schemas';
 </script>
 
 <svelte:head>
 	<script
-		defer
-		data-domain="wheretopark.app"
-		src="https://plausible.gbaranski.com/js/script.js"
+		data-goatcounter="https://wheretopark.goatcounter.com/count"
+		async
+		src="https://gc.zgo.at/count.js"
 	></script>
 	<title>Where To Park</title>
 	<meta

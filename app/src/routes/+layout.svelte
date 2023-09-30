@@ -30,9 +30,9 @@
 	<!-- SEO -->
 
 	<script
-		defer
-		data-domain="web.wheretopark.app"
-		src="https://plausible.gbaranski.com/js/script.js"
+		data-goatcounter="https://wheretopark-app.goatcounter.com/count"
+		async
+		src="https://gc.zgo.at/count.js"
 	></script>
 </svelte:head>
 
