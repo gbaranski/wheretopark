@@ -32,7 +32,7 @@
 	<script
 		defer
 		data-domain="web.wheretopark.app"
-		src="https://plausible.gbaranski.com/js/plausible.js"
+		src="https://plausible.gbaranski.com/js/script.js"
 	></script>
 </svelte:head>
 

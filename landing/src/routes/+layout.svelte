@@ -10,7 +10,7 @@
 	<script
 		defer
 		data-domain="wheretopark.app"
-		src="https://plausible.gbaranski.com/js/plausible.js"
+		src="https://plausible.gbaranski.com/js/script.js"
 	></script>
 	<title>Where To Park</title>
 	<meta
