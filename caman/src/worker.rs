@@ -64,8 +64,11 @@ impl Worker {
                     "inference for {id} finished after {}ms",
                     start.elapsed().as_millis()
                 );
-                dbg!(&objects);
-                let visualization = utils::visualize_objects(&image, &objects);
+                let vehicles = objects
+                    .into_iter()
+                    .filter(|object| ["car", "bus", "truck"].contains(&object.label))
+                    .collect_vec();
+                let visualization = utils::visualize_objects(&image, &vehicles);
                 visualization.save(format!("{id}-vehicles.jpeg"))?;
                 tracing::debug!("saved visualization for {id}");
             }

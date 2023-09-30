@@ -99,7 +99,6 @@ impl Model {
 
         let output = try_extract::<f32>(&outputs[0])?;
         let output = output.slice(s![.., .., 0]);
-        dbg!(output.shape());
         let objects = output
             .outer_iter()
             .map(|row| {
@@ -124,7 +123,6 @@ impl Model {
                     x: dim[0],
                     y: dim[1],
                 };
-                dbg!(&center);
                 let (width, height) = (dim[2], dim[3]);
                 let bbox = BoundingBox {
                     min: Point {
