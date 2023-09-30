@@ -1,44 +1,104 @@
-use image::imageops::FilterType;
-use image::io::Reader as ImageReader;
-use image::DynamicImage;
-use image::ImageFormat;
-use std::io::Cursor;
-use tokio::process::Command;
-
 use crate::model::HEIGHT;
 use crate::model::WIDTH;
+use anyhow::Context;
+use image::DynamicImage;
+use image::RgbImage;
+use std::process::Stdio;
+use tokio::io::AsyncBufRead;
+use tokio::io::AsyncBufReadExt;
+use tokio::io::AsyncRead;
+use tokio::io::AsyncReadExt;
+use tokio::io::BufReader;
+use tokio::process::Command;
+use tokio::sync::mpsc;
 
-pub async fn capture(url: &str) -> anyhow::Result<DynamicImage> {
+// #[derive(Debug)]
+// pub struct ImageStream {
+//     child: Child,
+//     buf: Vec<u8>,
+//     stdout: BufReader<ChildStdout>,
+// }
+
+// impl ImageStream {
+//     fn new(child: Child) -> Self {
+//         Self {
+//             child,
+//             buf: vec![],
+//             stdout: BufReader::new(child.stdout.unwrap()),
+//         }
+//     }
+// }
+
+fn command(url: impl AsRef<str>) -> Command {
     let mut command = Command::new("ffmpeg");
+    command.arg("-hwaccel");
+    command.arg("auto");
+
     // set input URL
     command.arg("-i");
-    command.arg(url.to_string());
-    // set to accept only the first frame
-    command.arg("-vframes");
-    command.arg("1");
-    // interpret input as image
+    command.arg(url.as_ref());
+    // set video filters
+    command.arg("-vf");
+    command.arg("fps=1/10,format=rgb24");
+    // set output image size
+    command.arg("-s");
+    command.arg(format!("{WIDTH}:{HEIGHT}"));
+    // set output format
     command.arg("-f");
-    command.arg("image2");
-    // encode to png
-    command.arg("-c:v");
-    command.arg("png");
+    command.arg("image2pipe");
+    // set ouput codec
+    command.arg("-vcodec");
+    command.arg("rawvideo");
     // set output to stdout
     command.arg("-");
 
-    let output = command.output().await?;
-    if !output.status.success() {
-        return Err(anyhow::anyhow!(
-            "ffmpeg exited with status {}",
-            output.status
-        ));
-    }
-    let cursor = Cursor::new(output.stdout);
-    let mut reader = ImageReader::new(cursor);
-    reader.set_format(ImageFormat::Png);
-    let image = reader.decode()?;
-    // this resize is required due to  https://github.com/onnx/models/tree/main/vision/object_detection_segmentation/mask-rcnn#preprocessing-steps
-    // moved here because its just easier to work with later
-    let image = image.resize_exact(WIDTH, HEIGHT, FilterType::Lanczos3);
+    command.stdout(Stdio::piped());
+    command.stderr(Stdio::piped());
+    command
+}
 
-    Ok(image)
+async fn read(
+    buf: &mut [u8],
+    mut reader: impl AsyncRead + AsyncBufRead + Unpin + Send,
+) -> anyhow::Result<DynamicImage> {
+    let n = reader.read_exact(buf).await?;
+    tracing::debug!("read {n} bytes");
+    if n == 0 {
+        return Err(anyhow::anyhow!("no bytes read"));
+    }
+    let image = RgbImage::from_raw(WIDTH as u32, HEIGHT as u32, buf.to_vec()).context("create image")?;
+    Ok(image.into())
+}
+
+pub fn images(
+    url: impl AsRef<str>,
+) -> anyhow::Result<mpsc::Receiver<anyhow::Result<DynamicImage>>> {
+    let mut command = command(url);
+
+    let child = command.spawn().unwrap();
+    tokio::spawn(async move {
+        let stderr = child.stderr.unwrap();
+        let reader = BufReader::new(stderr);
+        let mut lines = reader.lines();
+        while let Some(line) = lines.next_line().await.unwrap() {
+            tracing::trace!("ffmpeg: {}", line)
+        }
+        tracing::info!("ffmpeg exited");
+    });
+
+    let (tx, rx) = mpsc::channel(4);
+    let stdout = child.stdout.unwrap();
+    let mut reader = BufReader::new(stdout);
+    tokio::spawn(async move {
+        let mut buf = vec![0; WIDTH * HEIGHT * 3];
+        loop {
+            tokio::time::sleep(tokio::time::Duration::from_secs(1)).await;
+            let result = read(&mut buf, &mut reader).await;
+            if tx.send(result).await.is_err() {
+                break;
+            }
+        }
+    });
+
+    Ok(rx)
 }

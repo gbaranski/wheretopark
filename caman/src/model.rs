@@ -33,14 +33,14 @@ pub struct Model {
     session: Session,
 }
 
-pub const HEIGHT: u32 = 1024;
-pub const WIDTH: u32 = 1024;
+pub const HEIGHT: usize = 1024;
+pub const WIDTH: usize = 1024;
 
 fn generate_input(image: &RgbImage) -> anyhow::Result<ArrayBase<CowRepr<'_, u8>, Dim<IxDynImpl>>> {
-    assert_eq!(image.width(), WIDTH);
-    assert_eq!(image.height(), HEIGHT);
+    assert_eq!(image.width() as usize, WIDTH);
+    assert_eq!(image.height() as usize, HEIGHT);
     let image =
-        ndarray::Array::from_shape_fn([HEIGHT as usize, WIDTH as usize, 3], |(y, x, channel)| {
+        ndarray::Array::from_shape_fn([HEIGHT, WIDTH, 3], |(y, x, channel)| {
             let pixel = image.get_pixel(x as u32, y as u32);
             let channels = pixel.channels();
             channels[channel]

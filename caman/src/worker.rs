@@ -1,7 +1,6 @@
 use dashmap::DashMap;
 use std::sync::Arc;
 
-use crate::stream::capture;
 use crate::utils;
 use crate::utils::SpotPosition;
 use crate::utils::SpotState;
