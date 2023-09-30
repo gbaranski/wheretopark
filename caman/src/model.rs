@@ -1,21 +1,12 @@
-use image::imageops::resize;
-use image::imageops::FilterType;
-use image::GrayImage;
 use image::Pixel;
 use image::RgbImage;
-use imageproc::contours::Contour;
-use imageproc::contours::find_contours_with_threshold;
-use itertools::izip;
 use itertools::Itertools;
 use ndarray::s;
 use ndarray::ArrayBase;
-use ndarray::Axis;
 use ndarray::CowArray;
 use ndarray::CowRepr;
 use ndarray::Dim;
 use ndarray::IxDynImpl;
-use ndarray::OwnedRepr;
-use ort::tensor::TensorDataToType;
 use ort::Environment;
 use ort::ExecutionProvider;
 use ort::GraphOptimizationLevel;
@@ -23,12 +14,11 @@ use ort::LoggingLevel;
 use ort::Session;
 use ort::SessionBuilder;
 use ort::Value;
-use std::collections::HashMap;
 use std::path::Path;
 
 use crate::BoundingBox;
-use crate::Point;
 use crate::Object;
+use crate::Point;
 
 #[derive(Debug)]
 pub struct Model {
@@ -45,30 +35,25 @@ pub const HEIGHT: usize = 640;
 pub const WIDTH: usize = 640;
 const CHANNELS: usize = 3;
 
-fn generate_input(image: &RgbImage) -> anyhow::Result<ArrayBase<CowRepr<'_, f32>, Dim<IxDynImpl>>> {
-    image.save("/tmp/temp.png").unwrap();
-    assert_eq!(image.width() as usize, WIDTH);
-    assert_eq!(image.height() as usize, HEIGHT);
-    let image = ndarray::Array::from_shape_fn([CHANNELS, HEIGHT, WIDTH], |(channel, y, x)| {
-        let pixel = image.get_pixel(x as u32, y as u32);
-        let channels = pixel.channels();
-        channels[channel] as f32 / 255.0
-    });
-    let image = image.insert_axis(Axis(0));
+fn generate_input(
+    images: &[RgbImage],
+) -> anyhow::Result<ArrayBase<CowRepr<'_, f32>, Dim<IxDynImpl>>> {
+    for image in images {
+        assert_eq!(image.width() as usize, WIDTH);
+        assert_eq!(image.height() as usize, HEIGHT);
+    }
+    let image = ndarray::Array::from_shape_fn(
+        [images.len(), CHANNELS, HEIGHT, WIDTH],
+        |(idx, channel, y, x)| {
+            let image = &images[idx];
+            let pixel = image.get_pixel(x as u32, y as u32);
+            let channels = pixel.channels();
+            channels[channel] as f32 / 255.0
+        },
+    );
     let input = CowArray::from(image.into_dyn());
     Ok(input)
 }
-
-fn try_extract<'a, T: TensorDataToType>(
-    value: &'a Value,
-) -> anyhow::Result<ArrayBase<OwnedRepr<T>, Dim<IxDynImpl>>> {
-    let tensor = value.try_extract::<T>()?;
-    let view = tensor.view();
-    let transposed = view.t();
-    Ok(transposed.into_owned())
-}
-
-const VEHICLE_LABELS: [u8; 3] = [3, 6, 8];
 
 impl Model {
     pub fn new(model_path: impl AsRef<Path>) -> anyhow::Result<Self> {
@@ -91,57 +76,62 @@ impl Model {
         Ok(Self { session })
     }
 
-    pub fn infere(&self, image: &RgbImage) -> anyhow::Result<Vec<Object>> {
-        let input = generate_input(image)?;
+    pub fn infere(&self, images: &[RgbImage]) -> anyhow::Result<Vec<Vec<Object>>> {
+        let input = generate_input(images)?;
         let outputs = self
             .session
             .run(vec![Value::from_array(self.session.allocator(), &input)?])?;
 
-        let output = try_extract::<f32>(&outputs[0])?;
-        let output = output.slice(s![.., .., 0]);
-        let objects = output
-            .outer_iter()
-            .map(|row| {
-                let dimensions = row.slice(s![..4]).iter().cloned().collect_vec();
-                let classes = row.slice(s![4..]).iter().cloned().collect_vec();
-                assert_eq!(classes.len(), COCO_CLASSES.len());
-                (dimensions, classes)
-            })
-            .map(|(dim, classes)| {
-                let (class_id, score) = classes
-                    .iter()
-                    .enumerate()
-                    .map(|(index, value)| (index, *value))
-                    .reduce(|accum, row| if row.1 > accum.1 { row } else { accum })
-                    .unwrap();
-                let label = COCO_CLASSES[class_id];
-                (dim, (label, score))
-            })
-            .filter(|(_, (_, score))| *score > 0.1)
-            .map(|(dim, (label, score))| {
-                let center = Point {
-                    x: dim[0],
-                    y: dim[1],
-                };
-                let (width, height) = (dim[2], dim[3]);
-                let bbox = BoundingBox {
-                    min: Point {
-                        x: center.x - (width / 2.0),
-                        y: center.y - (height / 2.0),
-                    },
-                    max: Point {
-                        x: center.x + (width / 2.0),
-                        y: center.y + (height / 2.0),
-                    },
-                };
-                Object {
-                    bbox,
-                    label,
-                    score,
-                    contours: vec![],
-                }
-            });
-
-            Ok(objects.collect_vec())
+        let outputs = outputs.get(0).unwrap();
+        let outputs = outputs.try_extract::<f32>()?;
+        let outputs = outputs.view();
+        let outputs = outputs.outer_iter().map(|output| {
+            let output = output.t();
+            dbg!(output.shape());
+            output
+                .outer_iter()
+                .map(|row| {
+                    let dimensions = row.slice(s![..4]).iter().cloned().collect_vec();
+                    let classes = row.slice(s![4..]).iter().cloned().collect_vec();
+                    assert_eq!(classes.len(), COCO_CLASSES.len());
+                    (dimensions, classes)
+                })
+                .map(|(dim, classes)| {
+                    let (class_id, score) = classes
+                        .iter()
+                        .enumerate()
+                        .map(|(index, value)| (index, *value))
+                        .reduce(|accum, row| if row.1 > accum.1 { row } else { accum })
+                        .unwrap();
+                    let label = COCO_CLASSES[class_id];
+                    (dim, (label, score))
+                })
+                .filter(|(_, (_, score))| *score > 0.1)
+                .map(|(dim, (label, score))| {
+                    let center = Point {
+                        x: dim[0],
+                        y: dim[1],
+                    };
+                    let (width, height) = (dim[2], dim[3]);
+                    let bbox = BoundingBox {
+                        min: Point {
+                            x: center.x - (width / 2.0),
+                            y: center.y - (height / 2.0),
+                        },
+                        max: Point {
+                            x: center.x + (width / 2.0),
+                            y: center.y + (height / 2.0),
+                        },
+                    };
+                    Object {
+                        bbox,
+                        label,
+                        score,
+                        contours: vec![],
+                    }
+                })
+                .collect_vec()
+        });
+        Ok(outputs.collect())
     }
 }

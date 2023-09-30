@@ -52,23 +52,23 @@ impl Worker {
                     )
                 }))
                 .await;
-            let images = images
-                .into_iter()
-                .filter_map(|(id, image)| image.map(|image| (id, image)))
-                .collect::<HashMap<String, RgbImage>>();
             tracing::info!("collected {} images", images.len());
-            for (id, image) in images {
-                let start = std::time::Instant::now();
-                let objects = self.model.infere(&image)?;
-                tracing::debug!(
-                    "inference for {id} finished after {}ms",
-                    start.elapsed().as_millis()
-                );
+            let ids = images.iter().map(|(id, _)| id).cloned().collect_vec();
+            let images = images.into_iter().filter_map(|(_, image)| image).collect_vec();
+            let start = std::time::Instant::now();
+            let predictions = self.model.infere(&images)?;
+            tracing::debug!(
+                "inference for {} images finished after {}ms",
+                images.len(),
+                start.elapsed().as_millis()
+            );
+            for (i, objects) in predictions.into_iter().enumerate() {
+                let id = &ids[i];
                 let vehicles = objects
                     .into_iter()
                     .filter(|object| ["car", "bus", "truck"].contains(&object.label))
                     .collect_vec();
-                let visualization = utils::visualize_objects(&image, &vehicles);
+                let visualization = utils::visualize_objects(&images[i], &vehicles);
                 visualization.save(format!("{id}-vehicles.jpeg"))?;
                 tracing::debug!("saved visualization for {id}");
             }

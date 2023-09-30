@@ -55,15 +55,15 @@ async fn main() -> anyhow::Result<()> {
     }
     let model = Model::new(model_path)?;
     let cameras = Arc::new(DashMap::new());
-    // cameras.insert(
-    //     "u35s2sey91_1".to_string(),
-    //     Camera {
-    //         metadata: CameraMetadata {
-    //             url: Url::parse("https://cam5out.klemit.net/hls/cammt852.m3u8").unwrap(),
-    //         },
-    //         state: CameraState::default(),
-    //     },
-    // );
+    cameras.insert(
+        "u35s2sey91_1".to_string(),
+        Camera {
+            metadata: CameraMetadata {
+                url: Url::parse("https://cam5out.klemit.net/hls/cammt852.m3u8").unwrap(),
+            },
+            state: CameraState::default(),
+        },
+    );
     cameras.insert(
         "u35s3nvprd_0".to_string(),
         Camera {
