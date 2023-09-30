@@ -3,6 +3,7 @@ use crate::model::WIDTH;
 use anyhow::Context;
 use image::DynamicImage;
 use image::RgbImage;
+use tokio::sync::watch;
 use std::process::Stdio;
 use tokio::io::AsyncBufRead;
 use tokio::io::AsyncBufReadExt;
@@ -39,7 +40,7 @@ fn command(url: impl AsRef<str>) -> Command {
     command.arg(url.as_ref());
     // set video filters
     command.arg("-vf");
-    command.arg("fps=1/10,format=rgb24");
+    command.arg("fps=1/30,format=rgb24");
     // set output image size
     command.arg("-s");
     command.arg(format!("{WIDTH}:{HEIGHT}"));
@@ -71,11 +72,12 @@ async fn read(
 }
 
 pub fn images(
-    url: impl AsRef<str>,
-) -> anyhow::Result<mpsc::Receiver<anyhow::Result<DynamicImage>>> {
-    let mut command = command(url);
+    url: String,
+) -> anyhow::Result<watch::Receiver<Option<DynamicImage>>> {
+    tracing::info!("connecting to {url}");
+    let mut command = command(&url);
 
-    let child = command.spawn().unwrap();
+    let child = command.spawn()?;
     tokio::spawn(async move {
         let stderr = child.stderr.unwrap();
         let reader = BufReader::new(stderr);
@@ -86,7 +88,7 @@ pub fn images(
         tracing::info!("ffmpeg exited");
     });
 
-    let (tx, rx) = mpsc::channel(4);
+    let (tx, rx) = watch::channel(None);
     let stdout = child.stdout.unwrap();
     let mut reader = BufReader::new(stdout);
     tokio::spawn(async move {
@@ -94,8 +96,13 @@ pub fn images(
         loop {
             tokio::time::sleep(tokio::time::Duration::from_secs(1)).await;
             let result = read(&mut buf, &mut reader).await;
-            if tx.send(result).await.is_err() {
-                break;
+            match result {
+                Ok(image) => {
+                    tx.send(Some(image)).unwrap();
+                }
+                Err(err) => {
+                    tracing::error!(url=%url, "read image failed: {:#}", err);
+                }
             }
         }
     });

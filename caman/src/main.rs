@@ -2,21 +2,21 @@ mod model;
 mod server;
 mod stream;
 mod utils;
-// mod worker;
+mod worker;
 
-use anyhow::Context;
 pub use model::Model;
 pub use utils::BoundingBox;
 pub use utils::Point;
 pub use utils::Spot;
 pub use utils::Vehicle;
+pub use worker::Worker;
 
 use dashmap::DashMap;
 use serde::Deserialize;
 use serde::Serialize;
 use std::path::PathBuf;
 use std::sync::Arc;
-use std::time::SystemTime;
+use std::time::Duration;
 use url::Url;
 // use worker::Worker;
 
@@ -53,41 +53,33 @@ async fn main() -> anyhow::Result<()> {
             .data_dir()
             .join("mask_rcnn_inception_resnet_v2_1024x1024_coco17_gpu-8.onnx");
     }
-    // let model = Model::new(model_path)?;
-    tracing::info!("start");
-    let mut images = stream::images("https://cam4out.klemit.net/hls/camn591.m3u8")?;
-    while let Some(image) = images.recv().await {
-        image?
-            .save(format!(
-                "/tmp/img-{}.jpg",
-                SystemTime::now()
-                    .duration_since(std::time::UNIX_EPOCH)
-                    .unwrap()
-                    .as_secs()
-            ))
-            .context("save image")?;
-        tracing::info!("saved image");
-    }
-    tracing::info!("finished running");
+    let model = Model::new(model_path)?;
+    let cameras = Arc::new(DashMap::new());
+    cameras.insert(
+        "u35s2sey91_1".to_string(),
+        Camera {
+            metadata: CameraMetadata {
+                url: Url::parse("https://cam5out.klemit.net/hls/cammt852.m3u8").unwrap(),
+            },
+            state: CameraState::default(),
+        },
+    );
+    cameras.insert(
+        "u35s3nvprd_0".to_string(),
+        Camera {
+            metadata: CameraMetadata {
+                url: Url::parse("https://cam5out.klemit.net/hls/cammm841.m3u8").unwrap(),
+            },
+            state: CameraState::default(),
+        },
+    );
 
-    Ok(())
-    // let cameras = Arc::new(DashMap::new());
-    // cameras.insert(
-    //     "u35s2dpn4t_0".to_string(),
-    //     Camera {
-    //         metadata: CameraMetadata {
-    //             url: Url::parse("https://cam5out.klemit.net/hls/cammt853.m3u8").unwrap(),
-    //         },
-    //         state: CameraState::default(),
-    //     },
-    // );
-
-    // let worker = Worker::new(model, cameras.clone());
+    let worker = Worker::new(model, cameras.clone());
     // // server::run(ServerState::new(cameras)).await;
-    // loop {
-    //     if let Err(err) = worker.work().await {
-    //         tracing::error!("work fail: {:#}", err);
-    //     }
-    //     tokio::time::sleep(Duration::from_secs(5)).await;
-    // }
+    loop {
+        if let Err(err) = worker.work().await {
+            tracing::error!("work fail: {:#}", err);
+        }
+        tokio::time::sleep(Duration::from_secs(5)).await;
+    }
 }
