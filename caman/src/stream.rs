@@ -1,34 +1,21 @@
 use crate::model::HEIGHT;
 use crate::model::WIDTH;
 use anyhow::Context;
-use image::DynamicImage;
 use image::RgbImage;
-use tokio::sync::watch;
 use std::process::Stdio;
 use tokio::io::AsyncBufRead;
 use tokio::io::AsyncBufReadExt;
 use tokio::io::AsyncRead;
 use tokio::io::AsyncReadExt;
 use tokio::io::BufReader;
+use tokio::process::Child;
+use tokio::process::ChildStderr;
+use tokio::process::ChildStdout;
 use tokio::process::Command;
-use tokio::sync::mpsc;
-
-// #[derive(Debug)]
-// pub struct ImageStream {
-//     child: Child,
-//     buf: Vec<u8>,
-//     stdout: BufReader<ChildStdout>,
-// }
-
-// impl ImageStream {
-//     fn new(child: Child) -> Self {
-//         Self {
-//             child,
-//             buf: vec![],
-//             stdout: BufReader::new(child.stdout.unwrap()),
-//         }
-//     }
-// }
+use tokio::sync::watch;
+use tracing::span;
+use tracing::Instrument;
+use tracing::Level;
 
 fn command(url: impl AsRef<str>) -> Command {
     let mut command = Command::new("ffmpeg");
@@ -55,10 +42,11 @@ fn command(url: impl AsRef<str>) -> Command {
 
     command.stdout(Stdio::piped());
     command.stderr(Stdio::piped());
+    command.kill_on_drop(true);
     command
 }
 
-async fn read(
+async fn read_image(
     buf: &mut [u8],
     mut reader: impl AsyncRead + AsyncBufRead + Unpin + Send,
 ) -> anyhow::Result<RgbImage> {
@@ -67,45 +55,56 @@ async fn read(
     if n == 0 {
         return Err(anyhow::anyhow!("no bytes read"));
     }
-    let image = RgbImage::from_raw(WIDTH as u32, HEIGHT as u32, buf.to_vec()).context("create image")?;
+    let image =
+        RgbImage::from_raw(WIDTH as u32, HEIGHT as u32, buf.to_vec()).context("create image")?;
     Ok(image)
 }
 
-pub fn images(
-    url: String,
-) -> anyhow::Result<watch::Receiver<Option<RgbImage>>> {
-    tracing::info!("connecting to {url}");
-    let mut command = command(&url);
+async fn wait_for_exit(mut child: Child) {
+    let status = child.wait().await.expect("ffmpeg exit");
+    if !status.success() {
+        tracing::error!("ffmpeg exited with status {}", status);
+    }
+}
 
-    let child = command.spawn()?;
-    tokio::spawn(async move {
-        let stderr = child.stderr.unwrap();
-        let reader = BufReader::new(stderr);
-        let mut lines = reader.lines();
-        while let Some(line) = lines.next_line().await.unwrap() {
-            tracing::trace!("ffmpeg: {}", line)
-        }
-        tracing::info!("ffmpeg exited");
-    });
+async fn process_stderr(stderr: BufReader<ChildStderr>) {
+    let mut lines = stderr.lines();
+    while let Some(line) = lines.next_line().await.unwrap() {
+        tracing::trace!("ffmpeg: {}", line)
+    }
+}
 
-    let (tx, rx) = watch::channel(None);
-    let stdout = child.stdout.unwrap();
-    let mut reader = BufReader::new(stdout);
-    tokio::spawn(async move {
-        let mut buf = vec![0; WIDTH * HEIGHT * 3];
-        loop {
-            tokio::time::sleep(tokio::time::Duration::from_secs(1)).await;
-            let result = read(&mut buf, &mut reader).await;
-            match result {
-                Ok(image) => {
-                    tx.send(Some(image)).unwrap();
-                }
-                Err(err) => {
-                    tracing::error!(url=%url, "read image failed: {:#}", err);
-                }
+async fn process_stdout(
+    mut stdout: BufReader<ChildStdout>,
+    sender: watch::Sender<Option<RgbImage>>,
+) {
+    let mut buf = vec![0; WIDTH * HEIGHT * 3];
+    loop {
+        tokio::time::sleep(tokio::time::Duration::from_secs(1)).await;
+        let result = read_image(&mut buf, &mut stdout).await;
+        match result {
+            Ok(image) => {
+                sender.send(Some(image)).unwrap();
+            }
+            Err(err) => {
+                tracing::error!("read image failed: {:#}", err);
             }
         }
-    });
+    }
+}
+
+pub fn images(url: String) -> anyhow::Result<watch::Receiver<Option<RgbImage>>> {
+    tracing::info!("connecting to {url}");
+    let span = span!(Level::INFO, "images()", url = %url);
+    let mut command = command(&url);
+
+    let mut child = command.spawn()?;
+    let stderr = BufReader::new(child.stderr.take().unwrap());
+    let stdout = BufReader::new(child.stdout.take().unwrap());
+    let (tx, rx) = watch::channel(None);
+    tokio::spawn(wait_for_exit(child).instrument(span.clone()));
+    tokio::spawn(process_stderr(stderr).instrument(span.clone()));
+    tokio::spawn(process_stdout(stdout, tx).instrument(span.clone()));
 
     Ok(rx)
 }
