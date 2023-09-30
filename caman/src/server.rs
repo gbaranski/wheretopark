@@ -1,25 +1,23 @@
+use crate::CameraMetadata;
+use crate::Worker;
 use axum::extract::Path;
 use axum::extract::State;
 use axum::http::StatusCode;
 use axum::response::IntoResponse;
 use axum::response::Json;
-use axum::routing::get;
 use axum::Form;
+use axum::routing::get;
 use serde::Serialize;
-
-use crate::Camera;
-use crate::CameraMap;
-use crate::CameraMetadata;
-use crate::CameraState;
+use std::sync::Arc;
 
 #[derive(Debug, Clone)]
 pub struct ServerState {
-    cameras: CameraMap,
+    worker: Arc<Worker>,
 }
 
 impl ServerState {
-    pub fn new(cameras: CameraMap) -> Self {
-        Self { cameras }
+    pub fn new(worker: Arc<Worker>) -> Self {
+        Self { worker }
     }
 }
 
@@ -29,11 +27,7 @@ async fn post_camera(
     Form(metadata): Form<CameraMetadata>,
 ) -> impl IntoResponse {
     tracing::info!(id=%id, metadata=?metadata, "insert camera");
-    let camera = Camera {
-        metadata,
-        state: CameraState::default(),
-    };
-    app_state.cameras.insert(id, camera);
+    app_state.worker.add(id, metadata);
     StatusCode::CREATED
 }
 
@@ -42,10 +36,7 @@ async fn get_camera(
     Path(id): Path<String>,
 ) -> impl IntoResponse {
     tracing::info!(id=%id, "get camera");
-    let state = app_state
-        .cameras
-        .get(&id)
-        .map(|camera| camera.state.clone());
+    let state = app_state.worker.state_of(&id).map(|state| state.clone());
     let status = if state.is_none() {
         StatusCode::NOT_FOUND
     } else {
@@ -64,11 +55,11 @@ struct AppStatus {
 
 async fn status(State(app_state): State<ServerState>) -> impl IntoResponse {
     return Json(AppStatus {
-        cameras: app_state.cameras.len(),
+        cameras: app_state.worker.cameras(),
     });
 }
 
-pub async fn run(app_state: ServerState) {
+pub async fn run(app_state: ServerState) -> anyhow::Result<()> {
     let app = axum::Router::new()
         .route("/cameras/:id", get(get_camera).post(post_camera))
         .route("/cameras/:id/visualize/occupancy", get(visualize_occupancy))
@@ -80,5 +71,5 @@ pub async fn run(app_state: ServerState) {
     axum::Server::bind(&url)
         .serve(app.into_make_service())
         .await
-        .unwrap();
+        .map_err(|err| err.into())
 }

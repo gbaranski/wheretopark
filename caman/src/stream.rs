@@ -27,7 +27,7 @@ fn command(url: impl AsRef<str>) -> Command {
     command.arg(url.as_ref());
     // set video filters
     command.arg("-vf");
-    command.arg("fps=1/10,format=rgb24");
+    command.arg("fps=1/20,format=rgb24");
     // set output image size
     command.arg("-s");
     command.arg(format!("{WIDTH}:{HEIGHT}"));
@@ -95,7 +95,7 @@ async fn process_stdout(
 
 pub fn images(url: impl AsRef<str>) -> anyhow::Result<watch::Receiver<Option<RgbImage>>> {
     let url = url.as_ref();
-    tracing::info!("connecting to {url}");
+    tracing::debug!("connect to {url}");
     let span = span!(Level::INFO, "images()", url = %url);
     let mut command = command(&url);
 

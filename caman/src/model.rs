@@ -87,7 +87,6 @@ impl Model {
         let outputs = outputs.view();
         let outputs = outputs.outer_iter().map(|output| {
             let output = output.t();
-            dbg!(output.shape());
             output
                 .outer_iter()
                 .map(|row| {

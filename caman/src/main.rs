@@ -4,7 +4,6 @@ mod stream;
 mod utils;
 mod worker;
 
-use indexmap::IndexMap;
 pub use model::Model;
 pub use utils::BoundingBox;
 pub use utils::Object;
@@ -12,15 +11,14 @@ pub use utils::Point;
 pub use utils::Spot;
 pub use worker::Worker;
 
-use dashmap::DashMap;
+use anyhow::Context;
 use serde::Deserialize;
 use serde::Serialize;
+use server::ServerState;
 use std::collections::HashMap;
 use std::path::PathBuf;
 use std::sync::Arc;
-use std::time::Duration;
 use url::Url;
-// use worker::Worker;
 
 pub type CameraID = String;
 
@@ -34,14 +32,6 @@ pub struct CameraState {
     pub total_spots: u32,
     pub available_spots: u32,
 }
-
-#[derive(Debug)]
-pub struct Camera {
-    metadata: CameraMetadata,
-    state: CameraState,
-}
-
-pub type CameraMap = Arc<DashMap<CameraID, Camera>>;
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
@@ -71,11 +61,15 @@ async fn main() -> anyhow::Result<()> {
     );
 
     let worker = Worker::create(model, cameras.into_iter())?;
-    // // server::run(ServerState::new(cameras)).await;
-    loop {
-        if let Err(err) = worker.work().await {
-            tracing::error!("work fail: {:#}", err);
+    let worker = Arc::new(worker);
+    tokio::select! {
+        result = worker.run() => {
+            result.context("worker failure")?;
         }
-        tokio::time::sleep(Duration::from_secs(5)).await;
+        result = server::run(ServerState::new(worker.clone())) => {
+            result.context("server failure")?;
+        }
     }
+
+    Ok(())
 }
