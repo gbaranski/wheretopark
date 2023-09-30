@@ -93,7 +93,8 @@ async fn process_stdout(
     }
 }
 
-pub fn images(url: String) -> anyhow::Result<watch::Receiver<Option<RgbImage>>> {
+pub fn images(url: impl AsRef<str>) -> anyhow::Result<watch::Receiver<Option<RgbImage>>> {
+    let url = url.as_ref();
     tracing::info!("connecting to {url}");
     let span = span!(Level::INFO, "images()", url = %url);
     let mut command = command(&url);

@@ -4,24 +4,28 @@ mod stream;
 mod utils;
 mod worker;
 
+use indexmap::IndexMap;
 pub use model::Model;
 pub use utils::BoundingBox;
+pub use utils::Object;
 pub use utils::Point;
 pub use utils::Spot;
-pub use utils::Object;
 pub use worker::Worker;
 
 use dashmap::DashMap;
 use serde::Deserialize;
 use serde::Serialize;
+use std::collections::HashMap;
 use std::path::PathBuf;
 use std::sync::Arc;
 use std::time::Duration;
 use url::Url;
 // use worker::Worker;
 
+pub type CameraID = String;
+
 #[derive(Debug, Deserialize)]
-struct CameraMetadata {
+pub struct CameraMetadata {
     pub url: Url,
 }
 
@@ -37,7 +41,7 @@ pub struct Camera {
     state: CameraState,
 }
 
-pub type CameraMap = Arc<DashMap<String, Camera>>;
+pub type CameraMap = Arc<DashMap<CameraID, Camera>>;
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
@@ -49,32 +53,24 @@ async fn main() -> anyhow::Result<()> {
     if let Some(path) = std::option_env!("MODEL_PATH") {
         model_path = path.parse().unwrap();
     } else {
-        model_path = project_directories
-            .data_dir()
-            .join("yolov8x.onnx");
+        model_path = project_directories.data_dir().join("yolov8x.onnx");
     }
     let model = Model::new(model_path)?;
-    let cameras = Arc::new(DashMap::new());
+    let mut cameras = HashMap::new();
     cameras.insert(
         "u35s2sey91_1".to_string(),
-        Camera {
-            metadata: CameraMetadata {
-                url: Url::parse("https://cam5out.klemit.net/hls/cammt852.m3u8").unwrap(),
-            },
-            state: CameraState::default(),
+        CameraMetadata {
+            url: Url::parse("https://cam5out.klemit.net/hls/cammt852.m3u8").unwrap(),
         },
     );
     cameras.insert(
         "u35s3nvprd_0".to_string(),
-        Camera {
-            metadata: CameraMetadata {
-                url: Url::parse("https://cam5out.klemit.net/hls/cammm841.m3u8").unwrap(),
-            },
-            state: CameraState::default(),
+        CameraMetadata {
+            url: Url::parse("https://cam5out.klemit.net/hls/cammm841.m3u8").unwrap(),
         },
     );
 
-    let worker = Worker::new(model, cameras.clone());
+    let worker = Worker::create(model, cameras.into_iter())?;
     // // server::run(ServerState::new(cameras)).await;
     loop {
         if let Err(err) = worker.work().await {
