@@ -30,7 +30,7 @@
 	<!-- SEO -->
 
 	<script
-		data-goatcounter="https://wheretopark-app.goatcounter.com/count"
+		data-goatcounter="https://wheretopark.goatcounter.com/count"
 		async
 		src="https://gc.zgo.at/count.js"
 	></script>
