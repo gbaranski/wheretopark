@@ -98,8 +98,9 @@ pub fn compute_overlaps(pos1: &[SpotPosition], pos2: &[SpotPosition]) -> Vec<Vec
 }
 
 #[derive(Debug)]
-pub struct Vehicle {
+pub struct Object {
     pub bbox: BoundingBox,
+    pub label: &'static str,
     pub score: f32,
     pub contours: Vec<Contour<u32>>,
 }
@@ -148,10 +149,10 @@ const GREEN: Rgba<u8> = Rgba([0, 255, 0, 255]);
 const RED: Rgba<u8> = Rgba([255, 0, 0, 255]);
 const TRANSLUCENT_GREEN: Rgba<u8> = Rgba([0, 128, 0, 128]);
 
-pub fn visualize_vehicles(image: &RgbImage, vehicles: &[Vehicle]) -> RgbImage {
+pub fn visualize_objects(image: &RgbImage, objects: &[Object]) -> RgbImage {
     let image: RgbaImage = image.convert();
     let mut image = Blend(image);
-    vehicles.iter().for_each(|object| {
+    objects.iter().for_each(|object| {
         let rect = Rect::at(object.bbox.min.x as i32, object.bbox.min.y as i32)
             .of_size(object.bbox.width() as u32, object.bbox.height() as u32);
         draw_hollow_rect_mut(&mut image, rect, GREEN);

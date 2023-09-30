@@ -17,6 +17,7 @@ futures = "0.3.28"
 image = "0.24.7"
 imageproc = "0.23.0"
 itertools = "0.11.0"
+lazy_static = "1.4.0"
 m3u8-rs = "5.0.4"
 ndarray = "0.15.6"
 nshare = { version = "0.9.0", features = ["ndarray", "image"] }

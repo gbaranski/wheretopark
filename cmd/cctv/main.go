@@ -2,20 +2,17 @@ package main
 
 import (
 	"fmt"
-	"net/http"
-	"strconv"
 	wheretopark "wheretopark/go"
 	"wheretopark/providers/cctv"
 
 	"github.com/caarlos0/env/v8"
-	"github.com/go-chi/chi/v5"
 	"github.com/rs/zerolog/log"
 	"gocv.io/x/gocv"
 )
 
 type environment struct {
 	Port      int              `env:"PORT" envDefault:"8080"`
-	ModelPath string           `env:"MODEL_PATH" envDefault:"$HOME/.local/share/wheretopark/cctv/model.onnx" envExpand:"true"`
+	ModelPath string           `env:"MODEL_PATH" envDefault:"$HOME/.local/share/wheretopark/cctv/yolov8x.onnx" envExpand:"true"`
 	SavePath  *string          `env:"SAVE_PATH" envExpand:"true"`
 	SaveItems []cctv.SaveItem  `env:"SAVE_ITEMS" envSeparator:","`
 	SaveIDs   []wheretopark.ID `env:"SAVE_IDS" envSeparator:","`
@@ -51,66 +48,75 @@ func main() {
 	}
 
 	model := cctv.NewModel(environment.ModelPath)
-	saver := cctv.NewSaver(environment.SavePath, environment.SaveItems, environment.SaveIDs)
+	// saver := cctv.NewSaver(environment.SavePath, environment.SaveItems, environment.SaveIDs)
 
-	provider, err := cctv.NewProvider(model, saver)
+	img, err := generateVisualizationFor(model, &cctv.DefaultConfiguration.ParkingLots["u2gyfvc23d"].Cameras[0])
 	if err != nil {
 		log.Fatal().Err(err).Send()
 	}
-	defer provider.Close()
+	defer img.Close()
+	window := gocv.NewWindow("Where To Park")
+	window.IMShow(img)
+	window.WaitKey(1)
 
-	r, err := wheretopark.GetProviderRouter(provider)
-	if err != nil {
-		log.Fatal().Err(err).Msg("get router failure")
-	}
+	// provider, err := cctv.NewProvider(model, saver)
+	// if err != nil {
+	// 	log.Fatal().Err(err).Send()
+	// }
+	// defer provider.Close()
 
-	for id, parkingLot := range cctv.DefaultConfiguration.ParkingLots {
-		log.Info().Str("id", id).Str("name", parkingLot.Name).Int("cameras", len(parkingLot.Cameras)).Msg("registering parking lot")
-	}
+	// r, err := wheretopark.GetProviderRouter(provider)
+	// if err != nil {
+	// 	log.Fatal().Err(err).Msg("get router failure")
+	// }
 
-	r.Get("/visualize/{id}/{camera}", func(w http.ResponseWriter, r *http.Request) {
-		id := wheretopark.ID(chi.URLParam(r, "id"))
-		parkingLot, exists := cctv.DefaultConfiguration.ParkingLots[id]
-		if !exists {
-			w.WriteHeader(http.StatusNotFound)
-			w.Write([]byte("parking lot not found"))
-			return
-		}
+	// for id, parkingLot := range cctv.DefaultConfiguration.ParkingLots {
+	// 	log.Info().Str("id", id).Str("name", parkingLot.Name).Int("cameras", len(parkingLot.Cameras)).Msg("registering parking lot")
+	// }
 
-		cameraID, err := strconv.Atoi(chi.URLParam(r, "camera"))
-		if err != nil {
-			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte("invalid camera ID"))
-			return
-		}
-		if cameraID > len(parkingLot.Cameras)-1 {
-			w.WriteHeader(http.StatusNotFound)
-			w.Write([]byte("camera not found"))
-			return
-		}
-		camera := parkingLot.Cameras[cameraID]
+	// r.Get("/visualize/{id}/{camera}", func(w http.ResponseWriter, r *http.Request) {
+	// 	id := wheretopark.ID(chi.URLParam(r, "id"))
+	// 	parkingLot, exists := cctv.DefaultConfiguration.ParkingLots[id]
+	// 	if !exists {
+	// 		w.WriteHeader(http.StatusNotFound)
+	// 		w.Write([]byte("parking lot not found"))
+	// 		return
+	// 	}
 
-		img, err := generateVisualizationFor(model, &camera)
-		if err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
-			w.Write([]byte(fmt.Sprintf("generate visualization failure: %s", err)))
-			return
-		}
-		defer img.Close()
+	// 	cameraID, err := strconv.Atoi(chi.URLParam(r, "camera"))
+	// 	if err != nil {
+	// 		w.WriteHeader(http.StatusBadRequest)
+	// 		w.Write([]byte("invalid camera ID"))
+	// 		return
+	// 	}
+	// 	if cameraID > len(parkingLot.Cameras)-1 {
+	// 		w.WriteHeader(http.StatusNotFound)
+	// 		w.Write([]byte("camera not found"))
+	// 		return
+	// 	}
+	// 	camera := parkingLot.Cameras[cameraID]
 
-		buf, err := gocv.IMEncode(".jpg", img)
-		if err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
-			log.Err(err).Msg("encode image failure")
-			return
-		}
-		defer buf.Close()
+	// 	img, err := generateVisualizationFor(model, &camera)
+	// 	if err != nil {
+	// 		w.WriteHeader(http.StatusInternalServerError)
+	// 		w.Write([]byte(fmt.Sprintf("generate visualization failure: %s", err)))
+	// 		return
+	// 	}
+	// 	defer img.Close()
 
-		w.Header().Set("Content-Type", "image/jpeg")
-		w.Write(buf.GetBytes())
-	})
+	// 	buf, err := gocv.IMEncode(".jpg", img)
+	// 	if err != nil {
+	// 		w.WriteHeader(http.StatusInternalServerError)
+	// 		log.Err(err).Msg("encode image failure")
+	// 		return
+	// 	}
+	// 	defer buf.Close()
 
-	if err := wheretopark.RunRouter(r, uint(environment.Port)); err != nil {
-		log.Fatal().Err(err).Msg("run provider failure")
-	}
+	// 	w.Header().Set("Content-Type", "image/jpeg")
+	// 	w.Write(buf.GetBytes())
+	// })
+
+	// if err := wheretopark.RunRouter(r, uint(environment.Port)); err != nil {
+	// 	log.Fatal().Err(err).Msg("run provider failure")
+	// }
 }

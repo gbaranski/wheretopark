@@ -59,13 +59,14 @@ impl Worker {
             tracing::info!("collected {} images", images.len());
             for (id, image) in images {
                 let start = std::time::Instant::now();
-                let vehicles = self.model.infere(&image)?;
+                let objects = self.model.infere(&image)?;
                 tracing::debug!(
                     "inference for {id} finished after {}ms",
                     start.elapsed().as_millis()
                 );
-                let image_vehicles = utils::visualize_vehicles(&image, &vehicles);
-                image_vehicles.save(format!("{id}-vehicles.jpeg"))?;
+                dbg!(&objects);
+                let visualization = utils::visualize_objects(&image, &objects);
+                visualization.save(format!("{id}-vehicles.jpeg"))?;
                 tracing::debug!("saved visualization for {id}");
             }
         }

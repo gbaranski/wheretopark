@@ -3,9 +3,11 @@ use image::imageops::FilterType;
 use image::GrayImage;
 use image::Pixel;
 use image::RgbImage;
+use imageproc::contours::Contour;
 use imageproc::contours::find_contours_with_threshold;
 use itertools::izip;
 use itertools::Itertools;
+use ndarray::s;
 use ndarray::ArrayBase;
 use ndarray::Axis;
 use ndarray::CowArray;
@@ -26,25 +28,32 @@ use std::path::Path;
 
 use crate::BoundingBox;
 use crate::Point;
-use crate::Vehicle;
+use crate::Object;
 
 #[derive(Debug)]
 pub struct Model {
     session: Session,
 }
 
-pub const HEIGHT: usize = 1024;
-pub const WIDTH: usize = 1024;
+const COCO_CLASSES_TXT: &'static str = include_str!("coco.txt");
 
-fn generate_input(image: &RgbImage) -> anyhow::Result<ArrayBase<CowRepr<'_, u8>, Dim<IxDynImpl>>> {
+lazy_static::lazy_static! {
+    static ref COCO_CLASSES: Vec<&'static str> = COCO_CLASSES_TXT.lines().collect();
+}
+
+pub const HEIGHT: usize = 640;
+pub const WIDTH: usize = 640;
+const CHANNELS: usize = 3;
+
+fn generate_input(image: &RgbImage) -> anyhow::Result<ArrayBase<CowRepr<'_, f32>, Dim<IxDynImpl>>> {
+    image.save("/tmp/temp.png").unwrap();
     assert_eq!(image.width() as usize, WIDTH);
     assert_eq!(image.height() as usize, HEIGHT);
-    let image =
-        ndarray::Array::from_shape_fn([HEIGHT, WIDTH, 3], |(y, x, channel)| {
-            let pixel = image.get_pixel(x as u32, y as u32);
-            let channels = pixel.channels();
-            channels[channel]
-        });
+    let image = ndarray::Array::from_shape_fn([CHANNELS, HEIGHT, WIDTH], |(channel, y, x)| {
+        let pixel = image.get_pixel(x as u32, y as u32);
+        let channels = pixel.channels();
+        channels[channel] as f32 / 255.0
+    });
     let image = image.insert_axis(Axis(0));
     let input = CowArray::from(image.into_dyn());
     Ok(input)
@@ -55,8 +64,8 @@ fn try_extract<'a, T: TensorDataToType>(
 ) -> anyhow::Result<ArrayBase<OwnedRepr<T>, Dim<IxDynImpl>>> {
     let tensor = value.try_extract::<T>()?;
     let view = tensor.view();
-    let array = view.view();
-    Ok(array.into_owned())
+    let transposed = view.t();
+    Ok(transposed.into_owned())
 }
 
 const VEHICLE_LABELS: [u8; 3] = [3, 6, 8];
@@ -64,13 +73,13 @@ const VEHICLE_LABELS: [u8; 3] = [3, 6, 8];
 impl Model {
     pub fn new(model_path: impl AsRef<Path>) -> anyhow::Result<Self> {
         let environment = Environment::builder()
-            .with_name("MaskRCNN")
+            .with_name("YOLOv8")
             .with_log_level(LoggingLevel::Verbose)
-            .with_execution_providers([ExecutionProvider::CoreML(Default::default())])
+            .with_execution_providers([ExecutionProvider::CPU(Default::default())])
             .build()?
             .into_arc();
         let session = SessionBuilder::new(&environment)?
-            .with_optimization_level(GraphOptimizationLevel::Level3)?
+            .with_optimization_level(GraphOptimizationLevel::Level1)?
             .with_intra_threads(1)?
             .with_model_from_file(model_path)?;
 
@@ -82,77 +91,59 @@ impl Model {
         Ok(Self { session })
     }
 
-    pub fn infere(&self, image: &RgbImage) -> anyhow::Result<Vec<Vehicle>> {
+    pub fn infere(&self, image: &RgbImage) -> anyhow::Result<Vec<Object>> {
         let input = generate_input(image)?;
         let outputs = self
             .session
             .run(vec![Value::from_array(self.session.allocator(), &input)?])?;
 
-        let outputs: HashMap<&str, ArrayBase<OwnedRepr<f32>, Dim<IxDynImpl>>> = self
-            .session
-            .outputs
-            .iter()
-            .enumerate()
-            .map(|(i, o)| {
-                let value = try_extract::<f32>(&outputs[i])?;
-                anyhow::Ok((o.name.as_str(), value))
+        let output = try_extract::<f32>(&outputs[0])?;
+        let output = output.slice(s![.., .., 0]);
+        dbg!(output.shape());
+        let objects = output
+            .outer_iter()
+            .map(|row| {
+                let dimensions = row.slice(s![..4]).iter().cloned().collect_vec();
+                let classes = row.slice(s![4..]).iter().cloned().collect_vec();
+                assert_eq!(classes.len(), COCO_CLASSES.len());
+                (dimensions, classes)
             })
-            .collect::<anyhow::Result<_>>()?;
+            .map(|(dim, classes)| {
+                let (class_id, score) = classes
+                    .iter()
+                    .enumerate()
+                    .map(|(index, value)| (index, *value))
+                    .reduce(|accum, row| if row.1 > accum.1 { row } else { accum })
+                    .unwrap();
+                let label = COCO_CLASSES[class_id];
+                (dim, (label, score))
+            })
+            .filter(|(_, (_, score))| *score > 0.1)
+            .map(|(dim, (label, score))| {
+                let center = Point {
+                    x: dim[0],
+                    y: dim[1],
+                };
+                dbg!(&center);
+                let (width, height) = (dim[2], dim[3]);
+                let bbox = BoundingBox {
+                    min: Point {
+                        x: center.x - (width / 2.0),
+                        y: center.y - (height / 2.0),
+                    },
+                    max: Point {
+                        x: center.x + (width / 2.0),
+                        y: center.y + (height / 2.0),
+                    },
+                };
+                Object {
+                    bbox,
+                    label,
+                    score,
+                    contours: vec![],
+                }
+            });
 
-        let boxes = &outputs["detection_boxes"];
-        let classes = &outputs["detection_classes"];
-        let masks = &outputs["detection_masks"];
-        let scores = &outputs["detection_scores"];
-
-        let objects = izip!(
-            boxes.axis_iter(Axis(1)),
-            classes.axis_iter(Axis(1)),
-            scores.axis_iter(Axis(1)),
-            masks.axis_iter(Axis(1))
-        )
-        .map(|(bbox, class, score, mask)| {
-            let bbox = bbox.as_slice().unwrap();
-            let bbox = BoundingBox {
-                min: Point {
-                    x: bbox[1] * image.width() as f32,
-                    y: bbox[0] * image.height() as f32,
-                },
-                max: Point {
-                    x: bbox[3] * image.width() as f32,
-                    y: bbox[2] * image.height() as f32,
-                },
-            };
-            let class = class[0] as u8;
-            let score = score[0];
-            (bbox, class, score, mask)
-        })
-        .filter(|(_, class, _, _)| VEHICLE_LABELS.contains(class))
-        .filter(|(_, _, score, _)| *score > 0.5)
-        .map(|(bbox, _, score, mask)| {
-            assert_eq!(mask.shape(), [1, 33, 33]);
-            let mut mask_image = GrayImage::new(33, 33);
-
-            for (x, y, pixel) in mask_image.enumerate_pixels_mut() {
-                let value = mask[[0, x as usize, y as usize]];
-                *pixel = image::Luma([(value * 255.0) as u8]);
-            }
-            // mask_image.save("mask.png").unwrap();
-            let mask_image = resize(
-                &mask_image,
-                bbox.width() as u32,
-                bbox.height() as u32,
-                FilterType::Lanczos3,
-            );
-            // mask_image.save("mask-resized.png").unwrap();
-            let contours = find_contours_with_threshold(&mask_image, 128u8);
-
-            Vehicle {
-                bbox,
-                score,
-                contours,
-            }
-        });
-
-        Ok(objects.collect())
+            Ok(objects.collect_vec())
     }
 }

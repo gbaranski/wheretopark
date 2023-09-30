@@ -2392,6 +2392,7 @@ dependencies = [
  "image",
  "imageproc",
  "itertools 0.11.0",
+ "lazy_static",
  "m3u8-rs",
  "ndarray",
  "nshare",

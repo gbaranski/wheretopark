@@ -8,7 +8,7 @@ pub use model::Model;
 pub use utils::BoundingBox;
 pub use utils::Point;
 pub use utils::Spot;
-pub use utils::Vehicle;
+pub use utils::Object;
 pub use worker::Worker;
 
 use dashmap::DashMap;
@@ -51,19 +51,19 @@ async fn main() -> anyhow::Result<()> {
     } else {
         model_path = project_directories
             .data_dir()
-            .join("mask_rcnn_inception_resnet_v2_1024x1024_coco17_gpu-8.onnx");
+            .join("yolov8x.onnx");
     }
     let model = Model::new(model_path)?;
     let cameras = Arc::new(DashMap::new());
-    cameras.insert(
-        "u35s2sey91_1".to_string(),
-        Camera {
-            metadata: CameraMetadata {
-                url: Url::parse("https://cam5out.klemit.net/hls/cammt852.m3u8").unwrap(),
-            },
-            state: CameraState::default(),
-        },
-    );
+    // cameras.insert(
+    //     "u35s2sey91_1".to_string(),
+    //     Camera {
+    //         metadata: CameraMetadata {
+    //             url: Url::parse("https://cam5out.klemit.net/hls/cammt852.m3u8").unwrap(),
+    //         },
+    //         state: CameraState::default(),
+    //     },
+    // );
     cameras.insert(
         "u35s3nvprd_0".to_string(),
         Camera {
