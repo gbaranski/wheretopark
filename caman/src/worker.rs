@@ -1,19 +1,15 @@
 use anyhow::Context;
 use dashmap::DashMap;
-use image::DynamicImage;
+use image::RgbImage;
+use itertools::Itertools;
 use std::collections::HashMap;
-use std::sync::Arc;
 use tokio::sync::watch;
 
 use crate::stream;
 use crate::utils;
 use crate::utils::SpotPosition;
-use crate::utils::SpotState;
 use crate::CameraMap;
-use crate::CameraMetadata;
-use crate::CameraState;
 use crate::Model;
-use crate::Spot;
 
 #[derive(Debug)]
 pub struct Worker {
@@ -42,32 +38,37 @@ impl Worker {
                     .with_context(|| format!("create image stream for {url}"))?;
                 Ok((camera.key().to_string(), images))
             })
-            .collect::<anyhow::Result<HashMap<String, watch::Receiver<Option<DynamicImage>>>>>()?;
+            .collect::<anyhow::Result<HashMap<String, watch::Receiver<Option<RgbImage>>>>>()?;
         loop {
             let images =
                 futures::future::join_all(streams.iter_mut().map(|(id, stream)| async move {
                     (
                         id.to_string(),
-                        stream.changed().await.map(|_| stream.borrow()).unwrap(),
+                        stream
+                            .changed()
+                            .await
+                            .map(|_| stream.borrow().clone())
+                            .unwrap(),
                     )
                 }))
                 .await;
+            let images = images
+                .into_iter()
+                .filter_map(|(id, image)| image.map(|image| (id, image)))
+                .collect::<HashMap<String, RgbImage>>();
             tracing::info!("collected {} images", images.len());
+            for (id, image) in images {
+                let start = std::time::Instant::now();
+                let vehicles = self.model.infere(&image)?;
+                tracing::debug!(
+                    "inference for {id} finished after {}ms",
+                    start.elapsed().as_millis()
+                );
+                let image_vehicles = utils::visualize_vehicles(&image, &vehicles);
+                image_vehicles.save(format!("{id}-vehicles.jpeg"))?;
+                tracing::debug!("saved visualization for {id}");
+            }
         }
-
-        // }
-        // for camera in self.cameras.iter() {
-        //     let mut images = stream::images(&camera.metadata.url)?;
-        //     while let Some(image) = images.recv().await {
-        //         tracing::info!("saved image");
-        //     }
-
-        //     tracing::debug!(id=%camera.key(), "working on camera");
-        //     let start = std::time::Instant::now();
-        //     self.work_camera(camera.key(), &camera.metadata).await?;
-        //     let duration = format!("{}ms", start.elapsed().as_millis());
-        //     tracing::info!(id=%camera.key(), time=%duration, "work finished");
-        // }
     }
 
     // async fn work_camera(
@@ -75,9 +76,6 @@ impl Worker {
     //     id: &str,
     //     metadata: &CameraMetadata,
     // ) -> anyhow::Result<CameraState> {
-    //     let image = capture(metadata.url.as_str()).await?;
-    //     tracing::debug!(id=%id, "captured image");
-    //     let image = image.into_rgb8();
     //     let vehicles = self.model.infere(&image)?;
     //     tracing::debug!(id=%id, "inference finished");
     //     let image_vehicles = utils::visualize_vehicles(&image, &vehicles);

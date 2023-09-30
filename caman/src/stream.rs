@@ -40,7 +40,7 @@ fn command(url: impl AsRef<str>) -> Command {
     command.arg(url.as_ref());
     // set video filters
     command.arg("-vf");
-    command.arg("fps=1/30,format=rgb24");
+    command.arg("fps=1/10,format=rgb24");
     // set output image size
     command.arg("-s");
     command.arg(format!("{WIDTH}:{HEIGHT}"));
@@ -61,19 +61,19 @@ fn command(url: impl AsRef<str>) -> Command {
 async fn read(
     buf: &mut [u8],
     mut reader: impl AsyncRead + AsyncBufRead + Unpin + Send,
-) -> anyhow::Result<DynamicImage> {
+) -> anyhow::Result<RgbImage> {
     let n = reader.read_exact(buf).await?;
     tracing::debug!("read {n} bytes");
     if n == 0 {
         return Err(anyhow::anyhow!("no bytes read"));
     }
     let image = RgbImage::from_raw(WIDTH as u32, HEIGHT as u32, buf.to_vec()).context("create image")?;
-    Ok(image.into())
+    Ok(image)
 }
 
 pub fn images(
     url: String,
-) -> anyhow::Result<watch::Receiver<Option<DynamicImage>>> {
+) -> anyhow::Result<watch::Receiver<Option<RgbImage>>> {
     tracing::info!("connecting to {url}");
     let mut command = command(&url);
 
