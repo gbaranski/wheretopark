@@ -4,6 +4,7 @@ import (
 	"image"
 	"sync"
 
+	"github.com/rs/zerolog/log"
 	"gocv.io/x/gocv"
 )
 
@@ -13,15 +14,25 @@ type Model struct {
 }
 
 func NewModel(path string) Model {
-	net := gocv.ReadNet(path, "")
+	net := gocv.ReadNetFromONNX(path)
+	log.Info().Str("path", path).Msg("loaded onnx model")
 	return Model{
 		net,
 		&sync.Mutex{},
 	}
 }
 
+const (
+	HEIGHT = 640
+	WIDTH  = 640
+)
+
+var SIZE = image.Pt(HEIGHT, WIDTH)
+
 func (m *Model) Predict(img gocv.Mat) float32 {
-	blob := gocv.BlobFromImage(img, 1.0, image.Pt(128, 128), gocv.NewScalar(0, 0, 0, 0), true, false)
+	gocv.Resize(img, &img, SIZE, 0, 0, gocv.InterpolationLanczos4)
+
+	blob := gocv.BlobFromImage(img, 1.0, SIZE, gocv.NewScalar(0, 0, 0, 0), true, false)
 	defer blob.Close()
 	blob.DivideUChar(255)
 
