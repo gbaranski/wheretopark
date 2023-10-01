@@ -2,12 +2,15 @@ use crate::CameraMetadata;
 use crate::Worker;
 use axum::extract::Path;
 use axum::extract::State;
+use axum::http::header;
 use axum::http::StatusCode;
 use axum::response::IntoResponse;
 use axum::response::Json;
-use axum::Form;
 use axum::routing::get;
+use axum::Form;
+use image::codecs::png::PngEncoder;
 use serde::Serialize;
+use std::io::BufWriter;
 use std::sync::Arc;
 
 #[derive(Debug, Clone)]
@@ -45,9 +48,31 @@ async fn get_camera(
     (status, Json(state))
 }
 
-async fn visualize_occupancy() {}
-async fn visualize_spots() {}
-
+async fn visualize(
+    State(app_state): State<ServerState>,
+    Path(id): Path<String>,
+) -> impl IntoResponse {
+    tracing::info!(%id, "visualize occupancy");
+    let visualization = app_state.worker.visualization_of(&id);
+    match visualization {
+        Some(image) => {
+            let mut buf = vec![];
+            let writer = BufWriter::new(&mut buf);
+            let encoder = PngEncoder::new(writer);
+            image.write_with_encoder(encoder).unwrap();
+            (
+                StatusCode::OK,
+                [(header::CONTENT_TYPE, "image/png")],
+                buf,
+            )
+        }
+        None => (
+            StatusCode::NOT_FOUND,
+            [(header::CONTENT_TYPE, "text/plain")],
+            "visualization not found".as_bytes().to_vec(),
+        ),
+    }
+}
 #[derive(Debug, Serialize)]
 struct AppStatus {
     cameras: usize,
@@ -62,8 +87,7 @@ async fn status(State(app_state): State<ServerState>) -> impl IntoResponse {
 pub async fn run(app_state: ServerState) -> anyhow::Result<()> {
     let app = axum::Router::new()
         .route("/cameras/:id", get(get_camera).post(post_camera))
-        .route("/cameras/:id/visualize/occupancy", get(visualize_occupancy))
-        .route("/cameras/:id/visualize/spots", get(visualize_spots))
+        .route("/cameras/:id/visualize", get(visualize))
         .route("/status", get(status))
         .with_state(app_state);
     let url = "0.0.0.0:3000".parse().unwrap();

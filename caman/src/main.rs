@@ -47,16 +47,22 @@ async fn main() -> anyhow::Result<()> {
     }
     let model = Model::new(model_path)?;
     let mut cameras = HashMap::new();
+    // cameras.insert(
+    //     "u35s2sey91_1".to_string(),
+    //     CameraMetadata {
+    //         url: Url::parse("https://cam5out.klemit.net/hls/cammt852.m3u8").unwrap(),
+    //     },
+    // );
+    // cameras.insert(
+    //     "u35s3nvprd_0".to_string(),
+    //     CameraMetadata {
+    //         url: Url::parse("https://cam5out.klemit.net/hls/cammm841.m3u8").unwrap(),
+    //     },
+    // );
     cameras.insert(
-        "u35s2sey91_1".to_string(),
+        "u2gyfvc23d_0".to_string(),
         CameraMetadata {
-            url: Url::parse("https://cam5out.klemit.net/hls/cammt852.m3u8").unwrap(),
-        },
-    );
-    cameras.insert(
-        "u35s3nvprd_0".to_string(),
-        CameraMetadata {
-            url: Url::parse("https://cam5out.klemit.net/hls/cammm841.m3u8").unwrap(),
+            url: Url::parse("http://91.238.55.4:5080/LiveApp/streams/435465478973256862461988.m3u8?token=null").unwrap(),
         },
     );
 

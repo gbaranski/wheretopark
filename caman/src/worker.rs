@@ -28,7 +28,7 @@ impl CameraWorker {
         Ok(Self {
             images,
             // metadata,
-            positions: vec![],
+            positions: Vec::new(),
         })
     }
 
@@ -41,10 +41,19 @@ impl CameraWorker {
         }
     }
 
-    fn update(&mut self, positions: Vec<SpotPosition>) -> anyhow::Result<CameraState> {
+    fn update(&mut self, positions: Vec<SpotPosition>) -> anyhow::Result<Vec<Spot>> {
         if self.positions.is_empty() {
             self.positions = positions;
-            return Ok(CameraState::default());
+            let spots = self
+                .positions
+                .iter()
+                .cloned()
+                .map(|position| Spot {
+                    position,
+                    state: SpotState::Occupied,
+                })
+                .collect_vec();
+            return Ok(spots);
         }
 
         let overlaps = utils::compute_overlaps(&positions, &self.positions);
@@ -53,19 +62,16 @@ impl CameraWorker {
             .zip(positions.iter().cloned())
             .map(|(overlap, position)| {
                 let score = overlap.iter().cloned().reduce(f32::max).unwrap();
-                Spot {
-                    position,
-                    state: SpotState { score },
-                }
+                let state = if score < 0.15 {
+                    SpotState::Vacant
+                } else {
+                    SpotState::Occupied
+                };
+                Spot { position, state }
             })
             .collect::<Vec<_>>();
 
-        let available_spots = spots.iter().filter(|spot| spot.state.score < 0.15).count();
-        let state = CameraState {
-            total_spots: self.positions.len() as u32,
-            available_spots: available_spots as u32,
-        };
-        Ok(state)
+        Ok(spots)
     }
 }
 
@@ -74,6 +80,7 @@ pub struct Worker {
     model: Model,
     cameras: DashMap<CameraID, Arc<Mutex<CameraWorker>>>,
     state: DashMap<CameraID, CameraState>,
+    visualizations: DashMap<CameraID, RgbImage>,
 }
 
 impl Worker {
@@ -91,6 +98,7 @@ impl Worker {
             model,
             cameras,
             state: DashMap::new(),
+            visualizations: DashMap::new(),
         })
     }
 
@@ -98,13 +106,19 @@ impl Worker {
         let worker = CameraWorker::create(metadata).unwrap();
         self.cameras.insert(id, Arc::new(Mutex::new(worker)));
     }
-    
+
     pub fn cameras(&self) -> usize {
         self.cameras.len()
     }
 
     pub fn state_of(&self, id: &CameraID) -> Option<CameraState> {
         self.state.get(id).map(|state| state.value().clone())
+    }
+
+    pub fn visualization_of(&self, id: &CameraID) -> Option<RgbImage> {
+        self.visualizations
+            .get(id)
+            .map(|image| image.value().clone())
     }
 
     pub async fn run(&self) -> anyhow::Result<()> {
@@ -148,18 +162,30 @@ impl Worker {
                     })
                     .collect::<Vec<_>>();
 
-                let state = {
+                let spots = {
                     let worker = self.cameras.get(id).unwrap();
                     let mut worker = worker.lock().await;
                     worker.update(positions)?
                 };
-                tracing::debug!(%id, ?state, "state update");
-                Ok((id.clone(), state))
+                tracing::debug!(%id, "spots update");
+                Ok((id.clone(), spots))
             });
-        let state = futures::future::try_join_all(state).await?;
+        let spots = futures::future::try_join_all(state).await?;
 
-        for (id, state) in state {
-            self.state.insert(id, state);
+        for (id, spots) in spots {
+            let available_spots = spots
+                .iter()
+                .filter(|spot| spot.state == SpotState::Vacant)
+                .count();
+            let state = CameraState {
+                total_spots: spots.len() as u32,
+                available_spots: available_spots as u32,
+            };
+            tracing::debug!(%id, ?state, "state update");
+            self.state.insert(id.clone(), state);
+            let index = ids.iter().position(|i| *i == id).unwrap();
+            let visualization = utils::visualize_spots(&images[index], &spots);
+            self.visualizations.insert(id, visualization);
         }
 
         Ok(())

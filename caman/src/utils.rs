@@ -40,7 +40,7 @@ impl BoundingBox {
     }
 
     // Calculate the intersection area between two bounding boxes
-    pub fn intersection_area(&self, other: &BoundingBox) -> f32 {
+    pub fn intersection(&self, other: &BoundingBox) -> f32 {
         let x_overlap = f32::max(
             0.0,
             f32::min(self.max.x, other.max.x) - f32::max(self.min.x, other.min.x),
@@ -54,7 +54,7 @@ impl BoundingBox {
 
     // Calculate the IoU (Intersection over Union) between two bounding boxes
     pub fn iou(&self, other: &BoundingBox) -> f32 {
-        let intersection = self.intersection_area(other);
+        let intersection = self.intersection(other);
         let union = self.area() + other.area() - intersection;
         intersection / union
     }
@@ -111,9 +111,10 @@ pub struct SpotPosition {
     pub contours: Arc<Vec<Contour<u32>>>,
 }
 
-#[derive(Debug)]
-pub struct SpotState {
-    pub score: f32,
+#[derive(Debug, PartialEq, Eq)]
+pub enum SpotState {
+    Vacant,
+    Occupied,
 }
 
 #[derive(Debug)]
@@ -171,10 +172,16 @@ pub fn visualize_spots(image: &RgbImage, spots: &[Spot]) -> RgbImage {
     let image: RgbaImage = image.convert();
     let mut image = Blend(image);
     spots.iter().for_each(|spot| {
-        let rect = Rect::at(spot.position.bbox.min.x as i32, spot.position.bbox.min.y as i32)
-            .of_size(spot.position.bbox.width() as u32, spot.position.bbox.height() as u32);
+        let rect = Rect::at(
+            spot.position.bbox.min.x as i32,
+            spot.position.bbox.min.y as i32,
+        )
+        .of_size(
+            spot.position.bbox.width() as u32,
+            spot.position.bbox.height() as u32,
+        );
 
-        let color = if spot.state.score < 0.15 { GREEN } else { RED };
+        let color = if spot.state == SpotState::Vacant { GREEN } else { RED };
         draw_hollow_rect_mut(&mut image, rect, color);
     });
     image.0.convert()

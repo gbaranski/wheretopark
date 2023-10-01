@@ -105,7 +105,7 @@ impl Model {
                     let label = COCO_CLASSES[class_id];
                     (dim, (label, score))
                 })
-                .filter(|(_, (_, score))| *score > 0.1)
+                .filter(|(_, (_, score))| *score > 0.25)
                 .map(|(dim, (label, score))| {
                     let center = Point {
                         x: dim[0],
@@ -129,7 +129,15 @@ impl Model {
                         contours: vec![],
                     }
                 })
-                .collect_vec()
+                .sorted_by(|object1, object2| object1.score.partial_cmp(&object2.score).unwrap())
+                .rev()
+                .fold(Vec::<Object>::new(), |mut acc, object| {
+                    let overlapped = acc.iter().any(|other| object.bbox.iou(&other.bbox) > 0.7);
+                    if !overlapped {
+                        acc.push(object)
+                    }
+                    acc
+                })
         });
         Ok(outputs.collect())
     }
