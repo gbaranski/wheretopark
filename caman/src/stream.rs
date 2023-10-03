@@ -42,6 +42,7 @@ fn command(url: impl AsRef<str>) -> Command {
 
     command.stdout(Stdio::piped());
     command.stderr(Stdio::piped());
+    command.stdin(Stdio::null());
     command.kill_on_drop(true);
     command
 }

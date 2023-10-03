@@ -24,6 +24,7 @@ ndarray = "0.15.6"
 nshare = { version = "0.9.0", features = ["ndarray", "image"] }
 num = "0.4.1"
 ort = { version = "1.15.4", features = ["coreml"] }
+rand = "0.8.5"
 reqwest = { version = "0.11.20", features = ["json"] }
 serde = { version = "1.0.188", features = ["derive"] }
 tokio = { version = "1.32.0", features = ["full"] }

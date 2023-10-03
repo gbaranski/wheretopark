@@ -55,6 +55,12 @@ fn generate_input(
     Ok(input)
 }
 
+// object confidence threshold for detection
+const MIN_SCORE: f32 = 0.25;
+
+// intersection over union (IoU) threshold for NMS
+const IOU_THRESHOLD: f32 = 0.7;
+
 impl Model {
     pub fn new(model_path: impl AsRef<Path>) -> anyhow::Result<Self> {
         let environment = Environment::builder()
@@ -105,7 +111,7 @@ impl Model {
                     let label = COCO_CLASSES[class_id];
                     (dim, (label, score))
                 })
-                .filter(|(_, (_, score))| *score > 0.25)
+                .filter(|(_, (_, score))| *score > MIN_SCORE)
                 .map(|(dim, (label, score))| {
                     let center = Point {
                         x: dim[0],
@@ -132,7 +138,7 @@ impl Model {
                 .sorted_by(|object1, object2| object1.score.partial_cmp(&object2.score).unwrap())
                 .rev()
                 .fold(Vec::<Object>::new(), |mut acc, object| {
-                    let overlapped = acc.iter().any(|other| object.bbox.iou(&other.bbox) > 0.7);
+                    let overlapped = acc.iter().any(|other| object.bbox.iou(&other.bbox) > IOU_THRESHOLD);
                     if !overlapped {
                         acc.push(object)
                     }
