@@ -42,35 +42,50 @@ impl CameraWorker {
     }
 
     fn update(&mut self, positions: Vec<SpotPosition>) -> anyhow::Result<Vec<Spot>> {
-        if self.positions.is_empty() {
-            self.positions = positions;
-            let spots = self
+        // steps:
+        // 1. calculate overlaps
+        // 2. mark overlapped positions as occupied
+        // 3. mark unjoint positions from self.positions as vacant
+        // 4. update self.positions with new positions
+
+        let mut occupied = Vec::new();
+        for pos in positions.iter() {
+            let overlap = self
                 .positions
                 .iter()
-                .cloned()
-                .map(|position| Spot {
-                    position,
-                    state: SpotState::Occupied,
-                })
-                .collect_vec();
-            return Ok(spots);
+                .map(|other| pos.bbox.iou(&other.bbox))
+                .max_by(|x, y| x.partial_cmp(y).unwrap())
+                .unwrap_or(0.0);
+            if overlap > 0.7 {
+                // occupied
+                occupied.push(pos.clone());
+            } else {
+                // new spot, not registered in self.positions
+                self.positions.push(pos.clone());
+            }
         }
 
-        let overlaps = utils::compute_overlaps(&positions, &self.positions);
-        let spots = overlaps
-            .iter()
-            .zip(positions.iter().cloned())
-            .map(|(overlap, position)| {
-                let score = overlap.iter().cloned().reduce(f32::max).unwrap();
-                let state = if score < 0.15 {
-                    SpotState::Vacant
-                } else {
-                    SpotState::Occupied
-                };
-                Spot { position, state }
-            })
-            .collect::<Vec<_>>();
+        let mut vacant = Vec::new();
+        for pos in self.positions.iter() {
+            let overlap = positions
+                .iter()
+                .map(|other| pos.bbox.iou(&other.bbox))
+                .max_by(|x, y| x.partial_cmp(y).unwrap())
+                .unwrap_or(0.0);
+            if overlap < 0.15 {
+                // vacant
+                vacant.push(pos.clone());
+            }
+        }
 
+        let occupied = occupied.into_iter().map(|position| Spot {
+            position, state: SpotState::Occupied
+        });
+        let vacant = vacant.into_iter().map(|position| Spot {
+            position, state: SpotState::Vacant
+        });
+
+        let spots = occupied.chain(vacant).collect_vec();
         Ok(spots)
     }
 }

@@ -59,10 +59,19 @@ async fn main() -> anyhow::Result<()> {
     //         url: Url::parse("https://cam5out.klemit.net/hls/cammm841.m3u8").unwrap(),
     //     },
     // );
+    // cameras.insert(
+    //     "u35krvemdk_0".to_string(),
+    //     CameraMetadata {
+    //         url: Url::parse("https://cam4out.klemit.net/hls/camn583.m3u8").unwrap(),
+    //     },
+    // );
     cameras.insert(
         "u2gyfvc23d_0".to_string(),
         CameraMetadata {
-            url: Url::parse("http://91.238.55.4:5080/LiveApp/streams/435465478973256862461988.m3u8?token=null").unwrap(),
+            url: Url::parse(
+                "http://91.238.55.4:5080/LiveApp/streams/435465478973256862461988.m3u8?token=null",
+            )
+            .unwrap(),
         },
     );
 
