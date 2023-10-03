@@ -24,7 +24,7 @@ impl ServerState {
     }
 }
 
-async fn post_camera(
+async fn put_camera(
     State(app_state): State<ServerState>,
     Path(id): Path<String>,
     Form(metadata): Form<CameraMetadata>,
@@ -86,7 +86,7 @@ async fn status(State(app_state): State<ServerState>) -> impl IntoResponse {
 
 pub async fn run(app_state: ServerState) -> anyhow::Result<()> {
     let app = axum::Router::new()
-        .route("/cameras/:id", get(get_camera).post(post_camera))
+        .route("/cameras/:id", get(get_camera).put(put_camera))
         .route("/cameras/:id/visualize", get(visualize))
         .route("/status", get(status))
         .with_state(app_state);
