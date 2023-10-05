@@ -1,42 +1,19 @@
 mod model;
 mod server;
-mod stream;
+mod vis;
 mod utils;
 mod worker;
 
-use chrono::DateTime;
-use chrono::Utc;
-pub use model::Model;
+use model::Model;
 pub use utils::BoundingBox;
 pub use utils::Object;
 pub use utils::Point;
 pub use utils::Spot;
-pub use worker::Worker;
+pub use worker::Master;
 
 use anyhow::Context;
-use serde::Deserialize;
-use serde::Serialize;
 use server::ServerState;
-use std::collections::HashMap;
-use std::path::PathBuf;
 use std::sync::Arc;
-use url::Url;
-
-pub type CameraID = String;
-
-#[derive(Debug, Deserialize)]
-#[serde(rename_all = "camelCase")]
-pub struct CameraMetadata {
-    pub url: Url,
-}
-
-#[derive(Debug, Clone, Serialize)]
-#[serde(rename_all = "camelCase")]
-pub struct CameraState {
-    pub last_updated: DateTime<Utc>,
-    pub total_spots: u32,
-    pub available_spots: u32,
-}
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
@@ -44,43 +21,8 @@ async fn main() -> anyhow::Result<()> {
     let project_directories =
         directories::ProjectDirs::from("app", "wheretopark", "caman").unwrap();
 
-    let model_path: PathBuf;
-    if let Some(path) = std::option_env!("MODEL_PATH") {
-        model_path = path.parse().unwrap();
-    } else {
-        model_path = project_directories.data_dir().join("yolov8x.onnx");
-    }
-    let model = Model::new(model_path)?;
-    let mut cameras = HashMap::new();
-    // cameras.insert(
-    //     "u35s2sey91_1".to_string(),
-    //     CameraMetadata {
-    //         url: Url::parse("https://cam5out.klemit.net/hls/cammt852.m3u8").unwrap(),
-    //     },
-    // );
-    // cameras.insert(
-    //     "u35s3nvprd_0".to_string(),
-    //     CameraMetadata {
-    //         url: Url::parse("https://cam5out.klemit.net/hls/cammm841.m3u8").unwrap(),
-    //     },
-    // );
-    // cameras.insert(
-    //     "u35krvemdk_0".to_string(),
-    //     CameraMetadata {
-    //         url: Url::parse("https://cam4out.klemit.net/hls/camn583.m3u8").unwrap(),
-    //     },
-    // );
-    cameras.insert(
-        "u2gyfvc23d_0".to_string(),
-        CameraMetadata {
-            url: Url::parse(
-                "http://91.238.55.4:5080/LiveApp/streams/435465478973256862461988.m3u8?token=null",
-            )
-            .unwrap(),
-        },
-    );
-
-    let worker = Worker::create(model, cameras.into_iter())?;
+    let model = Model::new(project_directories)?;
+    let worker = Master::create(model)?;
     let worker = Arc::new(worker);
     tokio::select! {
         result = worker.run() => {

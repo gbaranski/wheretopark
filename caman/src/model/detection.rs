@@ -1,27 +1,20 @@
-use image::Pixel;
 use image::RgbImage;
 use itertools::Itertools;
 use ndarray::s;
-use ndarray::ArrayBase;
-use ndarray::CowArray;
-use ndarray::CowRepr;
-use ndarray::Dim;
-use ndarray::IxDynImpl;
 use ort::Environment;
-use ort::ExecutionProvider;
 use ort::GraphOptimizationLevel;
-use ort::LoggingLevel;
 use ort::Session;
 use ort::SessionBuilder;
 use ort::Value;
 use std::path::Path;
+use std::sync::Arc;
 
 use crate::BoundingBox;
 use crate::Object;
 use crate::Point;
 
 #[derive(Debug)]
-pub struct Model {
+pub struct DetectionModel {
     session: Session,
 }
 
@@ -35,40 +28,14 @@ pub const HEIGHT: usize = 640;
 pub const WIDTH: usize = 640;
 const CHANNELS: usize = 3;
 
-fn generate_input(
-    images: &[RgbImage],
-) -> anyhow::Result<ArrayBase<CowRepr<'_, f32>, Dim<IxDynImpl>>> {
-    for image in images {
-        assert_eq!(image.width() as usize, WIDTH);
-        assert_eq!(image.height() as usize, HEIGHT);
-    }
-    let image = ndarray::Array::from_shape_fn(
-        [images.len(), CHANNELS, HEIGHT, WIDTH],
-        |(idx, channel, y, x)| {
-            let image = &images[idx];
-            let pixel = image.get_pixel(x as u32, y as u32);
-            let channels = pixel.channels();
-            channels[channel] as f32 / 255.0
-        },
-    );
-    let input = CowArray::from(image.into_dyn());
-    Ok(input)
-}
-
 // object confidence threshold for detection
 const MIN_SCORE: f32 = 0.25;
 
 // intersection over union (IoU) threshold for NMS
 const IOU_THRESHOLD: f32 = 0.7;
 
-impl Model {
-    pub fn new(model_path: impl AsRef<Path>) -> anyhow::Result<Self> {
-        let environment = Environment::builder()
-            .with_name("YOLOv8")
-            .with_log_level(LoggingLevel::Verbose)
-            .with_execution_providers([ExecutionProvider::CPU(Default::default())])
-            .build()?
-            .into_arc();
+impl DetectionModel {
+    pub fn new(environment: &Arc<Environment>, model_path: impl AsRef<Path>) -> anyhow::Result<Self> {
         let session = SessionBuilder::new(&environment)?
             .with_optimization_level(GraphOptimizationLevel::Level1)?
             .with_intra_threads(1)?
@@ -83,7 +50,7 @@ impl Model {
     }
 
     pub fn infere(&self, images: &[RgbImage]) -> anyhow::Result<Vec<Vec<Object>>> {
-        let input = generate_input(images)?;
+        let input = super::generate_input(CHANNELS, WIDTH, HEIGHT, images)?;
         let outputs = self
             .session
             .run(vec![Value::from_array(self.session.allocator(), &input)?])?;

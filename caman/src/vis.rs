@@ -1,5 +1,3 @@
-use crate::model::HEIGHT;
-use crate::model::WIDTH;
 use anyhow::Context;
 use image::RgbImage;
 use std::process::Stdio;
@@ -17,17 +15,26 @@ use tracing::span;
 use tracing::Instrument;
 use tracing::Level;
 
-fn command(url: impl AsRef<str>) -> Command {
+const WIDTH: usize = 1024;
+const HEIGHT: usize = 1024;
+
+fn command(url: impl AsRef<str>, stream: bool) -> Command {
     let mut command = Command::new("ffmpeg");
     command.arg("-hwaccel");
     command.arg("auto");
-
     // set input URL
     command.arg("-i");
     command.arg(url.as_ref());
-    // set video filters
-    command.arg("-vf");
-    command.arg("fps=1/10,format=rgb24");
+
+    if stream {
+        command.arg("-vf");
+        command.arg("format=rgb24,fps=1/10");
+    } else {
+        command.arg("-vf");
+        command.arg("format=rgb24");
+        command.arg("-vframes");
+        command.arg("1");
+    }
     // set output image size
     command.arg("-s");
     command.arg(format!("{WIDTH}:{HEIGHT}"));
@@ -98,7 +105,7 @@ pub fn images(url: impl AsRef<str>) -> anyhow::Result<watch::Receiver<Option<Rgb
     let url = url.as_ref();
     tracing::debug!("connect to {url}");
     let span = span!(Level::INFO, "images()", url = %url);
-    let mut command = command(&url);
+    let mut command = command(&url, true);
 
     let mut child = command.spawn()?;
     let stderr = BufReader::new(child.stderr.take().unwrap());
@@ -109,4 +116,21 @@ pub fn images(url: impl AsRef<str>) -> anyhow::Result<watch::Receiver<Option<Rgb
     tokio::spawn(process_stdout(stdout, tx).instrument(span.clone()));
 
     Ok(rx)
+}
+
+pub async fn capture(url: impl AsRef<str>) -> anyhow::Result<RgbImage> {
+    let url = url.as_ref();
+    tracing::debug!("connect to {url}");
+    let span = span!(Level::INFO, "capture()", url = %url);
+    let mut command = command(&url, false);
+
+    let mut child = command.spawn()?;
+    let stderr = BufReader::new(child.stderr.take().unwrap());
+    let mut stdout = BufReader::new(child.stdout.take().unwrap());
+    tokio::spawn(wait_for_exit(child).instrument(span.clone()));
+    tokio::spawn(process_stderr(stderr).instrument(span.clone()));
+
+    let mut buf = vec![0; WIDTH * HEIGHT * 3];
+    let image = read_image(&mut buf, &mut stdout).await?;
+    Ok(image)
 }

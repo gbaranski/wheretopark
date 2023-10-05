@@ -186,3 +186,9 @@ pub fn visualize_spots(image: &RgbImage, spots: &[Spot]) -> RgbImage {
     });
     image.0.convert()
 }
+
+
+pub fn crop_by_polygon(image: &RgbImage, points: Vec<u32>) -> RgbImage {
+    
+
+}
