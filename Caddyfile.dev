@@ -11,17 +11,11 @@ http://localhost:1234 {
 		respond `[ {
 			"name": "collector",
 			"url": "http://localhost:1234/v1/collector"
-		}		, {
-			"name": "cctv",
-			"url": "http://localhost:1234/v1/cctv"
 		}
 		]`
 	}
 
 	handle_path /v1/collector/* {
 		reverse_proxy http://wheretopark_collector:8080
-	}
-	handle_path /v1/cctv/* {
-		reverse_proxy http://wheretopark_cctv:8080
 	}
 }
