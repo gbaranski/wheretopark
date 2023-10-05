@@ -7,7 +7,7 @@ RUN go mod download
 
 COPY ./cmd/collector ./cmd/collector
 COPY go ./go
-COPY providers/collector ./providers/collector
+COPY collector ./collector
 
 RUN go build -v -o collector ./cmd/collector
 
