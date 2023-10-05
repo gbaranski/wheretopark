@@ -4,6 +4,8 @@ mod stream;
 mod utils;
 mod worker;
 
+use chrono::DateTime;
+use chrono::Utc;
 pub use model::Model;
 pub use utils::BoundingBox;
 pub use utils::Object;
@@ -23,12 +25,15 @@ use url::Url;
 pub type CameraID = String;
 
 #[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct CameraMetadata {
     pub url: Url,
 }
 
-#[derive(Debug, Default, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize)]
+#[serde(rename_all = "camelCase")]
 pub struct CameraState {
+    pub last_updated: DateTime<Utc>,
     pub total_spots: u32,
     pub available_spots: u32,
 }

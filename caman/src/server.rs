@@ -8,6 +8,7 @@ use axum::response::IntoResponse;
 use axum::response::Json;
 use axum::routing::get;
 use axum::Form;
+use axum::routing::put;
 use image::codecs::png::PngEncoder;
 use serde::Serialize;
 use std::io::BufWriter;
@@ -24,7 +25,7 @@ impl ServerState {
     }
 }
 
-async fn put_camera(
+async fn put_metadata(
     State(app_state): State<ServerState>,
     Path(id): Path<String>,
     Form(metadata): Form<CameraMetadata>,
@@ -34,7 +35,7 @@ async fn put_camera(
     StatusCode::CREATED
 }
 
-async fn get_camera(
+async fn get_state(
     State(app_state): State<ServerState>,
     Path(id): Path<String>,
 ) -> impl IntoResponse {
@@ -46,6 +47,12 @@ async fn get_camera(
         StatusCode::OK
     };
     (status, Json(state))
+}
+
+async fn get_all_state(State(app_state): State<ServerState>) -> impl IntoResponse {
+    tracing::info!("get all cameras");
+    let state = app_state.worker.state();
+    Json(state)
 }
 
 async fn visualize(
@@ -60,11 +67,7 @@ async fn visualize(
             let writer = BufWriter::new(&mut buf);
             let encoder = PngEncoder::new(writer);
             image.write_with_encoder(encoder).unwrap();
-            (
-                StatusCode::OK,
-                [(header::CONTENT_TYPE, "image/png")],
-                buf,
-            )
+            (StatusCode::OK, [(header::CONTENT_TYPE, "image/png")], buf)
         }
         None => (
             StatusCode::NOT_FOUND,
@@ -86,7 +89,9 @@ async fn status(State(app_state): State<ServerState>) -> impl IntoResponse {
 
 pub async fn run(app_state: ServerState) -> anyhow::Result<()> {
     let app = axum::Router::new()
-        .route("/cameras/:id", get(get_camera).put(put_camera))
+        .route("/cameras/state", get(get_all_state))
+        .route("/cameras/:id/state", get(get_state))
+        .route("/cameras/:id/metadata", put(put_metadata))
         .route("/cameras/:id/visualize", get(visualize))
         .route("/status", get(status))
         .with_state(app_state);

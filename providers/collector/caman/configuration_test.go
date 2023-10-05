@@ -1,14 +1,14 @@
-package cctv_test
+package caman_test
 
 import (
 	"log"
 	"testing"
-	cctv "wheretopark/providers/cctv"
+	"wheretopark/providers/collector/caman"
 )
 
 func TestParse(t *testing.T) {
-	log.Println(cctv.DefaultConfiguration)
-	for _, parkingLot := range cctv.DefaultConfiguration.ParkingLots {
+	log.Println(caman.DefaultConfiguration)
+	for _, parkingLot := range caman.DefaultConfiguration.ParkingLots {
 		if err := parkingLot.Validate(); err != nil {
 			t.Fatalf("%s - invalid parking lot: %s", parkingLot.Name, err)
 		}

@@ -170,6 +170,13 @@ impl Worker {
         self.cameras.len()
     }
 
+    pub fn state(&self) -> HashMap<CameraID, CameraState> {
+        self.state
+            .iter()
+            .map(|entry| (entry.key().clone(), entry.clone()))
+            .collect()
+    }
+
     pub fn state_of(&self, id: &CameraID) -> Option<CameraState> {
         self.state.get(id).map(|state| state.value().clone())
     }
@@ -199,6 +206,7 @@ impl Worker {
             anyhow::Ok(image)
         });
         let images = futures::future::try_join_all(images).await?;
+        let image_date = chrono::Utc::now();
         tracing::info!("collected {} images", images.len());
         let start = std::time::Instant::now();
         let predictions = self.model.infere(&images)?;
@@ -237,6 +245,7 @@ impl Worker {
                 .filter(|spot| spot.state == SpotState::Vacant)
                 .count();
             let state = CameraState {
+                last_updated: image_date,
                 total_spots: spots.len() as u32,
                 available_spots: available_spots as u32,
             };

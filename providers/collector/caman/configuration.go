@@ -1,4 +1,4 @@
-package cctv
+package caman
 
 import (
 	"encoding/json"
@@ -51,7 +51,7 @@ func ParseConfiguration(content string) (*Configuration, error) {
 	}
 
 	configuration := Configuration{
-		ParkingLots: make(map[string]CameraParkingLot, len(internalConfiguration.ParkingLots)),
+		ParkingLots: make(map[string]ConfigurationParkingLot, len(internalConfiguration.ParkingLots)),
 	}
 
 	for _, parkingLot := range internalConfiguration.ParkingLots {
@@ -70,20 +70,20 @@ func ParseConfiguration(content string) (*Configuration, error) {
 }
 
 type internalConfiguration struct {
-	ParkingLots []CameraParkingLot `yaml:"parkingLots"`
+	ParkingLots []ConfigurationParkingLot `yaml:"parkingLots"`
 }
 
 type Configuration struct {
-	ParkingLots map[wheretopark.ID]CameraParkingLot `json:"parkingLots"`
+	ParkingLots map[wheretopark.ID]ConfigurationParkingLot `json:"parkingLots"`
 }
 
-type CameraParkingLot struct {
+type ConfigurationParkingLot struct {
 	wheretopark.Metadata `json:",inline"`
 
 	Cameras []ParkingLotCamera `json:"cameras"`
 }
 
-func (p *CameraParkingLot) UnmarshalJSON(data []byte) error {
+func (p *ConfigurationParkingLot) UnmarshalJSON(data []byte) error {
 	var metadata wheretopark.Metadata
 	err := json.Unmarshal(data, &metadata)
 	if err != nil {
