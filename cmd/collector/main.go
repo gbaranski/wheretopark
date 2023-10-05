@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"sync"
 	"time"
 	"wheretopark/collector"
 	"wheretopark/collector/cctv"
@@ -25,18 +26,24 @@ type environment struct {
 // useful when source is slow
 func prefetch(cache *wheretopark.Cache, sources map[string]wheretopark.Source, interval time.Duration) {
 	for {
+		var wg sync.WaitGroup
 		for name, source := range sources {
-			ctx := log.With().Str("source", name).Logger().WithContext(context.TODO())
-			ch, err := source.ParkingLots(ctx)
-			if err != nil {
-				log.Error().Err(err).Str("name", name).Msg("get parking lots failure")
-				continue
-			}
-			for parkingLots := range ch {
-				cache.UpdateParkingLots(name, parkingLots)
-			}
-			log.Ctx(ctx).Debug().Msg("prefetch done")
+			wg.Add(1)
+			go func(name string, source wheretopark.Source) {
+				defer wg.Done()
+				ctx := log.With().Str("source", name).Logger().WithContext(context.TODO())
+				ch, err := source.ParkingLots(ctx)
+				if err != nil {
+					log.Error().Err(err).Str("name", name).Msg("get parking lots failure")
+					return
+				}
+				for parkingLots := range ch {
+					cache.UpdateParkingLots(name, parkingLots)
+				}
+				log.Ctx(ctx).Debug().Msg("prefetch done")
+			}(name, source)
 		}
+		wg.Wait()
 		time.Sleep(interval)
 	}
 }
@@ -64,9 +71,8 @@ func main() {
 		log.Fatal().Err(err).Msg("failed to create cache")
 	}
 
-	go prefetch(cache, map[string]wheretopark.Source{
-		"cctv": sources["cctv"],
-	}, wheretopark.CacheTTL)
+	// for now prefetch literally everything
+	go prefetch(cache, sources, wheretopark.CacheTTL)
 
 	server := collector.NewServer(cache, sources)
 	router := server.Router()
