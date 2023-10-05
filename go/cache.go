@@ -13,12 +13,14 @@ import (
 
 type internalCache = bigcache.BigCache
 
+var CacheTTL = time.Minute * 5
+
 type Cache struct {
 	i *internalCache
 }
 
 func NewCache() (*Cache, error) {
-	cache, err := bigcache.New(context.Background(), bigcache.DefaultConfig(time.Minute*5))
+	cache, err := bigcache.New(context.Background(), bigcache.DefaultConfig(CacheTTL))
 	if err != nil {
 		return nil, err
 	}

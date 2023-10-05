@@ -1,6 +1,8 @@
 package main
 
 import (
+	"context"
+	"time"
 	"wheretopark/collector"
 	"wheretopark/collector/cctv"
 	"wheretopark/collector/gdansk"
@@ -18,6 +20,25 @@ import (
 type environment struct {
 	Port uint             `env:"PORT" envDefault:"8080"`
 	CCTV cctv.Environment `envPrefix:"CCTV_"`
+}
+
+// useful when source is slow
+func prefetch(cache *wheretopark.Cache, sources map[string]wheretopark.Source, interval time.Duration) {
+	for {
+		for name, source := range sources {
+			ctx := log.With().Str("source", name).Logger().WithContext(context.TODO())
+			ch, err := source.ParkingLots(ctx)
+			if err != nil {
+				log.Error().Err(err).Str("name", name).Msg("get parking lots failure")
+				continue
+			}
+			for parkingLots := range ch {
+				cache.UpdateParkingLots(name, parkingLots)
+			}
+			log.Ctx(ctx).Debug().Msg("prefetch done")
+		}
+		time.Sleep(interval)
+	}
 }
 
 func main() {
@@ -42,6 +63,11 @@ func main() {
 	if err != nil {
 		log.Fatal().Err(err).Msg("failed to create cache")
 	}
+
+	go prefetch(cache, map[string]wheretopark.Source{
+		"cctv": sources["cctv"],
+	}, wheretopark.CacheTTL)
+
 	server := collector.NewServer(cache, sources)
 	router := server.Router()
 	router.Get("/visualize/{id}/{camera}", sources["cctv"].(cctv.Source).HandleVisualizeCamera)
