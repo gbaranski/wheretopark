@@ -1,16 +1,23 @@
 package main
 
 import (
+	"wheretopark/collector"
+	"wheretopark/collector/cctv"
+	"wheretopark/collector/gdansk"
+	"wheretopark/collector/gdynia"
+	"wheretopark/collector/glasgow"
+	"wheretopark/collector/lacity"
+	"wheretopark/collector/poznan"
+	"wheretopark/collector/warsaw"
 	wheretopark "wheretopark/go"
 
-	"wheretopark/providers/collector"
-
-	"github.com/caarlos0/env/v8"
+	"github.com/caarlos0/env/v9"
 	"github.com/rs/zerolog/log"
 )
 
 type environment struct {
-	Port uint `env:"PORT" envDefault:"8080"`
+	Port uint             `env:"PORT" envDefault:"8080"`
+	CCTV cctv.Environment `envPrefix:"CCTV_"`
 }
 
 func main() {
@@ -21,11 +28,24 @@ func main() {
 		log.Fatal().Err(err).Send()
 	}
 
-	provider, err := collector.NewProvider()
-	if err != nil {
-		log.Fatal().Err(err).Msg("failed to create provider")
+	sources := map[string]wheretopark.Source{
+		"gdansk":  gdansk.New(),
+		"gdynia":  gdynia.New(),
+		"glasgow": glasgow.New(),
+		"lacity":  lacity.New(),
+		"poznan":  poznan.New(),
+		"warsaw":  warsaw.New(),
+		"cctv":    cctv.New(environment.CCTV),
 	}
-	if err := wheretopark.RunProvider(provider, uint(environment.Port)); err != nil {
-		log.Fatal().Err(err).Msg("run provider failure")
+
+	cache, err := wheretopark.NewCache()
+	if err != nil {
+		log.Fatal().Err(err).Msg("failed to create cache")
+	}
+	server := collector.NewServer(cache, sources)
+	router := server.Router()
+	router.Get("/visualize/{id}/{camera}", sources["cctv"].(cctv.Source).HandleVisualizeCamera)
+	if err := server.Run(router, environment.Port); err != nil {
+		log.Fatal().Err(err).Msg("run server failure")
 	}
 }

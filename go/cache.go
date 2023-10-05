@@ -73,6 +73,39 @@ func (c *Cache) SetParkingLots(source string, parkingLots map[ID]ParkingLot) err
 	return c.i.Set(source, data)
 }
 
+func (c *Cache) UpdateParkingLots(source string, parkingLots map[ID]ParkingLot) error {
+	data, err := c.i.Get(source)
+	found := true
+	if err != nil {
+		if err == bigcache.ErrEntryNotFound {
+			found = false
+		} else {
+			return err
+		}
+	}
+
+	var value map[ID]ParkingLot
+	if found {
+		if err := json.Unmarshal([]byte(data), &value); err != nil {
+			log.Fatal().Str("data", string(data)).Err(err).Msg("failed to unmarshal values")
+		}
+		for id, parkingLot := range parkingLots {
+			value[id] = parkingLot
+		}
+	} else {
+		value = parkingLots
+	}
+
+	data, err = json.Marshal(value)
+	if err != nil {
+		log.Fatal().Err(err).Msg("failed to marshal value")
+	}
+	hash := fnv.New32a()
+	hash.Write(data)
+	log.Trace().Str("source", source).Uint32("sum", hash.Sum32()).Msg(fmt.Sprintf("update `%s` to cache", data))
+	return c.i.Set(source, data)
+}
+
 func (c *Cache) Close() error {
 	return c.i.Close()
 }
