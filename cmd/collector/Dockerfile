@@ -1,17 +1,22 @@
-FROM golang:1-alpine as builder
+FROM gocv/opencv:4.8.0 as builder
+
+ENV GOPATH /go
 
 WORKDIR /app
 
 COPY go.* ./
 RUN go mod download
 
-COPY ./cmd/collector ./cmd/collector
 COPY go ./go
-COPY collector ./collector
+COPY ./collector ./collector
+COPY ./cmd/collector ./cmd/collector
 
-RUN go build -v -o collector ./cmd/collector
+RUN go build -v -o exe ./cmd/collector
 
-FROM golang:1-alpine
+FROM gocv/opencv:4.8.0
 
-COPY --from=builder /app/collector /app/collector
-CMD ["/app/collector"]
+RUN apt-get update && apt-get -y install ffmpeg
+
+COPY --from=builder /app/exe /app/exe
+
+CMD ["/app/exe"]

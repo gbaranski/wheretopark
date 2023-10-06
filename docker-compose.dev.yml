@@ -16,7 +16,7 @@ services:
       context: .
       dockerfile: ./cmd/collector/Dockerfile
     environment:
-      MODEL_PATH: /opt/wheretopark/model.onnx
+      CCTV_MODEL_PATH: /opt/wheretopark/model.onnx
       LOG_LEVEL: trace
     volumes:
       - $HOME/.local/share/wheretopark:/opt/wheretopark
