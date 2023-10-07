@@ -36,26 +36,12 @@ func init() {
 		}
 	}
 	for k, v := range prParkingLots {
-		configuration.ParkingLots[k] = wheretopark.Metadata{
-			LastUpdated:    &defaultLastUpdated,
-			Name:           "",
-			Address:        v.Address,
-			Geometry:       &geojson.Geometry{},
-			Resources:      append(v.Resources, prBaseResources...),
-			TotalSpots:     map[string]uint{},
-			MaxDimensions:  &wheretopark.Dimensions{},
-			Features:       append(v.Features, prBaseFeatures...),
-			PaymentMethods: []string{},
-			Comment:        prDefaultComment,
-			Currency:       defaultCurrency,
-			Timezone:       defaultTimezone,
-			Rules:          prDefaultRules,
-		}
+		configuration.ParkingLots[k] = v
 	}
 }
 
 var (
 	defaultTimezone    = wheretopark.MustLoadLocation("Europe/Warsaw")
-	defaultLastUpdated = wheretopark.MustParseDate("2022-12-28")
+	defaultLastUpdated = wheretopark.MustParseDate("2023-10-07")
 	defaultCurrency    = currency.PLN
 )

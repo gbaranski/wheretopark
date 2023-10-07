@@ -1,6 +1,8 @@
 package warsaw
 
-import wheretopark "wheretopark/go"
+import (
+	wheretopark "wheretopark/go"
+)
 
 var (
 	prBaseResources = []string{
@@ -9,11 +11,14 @@ var (
 		"tel:+48-(22)-56-98-11",
 	}
 
-	prBaseFeatures = []string{
-		wheretopark.FeatureUncovered,
+	prRules24h = []wheretopark.Rule{
+		{
+			Hours:   "24/7",
+			Pricing: []wheretopark.PricingRule{},
+		},
 	}
 
-	prDefaultRules = []wheretopark.Rule{
+	prRulesDay = []wheretopark.Rule{
 		{
 			Hours:   "Mo-Su 04:30-02:30",
 			Pricing: []wheretopark.PricingRule{},
@@ -74,101 +79,200 @@ Data source: City of Warsaw.`,
 
 	prParkingLots = map[string]wheretopark.Metadata{
 		"u3qckr1s6u": {
-			Address: "ul. Kasprowicza, Wrzeciono, 01-949 Warszawa",
-			Resources: []string{
-				"https://www.wtp.waw.pl/parkingi/parking-pr-metro-mlociny-iii/",
+			Address:   "ul. Kasprowicza, Wrzeciono, 01-949 Warszawa",
+			Resources: append(prBaseResources, "https://www.wtp.waw.pl/parkingi/parking-pr-metro-mlociny-iii/"),
+			Features: []wheretopark.Feature{
+				wheretopark.FeatureUncovered,
 			},
+
+			LastUpdated: &defaultLastUpdated,
+			Comment:     prDefaultComment,
+			Currency:    defaultCurrency,
+			Timezone:    defaultTimezone,
+			Rules:       prRulesDay,
 		},
 
 		"u3qbmy29nb": {
-			Address: "Karczunkowa 145, 02-873 Warszawa",
-			Resources: []string{
-				"https://www.wtp.waw.pl/parkingi/parking-pr-jeziorki-pkp",
-			},
+			Address:   "ul. Karczunkowa 145, 02-873 Warszawa",
+			Resources: append(prBaseResources, "https://www.wtp.waw.pl/parkingi/parking-pr-jeziorki-pkp/"),
 			Features: []wheretopark.Feature{
-				wheretopark.FeatureMonitored,
+				wheretopark.FeatureUncovered,
 			},
+
+			LastUpdated: &defaultLastUpdated,
+			Comment:     prDefaultComment,
+			Currency:    defaultCurrency,
+			Timezone:    defaultTimezone,
+			Rules:       prRulesDay,
 		},
 
 		"u3qbud4y0w": {
-			Address: "Al. Krakowska, Załuski, 02-180 Warszawa",
-			Resources: []string{
-				"https://www.wtp.waw.pl/parkingi/parking-pr-al-krakowska",
-			},
+			Address:   "Al. Krakowska, Załuski, 02-180 Warszawa",
+			Resources: append(prBaseResources, "https://www.wtp.waw.pl/parkingi/parking-pr-al-krakowska"),
 			Features: []wheretopark.Feature{
-				wheretopark.FeatureMonitored,
+				wheretopark.FeatureCovered,
 			},
+			MaxDimensions: &wheretopark.Dimensions{
+				Height: 190,
+			},
+
+			LastUpdated: &defaultLastUpdated,
+			Comment:     prDefaultComment,
+			Currency:    defaultCurrency,
+			Timezone:    defaultTimezone,
+			Rules:       prRulesDay,
 		},
 
 		"u3qbwwr4dz": {
-			Address: "ul. Ciszewskiego, Ursynów Północny, 02-777 Warszawa",
-			Resources: []string{
-				"https://www.wtp.waw.pl/parkingi/parking-pr-metro-stoklosy/",
-			},
+			Address:   "ul. Ciszewskiego, Ursynów Północny, 02-777 Warszawa",
+			Resources: append(prBaseResources, "https://www.wtp.waw.pl/parkingi/parking-pr-metro-stoklosy"),
 			Features: []wheretopark.Feature{
-				wheretopark.FeatureMonitored,
+				wheretopark.FeatureCovered,
 			},
+			MaxDimensions: &wheretopark.Dimensions{
+				Height: 200,
+			},
+
+			LastUpdated: &defaultLastUpdated,
+			Comment:     prDefaultComment,
+			Currency:    defaultCurrency,
+			Timezone:    defaultTimezone,
+			Rules:       prRulesDay,
 		},
 
 		"u3r1190t8e": {
-			Address: "ul. Szpotańskiego, Anin, 04-610 Warszawa",
-			Resources: []string{
-				"https://www.wtp.waw.pl/parkingi/parking-pr-anin-skm/",
-			},
+			Address:   "ul. Szpotańskiego, Anin, 04-610 Warszawa",
+			Resources: append(prBaseResources, "https://www.wtp.waw.pl/parkingi/parking-pr-anin-skm"),
 			Features: []wheretopark.Feature{
-				wheretopark.FeatureMonitored,
+				wheretopark.FeatureUncovered,
 			},
+			MaxDimensions: &wheretopark.Dimensions{
+				Height: 220,
+			},
+
+			LastUpdated: &defaultLastUpdated,
+			Comment:     prDefaultComment,
+			Currency:    defaultCurrency,
+			Timezone:    defaultTimezone,
+			Rules:       prRulesDay,
 		},
 
 		"u3qch4g0rr": {
-			Address: "ul. Półczyńska 8, Bemowo, 01-378 Warszawa",
-			Resources: []string{
-				"https://www.wtp.waw.pl/parkingi/parking-pr-polczynska/",
+			Address:   "ul. Półczyńska 8, Bemowo, 01-378 Warszawa",
+			Resources: append(prBaseResources, "https://www.wtp.waw.pl/parkingi/parking-pr-polczynska"),
+			Features: []wheretopark.Feature{
+				wheretopark.FeatureUncovered,
 			},
+
+			LastUpdated: &defaultLastUpdated,
+			Comment:     prDefaultComment,
+			Currency:    defaultCurrency,
+			Timezone:    defaultTimezone,
+			Rules:       prRulesDay,
 		},
 
 		"u3qckr8487": {
-			Address: "ul. Pułku Strzelców Kaniowskich, Huta, 01-949 Warszawa",
-			Resources: []string{
-				"https://www.wtp.waw.pl/parkingi/parking-pr-metro-mlociny-ii/",
+			Address:   "ul. Pułku Strzelców Kaniowskich, Huta, 01-949 Warszawa",
+			Resources: append(prBaseResources, "https://www.wtp.waw.pl/parkingi/parking-pr-metro-mlociny-ii/"),
+			Features: []wheretopark.Feature{
+				wheretopark.FeatureUncovered,
 			},
+			Rules: prRules24h,
+
+			LastUpdated: &defaultLastUpdated,
+			Comment:     prDefaultComment,
+			Currency:    defaultCurrency,
+			Timezone:    defaultTimezone,
 		},
 
 		"u3qby7jfb6": {
-			Address: "al. Wilanowska 236, Ksawerów, 02-765 Warszawa",
-			Resources: []string{
-				"https://www.wtp.waw.pl/parkingi/parking-pr-metro-wilanowska/",
-			},
+			Address:   "al. Wilanowska 236, Ksawerów, 02-765 Warszawa",
+			Resources: append(prBaseResources, "https://www.wtp.waw.pl/parkingi/parking-pr-metro-wilanowska/"),
+
+			LastUpdated: &defaultLastUpdated,
+			Comment:     prDefaultComment,
+			Currency:    defaultCurrency,
+			Timezone:    defaultTimezone,
+			Rules:       prRulesDay,
 		},
 
 		"u3qbwrztn7": {
-			Address: "al. Komisji Edukacji Narodowej, Ursynów Północny, 02-787 Warszawa",
-			Resources: []string{
-				"https://www.wtp.waw.pl/parkingi/parking-pr-metro-ursynow/",
+			Address:   "al. Komisji Edukacji Narodowej, Ursynów Północny, 02-787 Warszawa",
+			Resources: append(prBaseResources, "https://www.wtp.waw.pl/parkingi/parking-pr-metro-ursynow/"),
+			MaxDimensions: &wheretopark.Dimensions{
+				Height: 220,
 			},
 			Features: []wheretopark.Feature{
-				wheretopark.FeatureMonitored,
+				wheretopark.FeatureUncovered,
 			},
+
+			LastUpdated: &defaultLastUpdated,
+			Comment:     prDefaultComment,
+			Currency:    defaultCurrency,
+			Timezone:    defaultTimezone,
+			Rules:       prRulesDay,
 		},
 
 		"u3r116bcdu": {
-			Address: "ul. Widoczna 2a, Wawer, 04-647 Warszawa",
-			Resources: []string{
-				"https://www.wtp.waw.pl/parkingi/parking-pr-wawer-skm/",
-			},
+			Address:   "ul. Widoczna 2a, Wawer, 04-647 Warszawa",
+			Resources: append(prBaseResources, "https://www.wtp.waw.pl/parkingi/parking-pr-wawer-skm/"),
 			Features: []wheretopark.Feature{
-				wheretopark.FeatureMonitored,
+				wheretopark.FeatureUncovered,
 			},
+
+			LastUpdated: &defaultLastUpdated,
+			Comment:     prDefaultComment,
+			Currency:    defaultCurrency,
+			Timezone:    defaultTimezone,
+			Rules:       prRulesDay,
 		},
 
 		"u3qctgenxn": {
-			Address: "ul. Marywilska, Białołęka, 03-042 Warszawa",
-			Resources: []string{
-				"https://www.wtp.waw.pl/parkingi/parking-pr-zeran-pkp/",
+			Address:   "ul. Marywilska, Białołęka, 03-042 Warszawa",
+			Resources: append(prBaseResources, "https://www.wtp.waw.pl/parkingi/parking-pr-zeran-pkp/"),
+			Features: []wheretopark.Feature{
+				wheretopark.FeatureUncovered,
+			},
+
+			LastUpdated: &defaultLastUpdated,
+			Comment:     prDefaultComment,
+			Currency:    defaultCurrency,
+			Timezone:    defaultTimezone,
+			Rules:       prRules24h,
+		},
+
+		wheretopark.CoordinateToID(52.271140, 20.970460): {
+			Address:   "ul. Włościańska 56, 01-710 Warszawa",
+			Resources: append(prBaseResources, "https://www.wtp.waw.pl/parkingi/parking-pr-metro-marymont/"),
+			MaxDimensions: &wheretopark.Dimensions{
+				Height: 180,
 			},
 			Features: []wheretopark.Feature{
-				wheretopark.FeatureMonitored,
+				wheretopark.FeatureCovered,
 			},
+
+			LastUpdated: &defaultLastUpdated,
+			Comment:     prDefaultComment,
+			Currency:    defaultCurrency,
+			Timezone:    defaultTimezone,
+			Rules:       prRulesDay,
+		},
+
+		wheretopark.CoordinateToID(52.191143, 20.867516): {
+			Address:   "ul. Orląt Lwowskich 45, 02-495 Warszawa",
+			Resources: append(prBaseResources, "https://www.wtp.waw.pl/parkingi/parking-pr-ursus-niedzwiadek/"),
+			MaxDimensions: &wheretopark.Dimensions{
+				Height: 200,
+			},
+			Features: []wheretopark.Feature{
+				wheretopark.FeatureCovered,
+			},
+
+			LastUpdated: &defaultLastUpdated,
+			Comment:     prDefaultComment,
+			Currency:    defaultCurrency,
+			Timezone:    defaultTimezone,
+			Rules:       prRulesDay,
 		},
 	}
 )
