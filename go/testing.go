@@ -18,27 +18,17 @@ func ExamineParkingLots(t *testing.T, parkingLots map[ID]ParkingLot) {
 	}
 }
 
-func ExamineProvider(t *testing.T, provider Provider) {
-	sources := provider.Sources()
-	for identifier, source := range sources {
-		ctx := log.With().Str("source", identifier).Logger().WithContext(context.TODO())
-		parkingLots, err := source.ParkingLots(ctx)
-		if err != nil {
-			t.Fatalf("source %s fail: %s", identifier, err)
-		}
-		ExamineParkingLots(t, parkingLots)
-	}
-}
-
 func ExamineSource(t *testing.T, src Source) {
-	parkingLots, err := src.ParkingLots(context.TODO())
+	ch, err := src.ParkingLots(context.TODO())
 	if err != nil {
-		t.Fatal(err)
+		log.Fatal().Err(err).Msg("source fail")
+	}
+
+	parkingLots := make(map[ID]ParkingLot)
+	for parkingLot := range ch {
+		for id, lot := range parkingLot {
+			parkingLots[id] = lot
+		}
 	}
 	ExamineParkingLots(t, parkingLots)
-}
-
-func ExamineSequentialSource(t *testing.T, src SequentialSource) {
-	proxy := NewSequentialSourceProxy(src)
-	ExamineSource(t, proxy)
 }

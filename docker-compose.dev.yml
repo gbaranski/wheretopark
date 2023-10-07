@@ -16,23 +16,11 @@ services:
       context: .
       dockerfile: ./cmd/collector/Dockerfile
     environment:
+      CCTV_MODEL_PATH: /opt/wheretopark/model.onnx
       LOG_LEVEL: trace
+    volumes:
+      - $HOME/.local/share/wheretopark:/opt/wheretopark
     ports:
       - "8001:8080"
 
-  cctv:
-    container_name: wheretopark_cctv
-    restart: unless-stopped
-    build:
-      context: .
-      dockerfile: ./cmd/cctv/Dockerfile
-    environment:
-      MODEL_PATH: /opt/wheretopark/cctv/model.onnx
-      LOG_LEVEL: trace
-    volumes:
-      - $HOME/.local/share/wheretopark/cctv:/opt/wheretopark/cctv
-    ports:
-      - "8002:8080"
-
 volumes:
-  influxdb_data:

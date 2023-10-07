@@ -6,7 +6,7 @@ toolchain go1.21.1
 
 require (
 	github.com/allegro/bigcache/v3 v3.1.0
-	github.com/caarlos0/env/v8 v8.0.0
+	github.com/caarlos0/env/v9 v9.0.0
 	github.com/go-chi/chi/v5 v5.0.10
 	github.com/go-resty/resty/v2 v2.7.0
 	github.com/goccy/go-yaml v1.11.0
