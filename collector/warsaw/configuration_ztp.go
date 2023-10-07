@@ -127,12 +127,12 @@ func ztpComment(priceForInhabitants int, inhabitantsOnlyDaily bool) map[string]s
 }
 
 var (
-	ztpBaseFeatures = []wheretopark.Feature{
+	ztpDefaultFeatures = []wheretopark.Feature{
 		wheretopark.FeatureUncovered,
 		wheretopark.FeatureGuarded,
 	}
 
-	ztpBasePaymentMethods = []wheretopark.Feature{
+	ztpDefaultPaymentMethods = []wheretopark.Feature{
 		wheretopark.PaymentMethodCash,
 		wheretopark.PaymentMethodCard,
 		wheretopark.PaymentMethodContactless,
@@ -148,10 +148,11 @@ var (
 	ztpParkingLots = map[string]wheretopark.Metadata{
 		"u3qcnqcwne": {
 			Address: "ul. Bednarska 9, Powiśle, 00-310 Warszawa",
-			Resources: []string{
+			Resources: append(
+				ztpBaseResources,
 				"https://www.ztp.waw.pl/portal/download/file_id/164.html",
 				"https://www.ztp.waw.pl/portal/download/file_id/165.html",
-			},
+			),
 			Comment: ztpComment(200, false),
 			Rules: ztpRules(
 				ztpPrices{
@@ -172,14 +173,21 @@ var (
 					rmn: 180,
 				},
 			),
+
+			LastUpdated:    &defaultLastUpdated,
+			Features:       ztpDefaultFeatures,
+			PaymentMethods: ztpDefaultPaymentMethods,
+			Currency:       defaultCurrency,
+			Timezone:       defaultTimezone,
 		},
 
 		wheretopark.CoordinateToID(52.252094, 21.012700): {
 			Address: "ul. Boleść 6, Nowe Miasto, 00-259 Warszawa",
-			Resources: []string{
+			Resources: append(
+				ztpBaseResources,
 				"https://www.ztp.waw.pl/portal/download/file_id/166.html",
 				"https://www.ztp.waw.pl/portal/download/file_id/167.html",
-			},
+			),
 			Comment: ztpComment(200, false),
 			Rules: ztpRules(
 				ztpPrices{
@@ -200,17 +208,22 @@ var (
 					rmn: 180,
 				},
 			),
+
+			LastUpdated:    &defaultLastUpdated,
+			Features:       ztpDefaultFeatures,
+			PaymentMethods: ztpDefaultPaymentMethods,
+			Currency:       defaultCurrency,
+			Timezone:       defaultTimezone,
 		},
 
 		"u3qcq0n7c9": {
 			Address: "ul. Bugaj, Śródmieście, 00-284 Warszawa",
-			Resources: []string{
+			Resources: append(
+				ztpBaseResources,
 				"https://www.ztp.waw.pl/portal/download/file_id/168.html",
 				"https://www.ztp.waw.pl/portal/download/file_id/169.html",
-			},
-			Features:       ztpBaseFeatures,
-			PaymentMethods: ztpBasePaymentMethods,
-			Comment:        ztpComment(0, false),
+			),
+			Comment: ztpComment(0, false),
 			Rules: ztpRules(
 				ztpPrices{
 					h:   5,
@@ -227,14 +240,21 @@ var (
 					rm:  400,
 				},
 			),
+
+			LastUpdated:    &defaultLastUpdated,
+			Features:       ztpDefaultFeatures,
+			PaymentMethods: ztpDefaultPaymentMethods,
+			Currency:       defaultCurrency,
+			Timezone:       defaultTimezone,
 		},
 
 		"u3qcn41g7d": {
 			Address: "ul. Filtrowa 1, Śródmieście Południowe, 00-611 Warszawa",
-			Resources: []string{
+			Resources: append(
+				ztpBaseResources,
 				"https://www.ztp.waw.pl/portal/download/file_id/170.html",
 				"https://www.ztp.waw.pl/portal/download/file_id/171.html",
-			},
+			),
 			Comment: ztpComment(250, true),
 			Rules: ztpRules(
 				ztpPrices{
@@ -255,42 +275,21 @@ var (
 					rmn: 250,
 				},
 			),
-		},
 
-		"u3qcn5wfrm": {
-			Address: "ul. Hoża, Śródmieście Południowe, 00-682 Warszawa",
-			Resources: []string{
-				"https://www.ztp.waw.pl/portal/download/file_id/189.html",
-				"https://www.ztp.waw.pl/portal/download/file_id/190.html",
-			},
-			Comment: ztpComment(250, false),
-			Rules: ztpRules(
-				ztpPrices{
-					h:   5,
-					hh:  11,
-					hhh: 14,
-					rh:  4,
-					rm:  470,
-					rmd: 370,
-					rmn: 230,
-				}, ztpPrices{
-					h:   6,
-					hh:  13,
-					hhh: 18,
-					rh:  4,
-					rm:  560,
-					rmd: 420,
-					rmn: 310,
-				},
-			),
+			LastUpdated:    &defaultLastUpdated,
+			Features:       ztpDefaultFeatures,
+			PaymentMethods: ztpDefaultPaymentMethods,
+			Currency:       defaultCurrency,
+			Timezone:       defaultTimezone,
 		},
 
 		"u3qcnm9txg": {
 			Address: "ul. Karasia, Śródmieście Północne, 00-327 Warszawa",
-			Resources: []string{
+			Resources: append(
+				ztpBaseResources,
 				"https://www.ztp.waw.pl/portal/download/file_id/174.html",
 				"https://www.ztp.waw.pl/portal/download/file_id/175.html",
-			},
+			),
 			Comment: ztpComment(350, false),
 			Rules: ztpRules(
 				ztpPrices{
@@ -311,14 +310,21 @@ var (
 					rmn: 300,
 				},
 			),
+
+			LastUpdated:    &defaultLastUpdated,
+			Features:       ztpDefaultFeatures,
+			PaymentMethods: ztpDefaultPaymentMethods,
+			Currency:       defaultCurrency,
+			Timezone:       defaultTimezone,
 		},
 
 		"u3qcm8j3ep": {
 			Address: "ul. Miła, Muranów, 03-402 Warszawa",
-			Resources: []string{
+			Resources: append(
+				ztpBaseResources,
 				"https://www.ztp.waw.pl/portal/download/file_id/176.html",
 				"https://www.ztp.waw.pl/portal/download/file_id/177.html",
-			},
+			),
 			Comment: ztpComment(0, false),
 			Rules: ztpRules(
 				ztpPrices{
@@ -339,15 +345,22 @@ var (
 					rmn: 160,
 				},
 			),
+
+			LastUpdated:    &defaultLastUpdated,
+			Features:       ztpDefaultFeatures,
+			PaymentMethods: ztpDefaultPaymentMethods,
+			Currency:       defaultCurrency,
+			Timezone:       defaultTimezone,
 		},
 
 		"u3qcndw3tr": {
 			// also called Myśliwiecka
-			Address: "Łazienkowska 7, Śródmieście, 00-459 Warszawa",
-			Resources: []string{
+			Address: "ul. Łazienkowska 7, Śródmieście, 00-459 Warszawa",
+			Resources: append(
+				ztpBaseResources,
 				"https://www.ztp.waw.pl/portal/download/file_id/178.html",
 				"https://www.ztp.waw.pl/portal/download/file_id/179.html",
-			},
+			),
 			Comment: ztpComment(0, false),
 			Rules: ztpRules(
 				ztpPrices{
@@ -366,14 +379,21 @@ var (
 					rmd: 250,
 				},
 			),
+
+			LastUpdated:    &defaultLastUpdated,
+			Features:       ztpDefaultFeatures,
+			PaymentMethods: ztpDefaultPaymentMethods,
+			Currency:       defaultCurrency,
+			Timezone:       defaultTimezone,
 		},
 
 		"u3qcnhgzws": {
 			Address: "Plac Młynarskiego, Śródmieście Północne, 00-281 Warszawa",
-			Resources: []string{
+			Resources: append(
+				ztpBaseResources,
 				"https://www.ztp.waw.pl/portal/download/file_id/180.html",
 				"https://www.ztp.waw.pl/portal/download/file_id/181.html",
-			},
+			),
 			Comment: ztpComment(250, false),
 			Rules: ztpRules(
 				ztpPrices{
@@ -394,14 +414,21 @@ var (
 					rmn: 310,
 				},
 			),
+
+			LastUpdated:    &defaultLastUpdated,
+			Features:       ztpDefaultFeatures,
+			PaymentMethods: ztpDefaultPaymentMethods,
+			Currency:       defaultCurrency,
+			Timezone:       defaultTimezone,
 		},
 
 		"u3qcjvvj2z": {
 			Address: "Plac Żelaznej Bramy 10, Śródmieście Północne, 01-136 Warszawa",
-			Resources: []string{
+			Resources: append(
+				ztpBaseResources,
 				"https://www.ztp.waw.pl/portal/download/file_id/182.html",
 				"https://www.ztp.waw.pl/portal/download/file_id/183.html",
-			},
+			),
 			Comment: ztpComment(250, true),
 			Rules: ztpRules(
 				ztpPrices{
@@ -422,14 +449,21 @@ var (
 					rmn: 310,
 				},
 			),
+
+			LastUpdated:    &defaultLastUpdated,
+			Features:       ztpDefaultFeatures,
+			PaymentMethods: ztpDefaultPaymentMethods,
+			Currency:       defaultCurrency,
+			Timezone:       defaultTimezone,
 		},
 
 		"u3qcntjc55": {
 			Address: "aleja 3 Maja, 00-401 Warszawa",
-			Resources: []string{
+			Resources: append(
+				ztpBaseResources,
 				"https://www.ztp.waw.pl/portal/download/file_id/185.html",
 				"https://www.ztp.waw.pl/portal/download/file_id/186.html",
-			},
+			),
 			// TODO: add info about guaranteed 25 parking slots
 			Comment: ztpComment(200, true),
 			Rules: ztpRules(
@@ -447,15 +481,22 @@ var (
 					rm:  560,
 				},
 			),
+
+			LastUpdated:    &defaultLastUpdated,
+			Features:       ztpDefaultFeatures,
+			PaymentMethods: ztpDefaultPaymentMethods,
+			Currency:       defaultCurrency,
+			Timezone:       defaultTimezone,
 		},
 
 		"u3qcnkxqwd": {
 			// przy stacji PKP Powiśle
 			Address: "Smolna, Śródmieście, 00-375 Warszawa",
-			Resources: []string{
+			Resources: append(
+				ztpBaseResources,
 				"https://www.ztp.waw.pl/portal/download/file_id/187.html",
 				"https://www.ztp.waw.pl/portal/download/file_id/188.html",
-			},
+			),
 			Comment: ztpComment(250, false),
 			Rules: ztpRules(
 				ztpPrices{
@@ -472,14 +513,21 @@ var (
 					rm:  560,
 				},
 			),
+
+			LastUpdated:    &defaultLastUpdated,
+			Features:       ztpDefaultFeatures,
+			PaymentMethods: ztpDefaultPaymentMethods,
+			Currency:       defaultCurrency,
+			Timezone:       defaultTimezone,
 		},
 
-		"u3qcjvuk6p": {
-			Address: "ul. Ptasia, 03-402 Warszaw",
-			Resources: []string{
-				"https://www.ztp.waw.pl/portal/download/file_id/621.html",
-				"https://www.ztp.waw.pl/portal/download/file_id/622.html",
-			},
+		"u3qcn5wfrm": {
+			Address: "ul. Hoża, Śródmieście Południowe, 00-682 Warszawa",
+			Resources: append(
+				ztpBaseResources,
+				"https://www.ztp.waw.pl/portal/download/file_id/189.html",
+				"https://www.ztp.waw.pl/portal/download/file_id/190.html",
+			),
 			Comment: ztpComment(250, false),
 			Rules: ztpRules(
 				ztpPrices{
@@ -500,6 +548,47 @@ var (
 					rmn: 310,
 				},
 			),
+
+			LastUpdated:    &defaultLastUpdated,
+			Features:       ztpDefaultFeatures,
+			PaymentMethods: ztpDefaultPaymentMethods,
+			Currency:       defaultCurrency,
+			Timezone:       defaultTimezone,
+		},
+
+		"u3qcjvuk6p": {
+			Address: "ul. Ptasia, 03-402 Warszaw",
+			Resources: append(
+				ztpBaseResources,
+				"https://www.ztp.waw.pl/portal/download/file_id/621.html",
+				"https://www.ztp.waw.pl/portal/download/file_id/622.html",
+			),
+			Comment: ztpComment(250, false),
+			Rules: ztpRules(
+				ztpPrices{
+					h:   5,
+					hh:  11,
+					hhh: 14,
+					rh:  4,
+					rm:  470,
+					rmd: 370,
+					rmn: 230,
+				}, ztpPrices{
+					h:   6,
+					hh:  13,
+					hhh: 18,
+					rh:  4,
+					rm:  560,
+					rmd: 420,
+					rmn: 310,
+				},
+			),
+
+			LastUpdated:    &defaultLastUpdated,
+			Features:       ztpDefaultFeatures,
+			PaymentMethods: ztpDefaultPaymentMethods,
+			Currency:       defaultCurrency,
+			Timezone:       defaultTimezone,
 		},
 	}
 )
