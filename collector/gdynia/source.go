@@ -41,7 +41,11 @@ func (s Source) ParkingLots(ctx context.Context) (<-chan map[wheretopark.ID]wher
 		}
 
 		vStateIndex := StatePositionByID(*vState, vMetadata.ID)
-		vState := (*vState)[vStateIndex]
+		if vStateIndex == nil {
+			log.Error().Int("id", vMetadata.ID).Msg("matching state not found")
+			continue
+		}
+		vState := (*vState)[*vStateIndex]
 
 		metadata := wheretopark.Metadata{
 			LastUpdated: configuration.LastUpdated,

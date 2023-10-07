@@ -1,9 +1,5 @@
 package gdansk
 
-import (
-	"github.com/rs/zerolog/log"
-)
-
 type Coordinate struct {
 	Latitude  float64 `json:"latitude"`
 	Longitude float64 `json:"longitude"`
@@ -30,12 +26,11 @@ type State struct {
 	} `json:"parkingLots"`
 }
 
-func (s *State) AvailableSpotsByID(id string) uint {
+func (s *State) AvailableSpotsByID(id string) *uint {
 	for _, parkingLot := range s.ParkingLots {
 		if parkingLot.ID == id {
-			return parkingLot.AvailableSpots
+			return &parkingLot.AvailableSpots
 		}
 	}
-	log.Panic().Str("id", id).Msg("parking lot not found")
-	return 0
+	return nil
 }

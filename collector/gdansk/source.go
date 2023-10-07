@@ -63,10 +63,16 @@ func (s Source) ParkingLots(ctx context.Context) (<-chan map[wheretopark.ID]wher
 			Rules:          configuration.Rules,
 		}
 
+		availableSpots := vState.AvailableSpotsByID(vMetadata.ID)
+		if availableSpots == nil {
+			log.Error().Str("id", vMetadata.ID).Msg("matching parking lot not found")
+			continue
+		}
+
 		state := wheretopark.State{
 			LastUpdated: lastUpdated,
 			AvailableSpots: map[wheretopark.SpotType]uint{
-				wheretopark.SpotTypeCar: vState.AvailableSpotsByID(vMetadata.ID),
+				wheretopark.SpotTypeCar: *availableSpots,
 			},
 		}
 		parkingLots[id] = wheretopark.ParkingLot{

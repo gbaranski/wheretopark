@@ -2,7 +2,6 @@ package gdynia
 
 import (
 	geojson "github.com/paulmach/go.geojson"
-	"github.com/rs/zerolog/log"
 )
 
 type Metadata struct {
@@ -25,12 +24,11 @@ type State = []struct {
 	InsertTime string `json:"insertTime"`
 }
 
-func StatePositionByID(state State, id int) int {
+func StatePositionByID(state State, id int) *int {
 	for i, s := range state {
-		if s.ID == id {
-			return i
+		if s.ParkingID == id {
+			return &i
 		}
 	}
-	log.Panic().Int("id", id).Msg("matching state not found")
-	return 0
+	return nil
 }
