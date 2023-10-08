@@ -1,34 +1,58 @@
 <script lang="ts">
-	import team from '$lib/assets/team.jpg';
+	import { gregorybaranski, stanbaranski } from '$lib/assets/team';
 </script>
 
-<div class="p-16 gap-6 flex flex-col lg:flex-row object-fill">
-	<div class="self-center basis-1/2">
-		<h1 class="text-2xl font-bold">Contact</h1>
-		<p>
-			Email: <a class="font-bold link link-info" href="mailto:contact@wheretopark.app"
-				>contact@wheretopark.app</a
-			>
-		</p>
-		<br />
-		<h1 class="text-2xl font-bold">Our Team</h1>
-		<ul class="list-disc">
-			<li>
+<div class="p-16 gap-6 flex flex-col">
+	<h1 class="text-2xl font-bold">General Contact</h1>
+	<p>
+		Email: <a class="font-bold link link-info" href="mailto:contact@wheretopark.app"
+			>contact@wheretopark.app</a
+		>
+	</p>
+	<h1 class="text-2xl font-bold">Our Team</h1>
+	<div class="flex mt-1 gap-16">
+		<div class="border-2">
+			<img
+				src={gregorybaranski}
+				alt="Gregory Baranski"
+				width="320px"
+				height="320px"
+				class="object-contain h-[320px] w-[320px]"
+			/>
+			<div class="bg-slate-200 p-4 gap-4 flex flex-col h-48 space-between">
 				<a href="https://gbaranski.com" target="_blank" class="link link-secondary"
-					>Gregory <code>gbaranski</code> Baranski</a
-				> - founder of Where To Park, full-stack software developer
-			</li>
-			<li>
-				<a
-					href="https://www.linkedin.com/in/aleksandra-mycan-48a363279/"
-					target="_blank"
-					class="link link-secondary"
+					>Gregory Baranski</a
 				>
-					Aleksandra Mycan
-				</a>
-				- CEO, Business Relations
-			</li>
-		</ul>
+				<div>
+					<p>Founder @ Where To Park</p>
+					<p>Software Developer</p>
+					<p>Business Relations</p>
+				</div>
+				<a class="link link-secondary" href="mailto:gregory.baranski@wheretopark.app"
+					>gregory.baranski@wheretopark.app</a
+				>
+			</div>
+		</div>
+
+		<div class="border-2">
+			<img
+				src={stanbaranski}
+				alt="Stan Baranski"
+				width="320px"
+				height="320px"
+				class="object-scale-cover h-[320px] w-[320px]"
+			/>
+			<div class="bg-slate-200 p-4 gap-4 flex flex-col h-48 justify-between">
+				<a href="https://stan.bar" target="_blank" class="link link-secondary">Stan Baranski</a>
+				<div>
+					<p>Legal tutor</p>
+					<p>PhD Student</p>
+					<p>Legacy technology assistance</p>
+				</div>
+				<a class="link link-secondary" href="mailto:stan.baranski@wheretopark.app"
+					>stan.baranski@wheretopark.app</a
+				>
+			</div>
+		</div>
 	</div>
-	<img src={team} alt="our team" class="mask mask-squircle self-center lg:w-3/5" />
 </div>

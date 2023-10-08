@@ -74,6 +74,6 @@
 	</div>
 </div>
 
-<div class="pt-[4.5rem] w-screen h-screen flex flex-col lg:flex-row">
+<div class="pt-[4.5rem] mb-48 w-screen h-screen flex flex-col lg:flex-row">
 	<slot />
 </div>
