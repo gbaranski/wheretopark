@@ -33,8 +33,7 @@
 </script>
 
 <div class="flex flex-col w-full gap-3">
-
-	<div class="flex flex-row justify-between flex-wrap items-center">
+	<div class="flex flex-col gap-12 md:gap-0 md:flex-row justify-between">
 		<div class="flex flex-col justify-center gap-8">
 			<div class="flex flex-col gap-3">
 				<h1 class="font-bold text-4xl">Your parking lot assistant.</h1>
@@ -42,7 +41,7 @@
 					with the help of <b>AI</b> we'll find you an <b>available spot</b> nearby 🚗.
 				</h2>
 			</div>
-			<div class="py-2"/>
+			<div class="max-md:hidden py-2"/>
 			<div class="flex flex-col justify-center">
 				<div class="flex flex-row flex-wrap items-center justify-center">
 					<AppStoreBadge />
@@ -55,7 +54,7 @@
 			</div>
 		</div>
 
-		<div>
+		<div class="self-center justify-center">
 			<img src={iosScreenshot} alt="ios app screenshot" width="256px" />
 		</div>
 	</div>
