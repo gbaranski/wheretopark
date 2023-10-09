@@ -2,7 +2,7 @@
 	<title>Privacy Policy</title>
 </svelte:head>
 
-<div class="container mx-auto py-10 px-4">
+<div class="container mx-auto">
 	<h1 class="text-3xl font-semibold mb-6">Privacy Policy</h1>
 	<p class="mb-4">Last Updated: 13.09.2023</p>
 

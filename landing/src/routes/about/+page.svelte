@@ -2,7 +2,7 @@
 	import { gregorybaranski, stanbaranski } from '$lib/assets/team';
 </script>
 
-<div class="p-16 gap-6 flex flex-col">
+<div class="gap-6 flex flex-col">
 	<h1 class="text-2xl font-bold">General Contact</h1>
 	<p>
 		Email: <a class="font-bold link link-info" href="mailto:contact@wheretopark.app"

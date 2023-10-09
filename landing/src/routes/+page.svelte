@@ -6,6 +6,9 @@
 	import exampleParkingLot from '$lib/assets/parking-basen-klodzko.webp';
 	import { getRandomBetween, mailFromOperator } from '$lib/utils';
 	import { inview } from 'svelte-inview';
+	import AppStoreBadge from '$lib/assets/badge/AppStore.svelte';
+	import GooglePlayBadge from '$lib/assets/badge/GooglePlay.svelte';
+	import { iosScreenshot } from '$lib/assets/screenshots';
 
 	let counter = 0;
 	const onCounterVisible = () => {
@@ -29,35 +32,33 @@
 	};
 </script>
 
-<div class="flex flex-col text-center w-full pt-24 p-12">
-	<div class="flex items-center justify-center">
-		<div class="w-max">
-			<h1
-				class="animate-typing overflow-hidden whitespace-nowrap border-r-4 border-r-secondary pr-5 text-2xl lg:text-5xl font-extrabold lg:leading-[4rem]"
-			>
-				Your parking assistant &nbsp;
-			</h1>
+<div class="flex flex-col w-full gap-3">
+
+	<div class="flex flex-row justify-between flex-wrap items-center">
+		<div class="flex flex-col justify-center gap-8">
+			<div class="flex flex-col gap-3">
+				<h1 class="font-bold text-4xl">Your parking lot assistant.</h1>
+				<h2 class="font-regular text-lg lg:text-xl pt-2">
+					with the help of <b>AI</b> we'll find you an <b>available spot</b> nearby 🚗.
+				</h2>
+			</div>
+			<div class="py-2"/>
+			<div class="flex flex-col justify-center">
+				<div class="flex flex-row flex-wrap items-center justify-center">
+					<AppStoreBadge />
+					<GooglePlayBadge />
+				</div>
+				<div class="text-center">
+					<span>or</span>
+					<a class="link link-info" href="https://web.wheretopark.app">open app in the browser</a>
+				</div>
+			</div>
+		</div>
+
+		<div>
+			<img src={iosScreenshot} alt="ios app screenshot" width="256px" />
 		</div>
 	</div>
-	<h2 class="font-regular text-lg lg:text-xl pt-2">
-		With the help of our AI we'll find you <b>an available</b> parking spot nearby!
-	</h2>
-	<br />
-	<div>
-		<a
-			href="https://apps.apple.com/us/app/where-to-park/id6444453582?itsct=apps_box_badge&amp;itscg=30200"
-			style="display: inline-block; overflow: hidden; border-radius: 13px; width: 250px; height: 83px;"
-			><img
-				src="https://tools.applemediaservices.com/api/badges/download-on-the-app-store/white/en-us?size=250x83&amp;releaseDate=1668988800"
-				alt="Download on the App Store"
-				style="border-radius: 13px; width: 250px; height: 83px;"
-			/></a
-		>
-	</div>
-	<p class="pt-2">
-		or
-		<a class="link link-info" href="https://web.wheretopark.app">open app in the browser</a>
-	</p>
 
 	<div class="self-center divider w-96 p-12" />
 	<div class="flex justify-evenly items-center flex-col">
@@ -175,7 +176,9 @@
 	<div>
 		<div class="pb-10">
 			<h2 class="font-extrabold text-4xl pb-10">Benefits 📈</h2>
-			<div class="flex flex-col text-left items-center justify-evenly gap-10 lg:flex-row lg:items-start">
+			<div
+				class="flex flex-col text-left items-center justify-evenly gap-10 lg:flex-row lg:items-start"
+			>
 				<div class="flex-1 w-3/4">
 					<h2 class="text-2xl font-bold">For drivers 🚗</h2>
 					<ul class="list-disc">

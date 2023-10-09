@@ -2,7 +2,7 @@
 	import { mailFromOperator } from '$lib/utils';
 </script>
 
-<div class="p-8 gap-4 flex flex-col">
+<div class="gap-4 flex flex-col">
 	<h1 class="text-2xl font-extrabold">Frequently Asked Questions</h1>
 	<div class="px-4">
 		<h2 class="text-lg font-bold">When the app will be available?</h2>
