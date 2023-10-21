@@ -16,12 +16,18 @@
 				> since 21st of November 2022.
 			</li>
 			<li>
-				<span class="font-bold">Web</span> app is available at
-				<a href="https://web.wheretopark.app" target="_blank" class="link link-info"> https://web.wheretopark.app </a>.
+				<span class="font-bold">Android</span> app is available on
+				<a
+					class="link link-info"
+					href="https://play.google.com/store/apps/details?id=com.gbaranski.wheretopark&utm_source=wheretopark.app"
+					target="_blank">Google Play</a
+				>
 			</li>
 			<li>
-				<span class="font-bold">Android</span> app will
-				<span class="link link-secondary"> be available soon </span>.
+				<span class="font-bold">Web</span> app is available at
+				<a href="https://web.wheretopark.app" target="_blank" class="link link-info">
+					https://web.wheretopark.app
+				</a>.
 			</li>
 		</ul>
 	</div>

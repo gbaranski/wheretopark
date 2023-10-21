@@ -1,5 +1,6 @@
 <a
 	href="https://apps.apple.com/us/app/where-to-park/id6444453582?itsct=apps_box_badge&amp;itscg=30200"
+	target="_blank"
 >
 	<img
 		src="https://tools.applemediaservices.com/api/badges/download-on-the-app-store/white/en-us&amp;releaseDate=1668988800"

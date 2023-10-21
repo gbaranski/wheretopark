@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { LL } from '$lib/i18n/i18n-svelte';
 	import { awards } from '$lib/assets/award';
 	import { cities } from '$lib/assets/city';
 	import { news } from '$lib/assets/news';
@@ -19,7 +20,7 @@
 		setTimeout(() => {
 			clearInterval(interval);
 			counter = 10;
-		}, 3000);
+		}, 2000);
 	};
 
 	const references = {
@@ -32,24 +33,25 @@
 	};
 </script>
 
+
 <div class="flex flex-col w-full gap-3">
 	<div class="flex flex-col gap-12 md:gap-0 md:flex-row justify-between">
 		<div class="flex flex-col justify-center gap-8">
 			<div class="flex flex-col gap-3">
-				<h1 class="font-bold text-4xl">Your parking lot assistant.</h1>
+				<h1><b>{$LL.heading()}</b></h1>
 				<h2 class="font-regular text-lg lg:text-xl pt-2">
-					with the help of <b>AI</b> we'll find you an <b>available spot</b> nearby 🚗.
+					{@html $LL.subheading()} 🚗.
 				</h2>
 			</div>
-			<div class="max-md:hidden py-2"/>
+			<div class="max-md:hidden py-2" />
 			<div class="flex flex-col justify-center">
 				<div class="flex flex-row flex-wrap items-center justify-center">
 					<AppStoreBadge />
 					<GooglePlayBadge />
 				</div>
 				<div class="text-center">
-					<span>or</span>
-					<a class="link link-info" href="https://web.wheretopark.app">open app in the browser</a>
+					<span>{$LL.or()}</span>
+					<a class="link link-info" href="https://web.wheretopark.app">{$LL.openAppInBrowser()}</a>
 				</div>
 			</div>
 		</div>
@@ -61,28 +63,28 @@
 
 	<div class="self-center divider w-96 p-12" />
 	<div class="flex justify-evenly items-center flex-col">
-		<h2 class="font-extrabold text-3xl pb-5">What problem are we solving?</h2>
+		<h2 class="font-extrabold text-3xl pb-5">{$LL.problem.what()}</h2>
 		<div class="flex justify-evenly flex-row flex-wrap gap-10">
 			<div>
 				<h2 class="font-extrabold text-5xl text-info">
-					<span use:inview on:inview_enter={onCounterVisible}>{counter}</span> minutes
+					<span use:inview on:inview_enter={onCounterVisible}>
+						{$LL.minutes(counter)}
+					</span>
 				</h2>
 				<p>
-					Average <span class="font-bold">time wasted</span> each time you want to park.
+					{@html $LL.AVERAGE_TIME_WASTED()}
 				</p>
 			</div>
 			<div>
 				<h2 class="font-extrabold text-5xl text-warning">93.7%</h2>
-				<p>
-					Of drivers <b>circulate around</b> parking lots
-				</p>
+				<p>{@html $LL.OF_DRIVERS_CIRCULATE()}</p>
 			</div>
 			<div>
 				<h2 class="font-extrabold text-5xl text-error">
-					730 tons of CO<sub>2</sub>
+					{@html $LL.tonsOf('CO<sub>2</sub>', 730)}
 				</h2>
 				<p>
-					Annual contribution to <b>air pollution</b> in Los Angeles alone.
+					{@html $LL.AIR_POLUTION_ANNUAL_CONTRIBUTION('Los Angeles')}
 				</p>
 			</div>
 		</div>
@@ -91,8 +93,8 @@
 	<div class="self-center divider w-96 p-12" />
 	<div class="flex justify-evenly items-center flex-col lg:flex-row-reverse gap-8">
 		<div class="">
-			<h2 class="font-extrabold text-5xl">Our solution</h2>
-			<h3 class="text-xl">Easy access to information about available parking lots nearby</h3>
+			<h2 class="font-extrabold text-4xl">{$LL.OUR_SOLUTION()}</h2>
+			<h3 class="text-md">{$LL.OUR_SOLUTION_TEXT()}</h3>
 		</div>
 		<img
 			class="w-96 lg:w-2/3 rounded-2xl"
@@ -106,13 +108,9 @@
 	<div class="self-center divider w-96 p-12" />
 	<div class="flex justify-evenly items-center flex-col-reverse lg:flex-row gap-8">
 		<div class="">
-			<h2 class="font-extrabold text-4xl">Powered by AI &nbsp;🤖</h2>
-			<h3 class="text-xl">
-				Our system automatically marks
-				<span class="text-green-600">green</span>
-				free spaces, and
-				<span class="text-red-600">red</span>
-				occupied.
+			<h2 class="font-extrabold text-3xl">{$LL.POWERED_BY_AI()} 🤖</h2>
+			<h3 class="text-md">
+				{@html $LL.OUR_SYSTEM_MARKS()}
 			</h3>
 		</div>
 		<img
@@ -125,7 +123,7 @@
 	</div>
 
 	<div class="self-center divider w-96 p-12" />
-	<h2 class="font-extrabold text-4xl">We have parkings lots in</h2>
+	<h2 class="font-extrabold text-4xl">{$LL.WE_HAVE_PARKNG_LOTS()}</h2>
 	<div class="pt-10 flex flex-row flex-wrap gap-16 justify-center">
 		{#each cities as city}
 			<img
@@ -139,7 +137,7 @@
 	</div>
 
 	<div class="self-center divider w-96 p-12" />
-	<h2 class="font-extrabold text-4xl">Awards &nbsp;🏆</h2>
+	<h2 class="font-extrabold text-3xl">{$LL.AWARDS()} &nbsp;🏆</h2>
 	<div class="pt-10 flex flex-row flex-wrap gap-16 justify-center">
 		{#each awards as award}
 			<a class="w-32" href={award.link} target="_blank">
@@ -156,7 +154,7 @@
 	</div>
 
 	<div class="self-center divider w-96 p-12" />
-	<h2 class="font-extrabold text-4xl">Talks about us &nbsp;📢</h2>
+	<h2 class="font-extrabold text-3xl">{$LL.TALKS_ABOUT_US()} &nbsp;📢</h2>
 	<div class="pt-10 flex flex-row flex-wrap gap-16 justify-center">
 		{#each news as entry}
 			<a class="w-32" href={entry.link} target="_blank">
@@ -174,59 +172,53 @@
 	<div class="self-center divider w-96 p-12" />
 	<div>
 		<div class="pb-10">
-			<h2 class="font-extrabold text-4xl pb-10">Benefits 📈</h2>
+			<h2 class="font-extrabold text-3xl pb-10">{$LL.BENEFITS()} &nbsp;📈</h2>
 			<div
 				class="flex flex-col text-left items-center justify-evenly gap-10 lg:flex-row lg:items-start"
 			>
 				<div class="flex-1 w-3/4">
-					<h2 class="text-2xl font-bold">For drivers 🚗</h2>
-					<ul class="list-disc">
+					<h2 class="text-2xl font-bold">{$LL.FOR_DRIVERS()} 🚗</h2>
+					<ul class="text-sm list-disc">
 						<li>
-							<b>Money savings</b> of around
-							<a class="link" href={references.krakow2021} target="_blank">9zł or 2$</a> per each parking
-							session (based on costs of running the car and wasted time).
+							{@html $LL.FOR_DRIVERS_SAVINGS(
+								`<a class="link" href="${references.krakow2021}" target="_blank">2$</a>`
+							)}
 						</li>
 						<li>
-							<b>People with disabilities</b> can easily check which parking lots have specially designated
-							spaces for them, and whether these spaces are free.
+							{@html $LL.FOR_DRIVERS_DISABILITIES()}
 						</li>
 						<li>
-							<b>Predictions of availability</b>. The user has access to the statistics of the
-							occupancy of places on parking lots at a given time and on a given day. For example,
-							on Friday at 5 pm, the parking lot is usually 80% full, and on Saturday at 2 pm, it is
-							50% full.
+							{@html $LL.FOR_DRIVERS_PREDICTIONS()}
 						</li>
 					</ul>
 				</div>
 				<div class="flex-1 w-3/4">
-					<h2 class="text-2xl font-bold">For parking operators 👔</h2>
-					<ul class="list-disc">
+					<h2 class="text-2xl font-bold">{$LL.FOR_OPERATORS()} 👔</h2>
+					<ul class="text-sm list-disc">
 						<li>
-							<b>In-app promotion</b> - more customers.
+							{@html $LL.FOR_OPERATORS_PROMOTION()}
 						</li>
 						<li>
-							<b>Reserving parking spaces</b> directly in the app, without need of phone calling.
+							{@html $LL.FOR_OPERATORS_RESERVATIONS()}
 						</li>
 					</ul>
 				</div>
 				<div class="flex-1 w-3/4">
-					<h2 class="text-2xl font-bold">For cities 🌇</h2>
-					<ul class="list-disc">
+					<h2 class="text-2xl font-bold">{$LL.FOR_CITIES()} 🌇</h2>
+					<ul class="text-sm list-disc">
 						<li>
-							<b>Trend analysis</b> - will help cities choosing the right place for a new parking lot,
-							or managing the prices.
+							{@html $LL.FOR_CITIES_ANALYSIS()}
 						</li>
 						<li>
-							Our system can <b>detect illegally parked vehicle</b> and notify the authorities.
+							{@html $LL.FOR_CITIES_INCORRECTLY_PARKED()}
 						</li>
 						<li>
-							<b>Decreased car traffic</b> - in some cities up to
-							<a href={references.krakow2021} class="link" target="_blank">70% of traffic</a> is caused
-							by drivers.
+							{@html $LL.FOR_CITIES_DECREASED_TRAFFIC(
+								`<a href="${references.krakow2021}" class="link" target="_blank">70%</a>`
+							)}
 						</li>
 						<li>
-							<b>Optimised distribution of cars</b> - drivers could start using less known, or recently
-							opened parking lots, thus reducing the load on the most demanded ones.
+							{@html $LL.FOR_CITIES_OPTIMISED_DISTRIBUTION()}
 						</li>
 					</ul>
 				</div>
@@ -237,9 +229,9 @@
 	<div class="self-center divider w-96 p-12" />
 	<div>
 		<div class="pb-10">
-			<h2 class="font-extrabold text-4xl">Are you a parking operator?</h2>
+			<h2 class="font-extrabold text-4xl">{$LL.ARE_YOU_PARKING_OPERATOR()}</h2>
 		</div>
-		<a href={mailFromOperator} class="btn btn-primary">Contact us</a>
+		<a href={mailFromOperator} class="btn btn-primary">{$LL.CONTACT_US()}</a>
 	</div>
 
 	<div class="pb-12" />

@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import '../app.css';
 	import Logo from '$lib/Logo.svelte';
 	import NavbarMenu from '$lib/NavbarMenu.svelte';
@@ -39,6 +39,6 @@
 	</div>
 </navbar>
 
-<div class="pt-16 mb-48 w-screen h-screen flex flex-col lg:flex-row px-8 md:px-32">
+<div class="pt-16 mb-48 px-8 md:px-32 prose">
 	<slot />
 </div>
