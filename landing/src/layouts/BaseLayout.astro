@@ -1,0 +1,35 @@
+---
+interface Props {
+	title: string;
+	lang: string;
+}
+
+const { title, lang } = Astro.props;
+
+import Navbar from './Navbar.astro';
+import Footer from './Footer.astro';
+import '@fontsource-variable/inter';
+---
+
+<!doctype html>
+<html lang={lang}>
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="description" content="Astro description" />
+		<meta name="viewport" content="width=device-width" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="generator" content={Astro.generator} />
+		<title>{title}</title>
+	</head>
+	<body class="pt-8">
+		<div class="px-8 md:px-32">
+			<Navbar />
+		</div>
+		<div class="pt-12">
+			<slot />
+		</div>
+		<div class="mt-36">
+			<Footer/>
+		</div>
+	</body>
+</html>

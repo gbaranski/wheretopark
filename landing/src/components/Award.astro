@@ -1,0 +1,22 @@
+---
+import { Icon } from "astro-icon";
+
+interface Props {
+    href: string;
+    title: string;
+}
+
+const { href, title } = Astro.props;
+---
+
+<a href={href} target="_blank">
+    <div class="flex flex-row justify-center items-start gap-4 w-96">
+        <div class="mask mask-circle bg-primary p-2.5">
+            <Icon name="mdi:trophy" size={24} class="text-white" />
+        </div>
+        <div class="">
+            <h4 class="font-medium">{title}</h4>
+            <div class="mt-3 text-xs text-muted"><slot /></div>
+        </div>
+    </div>
+</a>

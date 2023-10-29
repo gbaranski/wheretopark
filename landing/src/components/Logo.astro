@@ -1,0 +1,23 @@
+---
+import { Image } from "astro:assets";
+import icon from "../assets/icon.webp"
+
+---
+<a href="/" class="text-xl">
+	<div class="flex flex-row gap-3 items-center">
+		<Image src={icon} alt="where to park" width={50} height={50}/>
+		<div class="flex flex-row gap-3 josefin-sans font-bold text-3xl max-sm:hidden">
+			<span class="text-primary">where</span>
+			<span class="text-success">to</span>
+			<span class="text-error">park</span>
+		</div>
+	</div>
+</a>
+
+<style>
+	@import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@700&display=swap');
+
+	.josefin-sans {
+		font-family: 'Josefin Sans', sans-serif;
+	}
+</style>

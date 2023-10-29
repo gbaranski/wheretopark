@@ -1,0 +1,20 @@
+---
+import { Icon } from "astro-icon";
+
+interface Props {
+    title: string;
+    content: string;
+}
+
+const { title, content } = Astro.props;
+---
+
+<div class="flex flex-row justify-center items-start gap-4 w-96">
+    <div class="mask mask-circle bg-green-600 p-1">
+        <Icon name="mdi:tick" size={16} class="text-white" />
+    </div>
+    <div class="">
+        <h4 class="font-medium">{title}</h4>
+        <p class="mt-3 text-xs text-muted">{content}</p>
+    </div>
+</div>
