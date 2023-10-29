@@ -7,7 +7,8 @@
     "start": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "deploy:cloudflare": "pnpm build && wrangler pages deploy --branch production --project-name wheretopark-landing dist"
   },
   "dependencies": {
     "@astrojs/tailwind": "^5.0.2",
@@ -18,6 +19,9 @@
   },
   "devDependencies": {
     "@tailwindcss/typography": "^0.5.10",
-    "daisyui": "^3.9.3"
+    "daisyui": "^3.9.3",
+    "mailto-link": "^2.0.0",
+    "schema-dts": "^1.1.2",
+    "sharp": "^0.32.6"
   }
 }

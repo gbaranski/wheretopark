@@ -1,0 +1,16 @@
+---
+import type { Thing } from "schema-dts";
+
+interface Props<T extends Thing> {
+    schema: T
+}
+
+const { schema } = Astro.props;
+const json = JSON.stringify(
+    schema,
+    null,
+    2
+  );
+---
+
+<script type="application/ld+json" set:html={json} />

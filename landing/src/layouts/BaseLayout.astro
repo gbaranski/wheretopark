@@ -6,9 +6,11 @@ interface Props {
 
 const { title, lang } = Astro.props;
 
-import Navbar from './Navbar.astro';
-import Footer from './Footer.astro';
-import '@fontsource-variable/inter';
+import Navbar from "./Navbar.astro";
+import Footer from "./Footer.astro";
+import "@fontsource-variable/inter";
+import Thing from "../components/Thing.astro";
+import { softwareApplication, frequentlyAskedQuestions, organisationSchema, gregoryBaranski } from "../lib/schemas";
 ---
 
 <!doctype html>
@@ -20,6 +22,22 @@ import '@fontsource-variable/inter';
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<meta name="generator" content={Astro.generator} />
 		<title>{title}</title>
+		<meta
+			name="description"
+			content="Real-time parking lot occupancy detection using CCTV Cameras and AI. Drivers can find the nearest parking lot with available parking spots using our mobile app."
+		/>
+		<meta
+			name="keywords"
+			content="Parking Lot, AI, Camera, Smart City, Gdańsk, Gdynia, Sopot, Warsaw, Warszawa, Poznań, Lubin, Kłodzko, Los Angeles"
+		/>
+		<script
+			data-goatcounter="https://wheretopark.goatcounter.com/count"
+			async
+			src="https://gc.zgo.at/count.js"></script>
+		<Thing schema={softwareApplication}/>
+		<Thing schema={frequentlyAskedQuestions}/>
+		<Thing schema={organisationSchema}/>
+		<Thing schema={gregoryBaranski}/>
 	</head>
 	<body class="pt-8">
 		<div class="px-8 md:px-32">
@@ -29,7 +47,7 @@ import '@fontsource-variable/inter';
 			<slot />
 		</div>
 		<div class="mt-36">
-			<Footer/>
+			<Footer />
 		</div>
 	</body>
 </html>
