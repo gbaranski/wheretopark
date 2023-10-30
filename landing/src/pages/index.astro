@@ -1,22 +1,13 @@
 ---
-import { Image } from "astro:assets";
 import Layout from "../layouts/BaseLayout.astro";
-import iosPreview from "../assets/ios-preview.webp";
-import parkingBasenKlodzko from "../assets/parking-basen-klodzko.webm";
-import appPreview from "../assets/app-preview.png";
-import clock from "../assets/clock.webp";
 import { getLangFromUrl, useTranslations } from "../i18n/utils";
-import AppStore from "../components/AppStore.astro";
-import GooglePlay from "../components/GooglePlay.astro";
-import { Icon } from "astro-icon";
-import PseudoCard from "../components/Feature.astro";
-import GoodThing from "../components/GoodThing.astro";
-import Step from "../components/Step.astro";
-import { cities } from "../assets/cities";
-import { news } from "../assets/news";
-import explory from "../assets/explory.jpg";
-import Award from "../components/Award.astro";
-import QnA from "../components/QnA.astro";
+import OurProgress from "../components/OurProgress/Index.astro"
+import Philosophy from "../components/Philosophy.astro";
+import Features from "../components/Features.astro";
+import Blueprint from "../components/Blueprint.astro";
+import Guide from "../components/Guide.astro";
+import FAQ from "../components/FAQ.astro";
+import Hero from "../components/Hero.astro";
 
 const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
@@ -26,361 +17,33 @@ const t = useTranslations(lang);
 	<div
 		class="flex max-md:flex-col justify-between items-center px-8 md:px-36"
 	>
-		<div class="flex flex-col">
-			<div class="flex flex-col gap-4">
-				<h1 class="font-bold text-4xl">{t("hero.headline")}.</h1>
-				<h2 class="text-xl" set:html={t("hero.subheadline")} />
-			</div>
-			<div class="py-6">
-				<div class="flex flex-row justify-center items-center">
-					<AppStore />
-					<GooglePlay />
-				</div>
-				<h3 class="text-center text-sm">
-					<span>{t("or")}&nbsp;</span>
-					<a
-						href="https://web.wheretopark.app"
-						class="link link-primary"
-						>{t("hero.openAppInBrowser")}</a
-					>
-				</h3>
-			</div>
-		</div>
-		<div>
-			<Image src={iosPreview} alt="ios screenshot preview" width={256} />
-		</div>
+		<Hero translations={t} />
 	</div>
 
 	<div
 		class="bg-blue-50 text-black w-screen left-0 py-4 text-black text-center my-12"
 	>
-		<Icon name="mdi:rocket-outline" class="h-4 inline-block" />
-		<span class="align-middle text-xs">
-			<span class="font-bold">Philosophy:</span>
-			 We'll reinvent the way you park - easier, faster and simpler.
-		</span>
+		<Philosophy />
 	</div>
 
-	<div class="w-full relative mx-auto max-w-4xl">
-		<div class="text-center">
-			<h2 class="font-bold text-secondary uppercase">Features</h2>
-			<h2 class="font-bold text-3xl">What you get with Where To Park</h2>
-			<h3 class="font-light text-muted mt-2">
-				We solve one of the most important problems in current modern
-				cities.
-			</h3>
-		</div>
-		<div
-			class="grid grid-cols-1 md:grid-cols-2 mt-8 gap-12 justify-items-center"
-		>
-			<PseudoCard
-				icon="mdi:hourglass"
-				title="Time savings"
-				content="Drivers on average waste 10 minutes looking for a parking space. We will fix that by giving you exact directions to the nearest available parking spot."
-			/>
-			<PseudoCard
-				icon="mdi:currency-usd"
-				title="Money savings"
-				content="A couple bucks is wasted each time you want to park. You not only pay for running the car, but also for the spent time that you could spend doing something more productive than circulating around a parking lot."
-			/>
-			<PseudoCard
-				icon="uil:analysis"
-				title="Usage analytics"
-				content="Data is the key - so we want to provide parking lots with information who enters the parking lot or how much time do they spend there."
-			/>
-			<PseudoCard
-				icon="mdi:chart-bar"
-				title="Predictions"
-				content="Based on history events, user can check predictions whether parking lot will be free on Thursday 4pm."
-			/>
-			<PseudoCard
-				icon="mdi:wheelchair-accessibility"
-				title="Disabled people"
-				content="We provide disabled people with information, which specific parking lot has spots for them, and if they're available right now, in real-time."
-			/>
-			<PseudoCard
-				icon="mdi:bullhorn-outline"
-				title="Promotion"
-				content="Cities or parking lots could choose to additionally promote the parking lot in the app, so it'd appear higher in the results."
-			/>
-		</div>
+	<div class="w-full relative mx-auto max-w-4xl px-4">
+		<Features />
 	</div>
 
 	<div class="bg-blue-50 py-16 my-32">
-		<div class="text-center">
-			<h2 class="font-bold text-secondary uppercase">
-				Behind the scenes
-			</h2>
-			<h2 class="font-bold text-3xl">Where To Park's Blueprint!</h2>
-		</div>
-
-		<div
-			class="flex flex-col-reverse items-center md:flex-row gap-12 mx-auto max-w-7xl md:px-8 p-4 md:mx-12 mt-12"
-		>
-			<div class="flex-1">
-				<video
-					class="rounded-md shadow-xl"
-					src={parkingBasenKlodzko}
-					autoplay
-					loop
-					muted></video>
-			</div>
-
-			<div class="flex-1 mt-2">
-				<h3 class="font-bold text-2xl mb-1">
-					Building on modern foundations
-				</h3>
-				<p class="text-md font-light">
-					Gain a competitive advantage by incorporating innovations
-					into a parking lot.
-				</p>
-				<div class="flex flex-col gap-6 mt-8">
-					<GoodThing
-						title="Real-time occupancy detection"
-						content="With over 93% of accuracy we're able to detect which parking spots are vacant and occupied."
-					/>
-					<GoodThing
-						title="Weather agnostic"
-						content="Our AI Model has been tested to work in rain, overcast and even when it's snowing ❄️."
-					/>
-				</div>
-			</div>
-		</div>
-
-		<div
-			class="flex flex-col-reverse items-center md:flex-row-reverse gap-12 mx-auto max-w-7xl md:px-8 p-4 md:mx-12 mt-12"
-		>
-			<div class="flex-1">
-				<Image
-					class="rounded-md shadow-xl"
-					src={appPreview}
-					alt="mobile app preview"
-				/>
-			</div>
-			<div class="flex-1 mt-2">
-				<h3 class="font-bold text-2xl mb-1">Mobile app</h3>
-				<p class="text-md font-light">
-					Drivers can easily access information through our mobile
-					app.
-				</p>
-				<div class="flex flex-col gap-6 mt-8">
-					<GoodThing
-						title="Wide-range of data"
-						content="Not only the amount of available parking spaces, but also opening hours, prices, maximum dimensions and anything you'd ever need for parking your vehicle!"
-					/>
-					<GoodThing
-						title="Smart directions"
-						content="Our app will be able to dynamically route you to the nearest available parking space, and if someone would take it halfway your way there we will re-route you to a different car park."
-					/>
-				</div>
-			</div>
-		</div>
+		<Blueprint />
 	</div>
 
 	<div class="relative mx-auto mx-auto max-w-4xl px-4">
-		<div class="flex flex-col md:flex-row md:gap-10">
-			<div class="flex-1 flex flex-col gap-12 mt-4">
-				<h3 class="font-bold text-3xl">
-					Add a new parking lot to our app.
-				</h3>
-
-				<div class="flex flex-col">
-					<Step
-						idx={0}
-						icon="mdi:information-variant"
-						title="Gather data"
-					>
-						We need information such as geolocation, opening hours,
-						pricing and, most importantly, access to your IP camera.
-					</Step>
-					<Step idx={1} icon="mdi:at" title="Send it to us">
-						We are availabe at contact@wheretopark.app.
-					</Step>
-					<Step
-						idx={2}
-						icon="grommet-icons:validate"
-						title="Validation"
-					>
-						We'll validate the data you've sent, and test the
-						cameras. Once it's done your parking lot will be
-						available in our app. Usually it takes <b
-							>up to one week.</b
-						>
-					</Step>
-					<Step icon="mdi:tick" title="Ready!" />
-				</div>
-			</div>
-			<div class="relative flex-1 max-md:hidden">
-				<Image
-					class="rounded-md shadow-xl h-full object-cover object-top"
-					height={600}
-					src={clock}
-					alt="mobile app preview"
-				/>
-			</div>
-		</div>
+		<Guide />
 	</div>
 
 	<div class="bg-blue-50 py-16 my-32">
-		<div class="text-center">
-			<h2 class="font-bold text-secondary uppercase">Progress</h2>
-			<h2 class="font-bold text-3xl">Where To Park's outreach</h2>
-			<p class="text-md font-light mt-2">
-				Gain a competitive advantage by incorporating industry leading
-				practices
-			</p>
-		</div>
-
-		<div
-			class="flex flex-col-reverse items-center md:flex-row gap-12 mx-auto max-w-7xl md:px-8 p-4 md:mx-12 mt-12"
-		>
-			<div
-				class="flex-1 flex flex-row flex-wrap justify-evenly items-center bg-slate-100 border shadow-sm p-8 rounded-lg"
-			>
-				{
-					cities.map((city) => (
-						<Image
-							class="p-2 object-scale-down "
-							src={city.image}
-							alt={city.name}
-							width={72}
-						/>
-					))
-				}
-			</div>
-
-			<div class="flex-1">
-				<h3 class="font-bold text-2xl mb-1">
-					Supported in major cities
-				</h3>
-				<p class="text-md font-light">
-					Not limited to only one country. We're expanding rapidly and
-					broadly.
-				</p>
-			</div>
-		</div>
-
-		<div
-			class="flex flex-col-reverse items-center md:flex-row-reverse gap-12 mx-auto max-w-7xl md:px-8 p-4 md:mx-12 mt-12"
-		>
-			<div class="flex-1">
-				<Image
-					class="rounded-md shadow-xl"
-					src={explory}
-					alt="mobile app preview"
-				/>
-			</div>
-			<div class="flex-1 mt-2">
-				<h3 class="font-bold text-2xl mb-1">Awards</h3>
-				<p class="text-md font-light">
-					We have received multiple awards for our innovative idea.
-				</p>
-				<div class="flex flex-col gap-6 mt-8">
-					<Award
-						href="https://www.explory.pl/news/2023/10/zwyciezcy-12-edycji-konkursu-explory,349"
-						title="E(x)plory Finalist"
-					>
-						Hundreds of projects were developed to be later verified
-						during the biggest high-tech youth contest in Poland.
-						During the finals in October 2023 Where To Park has
-						received an accreditation to the biggest youth science
-						contest held in Los Angeles, USA - ISEF Regeneron.
-					</Award>
-					<Award
-						href="https://not.org.pl/olimpiady-i-konkursy/xvi-edycja-konkursu-mlody-innowator-20222023-rozstrzygnieta"
-						title="Young Innovator 2022/2023"
-					>
-						Awarded with the Young Innovator 2022/2023 title by NOT
-						Poland.
-					</Award>
-				</div>
-			</div>
-		</div>
-
-		<div
-			class="flex flex-col-reverse items-center md:flex-row gap-12 mx-auto max-w-7xl md:px-8 p-4 md:mx-12 mt-12"
-		>
-			<div
-				class="flex-1 flex flex-row flex-wrap justify-evenly items-center bg-slate-100 border shadow-sm p-8 rounded-lg"
-			>
-				{
-					news.map((news) => (
-						<a href={news.link}>
-							<Image
-								class="p-2 object-scale-down "
-								src={news.image}
-								alt={news.link}
-								width={72}
-							/>
-						</a>
-					))
-				}
-			</div>
-
-			<div class="flex-1">
-				<h3 class="font-bold text-2xl mb-1">Press</h3>
-				<p class="text-md font-light">
-					Our team appeared on many media sites, promoting our ideas
-					and vision on future of parking lots.
-				</p>
-			</div>
-		</div>
+		<OurProgress />
 	</div>
 
 	<div class="w-full relative mx-auto max-w-4xl">
-		<div class="text-center">
-			<h2 class="font-bold text-secondary uppercase">FAQs</h2>
-			<h2 class="font-bold text-3xl">Frequently Asked Questions</h2>
-			<h3 class="font-light text-muted mt-2">
-				Dive into the following questions to gain insights into the
-				powerful features that AstroWind offers and how it can elevate
-				your web development journey.
-			</h3>
-		</div>
-		<div class="mx-auto gap-8 gap-y-8 grid grid-cols-1 md:grid-cols-2 mt-8">
-			<QnA question="Is the app available?">
-				<ul>
-					<li>
-						<b>iOS</b> app is available on <a
-							href="https://apps.apple.com/us/app/where-to-park/id6444453582"
-							class="link link-secondary">App Store</a
-						> since November 2022
-					</li>
-					<li>
-						<b>Android</b> app is available on <a
-							href="https://play.google.com/store/apps/details?id=com.gbaranski.wheretopark"
-							class="link link-secondary">Google Play</a
-						> since September 2023
-					</li>
-					<li>
-						<b>Web</b> app is available at <a
-							href="https://web.wheretopark.app"
-							class="link link-secondary">web.wheretopark.app</a
-						>
-					</li>
-				</ul>
-			</QnA>
-			<QnA question="What's the accuracy of your system?">
-				<p>
-					System accuracy ranges from <b>90 to 95 percent</b> accuracy
-					in determining if parking spot is available.
-				</p>
-				<p>We're constantly <b>improving</b>.</p>
-			</QnA>
-			<QnA question="What about privacy?">
-				<p>
-					The images we're collecting from <b>CCTV cameras</b> are
-					safely stored for error evaluation.
-				</p>
-				<p>
-					<b>Optionally</b> we can also automatically <b>blur out</b>
-					 the faces, registration plates and other vulnerable data.
-				</p>
-			</QnA>
-			<QnA question="What parking lots do you support?">
-				Our AI-based system supports <b>all kinds</b> of parking lots
-			</QnA>
-		</div>
+		<FAQ />
 	</div>
 </Layout>
 
