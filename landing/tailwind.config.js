@@ -1,59 +1,55 @@
 import defaultTheme from 'tailwindcss/defaultTheme';
 
-const theme = {
-  "primary": "#FEE440",
-  "secondary": "#383F51",
-  "accent": "#EF2D56",
-  "neutral": "#011627",
-  "base-100": "#ffffff",
-  "info": "#008BF8",
-  "success": "#91F5AD",
-  "warning": "#ec8004",
-  "error": "#EF2D56",
+const colors = {
+	red: "#EF2D56",
+	green: "#04E762",
+	yellow: "#FFC15E",
+	orange: "#EC8004",
+	blue: "#2B59C3",
+	white: "#FFFFFF",
+	darkBlue: "#383F51",
+	veryDarkBlue: "#011627",
+};
+
+const colorScheme = {
+	"primary": colors.yellow,
+	"secondary": colors.darkBlue,
+	"accent": colors.red,
+	"neutral": colors.veryDarkBlue,
+	"base-100": colors.white,
+	"info": colors.blue,
+	"success": colors.green,
+	"warning": colors.orange,
+	"error": colors.red,
 };
 
 
 /** @type {import('tailwindcss').Config} */
 export default {
-  content: ['./src/**/*.{html,js,svelte,ts}'],
-  theme: {
-    extend: {
-      fontFamily: {
-        'sans': ['Montserrat', ...defaultTheme.fontFamily.sans],
-      },
-      keyframes: {
-        typing: {
-          "0%": {
-            width: "0%",
-            visibility: "hidden"
-          },
-          "100%": {
-            width: "100%"
-          }  
-        },
-        blink: {
-          "50%": {
-            borderColor: "transparent"
-          },
-          "100%": {
-            borderColor: "secondary"
-          }  
-        }
-      },
-      animation: {
-        typing: "typing 2s steps(20) infinite alternate, blink .7s infinite"
-      }
-    }
-  },
-  daisyui: {
-      themes: [
-        {
-          myTheme: theme,
-        },
-      ],
-  },
-  plugins: [
-    require("daisyui"), 
-  ],
+	content: ['./src/**/*.{astro,html,js,jsx,md,mdx,svelte,ts,tsx,vue}'],
+	theme: {
+		extend: {
+			colors: {
+				primary: colorScheme.primary,
+				secondary: colorScheme.secondary,
+				accent: colorScheme.accent,
+				default: "#101010",
+				muted: "rgba(16, 16, 16, 0.66)",
+			},
+			fontFamily: {
+				'sans': ['Inter Variable', ...defaultTheme.fontFamily.sans],
+			},
+		}
+	},
+	daisyui: {
+		themes: [
+			{
+				myTheme: colorScheme,
+			},
+		],
+	},
+	plugins: [
+		require("daisyui"),
+		require('@tailwindcss/typography'),
+	],
 }
-

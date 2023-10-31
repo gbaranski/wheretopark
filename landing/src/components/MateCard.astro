@@ -1,0 +1,29 @@
+---
+import { Image } from "astro:assets";
+
+interface Props {
+    image: ImageMetadata;
+    name: string;
+    website: string;
+    mail: string;
+}
+
+const { image, name, website, mail } = Astro.props;
+---
+
+<div class="border-2 font-light">
+    <Image
+        src={image}
+        alt={name}
+        width={320}
+        height={320}
+        class="object-cover h-[320px] w-[320px]"
+    />
+    <div class="bg-slate-200 p-4 gap-4 flex flex-col h-48 space-between">
+        <a href={website} target="_blank" class="link link-secondary">{name}</a>
+        <div>
+            <slot />
+        </div>
+        <a class="link link-secondary" href=`mailto:${mail}`>{mail}</a>
+    </div>
+</div>

@@ -1,0 +1,21 @@
+---
+import { Icon } from "astro-icon";
+
+interface Props {
+    question: string;
+}
+
+const { question } = Astro.props;
+---
+
+<div class="flex flex-row max-w-none">
+    <div class="flex justify-center">
+        <Icon name="mdi:chevron-right" size={24} class="text-blue-800" />
+    </div>
+    <div class="">
+        <h4 class="font-bold">{question}</h4>
+        <div class="mt-3 text-xs text-muted">
+            <slot/>
+        </div>
+    </div>
+</div>

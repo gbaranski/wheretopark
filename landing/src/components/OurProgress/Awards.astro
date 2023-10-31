@@ -1,0 +1,38 @@
+---
+import { Image } from "astro:assets";
+import explory from "../../assets/explory.jpg";
+import Award from "../Award.astro";
+---
+
+<div class="flex-1">
+    <Image
+        class="rounded-md shadow-xl"
+        src={explory}
+        alt="mobile app preview"
+    />
+</div>
+<div class="flex-1 mt-2">
+    <h3 class="font-bold text-2xl mb-1">Awards</h3>
+    <p class="text-md font-light">
+        We have received multiple awards for our innovative idea.
+    </p>
+    <div class="flex flex-col gap-6 mt-8 items-start">
+        <Award
+            href="https://www.explory.pl/news/2023/10/zwyciezcy-12-edycji-konkursu-explory,349"
+            title="E(x)plory Finalist"
+        >
+            Hundreds of projects were developed to be later verified
+            during the biggest high-tech youth contest in Poland.
+            During the finals in October 2023 Where To Park has
+            received an accreditation to the biggest youth science
+            contest held in Los Angeles, USA - ISEF Regeneron.
+        </Award>
+        <Award
+            href="https://not.org.pl/olimpiady-i-konkursy/xvi-edycja-konkursu-mlody-innowator-20222023-rozstrzygnieta"
+            title="Young Innovator 2022/2023"
+        >
+            Awarded with the Young Innovator 2022/2023 title by NOT
+            Poland.
+        </Award>
+    </div>
+</div>

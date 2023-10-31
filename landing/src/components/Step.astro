@@ -1,0 +1,45 @@
+---
+import { Icon } from "astro-icon";
+
+interface Props {
+    idx?: number;
+    icon: string;
+    title: string;
+}
+
+const { idx, icon, title } = Astro.props;
+const slotPresent = Astro.slots.has("default");
+---
+
+<div class="flex flex-row gap-4">
+    <div class="flex flex-col items-center">
+        <symbol>
+            <Icon
+                name={icon}
+                class="text-black p-2 h-10 w-10 border-2 border-blue-800 rounded-full text-blue-800"
+            />
+        </symbol>
+        <div class="bg-black/10 dark:bg-slate-400/50 h-full w-px"></div>
+    </div>
+    <div class="flex flex-col mt-1">
+        <p class="text-lg">
+            {
+                idx !== undefined ? (
+                    <span>
+                        <b>Step {idx + 1}: </b>
+                        {title}
+                    </span>
+                ) : (
+                    <b>{title}</b>
+                )
+            }
+        </p>
+        {
+            slotPresent && (
+                <div class="text-muted font-light text-sm mb-8 mt-2">
+                    <slot />
+                </div>
+            )
+        }
+    </div>
+</div>
