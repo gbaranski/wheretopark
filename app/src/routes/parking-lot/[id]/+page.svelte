@@ -57,7 +57,7 @@
 </script>
 
 <svelte:head>
-	<title>Parking {parkingLot.name.replace('Parking', '')}</title>
+	<title>Parking {parkingLot.name.replace('Parking', '')} in Where To Park</title>
 	<meta
 		name="description"
 		content="Name: {parkingLot.name}, Address: {parkingLot.address}, Category: {parkingLot.category()}, Available spots: {parkingLot.availableSpotsFor(
@@ -94,7 +94,7 @@
 		</svg>
 	</a>
 </div>
-<h2 class="font-mono text-sm font-light mb-2">{parkingLot.category()}</h2>
+<h2 class="font-mono text-sm font-light mb-2">{parkingLot.address}</h2>
 <div class="join w-full">
 	<a
 		class="btn btn-primary rounded-md w-2/3"
@@ -273,11 +273,11 @@
 	{/each}
 </div>
 
-{#if status.comment}
+{#if parkingLot.comment}
 	<div class="divider"></div>
 	<h2 class="text-2xl font-bold mb-3">Description</h2>
-	<article class="prose prose-sm">
-		<Markdown source={status.comment} />
+	<article class="prose prose-sm text-muted">
+		<Markdown source={parkingLot.preferredComment()} />
 	</article>
 {/if}
 

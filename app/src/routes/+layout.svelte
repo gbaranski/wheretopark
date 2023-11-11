@@ -1,5 +1,6 @@
 <script>
 	import '../app.css';
+	import "@fontsource-variable/inter";
 	import Logo from '$lib/components/Logo.svelte';
 	import Map from '$lib/components/Map.svelte';
 	import { App } from '@capacitor/app';
@@ -17,18 +18,6 @@
 </script>
 
 <svelte:head>
-	<!-- SEO -->
-	<title>Where To Park</title>
-	<meta
-		name="description"
-		content="Where To Park App with real-time availability of parking lots in Poland and Scotland. Provided with opening hours, prices and other useful information."
-	/>
-	<meta
-		name="keywords"
-		content="Parking Lot, Smart City, Gdańsk, Gdynia, Sopot, Warsaw, Warszawa, Poznań, Glasgow"
-	/>
-	<!-- SEO -->
-
 	<script
 		data-goatcounter="https://wheretopark.goatcounter.com/count"
 		async
