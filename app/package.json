@@ -12,11 +12,9 @@
 				"test": "vitest",
 				"lint": "prettier --plugin-search-dir . --check . && eslint .",
 				"format": "prettier --plugin-search-dir . --write .",
-
 				"ios:build": "CAPACITOR=true vite build && cap sync",
 				"ios:run": "CAPACITOR=true vite build && cap sync && cap run ios",
 				"ios:dev": "LIVE_RELOAD=true cap copy && vite dev --host",
-
 				"android:build": "CAPACITOR=true vite build && cap sync",
 				"android:run": "CAPACITOR=true vite build && cap sync && cap run android",
 				"android:dev": "LIVE_RELOAD=true cap copy && vite dev --host"
@@ -28,10 +26,12 @@
 				"@capacitor/core": "^5.3.0",
 				"@capacitor/geolocation": "^5.0.6",
 				"@capacitor/ios": "^5.3.0",
+				"@fontsource-variable/inter": "^5.0.15",
 				"@mapbox/search-js-core": "1.0.0-beta.17",
 				"@sveltejs/adapter-cloudflare": "^2.3.3",
 				"@sveltejs/adapter-static": "^2.0.3",
 				"@sveltejs/kit": "1.24.1",
+				"@tailwindcss/typography": "^0.5.10",
 				"@types/geojson": "^7946.0.10",
 				"@types/haversine": "^1.1.5",
 				"@types/mapbox-gl": "^2.7.13",
