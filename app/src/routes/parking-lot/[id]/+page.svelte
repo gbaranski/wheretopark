@@ -60,11 +60,11 @@
 	<title>Parking {parkingLot.name.replace('Parking', '')} in Where To Park</title>
 	<meta
 		name="description"
-		content="Name: {parkingLot.name}, Address: {parkingLot.address}, Category: {parkingLot.category()}, Available spots: {parkingLot.availableSpotsFor(
+		content="Name: {parkingLot.name}, Address: {parkingLot.address}, Available spots: {parkingLot.availableSpotsFor(
 			SpotType.car
 		)}, Total spots: {parkingLot.totalSpotsFor(
 			SpotType.car
-		)}, Last updated: {parkingLot.lastUpdated.fromNow()}. Hours: {status}"
+		)}, Last updated: 1 minute ago"
 	/>
 	<meta
 		name="keywords"
