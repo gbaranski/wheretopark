@@ -32,7 +32,7 @@ func (s Source) stateOf(ctx context.Context, parkingLot ConfiguredParkingLot) (w
 	for id, camera := range parkingLot.Cameras {
 		wg.Add(1)
 		log.Ctx(ctx).
-			Info().
+			Debug().
 			Int("camera", id).
 			Msg("processing parking lot camera")
 		go func(id int, camera Camera) {
@@ -49,7 +49,7 @@ func (s Source) stateOf(ctx context.Context, parkingLot ConfiguredParkingLot) (w
 	}
 	wg.Wait()
 	log.Ctx(ctx).
-		Info().
+		Debug().
 		Str("duration", time.Since(captureTime).String()).
 		Msg("finished processing cameras")
 

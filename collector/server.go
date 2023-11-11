@@ -32,7 +32,8 @@ func (s *Server) handleParkingLots(w http.ResponseWriter, r *http.Request) {
 	var mu sync.Mutex
 	var wg sync.WaitGroup
 
-	send := func(parkingLots map[wheretopark.ID]wheretopark.ParkingLot) {
+	send := func(identifier string, parkingLots map[wheretopark.ID]wheretopark.ParkingLot) {
+		log.Info().Int("n", len(parkingLots)).Str("source", identifier).Msg("sending parkings lots")
 		json, err := json.Marshal(parkingLots)
 		if err != nil {
 			log.Error().Err(err).Msg("failed to marshal parking lots")
@@ -58,7 +59,7 @@ func (s *Server) handleParkingLots(w http.ResponseWriter, r *http.Request) {
 
 			parkingLots := s.cache.GetParkingLots(identifier)
 			if parkingLots != nil {
-				send(parkingLots)
+				send(identifier, parkingLots)
 				return
 			}
 
@@ -69,7 +70,7 @@ func (s *Server) handleParkingLots(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 			for parkingLots := range ch {
-				send(parkingLots)
+				send(identifier, parkingLots)
 				err := s.cache.UpdateParkingLots(identifier, parkingLots)
 				if err != nil {
 					log.Error().Err(err).Str("identifier", identifier).Msg("update cache failure")
@@ -83,6 +84,7 @@ func (s *Server) handleParkingLots(w http.ResponseWriter, r *http.Request) {
 func (s *Server) handleParkingLotsByIdentifier(w http.ResponseWriter, r *http.Request) {
 	identifier := chi.URLParam(r, "identifier")
 	send := func(parkingLots map[wheretopark.ID]wheretopark.ParkingLot) {
+		log.Info().Int("n", len(parkingLots)).Str("source", identifier).Msg("sending parkings lots")
 		json, err := json.Marshal(parkingLots)
 		if err != nil {
 			log.Error().Err(err).Msg("failed to marshal parking lots")
@@ -105,7 +107,12 @@ func (s *Server) handleParkingLotsByIdentifier(w http.ResponseWriter, r *http.Re
 		return
 	}
 
-	source := s.sources[identifier]
+	source, ok := s.sources[identifier]
+	if !ok {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte(fmt.Sprintf("unknown identifier: %s", identifier)))
+		return
+	}
 
 	ctx := log.With().Str("source", identifier).Logger().WithContext(context.TODO())
 	ch, err := source.ParkingLots(ctx)
