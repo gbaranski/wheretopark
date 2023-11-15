@@ -9,6 +9,7 @@
 		weekdays
 	} from '$lib/utils';
 	import Markdown from 'svelte-markdown';
+	import Icon from '@iconify/svelte';
 	import ResourceIcon from '$lib/components/ResourceIcon.svelte';
 
 	export let data: { parkingLot: ParkingLot };
@@ -238,6 +239,13 @@
 		</svg>
 		<span class="ml-2">
 			{parkingLot.address}
+		</span>
+	</p>
+
+	<p class="inline-flex">
+		<Icon icon="fluent-mdl2:parking-solid" class="w-5 h-5" />
+		<span class="ml-2">
+			{parkingLot.totalSpotsFor(SpotType.car)} total spots
 		</span>
 	</p>
 

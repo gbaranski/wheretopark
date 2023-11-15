@@ -27,6 +27,7 @@
 				"@capacitor/geolocation": "^5.0.6",
 				"@capacitor/ios": "^5.3.0",
 				"@fontsource-variable/inter": "^5.0.15",
+				"@iconify/svelte": "^3.1.4",
 				"@mapbox/search-js-core": "1.0.0-beta.17",
 				"@sveltejs/adapter-cloudflare": "^2.3.3",
 				"@sveltejs/adapter-static": "^2.0.3",
