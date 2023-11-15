@@ -111,7 +111,7 @@ W przypadku pozostawienia pojazdu na noc(po godzinie 02:30) obowiązuje opłata 
 
 Źródło danych: ztm.poznan.pl`,
 	}
-	defaultCurrency = currency.GBP
+	defaultCurrency = currency.PLN
 	defaultRules    = []wheretopark.Rule{
 		{
 			Hours: "Mo-Su 04:30-02:30",
