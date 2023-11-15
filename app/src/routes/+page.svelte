@@ -1,5 +1,6 @@
 <script lang="ts">
-	import SearchBox from '$lib/components/SearchBox.svelte';
+	import Legend from '$lib/components/Legend.svelte';
+import SearchBox from '$lib/components/SearchBox.svelte';
 	import { allFeatures } from '$lib/parkingLot';
 	import { searchFilters } from '$lib/store';
 	import { capitalizeFirstLetter } from '$lib/utils';
@@ -40,4 +41,7 @@
 			bind:value={$searchFilters.minAvailableSpots}
 		/>
 	</label>
+	<div class="my-8">
+		<Legend />
+	</div>
 </div>
