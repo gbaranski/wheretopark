@@ -1,8 +1,7 @@
 <script lang="ts">
-	import { currentMap, parkingLots } from '$lib/store';
-	import { ParkingLot, SpotType } from '$lib/parkingLot';
+	import { currentMap } from '$lib/store';
+	import { ParkingLot, SpotType, statusRatingFillColors, statusRatingTextColors } from '$lib/parkingLot';
 	import {
-		capitalizeFirstLetter,
 		getWeekday,
 		googleMapsLink,
 		humanizeDuration,
@@ -15,8 +14,7 @@
 	export let data: { parkingLot: ParkingLot };
 	$: parkingLot = data.parkingLot;
 	$: status = parkingLot.status(SpotType.car);
-	$: avColor = parkingLot.availabilityColorFor(SpotType.car);
-	$: stColor = status.color();
+	$: rating = parkingLot.rating(status, SpotType.car);
 
 	$: {
 		const [longitude, latitude] = parkingLot.geometry.coordinates;
@@ -167,26 +165,30 @@
 </div>
 <div class="stats w-full ml-0 left-0">
 	<div class="stat">
-		<div class="stat-title text-xs font-mono font-semibold">AVAILABLE SPACES</div>
+		<div class="stat-title text-xs font-mono font-semibold">CURRENT STATUS</div>
 		<div class="stat-value font-mono font-extrabold text-left justify-start">
-			<span style="color:{avColor}">
-				{parkingLot.availableSpotsFor(SpotType.car)}
-			</span>
-			<span class="font-light text-xs text-left -ml-5">
+				{#if parkingLot.isRecentlyUpdated()}
+					<span class="{statusRatingTextColors[rating]}">
+						{parkingLot.availableSpotsFor(SpotType.car)}
+						<span class="font-light text-xs -ml-3">
+							available spaces
+						</span>
+					</span>
+				{:else}
+					<span class="">
+						Inactive
+					</span>
+				{/if}
+			<!-- <span class="font-light text-xs text-left -ml-5">
 				/
 				<span class="font-bold">
 					{parkingLot.totalSpotsFor(SpotType.car)}
 				</span>
-			</span>
+			</span> -->
 		</div>
 		<div class="stat-desc">
-			Updated <span class="text-success">{parkingLot.lastUpdated.fromNow()}</span>
+			Updated <span class="{statusRatingTextColors[rating]}">{parkingLot.lastUpdated.fromNow()}</span>
 		</div>
-	</div>
-	<div class="stat">
-		<div class="stat-title text-xs font-mono font-semibold">CURRENT STATUS</div>
-		<div class="stat-value font-mono" style="color:{stColor}">{status.text}</div>
-		<div class="stat-desc">{status.comment}</div>
 	</div>
 </div>
 

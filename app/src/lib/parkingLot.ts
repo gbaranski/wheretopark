@@ -25,8 +25,30 @@ export class Resource extends URL {
   }
 }
 
+export enum StatusRating {
+  Good = "good",
+  Fair = "fair",
+  Poor = "poor",
+  Inactive = "inactive"
+};
+
+export const statusRatingFillColors: Record<StatusRating, string> = {
+  [StatusRating.Good]: "fill-green-400",
+  [StatusRating.Fair]: "fill-amber-400",
+  [StatusRating.Poor]: "fill-red-500",
+  [StatusRating.Inactive]: "fill-gray-400",
+};
+
+export const statusRatingTextColors: Record<StatusRating, string> = {
+  [StatusRating.Good]: "text-green-400",
+  [StatusRating.Fair]: "text-amber-400",
+  [StatusRating.Poor]: "text-red-500",
+  [StatusRating.Inactive]: "text-gray-400",
+};
+
+
 export class Status {
-  private constructor(readonly text: string) {}
+  private constructor(readonly text: string) { }
 
   public static open = new Status("Open");
   public static closed = new Status("Closed");
@@ -53,20 +75,6 @@ export class Status {
     return Object.assign(Object.create(Status.prototype), this, { comment });
   }
 
-  color(): string {
-    switch (this.text) {
-      case Status.open.text:
-        return "#91F5AD";
-      case Status.closesSoon.text:
-        return "#ec8004";
-      case Status.opensSoon.text:
-        return "#ec8004";
-      case Status.closed.text:
-        return "#EF2D56";
-      default:
-        return "#000000";
-    }
-  }
 }
 
 // export class SpotsMap {
@@ -98,7 +106,7 @@ export class Status {
 // export type AvailableSpots = SpotInfo;
 
 export class SpotType {
-  private constructor(readonly codename: string) {}
+  private constructor(readonly codename: string) { }
 
   public static car = new SpotType("CAR");
   public static disabledCar = new SpotType("CAR_DISABLED");
@@ -198,7 +206,7 @@ export class ParkingLot {
     public rules: Rule[],
     public lastUpdated: Dayjs,
     private availableSpots: Record<string, number>,
-  ) {}
+  ) { }
 
   static fromJSON(id: string, json: Record<string, any>): ParkingLot {
     return new ParkingLot(
@@ -354,6 +362,22 @@ export class ParkingLot {
     if (percent > 0.3) return "#91F5AD";
     else if (percent > 0.1) return "#ec8004";
     else return "#EF2D56";
+  }
+  
+  isRecentlyUpdated(): boolean {
+    const updatedLastHour = dayjs().diff(this.lastUpdated, 'minutes') < 60;
+    return updatedLastHour;
+  }
+
+  rating(status: Status, spotType: SpotType): StatusRating {
+    if (status.isClosed()) return StatusRating.Poor;
+    if (!this.isRecentlyUpdated()) return StatusRating.Inactive;
+    if (status.isClosingSoon()) return StatusRating.Fair;
+    const percent = this.availableSpotsFor(spotType) /
+      this.totalSpotsFor(spotType);
+    if (percent > 0.1) return StatusRating.Good;
+    else if (percent > 0) return StatusRating.Fair;
+    else return StatusRating.Poor;
   }
 
   feedbackLink(): URL {

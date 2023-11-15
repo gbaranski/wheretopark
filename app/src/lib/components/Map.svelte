@@ -8,7 +8,7 @@
 		type SearchFilters
 	} from '$lib/store';
 	import { goto } from '$app/navigation';
-	import MapMarker from './MapMarker.svelte';
+	import ParkingMapMarker from './ParkingMapMarker.svelte';
 	import 'mapbox-gl/dist/mapbox-gl.css';
 	import { SpotType, type ID, ParkingLot, Feature } from '$lib/parkingLot';
 	import { geolocation } from '$lib/utils';
@@ -61,7 +61,7 @@
 				.map(([id, parkingLot]) => {
 					const [longitude, latitude] = parkingLot.geometry.coordinates;
 					const markerElement = document.createElement('div');
-					new MapMarker({ target: markerElement, props: { parkingLot } });
+					new ParkingMapMarker({ target: markerElement, props: { parkingLot } });
 					const marker = new mapboxgl.Marker(markerElement).setLngLat([longitude, latitude]);
 					marker.getElement().addEventListener('click', () => {
 						goto(`/parking-lot/${id}`, { noScroll: true });

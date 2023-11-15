@@ -1,17 +1,22 @@
 <script lang="ts">
-	import { SpotType, type ParkingLot } from "$lib/parkingLot";
+	import { type StatusRating, statusRatingFillColors } from "$lib/parkingLot";
 
-    export let parkingLot: ParkingLot;
-    const status = parkingLot.status(SpotType.car);
-    const color = status.isOpen() ? parkingLot.availabilityColorFor(SpotType.car) : status.color()
+    export let rating: `${StatusRating}`;
 </script>
 
-<div class="flex flex-auto justify-center flex-col">
-    <svg xmlns="http://www.w3.org/2000/svg" fill={color} viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
-        <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
-    </svg>
-    <!-- <span class="text-center text-xs font-light">
-        {parkingLot.metadata.name}
-    </span> -->
+<div class="flex justify-center flex-col">
+	<svg
+		xmlns="http://www.w3.org/2000/svg"
+		viewBox="0 0 24 24"
+		stroke-width="1.5"
+		stroke="currentColor"
+		fill="none"
+		class="w-8 h-8 {statusRatingFillColors[rating]}"
+	>
+		<path
+			stroke-linecap="round"
+			stroke-linejoin="round"
+			d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"
+		/>
+	</svg>
 </div>
