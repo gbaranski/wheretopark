@@ -3,6 +3,11 @@ export const languages = {
   pl: "Polski",
 };
 
+export const flags = {
+  en: "🇬🇧",
+  pl: "🇵🇱"
+};
+
 export const defaultLang = "en";
 export const showDefaultLang = false;
 
