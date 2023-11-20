@@ -1,12 +1,24 @@
 ---
-import Logo from '../components/Logo.astro';
+import Logo from "../components/Logo.astro";
+import { languages } from '../i18n/ui';
+import {getRelativeLocaleUrl} from 'astro:i18n';
+
 ---
 
 <navbar class="navbar z-30">
-	<div class="navbar-start">
-		<Logo />
-	</div>
-	<!-- <div class="navbar-end">
+    <div class="navbar-start">
+        <Logo />
+    </div>
+    <ul class="menu menu-horizontal">
+        {
+            Object.entries(languages).map(([lang, label]) => (
+                <li>
+                    <a href={getRelativeLocaleUrl(lang, "")}>{label}</a>
+                </li>
+            ))
+        }
+    </ul>
+    <!-- <div class="navbar-end">
         <ul class="menu menu-horizontal px-1">
             <li>
                 <a href="/faq" class="basis-full text-sm"

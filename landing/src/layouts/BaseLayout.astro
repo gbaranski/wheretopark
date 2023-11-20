@@ -1,16 +1,23 @@
 ---
 interface Props {
 	title: string;
-	lang: string;
 }
 
-const { title, lang } = Astro.props;
+const { title } = Astro.props;
 
 import Navbar from "./Navbar.astro";
 import Footer from "./Footer.astro";
 import "@fontsource-variable/inter";
 import Thing from "../components/Thing.astro";
-import { softwareApplication, frequentlyAskedQuestions, organisationSchema, gregoryBaranski } from "../lib/schemas";
+import {
+	softwareApplication,
+	frequentlyAskedQuestions,
+	organisationSchema,
+	gregoryBaranski,
+} from "../lib/schemas";
+import { getLangFromUrl } from "../i18n/utils";
+
+const lang = getLangFromUrl(Astro.url);
 ---
 
 <!doctype html>
@@ -34,10 +41,10 @@ import { softwareApplication, frequentlyAskedQuestions, organisationSchema, greg
 			data-goatcounter="https://wheretopark.goatcounter.com/count"
 			async
 			src="https://gc.zgo.at/count.js"></script>
-		<Thing schema={softwareApplication}/>
-		<Thing schema={frequentlyAskedQuestions}/>
-		<Thing schema={organisationSchema}/>
-		<Thing schema={gregoryBaranski}/>
+		<Thing schema={softwareApplication} />
+		<Thing schema={frequentlyAskedQuestions} />
+		<Thing schema={organisationSchema} />
+		<Thing schema={gregoryBaranski} />
 	</head>
 	<body class="pt-8">
 		<div class="px-8 md:px-32">

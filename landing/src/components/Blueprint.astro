@@ -3,12 +3,15 @@ import { Image } from "astro:assets";
 import parkingBasenKlodzko from "../assets/parking-basen-klodzko.webm";
 import GoodThing from "../components/GoodThing.astro";
 import appPreview from "../assets/app-preview.png";
+import { getLangFromUrl, useTranslations } from "../i18n/utils";
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
 ---
+
 <div class="text-center">
-    <h2 class="font-bold text-secondary uppercase">
-        Behind the scenes
-    </h2>
-    <h2 class="font-bold text-3xl">Where To Park's Blueprint!</h2>
+    <h2 class="font-bold text-secondary uppercase">{t("blueprint.headline")}</h2>
+    <h2 class="font-bold text-3xl">{t("blueprint.subheadline")}</h2>
 </div>
 
 <div
@@ -24,21 +27,16 @@ import appPreview from "../assets/app-preview.png";
     </div>
 
     <div class="flex-1 mt-2">
-        <h3 class="font-bold text-2xl mb-1">
-            Building on modern foundations
-        </h3>
-        <p class="text-md font-light">
-            Gain a competitive advantage by incorporating innovations
-            into a parking lot.
-        </p>
+        <h3 class="font-bold text-2xl mb-1">{t("blueprint[0].headline")}</h3>
+        <p class="text-md font-light">{t("blueprint[0].subheadline")}</p>
         <div class="flex flex-col gap-6 mt-8 items-start">
             <GoodThing
-                title="Real-time occupancy detection"
-                content="With over 93% of accuracy we're able to detect which parking spots are vacant and occupied."
+                title={t("blueprint[0].goodthings[0].title")}
+                content={t("blueprint[0].goodthings[0].content")}
             />
             <GoodThing
-                title="Weather agnostic"
-                content="Our AI Model has been tested to work in rain, overcast and even when it's snowing ❄️."
+                title={t("blueprint[0].goodthings[1].title")}
+                content={t("blueprint[0].goodthings[1].content")}
             />
         </div>
     </div>
@@ -55,19 +53,16 @@ import appPreview from "../assets/app-preview.png";
         />
     </div>
     <div class="flex-1 mt-2">
-        <h3 class="font-bold text-2xl mb-1">Mobile app</h3>
-        <p class="text-md font-light">
-            Drivers can easily access information through our mobile
-            app.
-        </p>
+        <h3 class="font-bold text-2xl mb-1">{t("blueprint[1].headline")}</h3>
+        <p class="text-md font-light">{t("blueprint[1].subheadline")}</p>
         <div class="flex flex-col gap-6 mt-8">
             <GoodThing
-                title="Wide-range of data"
-                content="Not only the amount of available parking spaces, but also opening hours, prices, maximum dimensions and anything you'd ever need for parking your vehicle!"
+                title={t("blueprint[1].goodthings[0].title")}
+                content={t("blueprint[1].goodthings[0].content")}
             />
             <GoodThing
-                title="Smart directions"
-                content="Our app will be able to dynamically route you to the nearest available parking space, and if someone would take it halfway your way there we will re-route you to a different car park."
+                title={t("blueprint[1].goodthings[1].title")}
+                content={t("blueprint[1].goodthings[1].content")}
             />
         </div>
     </div>

@@ -2,38 +2,36 @@
 import { Image } from "astro:assets";
 import Step from "../components/Step.astro";
 import clock from "../assets/clock.webp";
+import { getLangFromUrl, useTranslations } from "../i18n/utils";
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
 ---
 
 <div class="flex flex-col md:flex-row md:gap-10">
     <div class="flex-1 flex flex-col gap-12 mt-4">
-        <h3 class="font-bold text-3xl">
-            Add a new parking lot to our app.
-        </h3>
+        <h3 class="font-bold text-3xl">{t("guide.headline")}</h3>
 
         <div class="flex flex-col">
             <Step
                 idx={0}
                 icon="mdi:information-variant"
-                title="Gather data"
-            >
-                We need information such as geolocation, opening hours,
-                pricing and, most importantly, access to your IP camera.
-            </Step>
-            <Step idx={1} icon="mdi:at" title="Send it to us">
-                We are availabe at contact@wheretopark.app.
-            </Step>
+                title={t("guide.steps[0].title")}
+                set:text={t("guide.steps[0].content")}
+            />
+            <Step
+                idx={1}
+                icon="mdi:at"
+                title={t("guide.steps[1].title")}
+                set:text={t("guide.steps[1].content")}
+            />
             <Step
                 idx={2}
                 icon="grommet-icons:validate"
-                title="Validation"
-            >
-                We'll validate the data you've sent, and test the
-                cameras. Once it's done your parking lot will be
-                available in our app. Usually it takes <b
-                    >up to one week.</b
-                >
-            </Step>
-            <Step icon="mdi:tick" title="Ready!" />
+                title={t("guide.steps[2].title")}
+                set:html={t("guide.steps[2].content")}
+            />
+            <Step icon="mdi:tick" title={t("guide.steps[3].title")} />
         </div>
     </div>
     <div class="relative flex-1 max-md:hidden">

@@ -1,43 +1,47 @@
 ---
 import PseudoCard from "../components/Feature.astro";
+import { getLangFromUrl, useTranslations } from "../i18n/utils";
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
 ---
 
 <div class="text-center">
-    <h2 class="font-bold text-secondary uppercase">Features</h2>
-    <h2 class="font-bold text-3xl">What you get with Where To Park</h2>
+    <h2 class="font-bold text-secondary uppercase">{t("features.headline")}</h2>
+    <h2 class="font-bold text-3xl">{t("features.subheadline")}</h2>
     <h3 class="font-light text-muted mt-2">
-        We solve one of the most important problems in current modern cities.
+        {t("features.subheadline2")}
     </h3>
 </div>
 <div class="grid grid-cols-1 md:grid-cols-2 mt-8 gap-12 justify-items-start">
     <PseudoCard
         icon="mdi:hourglass"
-        title="Time savings"
-        content="Drivers on average waste 10 minutes looking for a parking space. We will fix that by giving you exact directions to the nearest available parking spot."
+        title={t("features[0].title")}
+        content={t("features[0].content")}
     />
     <PseudoCard
         icon="mdi:currency-usd"
-        title="Money savings"
-        content="A couple bucks is wasted each time you want to park. You not only pay for running the car, but also for the spent time that you could spend doing something more productive than circulating around a parking lot."
+        title={t("features[1].title")}
+        content={t("features[1].content")}
     />
     <PseudoCard
         icon="uil:analysis"
-        title="Usage analytics"
-        content="Data is the key - so we want to provide parking lots with information who enters the parking lot or how much time do they spend there."
+        title={t("features[2].title")}
+        content={t("features[2].content")}
     />
     <PseudoCard
         icon="mdi:chart-bar"
-        title="Predictions"
-        content="Based on history events, user can check predictions whether parking lot will be free on Thursday 4pm."
+        title={t("features[3].title")}
+        content={t("features[3].content")}
     />
     <PseudoCard
         icon="mdi:wheelchair-accessibility"
-        title="Disabled people"
-        content="We provide disabled people with information, which specific parking lot has spots for them, and if they're available right now, in real-time."
+        title={t("features[4].title")}
+        content={t("features[4].content")}
     />
     <PseudoCard
         icon="mdi:bullhorn-outline"
-        title="Promotion"
-        content="Cities or parking lots could choose to additionally promote the parking lot in the app, so it'd appear higher in the results."
+        title={t("features[5].title")}
+        content={t("features[5].content")}
     />
 </div>

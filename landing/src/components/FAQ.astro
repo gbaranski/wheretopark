@@ -1,57 +1,57 @@
 ---
 import QnA from "../components/QnA.astro";
+import { getLangFromUrl, useTranslations } from "../i18n/utils";
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
 ---
 
 <div class="text-center">
     <h2 class="font-bold text-secondary uppercase">FAQs</h2>
-    <h2 class="font-bold text-3xl">Frequently Asked Questions</h2>
-    <h3 class="font-light text-muted mt-2">
-        Dive into the following questions to gain insights into the
-        powerful features that Where To Park offers and how it can elevate
-        your daily driving life.
-    </h3>
+    <h2 class="font-bold text-3xl">{t("faq.title")}</h2>
+    <h3 class="font-light text-muted mt-2">{t("faq.subtitle")}</h3>
 </div>
 <div class="mx-auto gap-8 gap-y-8 grid grid-cols-1 md:grid-cols-2 mt-8">
-    <QnA question="Is the app available?">
+    <QnA question={t("faq.qas[0].question")}>
         <ul>
             <li>
-                <b>iOS</b> app is available on <a
+                <span set:html={t("faq.qas[0].answer[0].former")} />
+                <a
                     href="https://apps.apple.com/us/app/where-to-park/id6444453582"
-                    class="link link-secondary">App Store</a
-                > since November 2022
+                    class="link link-secondary"
+                    target="_blank">App Store</a
+                >
+                <span set:html={t("faq.qas[0].answer[0].latter")} />
             </li>
             <li>
-                <b>Android</b> app is available on <a
+                <span set:html={t("faq.qas[0].answer[1].former")} />
+                <a
                     href="https://play.google.com/store/apps/details?id=com.gbaranski.wheretopark"
-                    class="link link-secondary">Google Play</a
-                > since September 2023
+                    class="link link-secondary"
+                    target="_blank">Google Play</a
+                >
+                <span set:html={t("faq.qas[0].answer[1].latter")} />
             </li>
             <li>
-                <b>Web</b> app is available at <a
+                <span set:html={t("faq.qas[0].answer[2]")} />
+                <a
                     href="https://web.wheretopark.app"
-                    class="link link-secondary">web.wheretopark.app</a
+                    class="link link-secondary"
+                    target="_blank">web.wheretopark.app</a
                 >
             </li>
         </ul>
     </QnA>
-    <QnA question="What's the accuracy of your system?">
-        <p>
-            System accuracy ranges from <b>90 to 95 percent</b> accuracy
-            in determining if parking spot is available.
-        </p>
-        <p>We're constantly <b>improving</b>.</p>
-    </QnA>
-    <QnA question="What about privacy?">
-        <p>
-            The images we're collecting from <b>CCTV cameras</b> are
-            safely stored for error evaluation.
-        </p>
-        <p>
-            <b>Optionally</b> we can also automatically <b>blur out</b>
-             the faces, registration plates and other vulnerable data.
-        </p>
-    </QnA>
-    <QnA question="What parking lots do you support?">
-        Our AI-based system supports <b>all kinds</b> of parking lots
-    </QnA>
+    <QnA
+        question={t("faq.qas[1].question")}
+        set:html={t("faq.qas[1].answer")}
+    />
+    <QnA
+        question={t("faq.qas[2].question")}
+        set:html={t("faq.qas[2].answer")}
+    />
+    <QnA
+        question={t("faq.qas[3].question")}
+        set:html={t("faq.qas[3].answer")}
+    />
 </div>

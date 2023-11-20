@@ -3,13 +3,10 @@ import { Image } from "astro:assets";
 import AppStore from "../components/AppStore.astro";
 import GooglePlay from "../components/GooglePlay.astro";
 import iosPreview from "../assets/ios-preview.webp";
-import type { UseTranslations } from "../i18n/utils";
+import { getLangFromUrl, useTranslations } from "../i18n/utils";
 
-interface Props {
-    translations: UseTranslations;
-}
-
-const { translations: t } = Astro.props;
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
 ---
 
 <div class="flex flex-col">
@@ -23,7 +20,7 @@ const { translations: t } = Astro.props;
             <GooglePlay />
         </div>
         <h3 class="text-center text-sm">
-            <span>{t("or")}&nbsp;</span>
+            <span>{t("or")}</span>
             <a
                 href="https://web.wheretopark.app"
                 class="link link-primary"

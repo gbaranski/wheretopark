@@ -1,9 +1,12 @@
 ---
 import Icon from "astro-icon";
+import { getLangFromUrl, useTranslations } from "../i18n/utils";
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
 ---
 
 <Icon name="mdi:rocket-outline" class="h-4 inline-block" />
 <span class="align-middle text-xs">
-    <span class="font-bold">Philosophy:</span>
-     We'll reinvent the way you park - easier, faster and simpler.
+    {t("philosophy")}
 </span>

@@ -1,0 +1,95 @@
+---
+import { getLangFromUrl, useTranslations } from "../i18n/utils";
+import { Image } from "astro:assets";
+import { cities } from "../assets/cities";
+import explory from "../assets/explory.jpg";
+import Award from "./Award.astro";
+import { news } from "../assets/news";
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+---
+
+<div class="text-center">
+    <h2 class="font-bold text-secondary uppercase">{t("progress.headline")}</h2>
+    <h2 class="font-bold text-3xl">{t("progress.subheadline")}</h2>
+    <p class="text-md font-light mt-2">{t("progress.subheadline2")}</p>
+</div>
+
+<div
+    class="flex flex-col-reverse items-center md:flex-row gap-12 mx-auto max-w-7xl md:px-8 p-4 md:mx-12 mt-12"
+>
+    <div
+        class="flex-1 flex flex-row flex-wrap justify-evenly items-center bg-slate-100 border shadow-sm p-8 rounded-lg"
+    >
+        {
+            cities.map((city) => (
+                <Image
+                    class="p-2 object-scale-down "
+                    src={city.image}
+                    alt={city.name}
+                    width={72}
+                />
+            ))
+        }
+    </div>
+
+    <div class="flex-1">
+        <h3 class="font-bold text-2xl mb-1">{t("progress[0].title")}</h3>
+        <p class="text-md font-light">{t("progress[0].content")}</p>
+    </div>
+</div>
+
+<div
+    class="flex flex-col-reverse items-center md:flex-row-reverse gap-12 mx-auto max-w-7xl md:px-8 p-4 md:mx-12 mt-12"
+>
+    <div class="flex-1">
+        <Image
+            class="rounded-md shadow-xl"
+            src={explory}
+            alt="mobile app preview"
+        />
+    </div>
+    <div class="flex-1 mt-2">
+        <h3 class="font-bold text-2xl mb-1">{t("progress[1].title")}</h3>
+        <p class="text-md font-light">{t("progress[1].content")}</p>
+        <div class="flex flex-col gap-6 mt-8 items-start">
+            <Award
+                href="https://www.explory.pl/news/2023/10/zwyciezcy-12-edycji-konkursu-explory,349"
+                title={t("progress[1].awards[0].title")}
+                set:text={t("progress[1].awards[0].content")}
+            />
+            <Award
+                href="https://not.org.pl/olimpiady-i-konkursy/xvi-edycja-konkursu-mlody-innowator-20222023-rozstrzygnieta"
+                title={t("progress[1].awards[1].title")}
+                set:text={t("progress[1].awards[1].content")}
+            />
+        </div>
+    </div>
+</div>
+
+<div
+    class="flex flex-col-reverse items-center md:flex-row gap-12 mx-auto max-w-7xl md:px-8 p-4 md:mx-12 mt-12"
+>
+    <div
+        class="flex-1 flex flex-row flex-wrap justify-evenly items-center bg-slate-100 border shadow-sm p-8 rounded-lg"
+    >
+        {
+            news.map((news) => (
+                <a href={news.link}>
+                    <Image
+                        class="p-2 object-scale-down "
+                        src={news.image}
+                        alt={news.link}
+                        width={72}
+                    />
+                </a>
+            ))
+        }
+    </div>
+
+    <div class="flex-1">
+        <h3 class="font-bold text-2xl mb-1">{t("progress[2].title")}</h3>
+        <p class="text-md font-light">{t("progress[2].content")}</p>
+    </div>
+</div>
