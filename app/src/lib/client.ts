@@ -1,13 +1,10 @@
 import { type ID, ParkingLot } from "./parkingLot";
 import { isLoading, parkingLots as parkingLotsStore } from "$lib/store";
-import { dev } from "$app/environment";
-import { Capacitor } from "@capacitor/core";
+import { env } from '$env/dynamic/public';
 
+const { PUBLIC_SERVER_URL } = env;
 const productionServer = "https://api.wheretopark.app";
-const developmentServer = "http://localhost:1234";
-const serverURL = dev
-  ? Capacitor.isNativePlatform() ? productionServer : developmentServer
-  : productionServer;
+const serverURL = PUBLIC_SERVER_URL ?? productionServer;
 
 type Provider = {
   name: string;
