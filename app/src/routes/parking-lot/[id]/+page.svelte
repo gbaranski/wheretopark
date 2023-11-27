@@ -75,7 +75,7 @@
 </svelte:head>
 
 <div class="flex flex-row justify-between">
-	<h1 class="font-sans text-3xl font-extrabold">{parkingLot.name}</h1>
+	<h1 class="font-sans text-xl font-extrabold">{parkingLot.name}</h1>
 	<a href="/" class="pt-1" data-sveltekit-noscroll>
 		<svg
 			xmlns="http://www.w3.org/2000/svg"
@@ -171,7 +171,7 @@
 				{#if parkingLot.isRecentlyUpdated()}
 					<span class="{statusRatingTextColors[rating]}">
 						{parkingLot.availableSpotsFor(SpotType.car)}
-						<span class="font-light text-xs -ml-3">
+						<span class="font-light text-sm -ml-3">
 							available spaces
 						</span>
 					</span>
@@ -267,7 +267,7 @@
 			</svg>
 
 			{#each parkingLot.paymentMethods as paymentMethod}
-				<div class="badge badge-secondary badge-lg ml-2 font-mono text-xs">{paymentMethod}</div>
+				<div class="badge badge-outline badge-lg ml-2 font-mono text-xs">{paymentMethod}</div>
 			{/each}
 		</p>
 	{/if}

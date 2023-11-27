@@ -5,7 +5,7 @@ const colors = {
 	green: "#04E762",
 	yellow: "#FFC15E",
 	orange: "#EC8004",
-	blue: "#2B59C3",
+	blue: "#3FA9F5",
 	white: "#FFFFFF",
 	darkBlue: "#383F51",
 	veryDarkBlue: "#011627",
@@ -13,7 +13,7 @@ const colors = {
 
 const colorScheme = {
 	"primary": colors.yellow,
-	"secondary": colors.darkBlue,
+	"secondary": colors.blue,
 	"accent": colors.red,
 	"neutral": colors.veryDarkBlue,
 	"base-100": colors.white,
