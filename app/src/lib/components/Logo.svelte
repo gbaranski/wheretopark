@@ -3,7 +3,7 @@
 </script>
 
 <a href="/" class="btn btn-ghost normal-case text-xl h-16" data-sveltekit-noscroll>
-	<img src="/logo.webp" alt="where to park icon" class="m-1" width="40px" height="40px" />
+	<img src="/icon@64.webp" alt="where to park icon" class="m-1" width="40px" height="40px" />
 	<span class="logo font-bold text-2xl">
 		<span class="text-primary"> where </span>
 
