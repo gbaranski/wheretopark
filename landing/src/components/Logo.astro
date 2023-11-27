@@ -2,12 +2,14 @@
 import { Image } from "astro:assets";
 import icon from "../assets/icon-text@256.webp"
 import { getRelativeLocaleUrl } from "astro:i18n";
-import { getLangFromUrl } from "../i18n/utils";
+import type { Language } from "../i18n/utils";
 
-const lang = getLangFromUrl(Astro.url);
-const homeURL = getRelativeLocaleUrl(lang, "/");
+interface Props {
+	lang: Language;
+}
 
+const { lang } = Astro.props;
 ---
-<a href={homeURL}>
+<a href={getRelativeLocaleUrl(lang, "/")}>
 	<Image src={icon} alt="where to park" height={256} class="w-72" />
 </a>

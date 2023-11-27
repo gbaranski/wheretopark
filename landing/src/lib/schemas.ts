@@ -33,7 +33,7 @@ import type {
     email: "contact@wheretopark.app",
     founder: gregoryBaranski,
     foundingDate: "2022-05-01",
-    logo: "https://wheretopark.app/logo.webp",
+    logo: "https://wheretopark.app/favicon.ico",
   
     name: "Where To Park",
     url: "https://wheretopark.app",

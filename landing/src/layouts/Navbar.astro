@@ -2,17 +2,24 @@
 import Logo from "../components/Logo.astro";
 import { flags, languages } from "../i18n/ui";
 import { getRelativeLocaleUrl } from "astro:i18n";
+import { getJustPath, type Language } from "../i18n/utils";
+
+interface Props {
+    lang: Language;
+}
+
+const { lang } = Astro.props;
 ---
 
 <navbar class="navbar z-30 justify-between">
     <div class="navbar-start">
-        <Logo />
+        <Logo lang={lang} />
     </div>
     <ul class="menu menu-horizontal">
         {
             Object.entries(languages).map(([lang, label]) => (
                 <li>
-                    <a href={getRelativeLocaleUrl(lang, "")}>
+                    <a href={getRelativeLocaleUrl(lang, getJustPath(Astro.url))}>
                         {label} {flags[lang as keyof typeof flags]}
                     </a>
                 </li>

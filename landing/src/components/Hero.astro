@@ -3,9 +3,13 @@ import { Image } from "astro:assets";
 import AppStore from "../components/AppStore.astro";
 import GooglePlay from "../components/GooglePlay.astro";
 import iosPreview from "../assets/ios-preview.webp";
-import { getLangFromUrl, useTranslations } from "../i18n/utils";
+import { useTranslations, type Language } from "../i18n/utils";
 
-const lang = getLangFromUrl(Astro.url);
+interface Props {
+    lang: Language;
+}
+
+const { lang } = Astro.props;
 const t = useTranslations(lang);
 ---
 
@@ -21,14 +25,17 @@ const t = useTranslations(lang);
         </div>
         <h3 class="text-center text-sm">
             <span>{t("or")}</span>
-            <a
-                href="https://web.wheretopark.app"
-                class="link link-primary"
+            <a href="https://web.wheretopark.app" class="link link-primary"
                 >{t("hero.openAppInBrowser")}</a
             >
         </h3>
     </div>
 </div>
 <div>
-    <Image src={iosPreview} alt="ios screenshot preview" class="w-64" width={512} />
+    <Image
+        src={iosPreview}
+        alt="ios screenshot preview"
+        class="w-64"
+        width={512}
+    />
 </div>

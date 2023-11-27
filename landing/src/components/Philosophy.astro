@@ -1,8 +1,12 @@
 ---
 import Icon from "astro-icon";
-import { getLangFromUrl, useTranslations } from "../i18n/utils";
+import { useTranslations, type Language } from "../i18n/utils";
 
-const lang = getLangFromUrl(Astro.url);
+interface Props {
+    lang: Language;
+}
+
+const { lang } = Astro.props;
 const t = useTranslations(lang);
 ---
 

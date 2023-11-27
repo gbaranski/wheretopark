@@ -3,14 +3,20 @@ import { Image } from "astro:assets";
 import parkingBasenKlodzko from "../assets/parking-basen-klodzko.webm";
 import GoodThing from "../components/GoodThing.astro";
 import appPreview from "../assets/app-preview.png";
-import { getLangFromUrl, useTranslations } from "../i18n/utils";
+import { useTranslations, type Language } from "../i18n/utils";
 
-const lang = getLangFromUrl(Astro.url);
+interface Props {
+	lang: Language;
+}
+
+const { lang } = Astro.props;
 const t = useTranslations(lang);
 ---
 
 <div class="text-center">
-    <h2 class="font-bold text-secondary uppercase">{t("blueprint.headline")}</h2>
+    <h2 class="font-bold text-secondary uppercase">
+        {t("blueprint.headline")}
+    </h2>
     <h2 class="font-bold text-3xl">{t("blueprint.subheadline")}</h2>
 </div>
 

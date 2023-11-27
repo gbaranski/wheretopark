@@ -2,9 +2,13 @@
 import { Image } from "astro:assets";
 import Step from "../components/Step.astro";
 import clock from "../assets/clock.webp";
-import { getLangFromUrl, useTranslations } from "../i18n/utils";
+import { useTranslations, type Language } from "../i18n/utils";
 
-const lang = getLangFromUrl(Astro.url);
+interface Props {
+	lang: Language;
+}
+
+const { lang } = Astro.props;
 const t = useTranslations(lang);
 ---
 

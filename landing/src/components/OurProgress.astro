@@ -1,12 +1,16 @@
 ---
-import { getLangFromUrl, useTranslations } from "../i18n/utils";
 import { Image } from "astro:assets";
 import { cities } from "../assets/cities";
 import explory from "../assets/explory.jpg";
 import Award from "./Award.astro";
 import { news } from "../assets/news";
+import { useTranslations, type Language } from "../i18n/utils";
 
-const lang = getLangFromUrl(Astro.url);
+interface Props {
+    lang: Language;
+}
+
+const { lang } = Astro.props;
 const t = useTranslations(lang);
 ---
 
