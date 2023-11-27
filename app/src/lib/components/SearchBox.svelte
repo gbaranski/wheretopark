@@ -55,7 +55,7 @@
 <input
 	name="address"
 	type="text"
-	placeholder="🔍  Where'd you park today?"
+	placeholder="🔍  Destination address"
 	class="input input-md input-primary input-bordered w-full text-sm bg-inherit block"
 	bind:value={searchTerm}
 	on:input={onInputChange}
