@@ -12,7 +12,7 @@ const colors = {
 };
 
 const colorScheme = {
-	"primary": colors.yellow,
+	"primary": colors.blue,
 	"secondary": colors.darkBlue,
 	"accent": colors.red,
 	"neutral": colors.veryDarkBlue,
