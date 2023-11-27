@@ -9,10 +9,11 @@ import {
 	organisationSchema,
 	gregoryBaranski,
 } from "../lib/schemas";
+import type { Language } from "../i18n/utils";
 
 interface Props {
 	title: string;
-	lang: string;
+	lang: Language;
 }
 
 const { title, lang } = Astro.props;
