@@ -19,7 +19,7 @@ require (
 	github.com/u2takey/ffmpeg-go v0.5.0
 	gocv.io/x/gocv v0.34.0
 	golang.org/x/exp v0.0.0-20231006140011-7918f672742d
-	golang.org/x/text v0.13.0
+	golang.org/x/text v0.14.0
 )
 
 require (
