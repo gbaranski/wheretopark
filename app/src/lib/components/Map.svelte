@@ -43,7 +43,7 @@
 			Object.entries(parkingLots)
 				.filter(([_, parkingLot]) => {
 					const status = parkingLot.status(SpotType.car);
-					if (filters.openNow && (status.isOpen() || status.isOpeningSoon())) return false;
+					if (filters.openNow && !status.isOpen()) return false;
 
 					const requiredFeatures = Object.entries(filters.hasFeatures).filter(
 						([_, required]) => required
