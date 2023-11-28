@@ -6,13 +6,18 @@ export const GET: RequestHandler = async ({ url }) => {
     if (src == null) {
         throw error(400, "missing src")
     }
-    const image = await fetchAndParseHLS(src);
+    const srcUrl = new URL(src);
+    const image = await fetchImage(srcUrl);
     // fs.writeFileSync("output.jpg", image);
     return new Response(image, { headers: { "Content-Type": "image/jpeg" } });
 }
 
-const fetchAndParseHLS = async (src: string): Promise<Buffer> => {
-    const child = spawnSync("ffmpeg", ["-i", src, "-frames:v", "1", "-f", "image2pipe", "-"]);
+const fetchImage = async (src: URL): Promise<Buffer> => {
+    const args = ["-i", src.toString(), "-frames:v", "1", "-vf", "select=gte(n\\,5)", "-f", "image2pipe", "-"];
+    if (src.protocol === "rtsp:") {
+        args.unshift("-rtsp_transport", "tcp", "-buffer_size", "2048");
+    }
+    const child = spawnSync("ffmpeg", args);
     if (child.status !== 0) {
         throw new Error(`ffmpeg exited with code ${child.status}. output: ${child.stderr}`);
     }
