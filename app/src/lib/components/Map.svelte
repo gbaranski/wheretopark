@@ -36,7 +36,7 @@
 		currentMap.set(map);
 		const currentMarkers: mapboxgl.Marker[] = [];
 		const updateMap = (parkingLots: Record<ID, ParkingLot>, filters: SearchFilters) => {
-			console.log('updating map', { parkingLots, filters });
+			// console.log('updating map', { parkingLots, filters });
 			currentMarkers.forEach((marker) => {
 				marker.remove();
 			});
