@@ -12,8 +12,8 @@ const colors = {
 };
 
 const colorScheme = {
-	"primary": colors.yellow,
-	"secondary": colors.blue,
+	"primary": colors.blue,
+	"secondary": colors.yellow,
 	"accent": colors.red,
 	"neutral": colors.veryDarkBlue,
 	"base-100": colors.white,

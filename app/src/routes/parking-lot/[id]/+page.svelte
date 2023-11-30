@@ -96,7 +96,7 @@
 <h2 class="font-mono text-sm font-light mb-2">{parkingLot.address}</h2>
 <div class="join w-full">
 	<a
-		class="btn btn-primary rounded-md w-2/3"
+		class="btn btn-primary text-white rounded-md w-2/3"
 		href={googleMapsLink(parkingLot.geometry).toString()}
 		target="_blank"
 	>
