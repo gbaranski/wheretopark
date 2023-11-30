@@ -93,12 +93,17 @@ func (s Source) ParkingLots(ctx context.Context) (<-chan map[wheretopark.ID]wher
 		}
 
 		state := wheretopark.State{
-			LastUpdated: lastUpdate.In(defaultTimezone),
-			AvailableSpots: map[string]uint{
-				wheretopark.SpotTypeCarElectric: vendor.FreePlacesTotal.Electric,
-				wheretopark.SpotTypeCar:         vendor.FreePlacesTotal.Public,
-				wheretopark.SpotTypeCarDisabled: vendor.FreePlacesTotal.Disabled,
-			},
+			LastUpdated:    lastUpdate.In(defaultTimezone),
+			AvailableSpots: map[string]uint{},
+		}
+		if vendor.FreePlacesTotal.Public > 0 {
+			state.AvailableSpots[wheretopark.SpotTypeCar] = uint(vendor.FreePlacesTotal.Public)
+		}
+		if vendor.FreePlacesTotal.Disabled > 0 {
+			state.AvailableSpots[wheretopark.SpotTypeCarDisabled] = uint(vendor.FreePlacesTotal.Disabled)
+		}
+		if vendor.FreePlacesTotal.Electric > 0 {
+			state.AvailableSpots[wheretopark.SpotTypeCarElectric] = uint(vendor.FreePlacesTotal.Electric)
 		}
 		parkingLots[id] = wheretopark.ParkingLot{
 			Metadata: metadata,

@@ -1,9 +1,9 @@
 package warsaw
 
 type FreePlacesTotal struct {
-	Disabled uint `json:"disabled"`
-	Public   uint `json:"public"`
-	Electric uint `json:"electric"`
+	Disabled int `json:"disabled"`
+	Public   int `json:"public"`
+	Electric int `json:"electric"`
 }
 
 type TotalPlaces struct {
