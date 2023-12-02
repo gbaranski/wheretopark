@@ -21,4 +21,8 @@ api.wheretopark.app {
 	}
 }
 
+dozzle.wheretopark.app {
+	reverse_proxy http://dozzle:8080
+}
+
 import /etc/caddy/conf.d/*

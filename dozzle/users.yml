@@ -1,0 +1,7 @@
+users:
+  # "admin" here is username
+  gbaranski:
+    name: "Gregory Baranski"
+    # Just sha-256 which can be computed with "echo -n password | shasum -a 256"
+    password: "cbe511e763e5f56c6b8bf7da3659012accdab28e4134bd6493116b0bc5291f4f"
+    email: me@gbaranski.com

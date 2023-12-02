@@ -1,8 +1,8 @@
 version: "3.8"
 services:
   caddy:
+    container_name: caddy
     image: caddy:latest
-    container_name: wheretopark_caddy
     restart: unless-stopped
     ports:
       - "80:80"
@@ -10,6 +10,16 @@ services:
       - "443:443/udp"
     volumes:
       - $PWD/Caddyfile:/etc/caddy/Caddyfile
+
+  dozzle:
+    container_name: dozzle
+    image: amir20/dozzle:latest
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./dozzle/users.yml:/data/users.yml
+    environment:
+      DOZZLE_AUTH_PROVIDER: simple
 
   collector:
     container_name: wheretopark_collector
