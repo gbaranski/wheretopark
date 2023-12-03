@@ -1,13 +1,43 @@
 version: "3.8"
 services:
-  # caddy:
-  #   image: caddy:latest
-  #   container_name: wheretopark_caddy
-  #   restart: unless-stopped
-  #   ports:
-  #     - "1234:1234"
-  #   volumes:
-  #     - $PWD/Caddyfile.dev:/etc/caddy/Caddyfile
+  traefik:
+    container_name: traefik
+    image: traefik:v3.0
+    command: --api.insecure=true --providers.docker
+    restart: unless-stopped
+    ports:
+      # The HTTP port
+      - "80:80"
+      - "1234:80"
+      # The Web UI (enabled by --api.insecure=true)
+      - "8080:8080"
+    volumes:
+      # So that Traefik can listen to the Docker events
+      - /var/run/docker.sock:/var/run/docker.sock
+    labels:
+      - "traefik.http.middlewares.strip1.stripprefixregex.regex=^\\/[^\\/]+"
+      - "traefik.http.middlewares.strip2.stripprefixregex.regex=^\\/[^\\/]+\\/[^\\/]+"
+      - "traefik.http.middlewares.strip3.stripprefixregex.regex=^\\/[^\\/]+\\/[^\\/]+\\/[^\\/]+"
+      - "traefik.http.middlewares.allowCORS.headers.accesscontrolallowmethods=GET"
+      - "traefik.http.middlewares.allowCORS.headers.accesscontrolallowheaders=*"
+      - "traefik.http.middlewares.allowCORS.headers.accesscontrolalloworiginlist=*"
+      - "traefik.http.middlewares.allowCORS.headers.accesscontrolmaxage=600"
+
+  config:
+    container_name: wheretopark_config
+    image: nginx:alpine
+    restart: unless-stopped
+    volumes:
+      - ./providers.dev.json:/usr/share/nginx/html/providers
+    ports:
+      - "9000:80"
+    labels:
+      - "traefik.http.middlewares.content-type-json.headers.customresponseheaders.Content-Type=application/json"
+      - "traefik.http.middlewares.redirect-new-config.replacepathregex.regex=/v1/providers"
+      - "traefik.http.middlewares.redirect-new-config.replacepathregex.replacement=/v1/config/providers"
+      - "traefik.http.routers.config.rule=PathPrefix(`/v1/config`) || Path(`/v1/providers`)"
+      - "traefik.http.routers.config.middlewares=redirect-new-config,strip2,content-type-json,allowCORS"
+
   
   cctv:
     container_name: wheretopark_cctv
@@ -23,6 +53,10 @@ services:
       - $HOME/.local/share/wheretopark:/opt/wheretopark
     ports:
       - "9001:8080"
+    labels:
+      - "traefik.http.routers.cctv.rule=PathPrefix(`/v1/provider/cctv`)"
+      - "traefik.http.routers.cctv.middlewares=strip3,allowCORS"
+
 
   gdansk:
     container_name: wheretopark_gdansk
@@ -35,6 +69,9 @@ services:
       LOG_LEVEL: trace
     ports:
       - "9002:8080"
+    labels:
+      - "traefik.http.routers.gdansk.rule=PathPrefix(`/v1/provider/gdansk`)"
+      - "traefik.http.routers.gdansk.middlewares=strip3,allowCORS"
 
   gdynia:
     container_name: wheretopark_gdynia
@@ -47,6 +84,9 @@ services:
       LOG_LEVEL: trace
     ports:
       - "9003:8080"
+    labels:
+      - "traefik.http.routers.gdynia.rule=PathPrefix(`/v1/provider/gdynia`)"
+      - "traefik.http.routers.gdynia.middlewares=strip3,allowCORS"
 
   glasgow:
     container_name: wheretopark_glasgow
@@ -59,6 +99,9 @@ services:
       LOG_LEVEL: trace
     ports:
       - "9004:8080"
+    labels:
+      - "traefik.http.routers.glasgow.rule=PathPrefix(`/v1/provider/glasgow`)"
+      - "traefik.http.routers.glasgow.middlewares=strip3,allowCORS"
 
   lacity:
     container_name: wheretopark_lacity
@@ -71,6 +114,9 @@ services:
       LOG_LEVEL: trace
     ports:
       - "9005:8080"
+    labels:
+      - "traefik.http.routers.lacity.rule=PathPrefix(`/v1/provider/lacity`)"
+      - "traefik.http.routers.lacity.middlewares=strip3,allowCORS"
 
   poznan:
     container_name: wheretopark_poznan
@@ -83,6 +129,10 @@ services:
       LOG_LEVEL: trace
     ports:
       - "9006:8080"
+    labels:
+      - "traefik.http.routers.poznan.rule=PathPrefix(`/v1/provider/poznan`)"
+      - "traefik.http.routers.poznan.middlewares=strip3,allowCORS"
+
 
   warsaw:
     container_name: wheretopark_warsaw
@@ -95,3 +145,6 @@ services:
       LOG_LEVEL: trace
     ports:
       - "9007:8080"
+    labels:
+      - "traefik.http.routers.warsaw.rule=PathPrefix(`/v1/provider/warsaw`)"
+      - "traefik.http.routers.warsaw.middlewares=strip3,allowCORS"
