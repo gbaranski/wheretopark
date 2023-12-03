@@ -1,0 +1,30 @@
+[
+    {
+        "name": "cctv",
+        "url": "http://localhost:80/v1/provider/cctv"
+    },
+    {
+        "name": "gdansk",
+        "url": "http://localhost:80/v1/provider/gdansk"
+    },
+    {
+        "name": "gdynia",
+        "url": "http://localhost:80/v1/provider/gdynia"
+    },
+    {
+        "name": "glasgow",
+        "url": "http://localhost:80/v1/provider/glasgow"
+    },
+    {
+        "name": "lacity",
+        "url": "http://localhost:80/v1/provider/lacity"
+    },
+    {
+        "name": "poznan",
+        "url": "http://localhost:80/v1/provider/poznan"
+    },
+    {
+        "name": "warsaw",
+        "url": "http://localhost:80/v1/provider/warsaw"
+    }
+]

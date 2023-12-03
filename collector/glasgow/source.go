@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"time"
-	"wheretopark/collector/client"
 	wheretopark "wheretopark/go"
 
 	"github.com/rs/zerolog/log"
@@ -22,7 +21,7 @@ var (
 )
 
 func (s Source) ParkingLots(ctx context.Context) (<-chan map[wheretopark.ID]wheretopark.ParkingLot, error) {
-	vendor, err := client.Get[Response](DATA_URL, nil)
+	vendor, err := wheretopark.Get[Response](DATA_URL, nil)
 	if err != nil {
 		return nil, err
 	}

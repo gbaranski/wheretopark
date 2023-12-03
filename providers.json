@@ -1,0 +1,30 @@
+[
+    {
+        "name": "cctv",
+        "url": "https://api.wheretopark.app/v1/provider/cctv"
+    },
+    {
+        "name": "gdansk",
+        "url": "https://api.wheretopark.app/v1/provider/gdansk"
+    },
+    {
+        "name": "gdynia",
+        "url": "https://api.wheretopark.app/v1/provider/gdynia"
+    },
+    {
+        "name": "glasgow",
+        "url": "https://api.wheretopark.app/v1/provider/glasgow"
+    },
+    {
+        "name": "lacity",
+        "url": "https://api.wheretopark.app/v1/provider/lacity"
+    },
+    {
+        "name": "poznan",
+        "url": "https://api.wheretopark.app/v1/provider/poznan"
+    },
+    {
+        "name": "warsaw",
+        "url": "https://api.wheretopark.app/v1/provider/warsaw"
+    }
+]
