@@ -1,26 +1,97 @@
 version: "3.8"
 services:
-  caddy:
-    image: caddy:latest
-    container_name: wheretopark_caddy
-    restart: unless-stopped
-    ports:
-      - "1234:1234"
-    volumes:
-      - $PWD/Caddyfile.dev:/etc/caddy/Caddyfile
-
-  collector:
-    container_name: wheretopark_collector
+  # caddy:
+  #   image: caddy:latest
+  #   container_name: wheretopark_caddy
+  #   restart: unless-stopped
+  #   ports:
+  #     - "1234:1234"
+  #   volumes:
+  #     - $PWD/Caddyfile.dev:/etc/caddy/Caddyfile
+  
+  cctv:
+    container_name: wheretopark_cctv
     restart: unless-stopped
     build:
       context: .
-      dockerfile: ./cmd/collector/Dockerfile
+      dockerfile: ./cmd/cctv/Dockerfile
     environment:
-      CCTV_MODEL_PATH: /opt/wheretopark/model.onnx
+      PORT: 8080
       LOG_LEVEL: trace
+      CCTV_MODEL_PATH: /opt/wheretopark/model.onnx
     volumes:
       - $HOME/.local/share/wheretopark:/opt/wheretopark
     ports:
-      - "8001:8080"
+      - "9001:8080"
 
-volumes:
+  gdansk:
+    container_name: wheretopark_gdansk
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: ./cmd/gdansk/Dockerfile
+    environment:
+      PORT: 8080
+      LOG_LEVEL: trace
+    ports:
+      - "9002:8080"
+
+  gdynia:
+    container_name: wheretopark_gdynia
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: ./cmd/gdynia/Dockerfile
+    environment:
+      PORT: 8080
+      LOG_LEVEL: trace
+    ports:
+      - "9003:8080"
+
+  glasgow:
+    container_name: wheretopark_glasgow
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: ./cmd/glasgow/Dockerfile
+    environment:
+      PORT: 8080
+      LOG_LEVEL: trace
+    ports:
+      - "9004:8080"
+
+  lacity:
+    container_name: wheretopark_lacity
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: ./cmd/lacity/Dockerfile
+    environment:
+      PORT: 8080
+      LOG_LEVEL: trace
+    ports:
+      - "9005:8080"
+
+  poznan:
+    container_name: wheretopark_poznan
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: ./cmd/poznan/Dockerfile
+    environment:
+      PORT: 8080
+      LOG_LEVEL: trace
+    ports:
+      - "9006:8080"
+
+  warsaw:
+    container_name: wheretopark_warsaw
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: ./cmd/warsaw/Dockerfile
+    environment:
+      PORT: 8080
+      LOG_LEVEL: trace
+    ports:
+      - "9007:8080"

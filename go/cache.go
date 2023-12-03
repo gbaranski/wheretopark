@@ -30,82 +30,76 @@ func NewCache() (*Cache, error) {
 	}, nil
 }
 
-func (c *Cache) GetParkingLotsOrUpdate(source string, or func() (map[ID]ParkingLot, error)) (map[ID]ParkingLot, error) {
-	parkingLots := c.GetParkingLots(source)
-	if parkingLots != nil {
-		return parkingLots, nil
+func (c *Cache) GetParkingLotOr(id string, or func() (ParkingLot, error)) (ParkingLot, error) {
+	parkingLot := c.GetParkingLot(id)
+	if parkingLot != nil {
+		return *parkingLot, nil
 	}
-	newParkingLots, err := or()
+	newParkingLot, err := or()
 	if err != nil {
-		return nil, fmt.Errorf("or() failed: %w", err)
+		return ParkingLot{}, fmt.Errorf("or() failed: %w", err)
 	}
-	c.SetParkingLots(source, newParkingLots)
-	return newParkingLots, nil
+	c.SetParkingLot(id, &newParkingLot)
+	return newParkingLot, nil
 }
 
-func (c *Cache) GetParkingLots(source string) map[ID]ParkingLot {
-	data, err := c.i.Get(source)
+func (c *Cache) GetParkingLot(id ID) *ParkingLot {
+	data, err := c.i.Get(id)
 	if err != nil {
 		if err != bigcache.ErrEntryNotFound {
-			log.Error().Err(err).Str("source", source).Msg("failed to get value from cache")
+			log.Error().Err(err).Str("id", id).Msg("failed to get value from cache")
 		}
-		log.Debug().Str("key", source).Msg("cache miss")
+		log.Debug().Str("key", id).Msg("cache miss")
 		return nil
 	}
 
 	hash := fnv.New32a()
 	hash.Write(data)
 
-	log.Trace().Str("source", source).Uint32("sum", hash.Sum32()).Msg(fmt.Sprintf("got `%s` from cache", data))
-	var value map[ID]ParkingLot
+	log.Trace().Str("id", id).Uint32("sum", hash.Sum32()).Msg(fmt.Sprintf("got `%s` from cache", data))
+	var value ParkingLot
 	if err := json.Unmarshal([]byte(data), &value); err != nil {
 		log.Fatal().Err(err).Msg("failed to unmarshal values")
 	}
-	return value
+	return &value
 }
 
-func (c *Cache) SetParkingLots(source string, parkingLots map[ID]ParkingLot) error {
-	data, err := json.Marshal(parkingLots)
-	if err != nil {
-		log.Fatal().Err(err).Msg("failed to marshal value")
-	}
-	hash := fnv.New32a()
-	hash.Write(data)
-	log.Trace().Str("source", source).Uint32("sum", hash.Sum32()).Msg(fmt.Sprintf("set `%s` to cache", data))
-	return c.i.Set(source, data)
-}
-
-func (c *Cache) UpdateParkingLots(source string, parkingLots map[ID]ParkingLot) error {
-	data, err := c.i.Get(source)
-	found := true
-	if err != nil {
-		if err == bigcache.ErrEntryNotFound {
-			found = false
-		} else {
-			return err
+func (c *Cache) GetAllParkingLots() map[ID]ParkingLot {
+	iterator := c.i.Iterator()
+	parkingLots := make(map[ID]ParkingLot, c.i.Len())
+	for iterator.SetNext() {
+		current, err := iterator.Value()
+		if err != nil {
+			log.Error().Err(err).Msg("failed to iterate over cache")
+			continue
 		}
-	}
 
-	var value map[ID]ParkingLot
-	if found {
+		data := current.Value()
+		id := ID(current.Key())
+		hash := fnv.New32a()
+		hash.Write(data)
+
+		log.Trace().Str("id", id).Uint32("sum", hash.Sum32()).Msg(fmt.Sprintf("got `%s` from cache", data))
+
+		var value ParkingLot
 		if err := json.Unmarshal([]byte(data), &value); err != nil {
-			log.Fatal().Str("data", string(data)).Err(err).Msg("failed to unmarshal values")
+			log.Fatal().Err(err).Msg("failed to unmarshal values")
 		}
-		for id, parkingLot := range parkingLots {
-			value[id] = parkingLot
-		}
-	} else {
-		value = parkingLots
+		parkingLots[id] = value
 	}
 
-	data, err = json.Marshal(value)
+	return parkingLots
+}
+
+func (c *Cache) SetParkingLot(id ID, parkingLot *ParkingLot) error {
+	data, err := json.Marshal(parkingLot)
 	if err != nil {
 		log.Fatal().Err(err).Msg("failed to marshal value")
 	}
 	hash := fnv.New32a()
 	hash.Write(data)
-	log.Trace().Str("source", source).Uint32("sum", hash.Sum32()).Msg(fmt.Sprintf("update `%s` to cache", data))
-	return c.i.Set(source, data)
+	log.Trace().Str("id", id).Uint32("sum", hash.Sum32()).Msg(fmt.Sprintf("set `%s` to cache", data))
+	return c.i.Set(id, data)
 }
 
 func (c *Cache) Close() error {

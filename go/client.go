@@ -1,4 +1,4 @@
-package client
+package wheretopark
 
 import (
 	"net/url"

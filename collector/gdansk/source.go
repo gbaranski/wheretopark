@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"time"
-	"wheretopark/collector/client"
 	wheretopark "wheretopark/go"
 
 	"github.com/rs/zerolog/log"
@@ -20,11 +19,11 @@ var (
 type Source struct{}
 
 func (s Source) ParkingLots(ctx context.Context) (<-chan map[wheretopark.ID]wheretopark.ParkingLot, error) {
-	vMetadata, err := client.Get[Metadata](METADATA_URL, nil)
+	vMetadata, err := wheretopark.Get[Metadata](METADATA_URL, nil)
 	if err != nil {
 		return nil, err
 	}
-	vState, err := client.Get[State](STATE_URL, nil)
+	vState, err := wheretopark.Get[State](STATE_URL, nil)
 	if err != nil {
 		return nil, err
 	}

@@ -8,10 +8,10 @@ COPY go.* ./
 RUN go mod download
 
 COPY go ./go
-COPY ./collector ./collector
-COPY ./cmd/collector ./cmd/collector
+COPY ./collector/cctv ./collector/cctv
+COPY ./cmd/cctv ./cmd/cctv
 
-RUN go build -v -o exe ./cmd/collector
+RUN go build -v -o exe ./cmd/cctv
 
 FROM gocv/opencv:4.8.0
 

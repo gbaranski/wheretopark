@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"net/url"
 	"sync"
-	"wheretopark/collector/client"
 	wheretopark "wheretopark/go"
 
 	"github.com/rs/zerolog/log"
@@ -14,11 +13,6 @@ import (
 const URL_FORMAT = "https://www.ztm.poznan.pl/pl/dla-deweloperow/getParkingFile?file=ZTM_ParkAndRide__%s.csv"
 
 type Source struct{}
-
-type container struct {
-	sync.Mutex
-	parkingLots map[wheretopark.ID]wheretopark.ParkingLot
-}
 
 func (s Source) ParkingLots(ctx context.Context) (<-chan map[wheretopark.ID]wheretopark.ParkingLot, error) {
 	var wg sync.WaitGroup
@@ -32,7 +26,7 @@ func (s Source) ParkingLots(ctx context.Context) (<-chan map[wheretopark.ID]wher
 				log.Ctx(ctx).Err(err).Msg("invalid url")
 				return
 			}
-			str, err := client.GetString(url, nil)
+			str, err := wheretopark.GetString(url, nil)
 			if err != nil {
 				log.Ctx(ctx).Err(err).Str("url", url.String()).Msg("failed to get string")
 				return
