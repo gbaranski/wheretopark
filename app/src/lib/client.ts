@@ -14,7 +14,7 @@ type Provider = {
 const getProviders = async (
   fetch: typeof window.fetch,
 ): Promise<Provider[]> => {
-  const response = await fetch(`${serverURL}/v1/providers`);
+  const response = await fetch(`${serverURL}/v1/config/providers`);
   const providers = await response.json() as Provider[];
   return providers;
 };
