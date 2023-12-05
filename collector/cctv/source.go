@@ -39,7 +39,7 @@ func (s Source) stateOf(ctx context.Context, parkingLot ConfiguredParkingLot) (w
 			defer wg.Done()
 			camAvailableSpots, err := s.processCamera(camera)
 			if err != nil {
-				log.Ctx(ctx).Error().Err(err).Int("id", id).Msg("processing camera fail")
+				log.Ctx(ctx).Error().Err(err).Int("camera", id).Msg("processing camera fail")
 				return
 			}
 			for spotType, count := range camAvailableSpots {
