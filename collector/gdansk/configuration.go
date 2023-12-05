@@ -505,7 +505,30 @@ W tym przypadku podstawą będzie niebieska naklejka na szybie pojazdu z symbole
 				},
 			},
 		},
-
+		"20": {
+			Resources: []string{
+				"https://gzdiz.gda.pl/aktualnosci/parkingi-nadmorskie-w-sezonie-letnim-2021,a,4773",
+			},
+			TotalSpots: map[string]uint{
+				wheretopark.SpotTypeCar: 123,
+			},
+			MaxDimensions: &wheretopark.Dimensions{
+				Height: -1,
+			},
+			Features: []string{
+				wheretopark.FeatureUncovered,
+			},
+			PaymentMethods: []string{},
+			Comment:        map[string]string{},
+			Rules: []wheretopark.Rule{
+				{
+					Hours: "24/7",
+					Pricing: []wheretopark.PricingRule{
+						wheretopark.NewIntPricingRule("PT1H", 0).Repeated(),
+					},
+				},
+			},
+		},
 		"21": {
 			Resources: []string{
 				"https://gzdiz.gda.pl/aktualnosci/parkingi-nadmorskie-w-sezonie-letnim-2021,a,4773",
