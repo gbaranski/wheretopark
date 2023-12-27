@@ -38,6 +38,15 @@ services:
       - "traefik.http.routers.config.rule=PathPrefix(`/v1/config`) || Path(`/v1/providers`)"
       - "traefik.http.routers.config.middlewares=redirect-new-config,strip2,content-type-json,allowCORS"
 
+  influxer:
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: ./cmd/influxer/Dockerfile
+    environment:
+      LOG_LEVEL: debug
+      SERVER_URL: "http://config:9000"
+      INFLUXDB_TOKEN: lj3YEMcRfKvtxM6mAkfdk8fkR5wgPt5ZB0KBhOtPOGDE0ZE_1V8jrv8LPMU1PMj_CjqHM-9QnnYb0j52s7iTeA==
   
   cctv:
     container_name: wheretopark_cctv

@@ -72,6 +72,16 @@ services:
       - "traefik.http.routers.config.tls.certresolver=myresolver"
       - "traefik.http.routers.config.middlewares=config-redirect,config-cors,config-strip,config-content-type"
 
+  influxer:
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: ./cmd/influxer/Dockerfile
+    environment:
+      LOG_LEVEL: debug
+      SERVER_URL: "https://api.wheretopark.app"
+      INFLUXDB_TOKEN: lj3YEMcRfKvtxM6mAkfdk8fkR5wgPt5ZB0KBhOtPOGDE0ZE_1V8jrv8LPMU1PMj_CjqHM-9QnnYb0j52s7iTeA==
+
   cctv:
     restart: unless-stopped
     build:
