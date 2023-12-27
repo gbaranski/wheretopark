@@ -5,12 +5,13 @@ WORKDIR /app
 COPY go.* ./
 RUN go mod download
 
-COPY ./cmd/influxer ./cmd/influxer
 COPY go ./go
+COPY ./cmd/influxer ./cmd/influxer
 
-RUN go build -v -o influxer ./cmd/influxer
+
+RUN go build -v -o exe ./cmd/influxer
 
 FROM golang:1-alpine
 
-COPY --from=builder /app/influxer /app/influxer
-CMD ["/app/influxer"]
+COPY --from=builder /app/exe /app/exe
+CMD ["/app/exe"]
