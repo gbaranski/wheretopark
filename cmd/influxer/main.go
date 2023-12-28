@@ -7,7 +7,7 @@ import (
 	wheretopark "wheretopark/go"
 
 	"github.com/InfluxCommunity/influxdb3-go/influxdb3"
-	"github.com/caarlos0/env/v9"
+	"github.com/caarlos0/env/v10"
 	"github.com/rs/zerolog/log"
 )
 

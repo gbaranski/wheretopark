@@ -7,7 +7,7 @@ toolchain go1.21.1
 require (
 	github.com/InfluxCommunity/influxdb3-go v0.5.0
 	github.com/allegro/bigcache/v3 v3.1.0
-	github.com/caarlos0/env/v9 v9.0.0
+	github.com/caarlos0/env/v10 v10.0.0
 	github.com/go-chi/chi/v5 v5.0.10
 	github.com/go-resty/resty/v2 v2.9.1
 	github.com/goccy/go-yaml v1.11.2
