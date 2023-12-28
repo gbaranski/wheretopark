@@ -61,20 +61,23 @@ func process(client *wheretopark.ServerClient, influx *influxdb3.Client, bucket 
 		return fmt.Errorf("failed to fetch providers: %w", err)
 	}
 
-	parkingLots, err := client.GetFromMany(providers)
+	entries, err := client.GetFromManyGrouped(providers)
 	if err != nil {
 		return fmt.Errorf("failed to fetch all parking lots: %w", err)
 	}
 
-	points := make([]*influxdb3.Point, 0, len(parkingLots))
-	for id, parkingLot := range parkingLots {
-		point := influxdb3.NewPointWithMeasurement("availability").
-			SetTag("id", id).
-			SetTag("name", parkingLot.Metadata.Name).
-			SetField("availableSpots", parkingLot.State.AvailableSpots["CAR"]).
-			SetField("totalSpots", parkingLot.Metadata.TotalSpots["CAR"]).
-			SetTimestamp(parkingLot.State.LastUpdated)
-		points = append(points, point)
+	points := make([]*influxdb3.Point, 0)
+	for provider, parkingLots := range entries {
+		for id, parkingLot := range parkingLots {
+			point := influxdb3.NewPointWithMeasurement("availability").
+				SetTag("id", id).
+				SetTag("name", parkingLot.Metadata.Name).
+				SetTag("provider", provider).
+				SetField("availableSpots", parkingLot.State.AvailableSpots["CAR"]).
+				SetField("totalSpots", parkingLot.Metadata.TotalSpots["CAR"]).
+				SetTimestamp(parkingLot.State.LastUpdated)
+			points = append(points, point)
+		}
 	}
 
 	if err := influx.WritePointsWithOptions(context.Background(), &influxdb3.WriteOptions{

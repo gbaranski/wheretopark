@@ -80,3 +80,24 @@ func (c *ServerClient) GetFromMany(providers []ProviderConfig) (map[ID]ParkingLo
 	wg.Wait()
 	return allParkingLots, nil
 }
+
+func (c *ServerClient) GetFromManyGrouped(providers []ProviderConfig) (map[string]map[ID]ParkingLot, error) {
+	var wg sync.WaitGroup
+	var mu sync.Mutex
+	allParkingLotsByProvider := make(map[string]map[ID]ParkingLot)
+	for _, provider := range providers {
+		wg.Add(1)
+		go func(provider ProviderConfig) {
+			defer wg.Done()
+			parkingLots, err := c.GetFrom(provider)
+			if err != nil {
+				log.Error().Err(err).Str("url", provider.URL.String()).Msgf("failed to fetch from %s", provider.Name)
+			}
+			mu.Lock()
+			allParkingLotsByProvider[provider.Name] = parkingLots
+			mu.Unlock()
+		}(provider)
+	}
+	wg.Wait()
+	return allParkingLotsByProvider, nil
+}
