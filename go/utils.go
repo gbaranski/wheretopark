@@ -40,36 +40,31 @@ func WithTimeout(fn func() error, timeout time.Duration) error {
 	}
 }
 
-func MustParseDate(date string) time.Time {
-	v, err := time.Parse(time.DateOnly, date)
+func Must[T any](value T, err error) T {
 	if err != nil {
 		panic(err)
 	}
-	return v
+	return value
+}
+
+func MustParseDate(date string) time.Time {
+	return Must(time.Parse(time.DateOnly, date))
 }
 
 func MustParseDateTime(dateTime string) time.Time {
-	v, err := time.Parse(time.RFC3339, dateTime)
-	if err != nil {
-		panic(err)
-	}
-	return v
+	return Must(time.Parse(time.RFC3339, dateTime))
+}
+
+func MustParseDateTimeWith(layout string, dateTime string) time.Time {
+	return Must(time.Parse(layout, dateTime))
 }
 
 func MustLoadLocation(name string) *time.Location {
-	location, err := time.LoadLocation(name)
-	if err != nil {
-		panic(err)
-	}
-	return location
+	return Must(time.LoadLocation(name))
 }
 
 func MustParseURL(v string) *url.URL {
-	url, err := url.Parse(v)
-	if err != nil {
-		panic(err)
-	}
-	return url
+	return Must(url.Parse(v))
 }
 
 func ExtractMetadatas(parkingLots map[ID]ParkingLot) map[ID]Metadata {
