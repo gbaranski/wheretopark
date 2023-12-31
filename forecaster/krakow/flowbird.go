@@ -54,7 +54,7 @@ func (f Flowbird) Load() (map[string]*forecaster.ParkingMeter, error) {
 				if _, ok := meters[entry.Code]; !ok {
 					meters[entry.Code] = &forecaster.ParkingMeter{
 						Name:          fmt.Sprintf("Parking %s", entry.Code),
-						OccupancyData: make(map[time.Time]int),
+						OccupancyData: make(map[time.Time]uint),
 					}
 				}
 				meters[entry.Code].AddOccupancy(entry.Date, entry.EndDate)

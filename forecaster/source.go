@@ -1,6 +1,8 @@
 package forecaster
 
-import "time"
+import (
+	"time"
+)
 
 type Source interface {
 	Name() string
@@ -9,7 +11,7 @@ type Source interface {
 
 type ParkingMeter struct {
 	Name          string
-	OccupancyData map[time.Time]int
+	OccupancyData map[time.Time]uint
 }
 
 const Interval time.Duration = time.Minute * 15
@@ -20,6 +22,28 @@ func (p *ParkingMeter) AddOccupancy(start time.Time, end time.Time) {
 
 	for currentInterval.Before(endInterval) {
 		p.OccupancyData[currentInterval]++
+		currentInterval = currentInterval.Add(Interval)
+	}
+}
+
+func (p *ParkingMeter) FillEmptyIntervals() {
+	earliest := time.Now()
+	latest := time.Time{}
+	for interval := range p.OccupancyData {
+		if interval.Before(earliest) {
+			earliest = interval
+		}
+		if interval.After(latest) {
+			latest = interval
+		}
+	}
+
+	currentInterval := earliest
+	endInterval := latest
+	for currentInterval.Before(endInterval) {
+		if _, ok := p.OccupancyData[currentInterval]; !ok {
+			p.OccupancyData[currentInterval] = 0
+		}
 		currentInterval = currentInterval.Add(Interval)
 	}
 }

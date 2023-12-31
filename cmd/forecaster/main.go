@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/csv"
+	"encoding/json"
 	"flag"
 	"fmt"
 	"os"
@@ -81,12 +82,22 @@ func SaveOutput(meters map[wheretopark.ID]*forecaster.ParkingMeter, path string)
 	defer w.Flush()
 
 	timeseries := forecaster.NewTimeseries(meters)
-	records := timeseries.EncodeCSV()
-	for _, record := range records {
-		if err := w.Write(record); err != nil {
-			return fmt.Errorf("error writing record: %w", err)
-		}
+	jsonData, err := json.Marshal(timeseries)
+	if err != nil {
+		return fmt.Errorf("error marshalling timeseries: %w", err)
 	}
-	log.Info().Msg(fmt.Sprintf("wrote %d records to %s", len(records), path))
+	err = os.WriteFile(path, jsonData, 0644)
+	if err != nil {
+		return fmt.Errorf("error writing json: %w", err)
+	}
+	log.Info().Msg(fmt.Sprintf("wrote %d parking lots to %s", len(timeseries.ParkingLots), path))
+
+	// records := timeseries.EncodeCSV()
+	// for _, record := range records {
+	// 	if err := w.Write(record); err != nil {
+	// 		return fmt.Errorf("error writing record: %w", err)
+	// 	}
+	// }
+	// log.Info().Msg(fmt.Sprintf("wrote %d records to %s", len(records), path))
 	return nil
 }
