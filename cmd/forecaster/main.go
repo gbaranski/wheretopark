@@ -55,7 +55,7 @@ func main() {
 			}
 		}
 		if id == "" {
-			log.Error().Str("code", code).Msg("meter without metadata")
+			log.Warn().Str("code", code).Msg("meter without metadata")
 			continue
 		}
 		metersByID[id] = meter

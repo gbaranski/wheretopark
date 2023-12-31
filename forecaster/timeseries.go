@@ -2,7 +2,9 @@ package forecaster
 
 import (
 	"fmt"
+	"sort"
 	"strconv"
+
 	// "sync"
 	"time"
 	wheretopark "wheretopark/go"
@@ -35,6 +37,9 @@ func NewTimeseries(meters map[wheretopark.ID]*ParkingMeter) Timeseries {
 				TotalSpots:    totalSpots,
 			})
 		}
+		sort.Slice(sequences, func(i, j int) bool {
+			return sequences[i].Date.Before(sequences[j].Date)
+		})
 		allSequences = append(allSequences, sequences...)
 		log.Debug().Msg(fmt.Sprintf("added %d sequences for %s", len(sequences), id))
 	}
@@ -58,7 +63,7 @@ func (t *Timeseries) EncodeCSV() [][]string {
 	data := make([][]string, len(t.sequences)+1)
 	data[0] = headers
 	for i, sequence := range t.sequences {
-		data[i] = sequence.EncodeCSV()
+		data[i+1] = sequence.EncodeCSV()
 	}
 	return data
 }
