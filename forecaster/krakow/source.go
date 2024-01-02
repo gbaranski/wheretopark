@@ -1,79 +1,228 @@
 package krakow
 
 import (
+	"context"
+	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
 	"sync"
 	"time"
 	"wheretopark/forecaster"
+	wheretopark "wheretopark/go"
 
 	"github.com/rs/zerolog/log"
 )
 
 type Krakow struct {
 	metadataPath string
-	sources      []forecaster.Source
+	sources      map[string]Source
 }
 
 func NewKrakow(baseSourcePath string) Krakow {
-	sources := []forecaster.Source{
-		NewFlowbird(filepath.Join(baseSourcePath, "FLOWBIRD")),
-		NewSolari2000(filepath.Join(baseSourcePath, "SOLARI 2000")),
-		NewSolari3000(filepath.Join(baseSourcePath, "SOLARI 3000")),
-	}
 	return Krakow{
 		metadataPath: filepath.Join(baseSourcePath, "parkomaty.xml"),
-		sources:      sources,
+		sources: map[string]Source{
+			"Flowbird":    NewFlowbird(filepath.Join(baseSourcePath, "FLOWBIRD")),
+			"Solari 2000": NewSolari(filepath.Join(baseSourcePath, "SOLARI 2000")),
+			"Solari 3000": NewSolari(filepath.Join(baseSourcePath, "SOLARI 3000")),
+		},
 	}
 }
 
-func (k Krakow) Load() (map[string]*forecaster.ParkingMeter, error) {
+type ZonedMeters struct {
+	ZoneA map[string]forecaster.ParkingLot
+	ZoneB map[string]forecaster.ParkingLot
+	ZoneC map[string]forecaster.ParkingLot
+}
+
+type meterCode = string
+
+type meterRecord struct {
+	zone      string
+	subzone   string
+	startDate time.Time
+	endDate   time.Time
+}
+
+type SourceFile[T any] interface {
+	Read(*os.File) T
+}
+
+type Source interface {
+	Files() ([]string, error)
+	LoadFile(*os.File) (map[meterCode][]meterRecord, error)
+}
+
+func (k Krakow) LoadSource(ctx context.Context, source Source) (map[meterCode][]meterRecord, error) {
+	start := time.Now()
+	files, err := source.Files()
+	if err != nil {
+		return nil, err
+	}
+
 	var wg sync.WaitGroup
 	var mu sync.Mutex
-	allMeters := make(map[string]*forecaster.ParkingMeter)
-	for _, source := range k.sources {
+	allRecords := make(map[meterCode][]meterRecord)
+	for _, file := range files {
 		wg.Add(1)
-		go func(source forecaster.Source) {
+		go func(filepath string) {
 			defer wg.Done()
-			log.Info().Str("source", source.Name()).Msg("loading source")
-			start := time.Now()
-			meters, err := source.Load()
+			file, err := os.Open(filepath)
 			if err != nil {
-				log.Error().Err(err).Str("source", source.Name()).Msg("failed to load source")
+				log.Ctx(ctx).Error().Err(err).Str("file", filepath).Msg("failed to open file")
+			}
+			defer file.Close()
+			records, err := source.LoadFile(file)
+			if err != nil {
+				log.Ctx(ctx).Error().Err(err).Msg("failed to load records")
 				return
 			}
-			log.Info().Str("source", source.Name()).Int("meters", len(meters)).Float64("time", time.Since(start).Seconds()).Msg("loaded source")
 			mu.Lock()
-			for code, meter := range meters {
-				allMeters[code] = meter
+			for code, records := range records {
+				allRecords[code] = append(allRecords[code], records...)
+			}
+			mu.Unlock()
+
+		}(file)
+	}
+	wg.Wait()
+
+	var totalRecords uint
+	for _, records := range allRecords {
+		totalRecords += uint(len(records))
+	}
+
+	log.
+		Ctx(ctx).
+		Info().
+		Msg(
+			fmt.Sprintf(
+				"loaded %d meter records from %d files in %d ms",
+				totalRecords,
+				len(files),
+				time.Since(start).Milliseconds()),
+		)
+	return allRecords, nil
+}
+
+func (k Krakow) Load() (map[wheretopark.ID]forecaster.ParkingLot, error) {
+	metadata, err := k.Metadata()
+	if err != nil {
+		log.Fatal().Err(err).Msg("error loading metadata")
+	}
+
+	var wg sync.WaitGroup
+	var mu sync.Mutex
+	allRecords := make(map[meterCode][]meterRecord)
+	log.Info().Msg(fmt.Sprintf("loading meter records from %d sources", len(k.sources)))
+	for name, source := range k.sources {
+		wg.Add(1)
+		ctx := log.With().Str("source", name).Logger().WithContext(context.Background())
+		go func(source Source) {
+			defer wg.Done()
+			records, err := k.LoadSource(ctx, source)
+			if err != nil {
+				log.Ctx(ctx).Error().Err(err).Msg("failed to load records")
+				return
+			}
+			mu.Lock()
+			for meterCode, records := range records {
+				if _, ok := allRecords[meterCode]; !ok {
+					allRecords[meterCode] = make([]meterRecord, 0, len(records))
+				}
+				allRecords[meterCode] = append(allRecords[meterCode], records...)
 			}
 			mu.Unlock()
 		}(source)
 	}
 	wg.Wait()
 
-	return allMeters, nil
+	parkingLots := make(map[wheretopark.ID]forecaster.ParkingLot, len(allRecords))
+	for code, records := range allRecords {
+		if len(records) < int(forecaster.MinimumRecords) {
+			log.Debug().Str("meterCode", code).Msg(fmt.Sprintf("not enough records(%d), skipping", len(records)))
+			continue
+
+		}
+		placemark, ok := metadata[code]
+		if !ok {
+			log.Warn().Str("code", code).Msg("no metadata for parking meter, skipping")
+			continue
+		}
+
+		// create sequences
+		sequences := make(map[time.Time]uint)
+		for _, record := range records {
+			currentInterval := record.startDate.Truncate(forecaster.DefaultInterval)
+			endInterval := record.endDate.Truncate(forecaster.DefaultInterval)
+
+			for currentInterval.Before(endInterval) {
+				sequences[currentInterval]++
+				currentInterval = currentInterval.Add(forecaster.DefaultInterval)
+			}
+		}
+		// fill in missing intervals
+		{
+			earliest := time.Now()
+			latest := time.Time{}
+			for interval := range sequences {
+				if interval.Before(earliest) {
+					earliest = interval
+				}
+				if interval.After(latest) {
+					latest = interval
+				}
+			}
+			currentInterval := earliest
+			endInterval := latest
+			for currentInterval.Before(endInterval) {
+				if _, ok := sequences[currentInterval]; !ok {
+					sequences[currentInterval] = 0
+				}
+				currentInterval = currentInterval.Add(forecaster.DefaultInterval)
+			}
+		}
+
+		parkingID := wheretopark.CoordinateToID(placemark.Coordinates.Latitude, placemark.Coordinates.Longitude)
+		totalSpots := forecaster.MaxOccupiedSpots(sequences)
+		parkingLot := forecaster.ParkingLot{
+			TotalSpots: totalSpots,
+			Sequences:  sequences,
+		}
+		parkingLots[parkingID] = parkingLot
+	}
+	log.Info().Msg(fmt.Sprintf("loaded %d parking lots from %d sources", len(parkingLots), len(k.sources)))
+
+	return parkingLots, nil
 }
 
-func (k Krakow) Metadata() ([]Placemark, error) {
-	return LoadPlacemarks(k.metadataPath)
+func (k Krakow) Metadata() (map[string]Placemark, error) {
+	placemarks, err := LoadPlacemarks(k.metadataPath)
+	if err != nil {
+		return nil, err
+	}
+	placemarksMap := make(map[string]Placemark, len(placemarks))
+	for _, placemark := range placemarks {
+		placemarksMap[placemark.Code] = placemark
+	}
+	return placemarksMap, nil
 
 }
 
-func ListFilesByExtension(path string, extension string) ([]os.DirEntry, error) {
+func ListFilesByExtension(path string, extension string) ([]string, error) {
 	entries, err := os.ReadDir(path)
 	if err != nil {
 		log.Fatal().Err(err).Send()
 	}
 
-	filteredEntries := make([]os.DirEntry, 0, len(entries))
+	filteredEntries := make([]string, 0, len(entries))
 	for _, entry := range entries {
 		if entry.IsDir() {
 			continue
 		}
 		if strings.HasSuffix(entry.Name(), extension) {
-			filteredEntries = append(filteredEntries, entry)
+			filteredEntries = append(filteredEntries, filepath.Join(path, entry.Name()))
 		}
 	}
 	return filteredEntries, nil
