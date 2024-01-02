@@ -30,12 +30,6 @@ func NewKrakow(baseSourcePath string) Krakow {
 	}
 }
 
-type ZonedMeters struct {
-	ZoneA map[string]forecaster.ParkingLot
-	ZoneB map[string]forecaster.ParkingLot
-	ZoneC map[string]forecaster.ParkingLot
-}
-
 type meterCode = string
 
 type meterRecord struct {
@@ -43,6 +37,11 @@ type meterRecord struct {
 	subzone   string
 	startDate time.Time
 	endDate   time.Time
+}
+
+type krakowParkingLot struct {
+	forecaster.ParkingLot
+	Zone string
 }
 
 type SourceFile[T any] interface {
@@ -106,7 +105,7 @@ func (k Krakow) LoadSource(ctx context.Context, source Source) (map[meterCode][]
 	return allRecords, nil
 }
 
-func (k Krakow) Load() (map[wheretopark.ID]forecaster.ParkingLot, error) {
+func (k Krakow) Load() (map[string]map[wheretopark.ID]forecaster.ParkingLot, error) {
 	metadata, err := k.Metadata()
 	if err != nil {
 		log.Fatal().Err(err).Msg("error loading metadata")
@@ -138,7 +137,7 @@ func (k Krakow) Load() (map[wheretopark.ID]forecaster.ParkingLot, error) {
 	}
 	wg.Wait()
 
-	parkingLots := make(map[wheretopark.ID]forecaster.ParkingLot, len(allRecords))
+	parkingLots := make(map[wheretopark.ID]krakowParkingLot, len(allRecords))
 	for code, records := range allRecords {
 		if len(records) < int(forecaster.MinimumRecords) {
 			log.Debug().Str("meterCode", code).Msg(fmt.Sprintf("not enough records(%d), skipping", len(records)))
@@ -186,15 +185,26 @@ func (k Krakow) Load() (map[wheretopark.ID]forecaster.ParkingLot, error) {
 
 		parkingID := wheretopark.CoordinateToID(placemark.Coordinates.Latitude, placemark.Coordinates.Longitude)
 		totalSpots := forecaster.MaxOccupiedSpots(sequences)
-		parkingLot := forecaster.ParkingLot{
-			TotalSpots: totalSpots,
-			Sequences:  sequences,
+		parkingLot := krakowParkingLot{
+			ParkingLot: forecaster.ParkingLot{
+				TotalSpots: totalSpots,
+				Sequences:  sequences,
+			},
+			Zone: string([]rune(placemark.Zone)[7]),
 		}
 		parkingLots[parkingID] = parkingLot
 	}
 	log.Info().Msg(fmt.Sprintf("loaded %d parking lots from %d sources", len(parkingLots), len(k.sources)))
 
-	return parkingLots, nil
+	parkingLotsByZone := make(map[string]map[wheretopark.ID]forecaster.ParkingLot)
+	for parkingID, parkingLot := range parkingLots {
+		if _, ok := parkingLotsByZone[parkingLot.Zone]; !ok {
+			parkingLotsByZone[parkingLot.Zone] = make(map[wheretopark.ID]forecaster.ParkingLot)
+		}
+		parkingLotsByZone[parkingLot.Zone][parkingID] = parkingLot.ParkingLot
+	}
+
+	return parkingLotsByZone, nil
 }
 
 func (k Krakow) Metadata() (map[string]Placemark, error) {

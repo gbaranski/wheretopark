@@ -26,23 +26,28 @@ func main() {
 	if err := env.Parse(&environment); err != nil {
 		log.Fatal().Err(err).Send()
 	}
-	datasetOutput := flag.String("output", "", "path to output the timeseries dataset")
+	datasetsOutput := flag.String("output", "", "path to output the timeseries datasets")
 	flag.Parse()
 
-	if datasetOutput == nil || *datasetOutput == "" {
+	if datasetsOutput == nil || *datasetsOutput == "" {
 		log.Fatal().Msg("missing output path. specify with --output <path>")
 	}
 
 	krk := krakow.NewKrakow(filepath.Join(environment.Source, "krakow"))
-	parkingLots, err := krk.Load()
+	parkingLotsByZone, err := krk.Load()
 	if err != nil {
 		log.Fatal().Err(err).Msg("error loading parking lots from krakow")
 	}
 
-	err = SaveOutput(parkingLots, *datasetOutput)
-	if err != nil {
-		log.Fatal().Err(err).Msg("error saving output")
+	for zone, parkingLots := range parkingLotsByZone {
+		path := filepath.Join(*datasetsOutput, fmt.Sprintf("Krakow_Zone%s.json", zone))
+		err = SaveOutput(parkingLots, path)
+		if err != nil {
+			log.Fatal().Err(err).Msg("error saving output")
+		}
+		log.Info().Msg(fmt.Sprintf("wrote %d parking lots from zone %s to %s", len(parkingLots), zone, path))
 	}
+
 }
 
 func SaveOutput(parkingLots map[wheretopark.ID]forecaster.ParkingLot, path string) error {
@@ -66,7 +71,6 @@ func SaveOutput(parkingLots map[wheretopark.ID]forecaster.ParkingLot, path strin
 	if err != nil {
 		return fmt.Errorf("error writing json: %w", err)
 	}
-	log.Info().Msg(fmt.Sprintf("wrote %d parking lots to %s", len(timeseries.ParkingLots), path))
 
 	return nil
 }
