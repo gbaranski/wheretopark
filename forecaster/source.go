@@ -9,5 +9,5 @@ type Source interface {
 	Load() (map[string]ParkingLot, error)
 }
 
-const DefaultInterval time.Duration = time.Hour
+const DefaultInterval time.Duration = time.Minute * 15
 const MinimumRecords uint = 50

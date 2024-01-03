@@ -1,11 +1,8 @@
 package main
 
 import (
-	"encoding/csv"
-	"encoding/json"
 	"flag"
 	"fmt"
-	"os"
 	"path/filepath"
 	"wheretopark/forecaster"
 	"wheretopark/forecaster/krakow"
@@ -39,34 +36,14 @@ func main() {
 		log.Fatal().Err(err).Msg("error loading parking lots from krakow")
 	}
 
-	err = SaveOutput(parkingLots, *datasetOutput)
-	if err != nil {
-		log.Fatal().Err(err).Msg("error saving output")
-	}
-}
-
-func SaveOutput(parkingLots map[wheretopark.ID]forecaster.ParkingLot, path string) error {
-	f, err := os.Create(path)
-	if err != nil {
-		return fmt.Errorf("error creating file: %w", err)
-	}
-	defer f.Close()
-
-	w := csv.NewWriter(f)
-	defer w.Flush()
-
 	timeseries := forecaster.Timeseries{
 		ParkingLots: parkingLots,
 	}
-	jsonData, err := json.MarshalIndent(timeseries, "", "    ")
-	if err != nil {
-		return fmt.Errorf("error marshalling timeseries: %w", err)
-	}
-	err = os.WriteFile(path, jsonData, 0644)
-	if err != nil {
-		return fmt.Errorf("error writing json: %w", err)
-	}
-	log.Info().Msg(fmt.Sprintf("wrote %d parking lots to %s", len(timeseries.ParkingLots), path))
 
-	return nil
+	err = timeseries.SaveMultipleCSV(*datasetOutput)
+	if err != nil {
+		log.Fatal().Err(err).Msg("error saving output")
+	}
+
+	log.Info().Msg(fmt.Sprintf("wrote %d parking lots to %s", len(parkingLots), *datasetOutput))
 }
