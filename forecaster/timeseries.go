@@ -58,37 +58,36 @@ func SaveSingleCSV(path string, parkingLot ParkingLot) error {
 
 	w := csv.NewWriter(f)
 	defer w.Flush()
-	records := make([][]string, 0, len(parkingLot.Sequences)+1)
-	records = append(records, []string{
+	type Record struct {
+		Date      time.Time `json:"date"`
+		Occupancy float32   `json:"occupancy"`
+	}
+	records := make([]Record, 0, len(parkingLot.Sequences))
+
+	for date, occupiedSpots := range parkingLot.Sequences {
+		// record := []string{
+		// 	date.Format(time.DateTime),
+		// 	fmt.Sprintf("%f", float32(occupiedSpots)/float32(parkingLot.TotalSpots)),
+		// }
+		records = append(records, Record{
+			Date:      date,
+			Occupancy: float32(occupiedSpots) / float32(parkingLot.TotalSpots),
+		})
+	}
+	sort.Slice(records, func(i, j int) bool {
+		return records[i].Date.Before(records[j].Date)
+	})
+
+	w.Write([]string{
 		"date",
 		"occupancy",
 	})
-
-	type StructSequence struct {
-		Date          time.Time
-		OccupiedSpots uint
-	}
-
-	sequences := make([]StructSequence, 0, len(parkingLot.Sequences))
-	for date, occupiedSpots := range parkingLot.Sequences {
-		sequences = append(sequences, StructSequence{
-			Date:          date,
-			OccupiedSpots: occupiedSpots,
-		})
-	}
-	sort.Slice(sequences, func(i, j int) bool {
-		return sequences[i].Date.Before(sequences[j].Date)
-	})
-	for _, seq := range sequences {
-		record := []string{
-			seq.Date.Format(time.DateTime),
-			fmt.Sprintf("%f", float32(seq.OccupiedSpots)/float32(parkingLot.TotalSpots)),
-		}
-		records = append(records, record)
-	}
-
 	for _, record := range records {
-		if err := w.Write(record); err != nil {
+		recordString := []string{
+			record.Date.Format(time.DateTime),
+			fmt.Sprintf("%f", record.Occupancy),
+		}
+		if err := w.Write(recordString); err != nil {
 			return fmt.Errorf("error writing record to file: %w", err)
 		}
 	}

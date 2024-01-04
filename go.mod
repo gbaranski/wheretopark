@@ -13,6 +13,7 @@ require (
 	github.com/goccy/go-yaml v1.11.2
 	github.com/google/go-cmp v0.5.9
 	github.com/mmcloughlin/geohash v0.10.0
+	github.com/owulveryck/onnx-go v0.5.0
 	github.com/paulmach/go.geojson v1.5.0
 	github.com/rs/zerolog v1.31.0
 	github.com/shopspring/decimal v1.3.1
@@ -22,6 +23,7 @@ require (
 	gocv.io/x/gocv v0.34.0
 	golang.org/x/exp v0.0.0-20231006140011-7918f672742d
 	golang.org/x/text v0.14.0
+	gorgonia.org/tensor v0.9.3
 )
 
 require (
@@ -43,16 +45,23 @@ require (
 
 require (
 	github.com/apache/arrow/go/v13 v13.0.0 // indirect
+	github.com/awalterschulze/gographviz v0.0.0-20190522210029-fa59802746ab // indirect
+	github.com/chewxy/hm v1.0.0 // indirect
+	github.com/chewxy/math32 v1.0.4 // indirect
 	github.com/goccy/go-json v0.10.0 // indirect
+	github.com/gogo/protobuf v1.3.1 // indirect
 	github.com/golang/protobuf v1.5.3 // indirect
 	github.com/google/flatbuffers v23.1.21+incompatible // indirect
 	github.com/influxdata/line-protocol/v2 v2.2.1 // indirect
 	github.com/klauspost/compress v1.15.15 // indirect
 	github.com/klauspost/cpuid/v2 v2.2.3 // indirect
+	github.com/leesper/go_rng v0.0.0-20190531154944-a612b043e353 // indirect
 	github.com/mohae/deepcopy v0.0.0-20170929034955-c48cc78d4826 // indirect
 	github.com/pierrec/lz4/v4 v4.1.17 // indirect
+	github.com/pkg/errors v0.9.1 // indirect
 	github.com/richardlehane/mscfb v1.0.4 // indirect
 	github.com/richardlehane/msoleps v1.0.3 // indirect
+	github.com/xtgo/set v1.0.0 // indirect
 	github.com/xuri/efp v0.0.0-20230802181842-ad255f2331ca // indirect
 	github.com/xuri/nfp v0.0.0-20230819163627-dc951e3ffe1a // indirect
 	github.com/zeebo/xxh3 v1.0.2 // indirect
@@ -60,7 +69,13 @@ require (
 	golang.org/x/mod v0.13.0 // indirect
 	golang.org/x/net v0.18.0 // indirect
 	golang.org/x/tools v0.14.0 // indirect
+	gonum.org/v1/gonum v0.12.0 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20230822172742-b8732ec3820d // indirect
 	google.golang.org/grpc v1.59.0 // indirect
 	google.golang.org/protobuf v1.31.0 // indirect
+	gorgonia.org/cu v0.9.0-beta // indirect
+	gorgonia.org/dawson v1.1.0 // indirect
+	gorgonia.org/gorgonia v0.9.4 // indirect
+	gorgonia.org/vecf32 v0.9.0 // indirect
+	gorgonia.org/vecf64 v0.9.0 // indirect
 )
