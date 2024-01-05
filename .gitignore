@@ -75,6 +75,7 @@ outTmp/
 /kotlin-native/dist
 kotlin-ide/
 data/model.onnx
+**/*/__pycache__/
 
 # Added by cargo
 
