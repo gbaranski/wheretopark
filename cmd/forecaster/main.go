@@ -1,19 +1,29 @@
 package main
 
 import (
-	"flag"
+	"context"
 	"fmt"
 	"path/filepath"
 	"wheretopark/forecaster"
 	"wheretopark/forecaster/krakow"
 	wheretopark "wheretopark/go"
 
-	"github.com/caarlos0/env/v10"
 	"github.com/rs/zerolog/log"
+
+	"github.com/caarlos0/env/v10"
 )
 
+// import (
+// 	"flag"
+// 	"fmt"
+// 	"path/filepath"
+// 	wheretopark "wheretopark/go"
+
+// 	"github.com/caarlos0/env/v10"
+// )
+
 type environment struct {
-	Source string `env:"FORECASTER_SOURCE,required"`
+	Data string `env:"FORECASTER_DATA,required"`
 }
 
 func main() {
@@ -23,27 +33,21 @@ func main() {
 	if err := env.Parse(&environment); err != nil {
 		log.Fatal().Err(err).Send()
 	}
-	datasetOutput := flag.String("output", "", "path to output the timeseries dataset")
-	flag.Parse()
 
-	if datasetOutput == nil || *datasetOutput == "" {
-		log.Fatal().Msg("missing output path. specify with --output <path>")
+	fcSources := map[string]forecaster.ForecasterSource{
+		"krakow": krakow.NewKrakow(filepath.Join(environment.Data, "datasets", "krakow")),
 	}
 
-	krk := krakow.NewKrakow(filepath.Join(environment.Source, "krakow"))
-	parkingLots, err := krk.Load()
+	source := forecaster.New(fcSources)
+	ch, err := source.ParkingLots(context.Background())
 	if err != nil {
-		log.Fatal().Err(err).Msg("error loading parking lots from krakow")
+		panic(err)
 	}
-
-	timeseries := forecaster.Timeseries{
-		ParkingLots: parkingLots,
+	for {
+		parkingLot, ok := <-ch
+		if !ok {
+			break
+		}
+		fmt.Printf("parking lot: %+v\n", parkingLot)
 	}
-
-	err = timeseries.SaveMultipleCSV(*datasetOutput)
-	if err != nil {
-		log.Fatal().Err(err).Msg("error saving output")
-	}
-
-	log.Info().Msg(fmt.Sprintf("wrote %d parking lots to %s", len(parkingLots), *datasetOutput))
 }
