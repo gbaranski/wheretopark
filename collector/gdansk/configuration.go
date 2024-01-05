@@ -31,15 +31,15 @@ var configuration = Configuration{
 				wheretopark.FeatureUncovered,
 			},
 			Comment: map[string]string{
-				"pl": `Na dwóch najwyższych kondygnacjach budynku centrum handlowego oferujemy dwupoziomowy parking i 1100 miejsc postojowych. 
-Wjazd do centrum handlowego odbywa się z ronda od strony ulicy Dmowskiego w Gdańsku. 
+				"pl": `Na dwóch najwyższych kondygnacjach budynku centrum handlowego oferujemy dwupoziomowy parking i 1100 miejsc postojowych.
+Wjazd do centrum handlowego odbywa się z ronda od strony ulicy Dmowskiego w Gdańsku.
 Komunikację między poziomami parkingowymi a poziomami handlowymi centrum handlowego zapewniają schody ruchome i windy szybkobieżne.
 Prosimy o zachowanie biletu parkingowego i opłacenie należności za postój w kasie automatycznej, znajdującej się przy wyjściu z parkingu.`,
 
 				"en": `We have prepared a two-level car park with 1,100 parking spaces (including those for disabled people) for our clients.
-It is situated on the two top floors of the building. 
-You can get there driving from the roundabout from the direction of Dmowskiego Street. 
-Both levels of the car park can be reached by a spiral parking ramp. 
+It is situated on the two top floors of the building.
+You can get there driving from the roundabout from the direction of Dmowskiego Street.
+Both levels of the car park can be reached by a spiral parking ramp.
 Escalators and high-speed lifts will take you from the car park decks to the Gallery's floors and back.`,
 
 				"ru": `На двух верхних этажах здания торгового центра расположен двухуровневый паркинг на 1100 парковочных мест.
@@ -131,8 +131,8 @@ Escalators and high-speed lifts will take you from the car park decks to the Gal
 			Comment: map[string]string{
 				"pl": `Parking naziemny zlokalizowany przy stadionie Energa w Gdańsku.
 Do dyspozycji klientów jest dostępnych 2500 miejsc parkingowych, w tym 40 bezpłatnych dla osób niepełnosprawnych.
-Parking jest podzielony na 3 segmenty: 
-  - P5 - od strony Fun Areny, 
+Parking jest podzielony na 3 segmenty:
+  - P5 - od strony Fun Areny,
   - P3 i P4 - od ulicy Pokoleń Lechii Gdańsk oraz
   - P1 - parking szlabanowy VIP.
 Segmenty P3, P4 i P5 są wyposażone w 12 parkometrów nowej generacji, w których można dokonać płatności nie tylko bilonem, ale również kartą.
@@ -140,12 +140,12 @@ Parking P5 jest wyposażony w 1 wjazd i 1 wyjazd oraz w 2 kasy automatyczne.
 
 W dniach imprez masowych można płacić aplikacją FLOW. Ceny zależne od rodzaju imprezy, np. 5/10/20 PLN za czas trwania imprezy.`,
 				"en": `Above-ground car park located by the Energa stadium in Gdańsk.
-There are about 2500 parking spaces for clients, including 40 free spaces for disabled persons. 
-The car park is divided into 3 sections: 
-  - P5 - from the Fun Arena side, 
-  - P3 and P4 - from Pokoleń Lechii Gdańsk street side 
-  - P1 - VIP barrier car park. 
-Sections P3, P4 and P5 are equipped with 12 new-generation parking meters, which accept payments not only in coins, but also by card. 
+There are about 2500 parking spaces for clients, including 40 free spaces for disabled persons.
+The car park is divided into 3 sections:
+  - P5 - from the Fun Arena side,
+  - P3 and P4 - from Pokoleń Lechii Gdańsk street side
+  - P1 - VIP barrier car park.
+Sections P3, P4 and P5 are equipped with 12 new-generation parking meters, which accept payments not only in coins, but also by card.
 P5 section has 1 entry and 1 exit as well as 2 automatic cash registers.
 
 On the days of mass events, you can pay with the FLOW application. Prices depend on the type of event, e.g. 5/10/20 PLN for the duration of the event.`,
@@ -270,7 +270,7 @@ W niedziele i świeta wyjście z parkingu przez Centrum Medyczne Rajska`,
 			Comment: map[string]string{
 				"pl": `Goście nocujący w Domu Muzyka oraz goście hotelowi nocujący w Domu Sonata, klienci Restauracji Domu Muzyka - bezpłatnie
 autokar z wycieczką nocującą w Domu Muzyka lub w Domu Sonata lub nocujący tylko kierowca autokaru - opłata indywidualna ustalana przez kierownika Domu Muzyka/Domu Sonata
-					
+
 Dla studentów i pracowników aMuz są dostępne specjalne abonamenty, więcej informacji na https://www.amuz.gda.pl/akademia/infrastruktura/parking,108
 				`,
 			},
@@ -369,10 +369,10 @@ Parking na poziomie 0 nie oferuje możliwości miejsc abonamentowych.
 			Comment: map[string]string{
 				"pl": `Dla klientow
 - kina Helios, 3 godziny parkowania bezpłatne.
-- City Fit i Media Markt, 2 godziny parkowania bezpłatne. 
+- City Fit i Media Markt, 2 godziny parkowania bezpłatne.
 
 Abonament miesięczny jest dostępny, po więcej informacji: https://forumgdansk.pl/pl/przydatne-informacje/parking
-					
+
 Biuro parkingu znajduje się na poziomie +2.
 Na parkingu znajdują się miejsca parkingowe dla osób niepełnosprawnych oraz rodzin z dziećmi.
 
@@ -420,10 +420,10 @@ W przypadku zgubienia biletu parkingowego kopię biletu można wydrukować w kas
 				wheretopark.PaymentMethodContactless,
 			},
 			Comment: map[string]string{
-				"pl": `Po wcześniejszym zgłoszeniu obsłudze przez kierującego takiej potrzeby pierwszy kwadrans będzie bezpłatny. 
+				"pl": `Po wcześniejszym zgłoszeniu obsłudze przez kierującego takiej potrzeby pierwszy kwadrans będzie bezpłatny.
 Po godzinie 17:00 do dnia następnego do godziny 9:00 za pozostawienie samochodu na parkingu nie trzeba będzie płacić.
-Z konieczności wniesienia opłaty za wjazd na parkingi nadmorskie zwolnione będą osoby niepełnosprawne, posiadające  identyfikatora „N+” wydany przez Gdański Zarząd Dróg i Zieleni lub odpowiadający mu dokument wydany przez innego zarządcę drogi. 
-Bezpłatny będzie również postój pojazdów elektrycznych i PHEV w rozumieniu Ustawy o elektromobilności i paliwach alternatywnych. 
+Z konieczności wniesienia opłaty za wjazd na parkingi nadmorskie zwolnione będą osoby niepełnosprawne, posiadające  identyfikatora „N+” wydany przez Gdański Zarząd Dróg i Zieleni lub odpowiadający mu dokument wydany przez innego zarządcę drogi.
+Bezpłatny będzie również postój pojazdów elektrycznych i PHEV w rozumieniu Ustawy o elektromobilności i paliwach alternatywnych.
 W tym przypadku podstawą będzie niebieska naklejka na szybie pojazdu z symbolem EE, karta zerowej stawki opłat na pojazdy PHEV a także zielona tablica rejestracyjna lub wskazanie gniazdka do ładowania samochodu pracownikowi obsługi przy wjeździe na parking.
 				`,
 			},
@@ -473,10 +473,10 @@ W tym przypadku podstawą będzie niebieska naklejka na szybie pojazdu z symbole
 				wheretopark.PaymentMethodContactless,
 			},
 			Comment: map[string]string{
-				"pl": `Po wcześniejszym zgłoszeniu obsłudze przez kierującego takiej potrzeby pierwszy kwadrans będzie bezpłatny. 
+				"pl": `Po wcześniejszym zgłoszeniu obsłudze przez kierującego takiej potrzeby pierwszy kwadrans będzie bezpłatny.
 Po godzinie 17:00 do dnia następnego do godziny 9:00 za pozostawienie samochodu na parkingu nie trzeba będzie płacić.
-Z konieczności wniesienia opłaty za wjazd na parkingi nadmorskie zwolnione będą osoby niepełnosprawne, posiadające  identyfikatora „N+” wydany przez Gdański Zarząd Dróg i Zieleni lub odpowiadający mu dokument wydany przez innego zarządcę drogi. 
-Bezpłatny będzie również postój pojazdów elektrycznych i PHEV w rozumieniu Ustawy o elektromobilności i paliwach alternatywnych. 
+Z konieczności wniesienia opłaty za wjazd na parkingi nadmorskie zwolnione będą osoby niepełnosprawne, posiadające  identyfikatora „N+” wydany przez Gdański Zarząd Dróg i Zieleni lub odpowiadający mu dokument wydany przez innego zarządcę drogi.
+Bezpłatny będzie również postój pojazdów elektrycznych i PHEV w rozumieniu Ustawy o elektromobilności i paliwach alternatywnych.
 W tym przypadku podstawą będzie niebieska naklejka na szybie pojazdu z symbolem EE, karta zerowej stawki opłat na pojazdy PHEV a także zielona tablica rejestracyjna lub wskazanie gniazdka do ładowania samochodu pracownikowi obsługi przy wjeździe na parking.
 				`,
 			},
@@ -548,10 +548,10 @@ W tym przypadku podstawą będzie niebieska naklejka na szybie pojazdu z symbole
 				wheretopark.PaymentMethodContactless,
 			},
 			Comment: map[string]string{
-				"pl": `Po wcześniejszym zgłoszeniu obsłudze przez kierującego takiej potrzeby pierwszy kwadrans będzie bezpłatny. 
+				"pl": `Po wcześniejszym zgłoszeniu obsłudze przez kierującego takiej potrzeby pierwszy kwadrans będzie bezpłatny.
 Po godzinie 17:00 do dnia następnego do godziny 9:00 za pozostawienie samochodu na parkingu nie trzeba będzie płacić.
-Z konieczności wniesienia opłaty za wjazd na parkingi nadmorskie zwolnione będą osoby niepełnosprawne, posiadające  identyfikatora „N+” wydany przez Gdański Zarząd Dróg i Zieleni lub odpowiadający mu dokument wydany przez innego zarządcę drogi. 
-Bezpłatny będzie również postój pojazdów elektrycznych i PHEV w rozumieniu Ustawy o elektromobilności i paliwach alternatywnych. 
+Z konieczności wniesienia opłaty za wjazd na parkingi nadmorskie zwolnione będą osoby niepełnosprawne, posiadające  identyfikatora „N+” wydany przez Gdański Zarząd Dróg i Zieleni lub odpowiadający mu dokument wydany przez innego zarządcę drogi.
+Bezpłatny będzie również postój pojazdów elektrycznych i PHEV w rozumieniu Ustawy o elektromobilności i paliwach alternatywnych.
 W tym przypadku podstawą będzie niebieska naklejka na szybie pojazdu z symbolem EE, karta zerowej stawki opłat na pojazdy PHEV a także zielona tablica rejestracyjna lub wskazanie gniazdka do ładowania samochodu pracownikowi obsługi przy wjeździe na parking.
 				`,
 			},
