@@ -7,14 +7,14 @@ import (
 	"github.com/go-resty/resty/v2"
 )
 
-var client = resty.New()
+var DefaultClient = resty.New()
 
 func init() {
-	client.GetClient().Timeout = 10 * time.Second
+	DefaultClient.GetClient().Timeout = 10 * time.Second
 }
 
 func GetString(url *url.URL, headers map[string]string) (string, error) {
-	resp, err := client.R().Get(url.String())
+	resp, err := DefaultClient.R().Get(url.String())
 	if err != nil {
 		return "", err
 	}
@@ -22,7 +22,7 @@ func GetString(url *url.URL, headers map[string]string) (string, error) {
 }
 
 func Get[T any](url *url.URL, headers map[string]string) (*T, error) {
-	resp, err := client.R().SetResult(new(T)).Get(url.String())
+	resp, err := DefaultClient.R().SetResult(new(T)).Get(url.String())
 	if err != nil {
 		return nil, err
 	}

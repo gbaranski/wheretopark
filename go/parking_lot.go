@@ -96,6 +96,14 @@ type Metadata struct {
 	Rules          []Rule                  `json:"rules,omitempty"`
 }
 
+func (m Metadata) AllTotalSpots() uint {
+	count := uint(0)
+	for _, v := range m.TotalSpots {
+		count += v
+	}
+	return count
+}
+
 type metadataAlias Metadata
 
 type metadataJSON struct {
