@@ -24,6 +24,13 @@ func NewSolari(basePath string, mapping map[uint]wheretopark.ID) DataSource {
 	}
 }
 
+func (s Solari) WorkingScheme() WorkingScheme {
+	return WorkingScheme{
+		StartHour: 10,
+		EndHour:   20,
+		Weekdays:  []time.Weekday{time.Monday, time.Tuesday, time.Wednesday, time.Thursday, time.Friday, time.Saturday},
+	}
+}
 func (s Solari) Files() ([]string, error) {
 	return listFilesWithExtension(s.basePath, "xlsx")
 }
@@ -49,7 +56,7 @@ func (f Solari) LoadRecords(file *os.File) (map[wheretopark.ID][]Record, error) 
 		dateStr := row[4]
 		durationStr := row[5]
 		if durationStr == "" || !strings.Contains(dateStr, "/") {
-			log.Debug().Str("row", fmt.Sprintf("%v", row)).Msg("skipping entry")
+			// log.Debug().Str("row", fmt.Sprintf("%v", row)).Msg("skipping entry")
 			continue
 		}
 		startDate := wheretopark.MustParseDateTimeWith(solariDateFormat, dateStr)
@@ -62,7 +69,7 @@ func (f Solari) LoadRecords(file *os.File) (map[wheretopark.ID][]Record, error) 
 		}
 		id, ok := f.mapping[uint(code)]
 		if !ok {
-			log.Debug().Uint64("code", code).Msg("missing code mapping")
+			// log.Debug().Uint64("code", code).Msg("missing code mapping")
 			continue
 		}
 		if _, ok := records[id]; !ok {

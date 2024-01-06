@@ -2,9 +2,9 @@ package meters
 
 import (
 	"encoding/csv"
-	"fmt"
 	"os"
 	"strconv"
+	"time"
 	wheretopark "wheretopark/go"
 
 	"github.com/rs/zerolog/log"
@@ -20,6 +20,14 @@ func NewFlowbird(basePath string, mapping map[uint]wheretopark.ID) DataSource {
 	return Flowbird{
 		basePath,
 		mapping,
+	}
+}
+
+func (f Flowbird) WorkingScheme() WorkingScheme {
+	return WorkingScheme{
+		StartHour: 10,
+		EndHour:   20,
+		Weekdays:  []time.Weekday{time.Monday, time.Tuesday, time.Wednesday, time.Thursday, time.Friday, time.Saturday},
 	}
 }
 
@@ -49,7 +57,7 @@ func (f Flowbird) LoadRecords(file *os.File) (map[wheretopark.ID][]Record, error
 		endDate := row[12]
 
 		if totalTime == "-" || zone == "" || subzone == "" {
-			log.Debug().Str("row", fmt.Sprintf("%v", row)).Msg("skipping entry")
+			// log.Debug().Str("row", fmt.Sprintf("%v", row)).Msg("skipping entry")
 			continue
 		}
 
@@ -60,7 +68,7 @@ func (f Flowbird) LoadRecords(file *os.File) (map[wheretopark.ID][]Record, error
 		}
 		id, ok := f.mapping[uint(code)]
 		if !ok {
-			log.Debug().Uint64("code", code).Msg("missing code mapping")
+			// log.Debug().Uint64("code", code).Msg("missing code mapping")
 			continue
 		}
 		if _, ok := records[id]; !ok {

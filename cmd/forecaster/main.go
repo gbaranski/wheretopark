@@ -63,15 +63,15 @@ func main() {
 	cachedSequencesPath := filepath.Join(environment.ForecasterCache, "sequences.csv")
 
 	var sequences map[wheretopark.ID]map[time.Time]uint
-	// if SequencesExist(cachedSequencesPath) {
-	// 	sequences = LoadSequences(cachedSequencesPath)
-	// 	log.Info().Msg(fmt.Sprintf("loaded %d sequences to %s", len(sequences), cachedSequencesPath))
-	// } else {
-	krakowSequences := krakowSequences(filepath.Join(environment.ForecasterData, "datasets", "krakow"))
-	sequences = krakowSequences
-	SaveSequences(cachedSequencesPath, sequences)
-	log.Info().Msg(fmt.Sprintf("saved %d sequences from %s", len(sequences), cachedSequencesPath))
-	// }
+	if SequencesExist(cachedSequencesPath) {
+		sequences = LoadSequences(cachedSequencesPath)
+		log.Info().Msg(fmt.Sprintf("loaded %d sequences to %s", len(sequences), cachedSequencesPath))
+	} else {
+		krakowSequences := krakowSequences(filepath.Join(environment.ForecasterData, "datasets", "krakow"))
+		sequences = krakowSequences
+		SaveSequences(cachedSequencesPath, sequences)
+		log.Info().Msg(fmt.Sprintf("saved %d sequences from %s", len(sequences), cachedSequencesPath))
+	}
 
 	for id := range sequences {
 		log.Info().Msg(fmt.Sprintf("parkingID: %s", id))

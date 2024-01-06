@@ -23,7 +23,7 @@ type Prediction struct {
 	Occupancy float32   `json:"occupancy"`
 }
 
-func (p Pycaster) Predict(id wheretopark.ID, sequences map[time.Time]uint, dateOnly time.Time) ([]Prediction, error) {
+func (p Pycaster) Predict(id wheretopark.ID, sequences map[time.Time]uint, start time.Time, end time.Time) ([]Prediction, error) {
 	var buf bytes.Buffer
 	err := WriteSequencesCSV(&buf, sequences)
 	if err != nil {
@@ -33,7 +33,9 @@ func (p Pycaster) Predict(id wheretopark.ID, sequences map[time.Time]uint, dateO
 
 	resp, err := wheretopark.DefaultClient.R().
 		SetFileReader("file", fmt.Sprintf("%s.csv", id), &buf).
-		Post(p.url.JoinPath("forecast", id, dateOnly.Format(time.DateOnly)).String())
+		SetQueryParam("start", start.Format(time.RFC3339)).
+		SetQueryParam("end", end.Format(time.RFC3339)).
+		Post(p.url.JoinPath("forecast", id).String())
 	if err != nil {
 		return nil, fmt.Errorf("error posting to server: %w", err)
 	}

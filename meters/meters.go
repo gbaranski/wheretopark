@@ -16,9 +16,17 @@ type Record struct {
 	EndDate   time.Time
 }
 
+type Hour = uint8
+
+type WorkingScheme struct {
+	StartHour uint8
+	EndHour   uint8
+	Weekdays  []time.Weekday
+}
 type DataSource interface {
 	Files() ([]string, error)
 	LoadRecords(file *os.File) (map[wheretopark.ID][]Record, error)
+	WorkingScheme() WorkingScheme
 }
 
 type Meters struct {
@@ -34,7 +42,7 @@ func NewMeters(sources map[string]DataSource) Meters {
 const MinimumMeterRecords uint = 50
 const MeterInterval time.Duration = time.Minute * 15
 
-func (m Meters) LoadRecordsOf(ctx context.Context, source DataSource) (map[wheretopark.ID][]Record, error) {
+func (m Meters) loadRecordsOf(ctx context.Context, source DataSource) (map[wheretopark.ID][]Record, error) {
 	start := time.Now()
 	files, err := source.Files()
 	if err != nil {
@@ -86,17 +94,22 @@ func (m Meters) LoadRecordsOf(ctx context.Context, source DataSource) (map[where
 	return allRecords, nil
 }
 
-func (m Meters) LoadRecords() (map[wheretopark.ID][]Record, error) {
+type recordWithSource struct {
+	records []Record
+	src     DataSource
+}
+
+func (m Meters) loadRecords() (map[wheretopark.ID]recordWithSource, error) {
 	var wg sync.WaitGroup
 	var mu sync.Mutex
-	allRecords := make(map[wheretopark.ID][]Record)
+	allRecords := make(map[wheretopark.ID]recordWithSource, len(m.sources))
 	log.Info().Msg(fmt.Sprintf("loading meter records from %d sources", len(m.sources)))
 	for name, source := range m.sources {
 		wg.Add(1)
 		ctx := log.With().Str("source", name).Logger().WithContext(context.Background())
 		go func(source DataSource) {
 			defer wg.Done()
-			records, err := m.LoadRecordsOf(ctx, source)
+			records, err := m.loadRecordsOf(ctx, source)
 			if err != nil {
 				log.Ctx(ctx).Error().Err(err).Msg("failed to load records")
 				return
@@ -104,9 +117,16 @@ func (m Meters) LoadRecords() (map[wheretopark.ID][]Record, error) {
 			mu.Lock()
 			for id, records := range records {
 				if _, ok := allRecords[id]; !ok {
-					allRecords[id] = make([]Record, 0, len(records))
+					allRecords[id] = recordWithSource{
+						records: records,
+						src:     source,
+					}
+				} else {
+					allRecords[id] = recordWithSource{
+						records: append(allRecords[id].records, records...),
+						src:     source,
+					}
 				}
-				allRecords[id] = append(allRecords[id], records...)
 			}
 			mu.Unlock()
 		}(source)
@@ -117,20 +137,20 @@ func (m Meters) LoadRecords() (map[wheretopark.ID][]Record, error) {
 }
 
 func (m Meters) Sequences() (map[wheretopark.ID]map[time.Time]uint, error) {
-	allRecords, err := m.LoadRecords()
+	allRecords, err := m.loadRecords()
 	if err != nil {
 		return nil, fmt.Errorf("error loading records: %w", err)
 	}
 	allSequences := make(map[wheretopark.ID]map[time.Time]uint, len(allRecords))
-	for id, records := range allRecords {
-		if len(records) < int(MinimumMeterRecords) {
-			log.Debug().Str("id", id).Msg(fmt.Sprintf("not enough records(%d), skipping", len(records)))
+	for id, r := range allRecords {
+		if len(r.records) < int(MinimumMeterRecords) {
+			log.Debug().Str("id", id).Msg(fmt.Sprintf("not enough records(%d), skipping", len(r.records)))
 			continue
 
 		}
 		// create sequences
 		sequences := make(map[time.Time]uint)
-		for _, record := range records {
+		for _, record := range r.records {
 			currentInterval := record.StartDate.Truncate(MeterInterval)
 			endInterval := record.EndDate.Truncate(MeterInterval)
 
@@ -160,6 +180,15 @@ func (m Meters) Sequences() (map[wheretopark.ID]map[time.Time]uint, error) {
 				currentInterval = currentInterval.Add(MeterInterval)
 			}
 		}
+		// remove records outside of working hours & days
+		{
+			workingScheme := r.src.WorkingScheme()
+			for interval := range sequences {
+				if !workingScheme.Matches(interval) {
+					delete(sequences, interval)
+				}
+			}
+		}
 
 		allSequences[id] = sequences
 	}
@@ -173,6 +202,21 @@ func (m Meters) Sequences() (map[wheretopark.ID]map[time.Time]uint, error) {
 	}
 	return allSequences, nil
 
+}
+
+func (s WorkingScheme) Matches(t time.Time) bool {
+	startHourAtDay := time.Date(t.Year(), t.Month(), t.Day(), int(s.StartHour), 0, 0, 0, time.UTC)
+	endHourAtDay := time.Date(t.Year(), t.Month(), t.Day(), int(s.EndHour), 0, 0, 0, time.UTC)
+	if t.Before(startHourAtDay) || t.After(endHourAtDay) {
+		return false
+	}
+
+	for _, day := range s.Weekdays {
+		if t.Weekday() == day {
+			return true
+		}
+	}
+	return false
 }
 
 func MaxOccupiedSpots(sequences map[time.Time]uint) uint {

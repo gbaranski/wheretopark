@@ -40,7 +40,9 @@ func (s *Server) handleForecast(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	predictions, err := s.pycaster.Predict(parkingID, sequences, dateOnlyTime)
+	start := time.Date(dateOnlyTime.Year(), dateOnlyTime.Month(), dateOnlyTime.Day(), 10, 0, 0, 0, time.UTC)
+	end := time.Date(dateOnlyTime.Year(), dateOnlyTime.Month(), dateOnlyTime.Day(), 20, 0, 0, 0, time.UTC)
+	predictions, err := s.pycaster.Predict(parkingID, sequences, start, end)
 	if err != nil {
 		log.Error().Err(err).Str("parkingID", parkingID).Msg("error predicting occupancy")
 		w.WriteHeader(http.StatusInternalServerError)
