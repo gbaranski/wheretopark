@@ -1,23 +1,18 @@
 package krakow
 
 import (
-	"encoding/xml"
 	"fmt"
-	"io"
-	"os"
 	wheretopark "wheretopark/go"
-	"wheretopark/meters"
 
 	geojson "github.com/paulmach/go.geojson"
 	"golang.org/x/text/currency"
-	"golang.org/x/text/encoding/charmap"
 )
 
 type Placemark struct {
 	Subzone     string `xml:"name"`
 	Card        string `xml:"card"`
 	Model       string `xml:"model"`
-	Code        string `xml:"parkingmeter"`
+	Code        uint   `xml:"parkingmeter"`
 	Address     string `xml:"address"`
 	Coordinates struct {
 		Latitude  float64 `xml:"latitude"`
@@ -41,8 +36,8 @@ func GetPlacemarks() ([]Placemark, error) {
 	return folder.Placemarks, nil
 }
 
-func CodeMapping(placemarks []Placemark) map[meters.Code]wheretopark.ID {
-	ids := make(map[meters.Code]wheretopark.ID, len(placemarks))
+func CodeMapping(placemarks []Placemark) map[uint]wheretopark.ID {
+	ids := make(map[uint]wheretopark.ID, len(placemarks))
 	for _, placemark := range placemarks {
 		id := wheretopark.CoordinateToID(placemark.Coordinates.Latitude, placemark.Coordinates.Longitude)
 		ids[placemark.Code] = id
@@ -50,24 +45,15 @@ func CodeMapping(placemarks []Placemark) map[meters.Code]wheretopark.ID {
 	return ids
 }
 
-func LoadPlacemarks(bytes []byte) ([]Placemark, error) {
-	var metadata Folder
-	if err := xml.Unmarshal(bytes, &metadata); err != nil {
-		return nil, err
+func FilterPlacemarks(placemarks []Placemark) []Placemark {
+	filtered := make([]Placemark, 0, len(placemarks))
+	for _, placemark := range placemarks {
+		if placemark.Coordinates.Latitude == 0 || placemark.Coordinates.Longitude == 0 {
+			continue
+		}
+		filtered = append(filtered, placemark)
 	}
-	return metadata.Placemarks, nil
-}
-
-func LoadPlacemarksFile(path string) ([]Placemark, error) {
-	file, err := os.Open(path)
-	if err != nil {
-		return nil, err
-	}
-	byteValue, err := io.ReadAll(charmap.ISO8859_2.NewDecoder().Reader(file))
-	if err != nil {
-		return nil, err
-	}
-	return LoadPlacemarks(byteValue)
+	return filtered
 }
 
 func newRules(perHourPrice int) []wheretopark.Rule {
@@ -120,7 +106,7 @@ func (p Placemark) ZoneMatchingRules() []wheretopark.Rule {
 func (p Placemark) Metadata(totalSpots uint) wheretopark.Metadata {
 	metadata := wheretopark.Metadata{
 		LastUpdated: &defaultLastUpdated,
-		Name:        fmt.Sprintf("Parking nr. %s", p.Code),
+		Name:        fmt.Sprintf("Parking nr. %d", p.Code),
 		Address:     p.Address,
 		Geometry:    geojson.NewPointGeometry([]float64{p.Coordinates.Longitude, p.Coordinates.Latitude}),
 		Resources: []string{

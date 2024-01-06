@@ -3,6 +3,7 @@ package meters
 import (
 	"fmt"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 	wheretopark "wheretopark/go"
@@ -13,10 +14,10 @@ import (
 
 type Solari struct {
 	basePath string
-	mapping  map[Code]wheretopark.ID
+	mapping  map[uint]wheretopark.ID
 }
 
-func NewSolari(basePath string, mapping map[Code]wheretopark.ID) DataSource {
+func NewSolari(basePath string, mapping map[uint]wheretopark.ID) DataSource {
 	return Solari{
 		basePath,
 		mapping,
@@ -44,7 +45,7 @@ func (f Solari) LoadRecords(file *os.File) (map[wheretopark.ID][]Record, error) 
 		if i == 0 {
 			continue
 		}
-		code := row[1]
+		strCode := row[1]
 		dateStr := row[4]
 		durationStr := row[5]
 		if durationStr == "" || !strings.Contains(dateStr, "/") {
@@ -54,7 +55,16 @@ func (f Solari) LoadRecords(file *os.File) (map[wheretopark.ID][]Record, error) 
 		startDate := wheretopark.MustParseDateTimeWith(solariDateFormat, dateStr)
 		duration := wheretopark.Must(parseSolariDuration(durationStr))
 
-		id := f.mapping[code]
+		code, err := strconv.ParseUint(strCode, 10, 32)
+		if err != nil {
+			log.Warn().Err(err).Str("code", row[2]).Msg("failed to parse code")
+			continue
+		}
+		id, ok := f.mapping[uint(code)]
+		if !ok {
+			log.Debug().Uint64("code", code).Msg("missing code mapping")
+			continue
+		}
 		if _, ok := records[id]; !ok {
 			records[id] = make([]Record, 0, 8)
 		}

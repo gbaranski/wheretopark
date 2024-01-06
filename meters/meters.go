@@ -11,8 +11,6 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-type Code = string
-
 type Record struct {
 	StartDate time.Time
 	EndDate   time.Time
@@ -166,6 +164,13 @@ func (m Meters) Sequences() (map[wheretopark.ID]map[time.Time]uint, error) {
 		allSequences[id] = sequences
 	}
 	log.Info().Msg(fmt.Sprintf("loaded %d parking lots", len(allSequences)))
+	for id, sequences := range allSequences {
+		for time, occupiedSpots := range sequences {
+			if occupiedSpots > 1000 {
+				fmt.Printf("id: %s, time: %s, occupiedSpots: %d\n", id, time, occupiedSpots)
+			}
+		}
+	}
 	return allSequences, nil
 
 }

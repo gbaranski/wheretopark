@@ -35,7 +35,11 @@ func krakowSequences(basePath string) map[wheretopark.ID]map[time.Time]uint {
 	flowbird := meters.NewFlowbird(filepath.Join(basePath, "FLOWBIRD"), mapping)
 	solari2000 := meters.NewSolari(filepath.Join(basePath, "SOLARI 2000"), mapping)
 	solari3000 := meters.NewSolari(filepath.Join(basePath, "SOLARI 3000"), mapping)
-	meterSources := map[string]meters.DataSource{"Flowbird": flowbird, "Solari 2000": solari2000, "Solari 3000": solari3000}
+	meterSources := map[string]meters.DataSource{
+		"Flowbird":    flowbird,
+		"Solari 2000": solari2000,
+		"Solari 3000": solari3000,
+	}
 	meters := meters.NewMeters(meterSources)
 	sequences, err := meters.Sequences()
 	if err != nil {
@@ -59,17 +63,17 @@ func main() {
 	cachedSequencesPath := filepath.Join(environment.ForecasterCache, "sequences.csv")
 
 	var sequences map[wheretopark.ID]map[time.Time]uint
-	if SequencesExist(cachedSequencesPath) {
-		sequences = LoadSequences(cachedSequencesPath)
-		log.Info().Msg(fmt.Sprintf("loaded %d sequences to %s", len(sequences), cachedSequencesPath))
-	} else {
-		krakowSequences := krakowSequences(filepath.Join(environment.ForecasterData, "datasets", "krakow"))
-		sequences = krakowSequences
-		SaveSequences(cachedSequencesPath, sequences)
-		log.Info().Msg(fmt.Sprintf("saved %d sequences from %s", len(sequences), cachedSequencesPath))
-	}
+	// if SequencesExist(cachedSequencesPath) {
+	// 	sequences = LoadSequences(cachedSequencesPath)
+	// 	log.Info().Msg(fmt.Sprintf("loaded %d sequences to %s", len(sequences), cachedSequencesPath))
+	// } else {
+	krakowSequences := krakowSequences(filepath.Join(environment.ForecasterData, "datasets", "krakow"))
+	sequences = krakowSequences
+	SaveSequences(cachedSequencesPath, sequences)
+	log.Info().Msg(fmt.Sprintf("saved %d sequences from %s", len(sequences), cachedSequencesPath))
+	// }
 
-	for id, _ := range sequences {
+	for id := range sequences {
 		log.Info().Msg(fmt.Sprintf("parkingID: %s", id))
 	}
 

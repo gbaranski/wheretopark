@@ -4,6 +4,7 @@ import (
 	"encoding/csv"
 	"fmt"
 	"os"
+	"strconv"
 	wheretopark "wheretopark/go"
 
 	"github.com/rs/zerolog/log"
@@ -12,10 +13,10 @@ import (
 
 type Flowbird struct {
 	basePath string
-	mapping  map[Code]wheretopark.ID
+	mapping  map[uint]wheretopark.ID
 }
 
-func NewFlowbird(basePath string, mapping map[Code]wheretopark.ID) DataSource {
+func NewFlowbird(basePath string, mapping map[uint]wheretopark.ID) DataSource {
 	return Flowbird{
 		basePath,
 		mapping,
@@ -41,7 +42,7 @@ func (f Flowbird) LoadRecords(file *os.File) (map[wheretopark.ID][]Record, error
 			continue
 		}
 		startDate := row[1]
-		code := row[2]
+		strCode := row[2]
 		totalTime := row[6]
 		zone := row[8]
 		subzone := row[9]
@@ -52,7 +53,16 @@ func (f Flowbird) LoadRecords(file *os.File) (map[wheretopark.ID][]Record, error
 			continue
 		}
 
-		id := f.mapping[code]
+		code, err := strconv.ParseUint(strCode, 10, 32)
+		if err != nil {
+			log.Warn().Err(err).Str("code", row[2]).Msg("failed to parse code")
+			continue
+		}
+		id, ok := f.mapping[uint(code)]
+		if !ok {
+			log.Debug().Uint64("code", code).Msg("missing code mapping")
+			continue
+		}
 		if _, ok := records[id]; !ok {
 			records[id] = make([]Record, 0, 8)
 		}
