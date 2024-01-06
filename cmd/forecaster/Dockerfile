@@ -8,9 +8,10 @@ RUN go mod download
 COPY go ./go
 COPY ./meters ./meters
 COPY ./collector/krakow ./collector/krakow
-COPY ./cmd/krakow ./cmd/krakow
+COPY ./forecaster ./forecaster
+COPY ./cmd/forecaster ./cmd/forecaster
 
-RUN go build -v -o exe ./cmd/krakow
+RUN go build -v -o exe ./cmd/forecaster
 
 FROM golang:1-alpine
 

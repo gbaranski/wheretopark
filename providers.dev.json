@@ -26,5 +26,9 @@
     {
         "name": "warsaw",
         "url": "http://localhost:80/v1/provider/warsaw"
+    },
+    {
+        "name": "krakow",
+        "url": "http://localhost:80/v1/provider/krakow"
     }
 ]

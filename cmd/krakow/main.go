@@ -20,14 +20,19 @@ func main() {
 		log.Fatal().Err(err).Send()
 	}
 
-	source := krakow.New()
+	placemarks, err := krakow.GetPlacemarks()
+	if err != nil {
+		log.Fatal().Err(err).Msg("error getting placemarks")
+	}
+
+	source := krakow.New(placemarks)
 
 	cache, err := wheretopark.NewCache()
 	if err != nil {
 		log.Fatal().Err(err).Msg("failed to create cache")
 	}
 
-	go wheretopark.RunPrefetch(cache, source, wheretopark.CacheTTL)
+	// go wheretopark.RunPrefetch(cache, source, wheretopark.CacheTTL)
 
 	server := wheretopark.NewServer(cache, source)
 	router := server.Router()

@@ -19,13 +19,13 @@ type Pycaster struct {
 }
 
 type Prediction struct {
-	Date      time.Time
-	Occupancy float64
+	Date      time.Time `json:"date"`
+	Occupancy float32   `json:"occupancy"`
 }
 
-func (p Pycaster) Predict(id wheretopark.ID, parkingLot ParkingLot) ([]Prediction, error) {
+func (p Pycaster) Predict(id wheretopark.ID, sequences map[time.Time]uint, dateOnly time.Time) ([]Prediction, error) {
 	var buf bytes.Buffer
-	err := parkingLot.WriteCSV(&buf)
+	err := WriteSequencesCSV(&buf, sequences)
 	if err != nil {
 		log.Error().Err(err).Str("id", string(id)).Msg("error writing csv")
 		return nil, fmt.Errorf("error writing csv: %w", err)
@@ -33,7 +33,7 @@ func (p Pycaster) Predict(id wheretopark.ID, parkingLot ParkingLot) ([]Predictio
 
 	resp, err := wheretopark.DefaultClient.R().
 		SetFileReader("file", fmt.Sprintf("%s.csv", id), &buf).
-		Post(p.url.JoinPath("forecast", id, time.Now().Format(time.DateOnly)).String())
+		Post(p.url.JoinPath("forecast", id, dateOnly.Format(time.DateOnly)).String())
 	if err != nil {
 		return nil, fmt.Errorf("error posting to server: %w", err)
 	}
@@ -66,7 +66,7 @@ func ParsePredictions(csvData string) ([]Prediction, error) {
 
 		predictions = append(predictions, Prediction{
 			Date:      wheretopark.MustParseDateTimeWith(time.DateTime, row[0]),
-			Occupancy: wheretopark.Must(strconv.ParseFloat(row[1], 64)),
+			Occupancy: float32(wheretopark.Must(strconv.ParseFloat(row[1], 32))),
 		})
 	}
 

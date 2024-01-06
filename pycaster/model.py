@@ -13,6 +13,9 @@ class ForecastingModel:
         else:
             self.m = Prophet()
             self.m.fit(dataset)
+            directory = os.path.dirname(path)
+            if not os.path.exists(directory):
+                os.makedirs(directory)
             with open(path, 'w') as fout:
                 fout.write(model_to_json(self.m))  # Save model
                 print(f'saved newly trained model for {id} to {path}')

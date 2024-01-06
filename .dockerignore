@@ -12,3 +12,4 @@ web/.env.*
 .env
 build
 ios
+**/*/__pycache__

@@ -1,5 +1,4 @@
 import os
 
-forecaster_path = os.path.join(os.path.expanduser("~"), ".local/share/wheretopark/forecaster")
-timeseries_path = os.path.join(forecaster_path, "timeseries")
-models_path = os.path.join(forecaster_path, "models")
+pycaster_path = os.environ.get('PYCASTER_DATA', os.path.join(os.path.expanduser("~"), ".local/share/wheretopark/pycaster"))
+models_path = os.path.join(pycaster_path, "models")

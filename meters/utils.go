@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-func listFilesByExtension(basePath string, extension string) ([]string, error) {
+func listFilesWithExtension(basePath string, extension string) ([]string, error) {
 	var filesWithExtension []string
 
 	// Read all files and directories within basePath

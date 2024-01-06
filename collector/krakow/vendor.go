@@ -6,6 +6,7 @@ import (
 	"io"
 	"os"
 	wheretopark "wheretopark/go"
+	"wheretopark/meters"
 
 	geojson "github.com/paulmach/go.geojson"
 	"golang.org/x/text/currency"
@@ -24,19 +25,40 @@ type Placemark struct {
 	} `xml:"coordinates"`
 }
 
-type Metadata struct {
+type Folder struct {
 	Placemarks []Placemark `xml:"placemark"`
 }
 
-func LoadMetadata(bytes []byte) ([]Placemark, error) {
-	var metadata Metadata
+var (
+	PLACEMARKS_URL = wheretopark.MustParseURL("http://zdmk.krakow.pl/wp-content/themes/justidea_theme/assets/xml/parkomaty.xml")
+)
+
+func GetPlacemarks() ([]Placemark, error) {
+	folder, err := wheretopark.Get[Folder](PLACEMARKS_URL, nil)
+	if err != nil {
+		return nil, err
+	}
+	return folder.Placemarks, nil
+}
+
+func CodeMapping(placemarks []Placemark) map[meters.Code]wheretopark.ID {
+	ids := make(map[meters.Code]wheretopark.ID, len(placemarks))
+	for _, placemark := range placemarks {
+		id := wheretopark.CoordinateToID(placemark.Coordinates.Latitude, placemark.Coordinates.Longitude)
+		ids[placemark.Code] = id
+	}
+	return ids
+}
+
+func LoadPlacemarks(bytes []byte) ([]Placemark, error) {
+	var metadata Folder
 	if err := xml.Unmarshal(bytes, &metadata); err != nil {
 		return nil, err
 	}
 	return metadata.Placemarks, nil
 }
 
-func LoadMetadataFile(path string) ([]Placemark, error) {
+func LoadPlacemarksFile(path string) ([]Placemark, error) {
 	file, err := os.Open(path)
 	if err != nil {
 		return nil, err
@@ -45,7 +67,7 @@ func LoadMetadataFile(path string) ([]Placemark, error) {
 	if err != nil {
 		return nil, err
 	}
-	return LoadMetadata(byteValue)
+	return LoadPlacemarks(byteValue)
 }
 
 func newRules(perHourPrice int) []wheretopark.Rule {

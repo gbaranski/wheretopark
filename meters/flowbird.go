@@ -4,8 +4,6 @@ import (
 	"encoding/csv"
 	"fmt"
 	"os"
-	"strings"
-	"time"
 	wheretopark "wheretopark/go"
 
 	"github.com/rs/zerolog/log"
@@ -13,20 +11,22 @@ import (
 )
 
 type Flowbird struct {
-	BasePath string
+	basePath string
+	mapping  map[Code]wheretopark.ID
 }
 
-func NewFlowbird(basePath string) DataSource {
+func NewFlowbird(basePath string, mapping map[Code]wheretopark.ID) DataSource {
 	return Flowbird{
-		BasePath: basePath,
+		basePath,
+		mapping,
 	}
 }
 
 func (f Flowbird) Files() ([]string, error) {
-	return listFilesByExtension(f.BasePath, ".csv")
+	return listFilesWithExtension(f.basePath, "csv")
 }
 
-func (f Flowbird) LoadRecords(file *os.File) (map[Code][]Record, error) {
+func (f Flowbird) LoadRecords(file *os.File) (map[wheretopark.ID][]Record, error) {
 	reader := csv.NewReader(charmap.ISO8859_2.NewDecoder().Reader(file))
 	reader.FieldsPerRecord = 13
 	reader.Comma = ';'
@@ -35,7 +35,7 @@ func (f Flowbird) LoadRecords(file *os.File) (map[Code][]Record, error) {
 	if err != nil {
 		panic(err)
 	}
-	records := make(map[Code][]Record, len(data))
+	records := make(map[wheretopark.ID][]Record, len(data))
 	for i, row := range data {
 		if i == 0 {
 			continue
@@ -52,10 +52,11 @@ func (f Flowbird) LoadRecords(file *os.File) (map[Code][]Record, error) {
 			continue
 		}
 
-		if _, ok := records[code]; !ok {
-			records[code] = make([]Record, 0, 8)
+		id := f.mapping[code]
+		if _, ok := records[id]; !ok {
+			records[id] = make([]Record, 0, 8)
 		}
-		records[code] = append(records[code], Record{
+		records[id] = append(records[id], Record{
 			StartDate: wheretopark.MustParseDateTimeWith(flowbirdDateFormat, startDate),
 			EndDate:   wheretopark.MustParseDateTimeWith(flowbirdDateFormat, endDate),
 		})
@@ -64,8 +65,3 @@ func (f Flowbird) LoadRecords(file *os.File) (map[Code][]Record, error) {
 }
 
 const flowbirdDateFormat = "02/01/2006 15:04"
-
-func parseFlowbirdDuration(s string) (time.Duration, error) {
-	s = strings.ReplaceAll(s, " ", "")
-	return time.ParseDuration(s)
-}

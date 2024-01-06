@@ -1,43 +1,61 @@
 version: "3.8"
 services:
   traefik:
-    container_name: traefik
     image: traefik:v3.0
-    command: --api.insecure=true --providers.docker
+    command: 
+      - "--log.level=TRACE"
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
     restart: unless-stopped
     ports:
-      # The HTTP port
       - "80:80"
-      - "1234:80"
       # The Web UI (enabled by --api.insecure=true)
       - "8080:8080"
     volumes:
       # So that Traefik can listen to the Docker events
       - /var/run/docker.sock:/var/run/docker.sock
     labels:
-      - "traefik.http.middlewares.strip1.stripprefixregex.regex=^\\/[^\\/]+"
-      - "traefik.http.middlewares.strip2.stripprefixregex.regex=^\\/[^\\/]+\\/[^\\/]+"
-      - "traefik.http.middlewares.strip3.stripprefixregex.regex=^\\/[^\\/]+\\/[^\\/]+\\/[^\\/]+"
-      - "traefik.http.middlewares.allowCORS.headers.accesscontrolallowmethods=GET"
-      - "traefik.http.middlewares.allowCORS.headers.accesscontrolallowheaders=*"
-      - "traefik.http.middlewares.allowCORS.headers.accesscontrolalloworiginlist=*"
-      - "traefik.http.middlewares.allowCORS.headers.accesscontrolmaxage=600"
+      - "traefik.enable=true"
+
+  whoami:
+    image: "traefik/whoami"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.whoami.rule=Path(`/whoami`)"
+      - "traefik.http.routers.whoami.entrypoints=web"
+
+  dozzle:
+    image: amir20/dozzle:latest
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./dozzle/users.yml:/data/users.yml
+    environment:
+      DOZZLE_AUTH_PROVIDER: simple
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.dozzle.rule=Path(`/dozzle`)"
+      - "traefik.http.routers.dozzle.entrypoints=web"
 
   config:
-    container_name: wheretopark_config
     image: nginx:alpine
     restart: unless-stopped
     volumes:
       - ./providers.dev.json:/usr/share/nginx/html/providers
-    ports:
-      - "9000:80"
     labels:
-      - "traefik.http.middlewares.content-type-json.headers.customresponseheaders.Content-Type=application/json"
-      - "traefik.http.middlewares.redirect-new-config.replacepathregex.regex=/v1/providers"
-      - "traefik.http.middlewares.redirect-new-config.replacepathregex.replacement=/v1/config/providers"
+      - "traefik.http.middlewares.config-redirect.replacepathregex.regex=/v1/providers"
+      - "traefik.http.middlewares.config-redirect.replacepathregex.replacement=/v1/config/providers"
+      - "traefik.http.middlewares.config-cors.headers.accesscontrolallowmethods=GET"
+      - "traefik.http.middlewares.config-cors.headers.accesscontrolalloworiginlist=*"
+      - "traefik.http.middlewares.config-strip.stripprefixregex.regex=^\\/[^\\/]+\\/[^\\/]+"
+      - "traefik.http.middlewares.config-content-type.headers.customresponseheaders.Content-Type=application/json"
+      - "traefik.enable=true"
       - "traefik.http.routers.config.rule=PathPrefix(`/v1/config`) || Path(`/v1/providers`)"
-      - "traefik.http.routers.config.middlewares=redirect-new-config,strip2,content-type-json,allowCORS"
-
+      - "traefik.http.routers.config.entrypoints=web"
+      - "traefik.http.routers.config.middlewares=config-redirect,config-cors,config-strip,config-content-type"
+  
   influxer:
     restart: unless-stopped
     build:
@@ -45,115 +63,164 @@ services:
       dockerfile: ./cmd/influxer/Dockerfile
     environment:
       LOG_LEVEL: debug
-      SERVER_URL: "http://config:9000"
+      SERVER_URL: "https://config:9000"
       INFLUXDB_TOKEN: lj3YEMcRfKvtxM6mAkfdk8fkR5wgPt5ZB0KBhOtPOGDE0ZE_1V8jrv8LPMU1PMj_CjqHM-9QnnYb0j52s7iTeA==
-  
+
   cctv:
-    container_name: wheretopark_cctv
     restart: unless-stopped
     build:
       context: .
       dockerfile: ./cmd/cctv/Dockerfile
     environment:
       PORT: 8080
-      LOG_LEVEL: trace
+      LOG_LEVEL: debug
       CCTV_MODEL_PATH: /opt/wheretopark/model.onnx
+      GIN_MODE: debug
     volumes:
       - $HOME/.local/share/wheretopark:/opt/wheretopark
-    ports:
-      - "9001:8080"
+      - $HOME/.cache/wheretopark:/root/.cache/wheretopark
     labels:
+      - "traefik.http.middlewares.cctv-cors.headers.accesscontrolallowmethods=GET"
+      - "traefik.http.middlewares.cctv-cors.headers.accesscontrolalloworiginlist=*"
+      - "traefik.http.middlewares.cctv-strip.stripprefix.prefixes=/v1/provider/cctv"
+      - "traefik.enable=true"
       - "traefik.http.routers.cctv.rule=PathPrefix(`/v1/provider/cctv`)"
-      - "traefik.http.routers.cctv.middlewares=strip3,allowCORS"
-
-
-  gdansk:
-    container_name: wheretopark_gdansk
-    restart: unless-stopped
-    build:
-      context: .
-      dockerfile: ./cmd/gdansk/Dockerfile
-    environment:
-      PORT: 8080
-      LOG_LEVEL: trace
-    ports:
-      - "9002:8080"
-    labels:
-      - "traefik.http.routers.gdansk.rule=PathPrefix(`/v1/provider/gdansk`)"
-      - "traefik.http.routers.gdansk.middlewares=strip3,allowCORS"
+      - "traefik.http.routers.cctv.entrypoints=web"
+      - "traefik.http.routers.cctv.middlewares=cctv-cors,cctv-strip"
 
   gdynia:
-    container_name: wheretopark_gdynia
     restart: unless-stopped
     build:
       context: .
       dockerfile: ./cmd/gdynia/Dockerfile
     environment:
       PORT: 8080
-      LOG_LEVEL: trace
-    ports:
-      - "9003:8080"
+      LOG_LEVEL: debug
     labels:
+      - "traefik.http.middlewares.gdynia-cors.headers.accesscontrolallowmethods=GET"
+      - "traefik.http.middlewares.gdynia-cors.headers.accesscontrolalloworiginlist=*"
+      - "traefik.http.middlewares.gdynia-strip.stripprefix.prefixes=/v1/provider/gdynia"
+      - "traefik.enable=true"
       - "traefik.http.routers.gdynia.rule=PathPrefix(`/v1/provider/gdynia`)"
-      - "traefik.http.routers.gdynia.middlewares=strip3,allowCORS"
+      - "traefik.http.routers.gdynia.entrypoints=web"
+      - "traefik.http.routers.gdynia.middlewares=gdynia-cors,gdynia-strip"
 
   glasgow:
-    container_name: wheretopark_glasgow
     restart: unless-stopped
     build:
       context: .
       dockerfile: ./cmd/glasgow/Dockerfile
     environment:
       PORT: 8080
-      LOG_LEVEL: trace
-    ports:
-      - "9004:8080"
+      LOG_LEVEL: debug
     labels:
+      - "traefik.http.middlewares.glasgow-cors.headers.accesscontrolallowmethods=GET"
+      - "traefik.http.middlewares.glasgow-cors.headers.accesscontrolalloworiginlist=*"
+      - "traefik.http.middlewares.glasgow-strip.stripprefix.prefixes=/v1/provider/glasgow"
+      - "traefik.enable=true"
       - "traefik.http.routers.glasgow.rule=PathPrefix(`/v1/provider/glasgow`)"
-      - "traefik.http.routers.glasgow.middlewares=strip3,allowCORS"
+      - "traefik.http.routers.glasgow.entrypoints=web"
+      - "traefik.http.routers.glasgow.middlewares=glasgow-cors,glasgow-strip"
 
   lacity:
-    container_name: wheretopark_lacity
     restart: unless-stopped
     build:
       context: .
       dockerfile: ./cmd/lacity/Dockerfile
     environment:
       PORT: 8080
-      LOG_LEVEL: trace
-    ports:
-      - "9005:8080"
+      LOG_LEVEL: debug
     labels:
+      - "traefik.http.middlewares.lacity-cors.headers.accesscontrolallowmethods=GET"
+      - "traefik.http.middlewares.lacity-cors.headers.accesscontrolalloworiginlist=*"
+      - "traefik.http.middlewares.lacity-strip.stripprefix.prefixes=/v1/provider/lacity"
+      - "traefik.enable=true"
       - "traefik.http.routers.lacity.rule=PathPrefix(`/v1/provider/lacity`)"
-      - "traefik.http.routers.lacity.middlewares=strip3,allowCORS"
+      - "traefik.http.routers.lacity.entrypoints=web"
+      - "traefik.http.routers.lacity.middlewares=lacity-cors,lacity-strip"
 
   poznan:
-    container_name: wheretopark_poznan
     restart: unless-stopped
     build:
       context: .
       dockerfile: ./cmd/poznan/Dockerfile
     environment:
       PORT: 8080
-      LOG_LEVEL: trace
-    ports:
-      - "9006:8080"
+      LOG_LEVEL: debug
     labels:
+      - "traefik.http.middlewares.poznan-cors.headers.accesscontrolallowmethods=GET"
+      - "traefik.http.middlewares.poznan-cors.headers.accesscontrolalloworiginlist=*"
+      - "traefik.http.middlewares.poznan-strip.stripprefix.prefixes=/v1/provider/poznan"
+      - "traefik.enable=true"
       - "traefik.http.routers.poznan.rule=PathPrefix(`/v1/provider/poznan`)"
-      - "traefik.http.routers.poznan.middlewares=strip3,allowCORS"
-
+      - "traefik.http.routers.poznan.entrypoints=web"
+      - "traefik.http.routers.poznan.middlewares=poznan-cors,poznan-strip"
 
   warsaw:
-    container_name: wheretopark_warsaw
     restart: unless-stopped
     build:
       context: .
       dockerfile: ./cmd/warsaw/Dockerfile
     environment:
       PORT: 8080
-      LOG_LEVEL: trace
-    ports:
-      - "9007:8080"
+      LOG_LEVEL: debug
     labels:
+      - "traefik.http.middlewares.warsaw-cors.headers.accesscontrolallowmethods=GET"
+      - "traefik.http.middlewares.warsaw-cors.headers.accesscontrolalloworiginlist=*"
+      - "traefik.http.middlewares.warsaw-strip.stripprefix.prefixes=/v1/provider/warsaw"
+      - "traefik.enable=true"
       - "traefik.http.routers.warsaw.rule=PathPrefix(`/v1/provider/warsaw`)"
-      - "traefik.http.routers.warsaw.middlewares=strip3,allowCORS"
+      - "traefik.http.routers.warsaw.entrypoints=web"
+      - "traefik.http.routers.warsaw.middlewares=warsaw-cors,warsaw-strip"
+
+  krakow:
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: ./cmd/krakow/Dockerfile
+    environment:
+      PORT: 8080
+      LOG_LEVEL: debug
+    labels:
+      - "traefik.http.middlewares.krakow-cors.headers.accesscontrolallowmethods=GET"
+      - "traefik.http.middlewares.krakow-cors.headers.accesscontrolalloworiginlist=*"
+      - "traefik.http.middlewares.krakow-strip.stripprefix.prefixes=/v1/provider/krakow"
+      - "traefik.enable=true"
+      - "traefik.http.services.krakow.loadbalancer.server.port=8080"
+      - "traefik.http.routers.krakow.rule=PathPrefix(`/v1/provider/krakow`)"
+      - "traefik.http.routers.krakow.entrypoints=web"
+      - "traefik.http.routers.krakow.middlewares=krakow-cors,krakow-strip"
+
+  pycaster:
+    restart: unless-stopped
+    build: ./pycaster
+    environment:
+      PYCASTER_DATA: /opt/wheretopark/pycaster
+    volumes:
+      - $HOME/.local/share/wheretopark/pycaster:/opt/wheretopark/pycaster
+  
+  forecaster:
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: ./cmd/forecaster/Dockerfile
+    depends_on:
+      - pycaster
+    environment:
+      PORT: 8080
+      LOG_LEVEL: debug
+      FORECASTER_DATA: /opt/wheretopark/forecaster
+      FORECASTER_CACHE: /var/cache/wheretopark/forecaster
+      PYCASTER_URL: "http://pycaster:8080"
+    volumes:
+      - $HOME/.local/share/wheretopark/forecaster:/opt/wheretopark/forecaster
+      - $HOME/.cache/wheretopark/forecaster:/var/cache/wheretopark/forecaster
+    labels:
+      - "traefik.http.middlewares.forecaster-cors.headers.accesscontrolallowmethods=GET"
+      - "traefik.http.middlewares.forecaster-cors.headers.accesscontrolalloworiginlist=*"
+      - "traefik.http.middlewares.forecaster-strip.stripprefix.prefixes=/v1/forecaster"
+      - "traefik.enable=true"
+      - "traefik.http.services.forecaster.loadbalancer.server.port=8080"
+      - "traefik.http.routers.forecaster.rule=PathPrefix(`/v1/forecaster`)"
+      - "traefik.http.routers.forecaster.entrypoints=web"
+      - "traefik.http.routers.forecaster.middlewares=forecaster-cors,forecaster-strip"

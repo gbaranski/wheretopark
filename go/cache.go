@@ -65,6 +65,9 @@ func (c *Cache) GetParkingLot(id ID) *ParkingLot {
 }
 
 func (c *Cache) GetAllParkingLots() map[ID]ParkingLot {
+	if c.i.Len() == 0 {
+		return nil
+	}
 	iterator := c.i.Iterator()
 	parkingLots := make(map[ID]ParkingLot, c.i.Len())
 	for iterator.SetNext() {

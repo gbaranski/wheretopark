@@ -13,19 +13,21 @@ import (
 
 type Solari struct {
 	basePath string
+	mapping  map[Code]wheretopark.ID
 }
 
-func NewSolari(basePath string) DataSource {
+func NewSolari(basePath string, mapping map[Code]wheretopark.ID) DataSource {
 	return Solari{
-		basePath: basePath,
+		basePath,
+		mapping,
 	}
 }
 
 func (s Solari) Files() ([]string, error) {
-	return listFilesByExtension(s.basePath, ".xlsx")
+	return listFilesWithExtension(s.basePath, "xlsx")
 }
 
-func (f Solari) LoadRecords(file *os.File) (map[Code][]Record, error) {
+func (f Solari) LoadRecords(file *os.File) (map[wheretopark.ID][]Record, error) {
 	spreadsheet, err := excelize.OpenReader(file)
 	if err != nil {
 		return nil, fmt.Errorf("error reading spreadsheet: %w", err)
@@ -37,7 +39,7 @@ func (f Solari) LoadRecords(file *os.File) (map[Code][]Record, error) {
 		return nil, err
 	}
 
-	records := make(map[Code][]Record, len(rows))
+	records := make(map[wheretopark.ID][]Record, len(rows))
 	for i, row := range rows {
 		if i == 0 {
 			continue
@@ -52,10 +54,11 @@ func (f Solari) LoadRecords(file *os.File) (map[Code][]Record, error) {
 		startDate := wheretopark.MustParseDateTimeWith(solariDateFormat, dateStr)
 		duration := wheretopark.Must(parseSolariDuration(durationStr))
 
-		if _, ok := records[code]; !ok {
-			records[code] = make([]Record, 0, 8)
+		id := f.mapping[code]
+		if _, ok := records[id]; !ok {
+			records[id] = make([]Record, 0, 8)
 		}
-		records[code] = append(records[code], Record{
+		records[id] = append(records[id], Record{
 			StartDate: startDate,
 			EndDate:   startDate.Add(duration),
 		})

@@ -6,21 +6,14 @@ import (
 	wheretopark "wheretopark/go"
 )
 
-var (
-	METADATA_URL = wheretopark.MustParseURL("http://zdmk.krakow.pl/wp-content/themes/justidea_theme/assets/xml/parkomaty.xml")
-)
-
-type Source struct{}
+type Source struct {
+	placemarks []Placemark
+}
 
 func (s Source) ParkingLots(ctx context.Context) (<-chan map[wheretopark.ID]wheretopark.ParkingLot, error) {
-	vMetadata, err := wheretopark.Get[Metadata](METADATA_URL, nil)
-	if err != nil {
-		return nil, err
-	}
-
 	parkingLots := make(map[wheretopark.ID]wheretopark.ParkingLot)
-	for _, placemark := range vMetadata.Placemarks {
-		metadata := placemark.Metadata(10)
+	for _, placemark := range s.placemarks {
+		metadata := placemark.Metadata(0)
 		id := wheretopark.GeometryToID(metadata.Geometry)
 		state := wheretopark.State{
 			LastUpdated: time.Now(),
@@ -39,6 +32,8 @@ func (s Source) ParkingLots(ctx context.Context) (<-chan map[wheretopark.ID]wher
 	return ch, nil
 }
 
-func New() Source {
-	return Source{}
+func New(placemarks []Placemark) Source {
+	return Source{
+		placemarks: placemarks,
+	}
 }
