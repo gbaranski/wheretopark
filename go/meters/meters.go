@@ -32,7 +32,7 @@ type Record struct {
 }
 
 func NewTimeseriesFromMeterRecords(records []Record, opts Options) timeseries.TimeSeries {
-	timeseries := timeseries.NewTimeseries(opts.Interval)
+	timeseries := timeseries.NewTimeseries()
 	for _, record := range records {
 		id, exists := opts.Mapping[record.Code]
 		if !exists {
@@ -46,7 +46,7 @@ func NewTimeseriesFromMeterRecords(records []Record, opts Options) timeseries.Ti
 			currentInterval = currentInterval.Add(opts.Interval)
 		}
 	}
-	timeseries.FillMissingIntervals()
+	timeseries.FillMissingIntervals(opts.Interval)
 	timeseries.Filter(func(id wheretopark.ID, interval time.Time) bool {
 		return opts.WorkingScheme.Matches(interval)
 	})

@@ -13,13 +13,11 @@ import (
 )
 
 type TimeSeries struct {
-	interval  time.Duration
 	sequences map[wheretopark.ID]map[time.Time]uint
 }
 
-func NewTimeseries(interval time.Duration) TimeSeries {
+func NewTimeseries() TimeSeries {
 	return TimeSeries{
-		interval:  interval,
 		sequences: make(map[wheretopark.ID]map[time.Time]uint),
 	}
 }
@@ -43,7 +41,7 @@ func (ts *TimeSeries) Add(id wheretopark.ID, interval time.Time) {
 	ts.sequences[id][interval]++
 }
 
-func (ts *TimeSeries) FillMissingIntervals() {
+func (ts *TimeSeries) FillMissingIntervals(interval time.Duration) {
 	for id, sequences := range ts.sequences {
 		earliest := time.Now()
 		latest := time.Time{}
@@ -61,7 +59,7 @@ func (ts *TimeSeries) FillMissingIntervals() {
 			if _, ok := ts.sequences[id][currentInterval]; !ok {
 				ts.sequences[id][currentInterval] = 0
 			}
-			currentInterval = currentInterval.Add(ts.interval)
+			currentInterval = currentInterval.Add(interval)
 		}
 	}
 }
@@ -124,6 +122,23 @@ func (ts *TimeSeries) writeSingleCSV(id wheretopark.ID, path string) error {
 }
 
 func (ts *TimeSeries) WriteMultipleCSV(basePath string) error {
+	if _, err := os.Stat(basePath); os.IsNotExist(err) {
+		err = os.MkdirAll(basePath, 0755)
+		if err != nil {
+			return fmt.Errorf("failed to create directory: %w", err)
+		}
+	}
+	for id := range ts.sequences {
+		path := filepath.Join(basePath, fmt.Sprintf("%s.csv", id))
+		err := ts.writeSingleCSV(id, path)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func (ts *TimeSeries) ReadMultipleCSV(basePath string) error {
 	if _, err := os.Stat(basePath); os.IsNotExist(err) {
 		err = os.MkdirAll(basePath, 0755)
 		if err != nil {
