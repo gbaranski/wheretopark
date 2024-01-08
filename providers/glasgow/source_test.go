@@ -2,8 +2,8 @@ package glasgow_test
 
 import (
 	"testing"
-	"wheretopark/collector/glasgow"
 	wheretopark "wheretopark/go"
+	"wheretopark/providers/glasgow"
 )
 
 func TestGlasgow(t *testing.T) {

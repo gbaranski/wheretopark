@@ -2,8 +2,8 @@ package gdansk_test
 
 import (
 	"testing"
-	"wheretopark/collector/gdansk"
 	wheretopark "wheretopark/go"
+	"wheretopark/providers/gdansk"
 )
 
 func TestGdansk(t *testing.T) {

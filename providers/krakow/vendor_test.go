@@ -2,7 +2,7 @@ package krakow_test
 
 import (
 	"testing"
-	"wheretopark/collector/krakow"
+	"wheretopark/providers/krakow"
 )
 
 func TestGetPlacemarks(t *testing.T) {

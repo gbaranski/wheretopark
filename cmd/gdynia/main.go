@@ -1,8 +1,8 @@
 package main
 
 import (
-	"wheretopark/collector/gdynia"
 	wheretopark "wheretopark/go"
+	"wheretopark/providers/gdynia"
 
 	"github.com/caarlos0/env/v10"
 	"github.com/rs/zerolog/log"

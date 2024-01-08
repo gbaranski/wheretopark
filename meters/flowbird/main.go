@@ -6,9 +6,9 @@ import (
 	"os"
 	"strconv"
 	"time"
-	"wheretopark/collector/krakow"
 	wheretopark "wheretopark/go"
 	"wheretopark/go/meters"
+	"wheretopark/providers/krakow"
 
 	"github.com/jessevdk/go-flags"
 	"github.com/rs/zerolog/log"

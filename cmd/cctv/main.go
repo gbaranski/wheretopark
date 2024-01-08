@@ -1,8 +1,8 @@
 package main
 
 import (
-	"wheretopark/collector/cctv"
 	wheretopark "wheretopark/go"
+	"wheretopark/providers/cctv"
 
 	"github.com/caarlos0/env/v10"
 	"github.com/rs/zerolog/log"

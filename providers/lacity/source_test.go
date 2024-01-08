@@ -2,8 +2,8 @@ package lacity_test
 
 import (
 	"testing"
-	"wheretopark/collector/lacity"
 	wheretopark "wheretopark/go"
+	"wheretopark/providers/lacity"
 )
 
 func TestLACity(t *testing.T) {

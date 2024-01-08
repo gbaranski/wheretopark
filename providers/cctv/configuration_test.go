@@ -3,7 +3,7 @@ package cctv_test
 import (
 	"log"
 	"testing"
-	cctv "wheretopark/collector/cctv"
+	cctv "wheretopark/providers/cctv"
 )
 
 func TestParse(t *testing.T) {

@@ -1,8 +1,8 @@
 package main
 
 import (
-	"wheretopark/collector/glasgow"
 	wheretopark "wheretopark/go"
+	"wheretopark/providers/glasgow"
 
 	"github.com/caarlos0/env/v10"
 	"github.com/rs/zerolog/log"

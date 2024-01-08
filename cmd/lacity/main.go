@@ -1,8 +1,8 @@
 package main
 
 import (
-	"wheretopark/collector/lacity"
 	wheretopark "wheretopark/go"
+	"wheretopark/providers/lacity"
 
 	"github.com/caarlos0/env/v10"
 	"github.com/rs/zerolog/log"

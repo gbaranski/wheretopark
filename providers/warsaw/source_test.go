@@ -2,8 +2,8 @@ package warsaw_test
 
 import (
 	"testing"
-	"wheretopark/collector/warsaw"
 	wheretopark "wheretopark/go"
+	"wheretopark/providers/warsaw"
 )
 
 func TestWarsaw(t *testing.T) {
