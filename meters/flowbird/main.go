@@ -27,7 +27,7 @@ func main() {
 		log.Fatal().Err(err).Msg("failed to parse flags")
 	}
 
-	files, err := meters.ListFilesWithExtension(opts.InputPath, "csv")
+	files, err := wheretopark.ListFilesWithExtension(opts.InputPath, "csv")
 	if err != nil {
 		log.Fatal().Err(err).Msg("failed to list files")
 	}
