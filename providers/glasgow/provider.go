@@ -12,7 +12,7 @@ import (
 	geojson "github.com/paulmach/go.geojson"
 )
 
-type Source struct{}
+type Provider struct{}
 
 var (
 	// https://developer.glasgow.gov.uk/api-details#api=55c36a318b3a0306f0009483&operation=563cea91aab82f1168298575
@@ -20,7 +20,7 @@ var (
 	API_KEY  = "ccaa1e24db6e4a9bb791f99433cc7ab7"
 )
 
-func (s Source) ParkingLots(ctx context.Context) (<-chan map[wheretopark.ID]wheretopark.ParkingLot, error) {
+func (p Provider) ParkingLots(ctx context.Context) (<-chan map[wheretopark.ID]wheretopark.ParkingLot, error) {
 	vendor, err := wheretopark.Get[Response](DATA_URL, nil)
 	if err != nil {
 		return nil, err
@@ -82,6 +82,6 @@ func (s Source) ParkingLots(ctx context.Context) (<-chan map[wheretopark.ID]wher
 	return ch, nil
 }
 
-func New() Source {
-	return Source{}
+func New() Provider {
+	return Provider{}
 }

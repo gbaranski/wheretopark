@@ -15,13 +15,13 @@ import (
 	"gocv.io/x/gocv"
 )
 
-type Source struct {
+type Provider struct {
 	configuration Configuration
 	model         Model
 	saver         Saver
 }
 
-func (s Source) stateOf(ctx context.Context, parkingLot ConfiguredParkingLot) (wheretopark.State, error) {
+func (p Provider) stateOf(ctx context.Context, parkingLot ConfiguredParkingLot) (wheretopark.State, error) {
 	availableSpotsPtr := make(map[wheretopark.SpotType]*uint32, len(wheretopark.SpotTypes))
 	for _, spotType := range wheretopark.SpotTypes {
 		availableSpotsPtr[spotType] = new(uint32)
@@ -37,7 +37,7 @@ func (s Source) stateOf(ctx context.Context, parkingLot ConfiguredParkingLot) (w
 			Msg("processing parking lot camera")
 		go func(id int, camera Camera) {
 			defer wg.Done()
-			camAvailableSpots, err := s.processCamera(camera)
+			camAvailableSpots, err := p.processCamera(camera)
 			if err != nil {
 				log.Ctx(ctx).Error().Err(err).Int("camera", id).Msg("processing camera fail")
 				return
@@ -69,7 +69,7 @@ func (s Source) stateOf(ctx context.Context, parkingLot ConfiguredParkingLot) (w
 
 }
 
-func (s Source) processCamera(camera Camera) (map[wheretopark.SpotType]uint, error) {
+func (s Provider) processCamera(camera Camera) (map[wheretopark.SpotType]uint, error) {
 	img, err := GetImageFromCamera(camera.URL)
 	if err != nil {
 		return nil, fmt.Errorf("unable to get image from camera: %v", err)
@@ -102,16 +102,16 @@ func (s Source) processCamera(camera Camera) (map[wheretopark.SpotType]uint, err
 	return availableSpots, nil
 }
 
-func (s Source) ParkingLots(ctx context.Context) (<-chan map[wheretopark.ID]wheretopark.ParkingLot, error) {
+func (p Provider) ParkingLots(ctx context.Context) (<-chan map[wheretopark.ID]wheretopark.ParkingLot, error) {
 	var wg sync.WaitGroup
 
-	ch := make(chan map[wheretopark.ID]wheretopark.ParkingLot, len(s.configuration.ParkingLots))
-	for id, cfg := range s.configuration.ParkingLots {
+	ch := make(chan map[wheretopark.ID]wheretopark.ParkingLot, len(p.configuration.ParkingLots))
+	for id, cfg := range p.configuration.ParkingLots {
 		wg.Add(1)
 		go func(id wheretopark.ID, cfg ConfiguredParkingLot) {
 			defer wg.Done()
 			ctx := log.With().Str("id", id).Logger().WithContext(ctx)
-			state, err := s.stateOf(ctx, cfg)
+			state, err := p.stateOf(ctx, cfg)
 			if err != nil {
 				log.Ctx(ctx).Error().Err(err).Msg("stateOf fail")
 				return
@@ -133,9 +133,9 @@ func (s Source) ParkingLots(ctx context.Context) (<-chan map[wheretopark.ID]wher
 	return ch, nil
 }
 
-func (s Source) HandleVisualizeCamera(w http.ResponseWriter, r *http.Request) {
+func (p Provider) HandleVisualizeCamera(w http.ResponseWriter, r *http.Request) {
 	id := wheretopark.ID(chi.URLParam(r, "id"))
-	parkingLot, exists := s.configuration.ParkingLots[id]
+	parkingLot, exists := p.configuration.ParkingLots[id]
 	if !exists {
 		w.WriteHeader(http.StatusNotFound)
 		w.Write([]byte("parking lot not found"))
@@ -154,7 +154,7 @@ func (s Source) HandleVisualizeCamera(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	camera := parkingLot.Cameras[cameraID]
-	img, err := generateVisualizationFor(s.model, &camera)
+	img, err := generateVisualizationFor(p.model, &camera)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(fmt.Sprintf("generate visualization failure: %s", err)))
@@ -174,15 +174,15 @@ func (s Source) HandleVisualizeCamera(w http.ResponseWriter, r *http.Request) {
 	w.Write(buf.GetBytes())
 }
 
-func (s Source) ConfigureRoutes(r *chi.Mux) error {
-	r.Get("/visualize/{id}/{camera}", s.HandleVisualizeCamera)
+func (p Provider) ConfigureRoutes(r *chi.Mux) error {
+	r.Get("/visualize/{id}/{camera}", p.HandleVisualizeCamera)
 	return nil
 }
 
-func New(environment Environment) Source {
+func New(environment Environment) Provider {
 	model := NewModel(environment.ModelPath)
 	saver := NewSaver(environment.SavePath, environment.SaveItems, environment.SaveIDs)
-	return Source{
+	return Provider{
 		configuration: DefaultConfiguration,
 		model:         model,
 		saver:         saver,

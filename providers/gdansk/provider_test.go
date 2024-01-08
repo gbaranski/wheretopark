@@ -2,10 +2,10 @@ package gdansk_test
 
 import (
 	"testing"
-	wheretopark "wheretopark/go"
+	"wheretopark/go/tester"
 	"wheretopark/providers/gdansk"
 )
 
 func TestGdansk(t *testing.T) {
-	wheretopark.ExamineSource(t, gdansk.New())
+	tester.ExamineProvider(t, gdansk.New())
 }

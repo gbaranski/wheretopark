@@ -6,13 +6,13 @@ import (
 	wheretopark "wheretopark/go"
 )
 
-type Source struct {
+type Provider struct {
 	placemarks []Placemark
 }
 
-func (s Source) ParkingLots(ctx context.Context) (<-chan map[wheretopark.ID]wheretopark.ParkingLot, error) {
+func (p Provider) ParkingLots(ctx context.Context) (<-chan map[wheretopark.ID]wheretopark.ParkingLot, error) {
 	parkingLots := make(map[wheretopark.ID]wheretopark.ParkingLot)
-	for _, placemark := range s.placemarks {
+	for _, placemark := range p.placemarks {
 		metadata := placemark.Metadata(0)
 		id := wheretopark.GeometryToID(metadata.Geometry)
 		state := wheretopark.State{
@@ -32,8 +32,8 @@ func (s Source) ParkingLots(ctx context.Context) (<-chan map[wheretopark.ID]wher
 	return ch, nil
 }
 
-func New(placemarks []Placemark) Source {
-	return Source{
+func New(placemarks []Placemark) Provider {
+	return Provider{
 		placemarks: placemarks,
 	}
 }

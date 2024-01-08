@@ -2,10 +2,10 @@ package lacity_test
 
 import (
 	"testing"
-	wheretopark "wheretopark/go"
+	"wheretopark/go/tester"
 	"wheretopark/providers/lacity"
 )
 
 func TestLACity(t *testing.T) {
-	wheretopark.ExamineSource(t, lacity.New())
+	tester.ExamineProvider(t, lacity.New())
 }

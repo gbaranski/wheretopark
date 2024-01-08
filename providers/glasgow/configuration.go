@@ -327,14 +327,14 @@ var configuration = Configuration{
 
 func init() {
 	for k, v := range configuration.ParkingLots {
-		const SOURCE_NOTICE = "Source of data: glasgow.gov.uk."
+		const DATA_SOURCE_NOTICE = "Source of data: glasgow.gov.uk."
 		comment := v.Comment
 		if comment == nil {
 			comment = make(map[string]string)
-			comment["en"] = SOURCE_NOTICE
+			comment["en"] = DATA_SOURCE_NOTICE
 		} else {
 			comment["en"] += "\n"
-			comment["en"] += SOURCE_NOTICE
+			comment["en"] += DATA_SOURCE_NOTICE
 		}
 
 		configuration.ParkingLots[k] = wheretopark.Metadata{

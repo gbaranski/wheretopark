@@ -2,6 +2,7 @@ package main
 
 import (
 	wheretopark "wheretopark/go"
+	"wheretopark/go/providers"
 	"wheretopark/providers/krakow"
 
 	"github.com/caarlos0/env/v10"
@@ -25,16 +26,16 @@ func main() {
 		log.Fatal().Err(err).Msg("error getting placemarks")
 	}
 
-	source := krakow.New(placemarks)
+	provider := krakow.New(placemarks)
 
-	cache, err := wheretopark.NewCache()
+	cache, err := providers.NewCache()
 	if err != nil {
 		log.Fatal().Err(err).Msg("failed to create cache")
 	}
 
-	// go wheretopark.RunPrefetch(cache, source, wheretopark.CacheTTL)
+	// go wheretopark.RunPrefetch(cache, provider, wheretopark.CacheTTL)
 
-	server := wheretopark.NewServer(cache, source)
+	server := providers.NewServer(cache, provider)
 	router := server.Router()
 	if err := server.Run(router, environment.Port); err != nil {
 		log.Fatal().Err(err).Msg("run server failure")

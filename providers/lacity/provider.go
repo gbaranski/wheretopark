@@ -11,7 +11,7 @@ import (
 	geojson "github.com/paulmach/go.geojson"
 )
 
-type Source struct{}
+type Provider struct{}
 
 var (
 	METADATA_URL = wheretopark.MustParseURL("https://data.lacity.org/resource/s49e-q6j2.json")
@@ -20,7 +20,7 @@ var (
 
 var timezone *time.Location = wheretopark.MustLoadLocation("America/Los_Angeles")
 
-func (s Source) ParkingLots(ctx context.Context) (<-chan map[wheretopark.ID]wheretopark.ParkingLot, error) {
+func (p Provider) ParkingLots(ctx context.Context) (<-chan map[wheretopark.ID]wheretopark.ParkingLot, error) {
 	vMetadata, err := wheretopark.Get[Metadata](METADATA_URL, nil)
 	if err != nil {
 		return nil, err
@@ -117,6 +117,6 @@ func (s Source) ParkingLots(ctx context.Context) (<-chan map[wheretopark.ID]wher
 	return ch, nil
 }
 
-func New() Source {
-	return Source{}
+func New() Provider {
+	return Provider{}
 }

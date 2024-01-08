@@ -2,6 +2,7 @@ package main
 
 import (
 	wheretopark "wheretopark/go"
+	"wheretopark/go/providers"
 	"wheretopark/providers/cctv"
 
 	"github.com/caarlos0/env/v10"
@@ -21,18 +22,18 @@ func main() {
 		log.Fatal().Err(err).Send()
 	}
 
-	source := cctv.New(environment.CCTV)
+	provider := cctv.New(environment.CCTV)
 
-	cache, err := wheretopark.NewCache()
+	cache, err := providers.NewCache()
 	if err != nil {
 		log.Fatal().Err(err).Msg("failed to create cache")
 	}
 
-	go wheretopark.RunPrefetch(cache, source, wheretopark.CacheTTL)
+	go providers.RunPrefetch(cache, provider, providers.CacheTTL)
 
-	server := wheretopark.NewServer(cache, source)
+	server := providers.NewServer(cache, provider)
 	router := server.Router()
-	router.Get("/visualize/{id}/{camera}", source.HandleVisualizeCamera)
+	router.Get("/visualize/{id}/{camera}", provider.HandleVisualizeCamera)
 	if err := server.Run(router, environment.Port); err != nil {
 		log.Fatal().Err(err).Msg("run server failure")
 	}

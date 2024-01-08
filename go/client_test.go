@@ -4,6 +4,7 @@ import (
 	"net/url"
 	"testing"
 	wheretopark "wheretopark/go"
+	"wheretopark/go/tester"
 )
 
 func TestServerClient(t *testing.T) {
@@ -11,7 +12,7 @@ func TestServerClient(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	c := wheretopark.NewServerClient(url)
+	c := wheretopark.NewClient(url)
 	providers, err := c.Providers()
 	if err != nil {
 		t.Fatal(err)
@@ -36,5 +37,5 @@ func TestServerClient(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	equalJson[map[wheretopark.ID]wheretopark.ParkingLot](t, allParkingLots, allParkingLots2, "different parking lot maps returned from GetFrom and GetFromMany")
+	tester.EqualJson[map[wheretopark.ID]wheretopark.ParkingLot](t, allParkingLots, allParkingLots2, "different parking lot maps returned from GetFrom and GetFromMany")
 }

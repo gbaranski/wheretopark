@@ -26,7 +26,7 @@ func main() {
 		log.Fatal().Err(err).Send()
 	}
 
-	client := wheretopark.NewServerClient(wheretopark.MustParseURL(environment.SERVER_URL))
+	client := wheretopark.NewClient(wheretopark.MustParseURL(environment.SERVER_URL))
 
 	// Create a new influx using an InfluxDB server base URL and an authentication token
 	influx, err := influxdb3.New(influxdb3.ClientConfig{
@@ -55,7 +55,7 @@ func main() {
 
 }
 
-func process(client *wheretopark.ServerClient, influx *influxdb3.Client, bucket string) error {
+func process(client *wheretopark.Client, influx *influxdb3.Client, bucket string) error {
 	providers, err := client.Providers()
 	if err != nil {
 		return fmt.Errorf("failed to fetch providers: %w", err)

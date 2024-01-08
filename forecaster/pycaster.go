@@ -31,7 +31,7 @@ func (p Pycaster) Predict(id wheretopark.ID, sequences map[time.Time]uint, start
 		return nil, fmt.Errorf("error writing csv: %w", err)
 	}
 
-	resp, err := wheretopark.DefaultClient.R().
+	resp, err := wheretopark.DefaultRestyClient.R().
 		SetFileReader("file", fmt.Sprintf("%s.csv", id), &buf).
 		SetQueryParam("start", start.Format(time.RFC3339)).
 		SetQueryParam("end", end.Format(time.RFC3339)).

@@ -1,18 +1,19 @@
-package wheretopark
+package providers
 
 import (
 	"context"
 	"time"
+	wheretopark "wheretopark/go"
 
 	"github.com/rs/zerolog/log"
 )
 
-type Source interface {
-	ParkingLots(context.Context) (<-chan map[ID]ParkingLot, error)
+type Provider interface {
+	ParkingLots(context.Context) (<-chan map[wheretopark.ID]wheretopark.ParkingLot, error)
 }
 
-func poll(ctx context.Context, cache *Cache, source Source) (uint, error) {
-	ch, err := source.ParkingLots(ctx)
+func poll(ctx context.Context, cache *Cache, provider Provider) (uint, error) {
+	ch, err := provider.ParkingLots(ctx)
 	if err != nil {
 		return 0, err
 	}
@@ -26,10 +27,10 @@ func poll(ctx context.Context, cache *Cache, source Source) (uint, error) {
 	return count, nil
 }
 
-func RunPrefetch(cache *Cache, source Source, interval time.Duration) {
+func RunPrefetch(cache *Cache, provider Provider, interval time.Duration) {
 	ctx := log.With().Logger().WithContext(context.TODO())
 	for {
-		count, err := poll(ctx, cache, source)
+		count, err := poll(ctx, cache, provider)
 		if err != nil {
 			log.Ctx(ctx).Error().Err(err).Msg("prefetch failed")
 		} else {

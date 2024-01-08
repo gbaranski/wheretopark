@@ -2,10 +2,10 @@ package warsaw_test
 
 import (
 	"testing"
-	wheretopark "wheretopark/go"
+	"wheretopark/go/tester"
 	"wheretopark/providers/warsaw"
 )
 
 func TestWarsaw(t *testing.T) {
-	wheretopark.ExamineSource(t, warsaw.New())
+	tester.ExamineProvider(t, warsaw.New())
 }

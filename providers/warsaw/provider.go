@@ -13,7 +13,7 @@ import (
 	geojson "github.com/paulmach/go.geojson"
 )
 
-type Source struct{}
+type Provider struct{}
 
 var (
 	// API key from https://api.um.warszawa.pl
@@ -21,7 +21,7 @@ var (
 	DATA_URL = wheretopark.MustParseURL("https://api.um.warszawa.pl/api/action/parking_get_list/?apikey=" + API_KEY)
 )
 
-func (s Source) ParkingLots(ctx context.Context) (<-chan map[wheretopark.ID]wheretopark.ParkingLot, error) {
+func (p Provider) ParkingLots(ctx context.Context) (<-chan map[wheretopark.ID]wheretopark.ParkingLot, error) {
 	vendor, err := wheretopark.Get[Response](DATA_URL, nil)
 	if err != nil {
 		return nil, err
@@ -115,6 +115,6 @@ func (s Source) ParkingLots(ctx context.Context) (<-chan map[wheretopark.ID]wher
 	return ch, nil
 }
 
-func New() Source {
-	return Source{}
+func New() Provider {
+	return Provider{}
 }

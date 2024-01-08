@@ -16,9 +16,9 @@ var (
 	STATE_URL    = wheretopark.MustParseURL("https://ckan2.multimediagdansk.pl/parkingLots")
 )
 
-type Source struct{}
+type Provider struct{}
 
-func (s Source) ParkingLots(ctx context.Context) (<-chan map[wheretopark.ID]wheretopark.ParkingLot, error) {
+func (p Provider) ParkingLots(ctx context.Context) (<-chan map[wheretopark.ID]wheretopark.ParkingLot, error) {
 	vMetadata, err := wheretopark.Get[Metadata](METADATA_URL, nil)
 	if err != nil {
 		return nil, err
@@ -85,6 +85,6 @@ func (s Source) ParkingLots(ctx context.Context) (<-chan map[wheretopark.ID]wher
 	return ch, nil
 }
 
-func New() Source {
-	return Source{}
+func New() Provider {
+	return Provider{}
 }

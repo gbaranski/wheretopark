@@ -12,9 +12,9 @@ import (
 
 const URL_FORMAT = "https://www.ztm.poznan.pl/pl/dla-deweloperow/getParkingFile?file=ZTM_ParkAndRide__%s.csv"
 
-type Source struct{}
+type Provider struct{}
 
-func (s Source) ParkingLots(ctx context.Context) (<-chan map[wheretopark.ID]wheretopark.ParkingLot, error) {
+func (p Provider) ParkingLots(ctx context.Context) (<-chan map[wheretopark.ID]wheretopark.ParkingLot, error) {
 	var wg sync.WaitGroup
 	ch := make(chan map[wheretopark.ID]wheretopark.ParkingLot, len(configuration.ParkingLots))
 	for name, metadata := range configuration.ParkingLots {
@@ -61,6 +61,6 @@ func (s Source) ParkingLots(ctx context.Context) (<-chan map[wheretopark.ID]wher
 	return ch, nil
 }
 
-func New() Source {
-	return Source{}
+func New() Provider {
+	return Provider{}
 }

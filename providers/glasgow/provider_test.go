@@ -2,10 +2,10 @@ package glasgow_test
 
 import (
 	"testing"
-	wheretopark "wheretopark/go"
+	"wheretopark/go/tester"
 	"wheretopark/providers/glasgow"
 )
 
 func TestGlasgow(t *testing.T) {
-	wheretopark.ExamineSource(t, glasgow.New())
+	tester.ExamineProvider(t, glasgow.New())
 }
