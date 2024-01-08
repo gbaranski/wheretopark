@@ -29,7 +29,7 @@ type Record struct {
 }
 
 func NewTimeseriesFromMeterRecords(records []Record, opts Options) timeseries.TimeSeries {
-	timeseries := timeseries.NewTimeseries()
+	timeseries := timeseries.New()
 	for _, record := range records {
 		id, exists := opts.Mapping[record.Code]
 		if !exists {

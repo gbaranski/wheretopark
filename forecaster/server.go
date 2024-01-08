@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"time"
-	wheretopark "wheretopark/go"
+	"wheretopark/go/timeseries"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
@@ -13,14 +13,14 @@ import (
 )
 
 type Server struct {
-	pycaster  Pycaster
-	sequences map[wheretopark.ID]map[time.Time]uint
+	pycaster Pycaster
+	ts       timeseries.TimeSeries
 }
 
-func NewServer(pycaster Pycaster, sequences map[wheretopark.ID]map[time.Time]uint) Server {
+func NewServer(pycaster Pycaster, timeseries timeseries.TimeSeries) Server {
 	return Server{
 		pycaster,
-		sequences,
+		timeseries,
 	}
 }
 
@@ -37,8 +37,8 @@ func (s *Server) handleForecast(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-	sequences, ok := s.sequences[wheretopark.ID(parkingID)]
-	if !ok {
+	sequences := s.ts.Get(parkingID)
+	if sequences == nil {
 		log.Error().Err(err).Str("parkingID", parkingID).Msg("parkingID not found")
 		w.WriteHeader(http.StatusBadRequest)
 		return

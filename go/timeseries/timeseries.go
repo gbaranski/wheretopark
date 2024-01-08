@@ -3,9 +3,11 @@ package timeseries
 import (
 	"encoding/csv"
 	"fmt"
+	"io"
 	"os"
 	"path/filepath"
 	"strconv"
+	"strings"
 	"time"
 	wheretopark "wheretopark/go"
 
@@ -16,7 +18,7 @@ type TimeSeries struct {
 	sequences map[wheretopark.ID]map[time.Time]uint
 }
 
-func NewTimeseries() TimeSeries {
+func New() TimeSeries {
 	return TimeSeries{
 		sequences: make(map[wheretopark.ID]map[time.Time]uint),
 	}
@@ -32,6 +34,15 @@ func (ts *TimeSeries) IDs() []wheretopark.ID {
 		ids = append(ids, id)
 	}
 	return ids
+}
+
+func (ts *TimeSeries) Get(id wheretopark.ID) map[time.Time]uint {
+	seq, ok := ts.sequences[id]
+	if ok {
+		return seq
+	} else {
+		return nil
+	}
 }
 
 func (ts *TimeSeries) Add(id wheretopark.ID, interval time.Time) {
@@ -138,19 +149,61 @@ func (ts *TimeSeries) WriteMultipleCSV(basePath string) error {
 	return nil
 }
 
-func (ts *TimeSeries) ReadMultipleCSV(basePath string) error {
-	if _, err := os.Stat(basePath); os.IsNotExist(err) {
-		err = os.MkdirAll(basePath, 0755)
-		if err != nil {
-			return fmt.Errorf("failed to create directory: %w", err)
-		}
+func (ts *TimeSeries) loadSingleCSV(path string) (map[time.Time]uint, error) {
+	file, err := os.Open(path)
+	if err != nil {
+		return nil, fmt.Errorf("failed to open file: %w", err)
 	}
-	for id := range ts.sequences {
-		path := filepath.Join(basePath, fmt.Sprintf("%s.csv", id))
-		err := ts.writeSingleCSV(id, path)
-		if err != nil {
-			return err
-		}
+	defer file.Close()
+
+	reader := csv.NewReader(file)
+	sequences := make(map[time.Time]uint)
+
+	// Read and discard headers
+	_, err = reader.Read()
+	if err != nil {
+		return nil, fmt.Errorf("failed to read headers from csv file: %w", err)
 	}
+
+	// Read data
+	for {
+		record, err := reader.Read()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			return nil, fmt.Errorf("error reading csv file: %w", err)
+		}
+
+		t, err := time.Parse(time.RFC3339, record[0])
+		if err != nil {
+			return nil, fmt.Errorf("error parsing time: %w", err)
+		}
+		u, err := strconv.ParseUint(record[1], 10, 32)
+		if err != nil {
+			return nil, fmt.Errorf("error parsing uint: %w", err)
+		}
+
+		sequences[t] = uint(u)
+	}
+
+	return sequences, nil
+
+}
+
+func (ts *TimeSeries) LoadMultipleCSV(basePath string) error {
+	files, err := wheretopark.ListFilesWithExtension(basePath, "csv")
+	if err != nil {
+		return fmt.Errorf("failed to list files: %w", err)
+	}
+	for _, path := range files {
+		id := strings.TrimSuffix(path, ".csv")
+		sequences, err := ts.loadSingleCSV(path)
+		if err != nil {
+			log.Error().Err(err).Str("path", path).Msg("failed to load csv file")
+		}
+		ts.sequences[id] = sequences
+	}
+	log.Info().Msg(fmt.Sprintf("loaded %d sequences from %d files", len(ts.sequences), len(files)))
 	return nil
 }
