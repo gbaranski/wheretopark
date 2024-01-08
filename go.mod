@@ -12,6 +12,7 @@ require (
 	github.com/go-resty/resty/v2 v2.9.1
 	github.com/goccy/go-yaml v1.11.2
 	github.com/google/go-cmp v0.5.9
+	github.com/jessevdk/go-flags v1.5.0
 	github.com/mmcloughlin/geohash v0.10.0
 	github.com/paulmach/go.geojson v1.5.0
 	github.com/rs/zerolog v1.31.0

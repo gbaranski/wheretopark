@@ -12,7 +12,6 @@ import (
 	"wheretopark/collector/krakow"
 	"wheretopark/forecaster"
 	wheretopark "wheretopark/go"
-	"wheretopark/meters"
 
 	"github.com/rs/zerolog/log"
 
@@ -32,13 +31,10 @@ func krakowSequences(basePath string) map[wheretopark.ID]map[time.Time]uint {
 		log.Fatal().Err(err).Msg("error getting placemarks")
 	}
 	mapping := krakow.CodeMapping(placemarks)
-	flowbird := meters.NewFlowbird(filepath.Join(basePath, "FLOWBIRD"), mapping)
-	solari2000 := meters.NewSolari(filepath.Join(basePath, "SOLARI 2000"), mapping)
-	solari3000 := meters.NewSolari(filepath.Join(basePath, "SOLARI 3000"), mapping)
-	meterSources := map[string]meters.DataSource{
-		"Flowbird":    flowbird,
-		"Solari 2000": solari2000,
-		"Solari 3000": solari3000,
+	meterSources := []meters.DataSource{
+		meters.NewFlowbird(filepath.Join(basePath, "FLOWBIRD"), mapping),
+		meters.NewSolari(filepath.Join(basePath, "SOLARI 2000"), mapping, meters.SolariVersion2000),
+		meters.NewSolari(filepath.Join(basePath, "SOLARI 3000"), mapping, meters.SolariVersion3000),
 	}
 	meters := meters.NewMeters(meterSources)
 	sequences, err := meters.Sequences()

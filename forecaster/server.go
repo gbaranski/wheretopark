@@ -24,6 +24,10 @@ func NewServer(pycaster Pycaster, sequences map[wheretopark.ID]map[time.Time]uin
 	}
 }
 
+type Forecast struct {
+	Predictions []Prediction `json:"predictions"`
+}
+
 func (s *Server) handleForecast(w http.ResponseWriter, r *http.Request) {
 	parkingID := chi.URLParam(r, "identifier")
 	dateOnly := chi.URLParam(r, "dateOnly")
@@ -49,7 +53,11 @@ func (s *Server) handleForecast(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	json, err := json.Marshal(predictions)
+	forecast := Forecast{
+		Predictions: predictions,
+	}
+
+	json, err := json.Marshal(forecast)
 	if err != nil {
 		log.Error().Err(err).Str("parkingID", parkingID).Msg("error marshaling predictions")
 		w.WriteHeader(http.StatusInternalServerError)

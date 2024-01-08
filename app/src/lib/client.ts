@@ -1,10 +1,6 @@
 import { type ID, ParkingLot } from "./parkingLot";
 import { isLoading, parkingLots as parkingLotsStore } from "$lib/store";
-import { env } from '$env/dynamic/public';
-
-const { PUBLIC_SERVER_URL } = env;
-const productionServer = "https://api.wheretopark.app";
-const serverURL = PUBLIC_SERVER_URL ?? productionServer;
+import { serverURL } from "./config";
 
 type Provider = {
   name: string;
@@ -61,11 +57,15 @@ export const getParkingLots = async (
   const allParkingLots: Record<ID, ParkingLot> = {};
   const providers = await getProviders(fetch);
   const promises = providers.map(async (provider) => {
-    const providerParkingLots = getParkingLotFromProvider(fetch, provider);
-    for await (const parkingLots of providerParkingLots) {
-      Object.entries(parkingLots).forEach(([id, parkingLot]) => {
-        allParkingLots[id] = parkingLot;
-      });
+    try {
+      const providerParkingLots = getParkingLotFromProvider(fetch, provider);
+      for await (const parkingLots of providerParkingLots) {
+        Object.entries(parkingLots).forEach(([id, parkingLot]) => {
+          allParkingLots[id] = parkingLot;
+        });
+      }
+    } catch (e) {
+      console.error("Failed to fetch parking lots from provider", provider, e)
     }
   });
   await Promise.all(promises);
@@ -75,11 +75,16 @@ export const getParkingLots = async (
 export const updateParkingLots = async (fetch: typeof window.fetch) => {
   const providers = await getProviders(fetch);
   const promises = providers.map(async (provider) => {
-    const providerParkingLots = getParkingLotFromProvider(fetch, provider);
-    for await (const parkingLots of providerParkingLots) {
-      parkingLotsStore.update((value) => {
-        return { ...value, ...parkingLots };
-      });
+
+    try {
+      const providerParkingLots = getParkingLotFromProvider(fetch, provider);
+      for await (const parkingLots of providerParkingLots) {
+        parkingLotsStore.update((value) => {
+          return { ...value, ...parkingLots };
+        });
+      }
+    } catch (e) {
+      console.error("Failed to fetch parking lots from provider", provider, e.message)
     }
   });
   await Promise.all(promises);

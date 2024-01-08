@@ -113,6 +113,9 @@ func MergeMaps[K comparable, T any](values ...map[K]T) map[K]T {
 	result := make(map[K]T)
 	for _, subvalues := range values {
 		for id, value := range subvalues {
+			if _, exists := result[id]; exists {
+				panic(fmt.Errorf("duplicate key: %v", id))
+			}
 			result[id] = value
 		}
 	}
