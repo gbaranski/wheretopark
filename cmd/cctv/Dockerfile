@@ -8,7 +8,7 @@ COPY go.* ./
 RUN go mod download
 
 COPY go ./go
-COPY ./collector/cctv ./collector/cctv
+COPY ./providers/cctv ./providers/cctv
 COPY ./cmd/cctv ./cmd/cctv
 
 RUN go build -v -o exe ./cmd/cctv

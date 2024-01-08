@@ -6,7 +6,7 @@ COPY go.* ./
 RUN go mod download
 
 COPY go ./go
-COPY ./collector/lacity ./collector/lacity
+COPY ./providers/lacity ./providers/lacity
 COPY ./cmd/lacity ./cmd/lacity
 
 RUN go build -v -o exe ./cmd/lacity

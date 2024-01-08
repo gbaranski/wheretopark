@@ -6,7 +6,7 @@ COPY go.* ./
 RUN go mod download
 
 COPY go ./go
-COPY ./collector/warsaw ./collector/warsaw
+COPY ./providers/warsaw ./providers/warsaw
 COPY ./cmd/warsaw ./cmd/warsaw
 
 RUN go build -v -o exe ./cmd/warsaw

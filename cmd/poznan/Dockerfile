@@ -6,7 +6,7 @@ COPY go.* ./
 RUN go mod download
 
 COPY go ./go
-COPY ./collector/poznan ./collector/poznan
+COPY ./providers/poznan ./providers/poznan
 COPY ./cmd/poznan ./cmd/poznan
 
 RUN go build -v -o exe ./cmd/poznan

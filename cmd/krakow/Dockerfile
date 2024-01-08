@@ -7,7 +7,7 @@ RUN go mod download
 
 COPY go ./go
 COPY ./meters ./meters
-COPY ./collector/krakow ./collector/krakow
+COPY ./providers/krakow ./providers/krakow
 COPY ./cmd/krakow ./cmd/krakow
 
 RUN go build -v -o exe ./cmd/krakow

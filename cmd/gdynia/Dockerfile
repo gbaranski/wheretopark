@@ -6,7 +6,7 @@ COPY go.* ./
 RUN go mod download
 
 COPY go ./go
-COPY ./collector/gdynia ./collector/gdynia
+COPY ./providers/gdynia ./providers/gdynia
 COPY ./cmd/gdynia ./cmd/gdynia
 
 RUN go build -v -o exe ./cmd/gdynia

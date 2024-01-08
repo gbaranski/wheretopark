@@ -6,7 +6,7 @@ COPY go.* ./
 RUN go mod download
 
 COPY go ./go
-COPY ./collector/glasgow ./collector/glasgow
+COPY ./providers/glasgow ./providers/glasgow
 COPY ./cmd/glasgow ./cmd/glasgow
 
 RUN go build -v -o exe ./cmd/glasgow

@@ -6,7 +6,7 @@ COPY go.* ./
 RUN go mod download
 
 COPY go ./go
-COPY ./collector/gdansk ./collector/gdansk
+COPY ./providers/gdansk ./providers/gdansk
 COPY ./cmd/gdansk ./cmd/gdansk
 
 RUN go build -v -o exe ./cmd/gdansk

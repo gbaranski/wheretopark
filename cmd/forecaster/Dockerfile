@@ -7,7 +7,7 @@ RUN go mod download
 
 COPY go ./go
 COPY ./meters ./meters
-COPY ./collector/krakow ./collector/krakow
+COPY ./providers/krakow ./providers/krakow
 COPY ./forecaster ./forecaster
 COPY ./cmd/forecaster ./cmd/forecaster
 
