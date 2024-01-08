@@ -181,6 +181,9 @@ services:
     environment:
       PORT: 8080
       LOG_LEVEL: debug
+      TIMESERIES_DATA: /opt/wheretopark/timeseries
+    volumes:
+      - $HOME/.local/share/wheretopark/timeseries:/opt/wheretopark/timeseries
     labels:
       - "traefik.http.middlewares.krakow-cors.headers.accesscontrolallowmethods=GET"
       - "traefik.http.middlewares.krakow-cors.headers.accesscontrolalloworiginlist=*"

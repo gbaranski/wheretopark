@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"net/url"
 	"wheretopark/forecaster"
 	wheretopark "wheretopark/go"
@@ -29,6 +30,9 @@ func main() {
 	err := timeseries.LoadMultipleCSV(environment.TimeseriesData)
 	if err != nil {
 		log.Fatal().Err(err).Msg("failed to load timeseries")
+	}
+	for _, id := range timeseries.IDs() {
+		fmt.Printf("id: %s, count: %d\n", id, timeseries.CountFor(id))
 	}
 
 	pycaster := forecaster.NewPycaster(environment.PycasterURL)

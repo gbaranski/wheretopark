@@ -40,7 +40,7 @@ func (s *Server) handleForecast(w http.ResponseWriter, r *http.Request) {
 	sequences := s.ts.Get(parkingID)
 	if sequences == nil {
 		log.Error().Err(err).Str("parkingID", parkingID).Msg("parkingID not found")
-		w.WriteHeader(http.StatusBadRequest)
+		w.WriteHeader(http.StatusNotFound)
 		return
 	}
 
