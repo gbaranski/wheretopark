@@ -209,12 +209,10 @@ services:
     environment:
       PORT: 8080
       LOG_LEVEL: debug
-      FORECASTER_DATA: /opt/wheretopark/forecaster
-      FORECASTER_CACHE: /var/cache/wheretopark/forecaster
+      TIMESERIES_DATA: /opt/wheretopark/timeseries
       PYCASTER_URL: "http://pycaster:8080"
     volumes:
-      - $HOME/.local/share/wheretopark/forecaster:/opt/wheretopark/forecaster
-      - $HOME/.cache/wheretopark/forecaster:/var/cache/wheretopark/forecaster
+      - $HOME/.local/share/wheretopark/timeseries:/opt/wheretopark/timeseries
     labels:
       - "traefik.http.middlewares.forecaster-cors.headers.accesscontrolallowmethods=GET"
       - "traefik.http.middlewares.forecaster-cors.headers.accesscontrolalloworiginlist=*"

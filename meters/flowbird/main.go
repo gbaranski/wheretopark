@@ -17,7 +17,7 @@ import (
 
 var opts struct {
 	InputPath  string `short:"i" long:"input" description:"Flowbird data input path" required:"true"`
-	OutputPath string `short:"o" long:"output" description:"Folder in where to output sequences" required:"true"`
+	OutputPath string `short:"o" long:"output" description:"Folder in where to output sequences"`
 }
 
 func main() {
@@ -70,6 +70,13 @@ func main() {
 		)
 	for _, id := range timeseries.IDs() {
 		fmt.Printf("%s: %d records. %d total spots\n", id, timeseries.CountFor(id), timeseries.MaxOccupancyOf(id))
+	}
+
+	if opts.OutputPath != "" {
+		err := timeseries.WriteMultipleCSV(opts.OutputPath)
+		if err != nil {
+			log.Fatal().Err(err).Msg("failed to write csv")
+		}
 	}
 }
 

@@ -2,7 +2,6 @@ package main
 
 import (
 	"net/url"
-	"path/filepath"
 	"wheretopark/forecaster"
 	wheretopark "wheretopark/go"
 	"wheretopark/go/timeseries"
@@ -14,7 +13,7 @@ import (
 
 type environment struct {
 	Port           uint     `env:"PORT" envDefault:"8080"`
-	ForecasterData string   `env:"FORECASTER_DATA,expand" envDefault:"${HOME}/.local/share/wheretopark/forecaster"`
+	TimeseriesData string   `env:"TIMESERIES_DATA,expand" envDefault:"${HOME}/.local/share/wheretopark/timeseries"`
 	PycasterURL    *url.URL `env:"PYCASTER_URL,required"`
 }
 
@@ -27,7 +26,7 @@ func main() {
 	}
 
 	timeseries := timeseries.New()
-	err := timeseries.LoadMultipleCSV(filepath.Join(environment.ForecasterData, "timeseries"))
+	err := timeseries.LoadMultipleCSV(environment.TimeseriesData)
 	if err != nil {
 		log.Fatal().Err(err).Msg("failed to load timeseries")
 	}
