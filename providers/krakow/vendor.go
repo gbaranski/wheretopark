@@ -103,6 +103,10 @@ func (p Placemark) ZoneMatchingRules() []wheretopark.Rule {
 	}
 }
 
+func (p Placemark) ID() wheretopark.ID {
+	return wheretopark.CoordinateToID(p.Coordinates.Latitude, p.Coordinates.Longitude)
+}
+
 func (p Placemark) Metadata(totalSpots uint) wheretopark.Metadata {
 	metadata := wheretopark.Metadata{
 		LastUpdated: &defaultLastUpdated,

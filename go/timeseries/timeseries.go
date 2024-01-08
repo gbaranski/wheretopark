@@ -151,7 +151,7 @@ func (ts *TimeSeries) LoadMultipleCSV(basePath string) error {
 		return fmt.Errorf("failed to list files: %w", err)
 	}
 	for _, path := range files {
-		id := strings.TrimSuffix(path, ".csv")
+		id := strings.TrimSuffix(filepath.Base(path), ".csv")
 		sequences, err := readSingleCSV(path)
 		if err != nil {
 			log.Error().Err(err).Str("path", path).Msg("failed to load csv file")
