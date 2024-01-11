@@ -126,3 +126,7 @@ export const serializeSchema = <T extends Thing>(thing: WithContext<T>): string 
     2
   )}</script>`
 }
+
+export const getNumbersBetween = (start: number, end: number) => {
+  return Array.from({ length: end - start + 1 }, (_, i) => start + i);
+}

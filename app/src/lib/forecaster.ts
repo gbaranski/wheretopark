@@ -2,7 +2,7 @@ import { serverURL } from "./config";
 import type { ID } from "./parkingLot";
 
 export type Prediction = {
-    date: string;
+    date: Date;
     occupancy: number;
 }
 
@@ -21,5 +21,10 @@ export const getForecast = async (
         throw new Error(`HTTP error! status: ${response.status}`);
     }
     const data = await response.json();
-    return data as Forecast;
+    return {
+        predictions: data["predictions"].map((p: any) => ({
+            date: new Date(p.date),
+            occupancy: p.occupancy,
+        })),
+    };
 }

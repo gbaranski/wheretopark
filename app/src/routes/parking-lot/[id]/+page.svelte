@@ -11,9 +11,13 @@
 	import Markdown from 'svelte-markdown';
 	import Icon from '@iconify/svelte';
 	import ResourceIcon from '$lib/components/ResourceIcon.svelte';
+	import type { Forecast } from '$lib/forecaster';
+	import { page } from '$app/stores';
+	import ForecastChart from '$lib/components/ForecastChart.svelte';
 
-	export let data: { parkingLot: ParkingLot };
+	export let data: { parkingLot: ParkingLot, forecast: Forecast };
 	$: parkingLot = data.parkingLot;
+	$: forecast = data.forecast
 	$: status = parkingLot.status(SpotType.car);
 	$: rating = parkingLot.rating(status, SpotType.car);
 
@@ -290,6 +294,9 @@
 		<Markdown source={parkingLot.preferredComment()} />
 	</article>
 {/if}
+
+
+<ForecastChart {forecast}/>
 
 <div class="divider"></div>
 <div class="text-center">

@@ -1,0 +1,5 @@
+{
+	"devDependencies": {
+		"chart.js": "^4.4.1"
+	}
+}
