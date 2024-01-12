@@ -59,6 +59,9 @@ devDependencies:
   '@types/haversine':
     specifier: ^1.1.8
     version: 1.1.8
+  '@types/leaflet':
+    specifier: ^1.9.8
+    version: 1.9.8
   '@types/mapbox-gl':
     specifier: ^2.7.19
     version: 2.7.19
@@ -92,6 +95,9 @@ devDependencies:
   haversine:
     specifier: ^1.1.1
     version: 1.1.1
+  leaflet:
+    specifier: ^1.9.4
+    version: 1.9.4
   mailto-link:
     specifier: ^2.0.0
     version: 2.0.0
@@ -1173,6 +1179,12 @@ packages:
 
   /@types/json-schema@7.0.15:
     resolution: {integrity: sha512-5+fP8P8MFNC+AyZCDxrB2pkZFPGzqQWUzpSeuuVLvm8VMcorNYavBqoFcxK8bQz4Qsbn4oUEEem4wDLfcysGHA==}
+    dev: true
+
+  /@types/leaflet@1.9.8:
+    resolution: {integrity: sha512-EXdsL4EhoUtGm2GC2ZYtXn+Fzc6pluVgagvo2VC1RHWToLGlTRwVYoDpqS/7QXa01rmDyBjJk3Catpf60VMkwg==}
+    dependencies:
+      '@types/geojson': 7946.0.13
     dev: true
 
   /@types/mapbox-gl@2.7.19:
@@ -2469,6 +2481,10 @@ packages:
 
   /known-css-properties@0.29.0:
     resolution: {integrity: sha512-Ne7wqW7/9Cz54PDt4I3tcV+hAyat8ypyOGzYRJQfdxnnjeWsTxt1cy8pjvvKeI5kfXuyvULyeeAvwvvtAX3ayQ==}
+    dev: true
+
+  /leaflet@1.9.4:
+    resolution: {integrity: sha512-nxS1ynzJOmOlHp+iL3FyWqK89GtNL8U8rvlMOsQdTTssxZwCXh8N2NB3GDQOL+YR3XnWyZAxwQixURb+FA74PA==}
     dev: true
 
   /levn@0.4.1:
