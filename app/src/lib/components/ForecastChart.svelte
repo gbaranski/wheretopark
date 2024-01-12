@@ -10,7 +10,7 @@
 		.map((n) => n.toString())
 		.map((n) => n.padStart(2, '0'));
 
-	export const chart: Action<HTMLElement, Forecast> = (node, forecast: Forecast) => {
+	const chart: Action<HTMLElement, Forecast> = (node, forecast: Forecast) => {
 		const generateDataset = (forecast: Forecast) => {
 			const hourlyPredictions = forecast.predictions.filter(({ date }) => date.getMinutes() == 0);
 			const values = getNumbersBetween(0, 24).map(
