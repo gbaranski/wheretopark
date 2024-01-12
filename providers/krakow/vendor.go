@@ -111,7 +111,7 @@ func (p Placemark) Metadata(totalSpots uint) wheretopark.Metadata {
 	metadata := wheretopark.Metadata{
 		LastUpdated: &defaultLastUpdated,
 		Name:        fmt.Sprintf("Parking nr. %d", p.Code),
-		Address:     p.Address,
+		Address:     fmt.Sprintf("%s, Kraków", p.Address),
 		Geometry:    geojson.NewPointGeometry([]float64{p.Coordinates.Longitude, p.Coordinates.Latitude}),
 		Resources: []string{
 			"https://zdmk.krakow.pl/parkowanie/strefa-platnego-parkowania/informacje-ogolne-i-oplaty/",
