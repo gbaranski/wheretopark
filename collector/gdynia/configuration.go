@@ -17,16 +17,20 @@ type Configuration struct {
 var configuration = Configuration{
 	ParkingLots: map[int]wheretopark.Metadata{
 		1: {
-			Rules: typeOneRules,
+			Address: "Zawiszy Czarnego 1, 81-374 Gdynia",
+			Rules:   typeOneRules,
 		},
 		2: {
-			Rules: typeOneRules,
+			Address: "Generała Józefa Bema 28, 81-314 Gdynia",
+			Rules:   typeOneRules,
 		},
 		3: {
-			Rules: typeOneRules,
+			Address: "al. Marszałka Piłsudskiego 52/54, 81-382 Gdynia",
+			Rules:   typeOneRules,
 		},
 		4: {
-			Rules: typeTwoRules,
+			Address: "Skwer Arki Gdynia, 81-378 Gdynia",
+			Rules:   typeTwoRules,
 		},
 	},
 }
