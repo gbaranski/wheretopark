@@ -25,6 +25,10 @@ func New() TimeSeries {
 	}
 }
 
+func (ts *TimeSeries) Contains(id wheretopark.ID) bool {
+	return ts.sequences[id] != nil
+}
+
 func (ts *TimeSeries) CountFor(id wheretopark.ID) uint {
 	return uint(len(ts.sequences[id]))
 }
