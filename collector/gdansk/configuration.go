@@ -15,6 +15,7 @@ type Configuration struct {
 var configuration = Configuration{
 	ParkingLots: map[string]wheretopark.Metadata{
 		"1": {
+			Address: "Aleja Grunwaldzka 141, 80-264 Gdańsk",
 			Resources: []string{
 				"mailto:galeria@galeriabaltycka.pl",
 				"tel:+48-58-521-85-52",
@@ -61,6 +62,7 @@ Escalators and high-speed lifts will take you from the car park decks to the Gal
 		},
 
 		"2": {
+			Address: "Aleja Grunwaldzka 82, 80-244 Gdańsk",
 			Resources: []string{
 				"mailto:biuro@gchmanhattan.pl",
 				"tel:+48-58-767-70-16",
@@ -112,6 +114,7 @@ Escalators and high-speed lifts will take you from the car park decks to the Gal
 		},
 
 		"3": {
+			Address: "Pokoleń Lechii Gdańsk 1, 80-560 Gdańsk",
 			Resources: []string{
 				"mailto:parkingi@apcoa.pl",
 				"tel:+48-22-354-83-80",
@@ -171,6 +174,7 @@ On the days of mass events, you can pay with the FLOW application. Prices depend
 		},
 
 		"4": {
+			Address: "Żaglowa 11, 80-560 Gdańsk",
 			Resources: []string{
 				"mailto:parkingi@apcoa.pl",
 				"tel:+48-22-354-83-80",
@@ -202,6 +206,7 @@ On the days of mass events, you can pay with the FLOW application. Prices depend
 		},
 
 		"5": {
+			Address: "Rajska 10, 80-850 Gdańsk",
 			Resources: []string{
 				"mailto:info@madison.gda.pl",
 				"tel:+48-58-766-75-39",
@@ -256,6 +261,7 @@ W niedziele i świeta wyjście z parkingu przez Centrum Medyczne Rajska`,
 		},
 
 		"7": {
+			Address: "Łąkowa 1-2, 80-743 Gdańsk",
 			Resources: []string{
 				"mailto:e.gazda@amuz.gda.pl",
 				"tel:+48-58-300-92-06",
@@ -286,6 +292,7 @@ Dla studentów i pracowników aMuz są dostępne specjalne abonamenty, więcej i
 		},
 
 		"14": {
+			Address: "pl. Solidarności 1, 80-863 Gdańsk",
 			Resources: []string{
 				"https://ecs.gda.pl/title,Parking_,pid,601.htm",
 				"tel:+48-58-772-40-00",
@@ -316,6 +323,7 @@ Dla studentów i pracowników aMuz są dostępne specjalne abonamenty, więcej i
 		},
 
 		"15": {
+			Address: "Jana Kilińskiego 4, 80-452 Gdańsk",
 			Resources: []string{
 				"mailto:bartlomiej.jablonski@carpark.com.pl",
 				"tel:+48-661-552-882",
@@ -351,6 +359,7 @@ Parking na poziomie 0 nie oferuje możliwości miejsc abonamentowych.
 		},
 
 		"17": {
+			Address: "Targ Sienny 7, 80-806 Gdańsk",
 			Resources: []string{
 				"mailto:parking@forumgdansk.pl",
 				"tel:+48-661-551-882",
@@ -400,6 +409,7 @@ W przypadku zgubienia biletu parkingowego kopię biletu można wydrukować w kas
 		},
 
 		"18": {
+			Address: "Jelitkowska 23, 80-342 Gdańsk",
 			Resources: []string{
 				"mailto:parkingi@apcoa.pl",
 				"tel:+48-22-354-83-80",
@@ -454,6 +464,7 @@ W tym przypadku podstawą będzie niebieska naklejka na szybie pojazdu z symbole
 		},
 
 		"19": {
+			Address: "Bałtycka 28, 80-341 Gdańsk",
 			Resources: []string{
 				"https://www.apcoa.pl/parking-w/gdansk-1/gdansk-ul-kapliczna/",
 				"https://gzdiz.gda.pl/aktualnosci/parkingi-nadmorskie-w-sezonie-letnim-2021,a,4773",
@@ -506,6 +517,7 @@ W tym przypadku podstawą będzie niebieska naklejka na szybie pojazdu z symbole
 			},
 		},
 		"20": {
+			Address: "Prezydenta Lecha Kaczyńskiego, 80-980 Gdańsk",
 			Resources: []string{
 				"https://gzdiz.gda.pl/aktualnosci/parkingi-nadmorskie-w-sezonie-letnim-2021,a,4773",
 			},
@@ -530,6 +542,7 @@ W tym przypadku podstawą będzie niebieska naklejka na szybie pojazdu z symbole
 			},
 		},
 		"21": {
+			Address: "Czarny Dwór 18/7, Gdańsk",
 			Resources: []string{
 				"https://gzdiz.gda.pl/aktualnosci/parkingi-nadmorskie-w-sezonie-letnim-2021,a,4773",
 			},

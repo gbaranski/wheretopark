@@ -49,7 +49,7 @@ func (s Source) ParkingLots(ctx context.Context) (<-chan map[wheretopark.ID]wher
 		metadata := wheretopark.Metadata{
 			LastUpdated:    configuration.LastUpdated,
 			Name:           vMetadata.Name,
-			Address:        vMetadata.Address,
+			Address:        configuration.Address,
 			Geometry:       geojson.NewPointGeometry([]float64{vMetadata.Location.Longitude, vMetadata.Location.Latitude}),
 			Resources:      configuration.Resources,
 			TotalSpots:     configuration.TotalSpots,
