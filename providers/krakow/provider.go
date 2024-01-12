@@ -4,17 +4,20 @@ import (
 	"context"
 	"time"
 	wheretopark "wheretopark/go"
+	"wheretopark/go/timeseries"
 )
 
 type Provider struct {
 	placemarks []Placemark
+	timeseries timeseries.TimeSeries
 }
 
 func (p Provider) ParkingLots(ctx context.Context) (<-chan map[wheretopark.ID]wheretopark.ParkingLot, error) {
 	parkingLots := make(map[wheretopark.ID]wheretopark.ParkingLot)
 	for _, placemark := range p.placemarks {
-		metadata := placemark.Metadata(0)
-		id := wheretopark.GeometryToID(metadata.Geometry)
+		id := placemark.ID()
+		totalSpots := p.timeseries.MaxOccupancyOf(id)
+		metadata := placemark.Metadata(totalSpots)
 		state := wheretopark.State{
 			LastUpdated: time.Now(),
 			AvailableSpots: map[string]uint{
@@ -32,8 +35,9 @@ func (p Provider) ParkingLots(ctx context.Context) (<-chan map[wheretopark.ID]wh
 	return ch, nil
 }
 
-func New(placemarks []Placemark) Provider {
+func New(placemarks []Placemark, timeseries timeseries.TimeSeries) Provider {
 	return Provider{
-		placemarks: placemarks,
+		placemarks,
+		timeseries,
 	}
 }
