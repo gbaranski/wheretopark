@@ -1,11 +1,9 @@
 package main
 
 import (
-	"fmt"
-	"path/filepath"
-	"strings"
 	wheretopark "wheretopark/go"
 	"wheretopark/go/providers"
+	"wheretopark/go/timeseries"
 	"wheretopark/providers/krakow"
 
 	"github.com/caarlos0/env/v10"
@@ -30,12 +28,30 @@ func main() {
 		log.Fatal().Err(err).Msg("error getting placemarks")
 	}
 
-	// this is probably just temporary, I have to filter out placemarks that are not in the timeseries data
-	// so that user doesn't get them displayed on the map
-	supportedPlacemarks := supportedPlacemarks(&environment, placemarks)
-	fmt.Printf("supported placemarks: %d\n", len(supportedPlacemarks))
+	timeseries := timeseries.New()
+	err = timeseries.LoadMultipleCSV(environment.TimeseriesData)
+	if err != nil {
+		log.Fatal().Err(err).Msg("error loading timeseries data")
+	}
 
-	provider := krakow.New(supportedPlacemarks)
+	// sort.Slice(placemarks, func(i, j int) bool {
+	// 	return placemarks[i].Code < placemarks[j].Code
+	// })
+	// for _, placemark := range placemarks {
+	// 	googleMapsURL := fmt.Sprintf("https://www.google.com/maps/place/%f,%f", placemark.Coordinates.Latitude, placemark.Coordinates.Longitude)
+	// 	fmt.Printf("%d: %s\n", placemark.Code, googleMapsURL)
+	// }
+	// return
+
+	supportedPlacemarks := make([]krakow.Placemark, 0, len(placemarks))
+	for _, placemark := range placemarks {
+		id := placemark.ID()
+		if timeseries.Contains(id) {
+			supportedPlacemarks = append(supportedPlacemarks, placemark)
+		}
+	}
+
+	provider := krakow.New(supportedPlacemarks, timeseries)
 
 	cache, err := providers.NewCache()
 	if err != nil {
@@ -49,30 +65,4 @@ func main() {
 	if err := server.Run(router, environment.Port); err != nil {
 		log.Fatal().Err(err).Msg("run server failure")
 	}
-}
-
-func supportedPlacemarks(environment *environment, placemarks []krakow.Placemark) []krakow.Placemark {
-	timeseriesFiles, err := wheretopark.ListFilesWithExtension(environment.TimeseriesData, "csv")
-	if err != nil {
-		log.Fatal().Err(err).Msg("error listing timeseries files")
-	}
-	supportedIDs := make(map[wheretopark.ID]struct{})
-	for _, path := range timeseriesFiles {
-		id := strings.TrimSuffix(filepath.Base(path), ".csv")
-		supportedIDs[id] = struct{}{}
-	}
-	for id := range supportedIDs {
-		fmt.Printf("supported placemark %s\n", id)
-	}
-
-	supportedPlacemarks := make([]krakow.Placemark, 0, len(placemarks))
-	for _, placemark := range placemarks {
-		id := placemark.ID()
-		if _, ok := supportedIDs[id]; !ok {
-			fmt.Printf("skipping placemark %s\n", id)
-			continue
-		}
-		supportedPlacemarks = append(supportedPlacemarks, placemark)
-	}
-	return supportedPlacemarks
 }
