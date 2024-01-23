@@ -22,16 +22,6 @@ async def forecast(parking_lot_id: str, start: datetime | None, end: datetime | 
     timeseries = pd.read_csv(string_io)
     dataset = timeseries.rename(columns={'date': 'ds', 'occupancy': 'y'})
     dataset['ds'] = pd.to_datetime(dataset['ds'])
-    print(dataset)
-    if parking_lot_id not in models:
-        model = ForecastingModel(
-            id=parking_lot_id,
-            dataset=dataset,
-            path=os.path.join(config.models_path, parking_lot_id + ".json")
-        )
-        models[parking_lot_id] = model
-
-    model = models[parking_lot_id]
 
     if start is None:
         start = datetime.now().replace(hour=10, minute=0, second=0, microsecond=0, tzinfo=None)
@@ -42,12 +32,36 @@ async def forecast(parking_lot_id: str, start: datetime | None, end: datetime | 
         end = datetime.now().replace(hour=20, minute=0, second=0, microsecond=0, tzinfo=None)
     else:
         end = end.replace(tzinfo=None)
-    
-    dates = pd.date_range(start=start, end=end, freq='15min')
-    predictions = model.predict(dates)
 
-    predictions = pd.DataFrame(predictions[['ds', 'yhat']])
-    predictions = predictions.rename(columns={'ds': 'date', 'yhat': 'occupancy'})
+    dataset = dataset[dataset['ds'].dt.weekday == start.weekday()]
+    dataset["hour"] = dataset["ds"].dt.hour
+    dataset["minute"] = dataset["ds"].dt.minute
+    groups = dataset.groupby(["hour", "minute"])
+    # groups = groups.drop(columns=['ds'])
+    medians = groups.mean(2).reset_index()
+    predictions = pd.predictions = pd.DataFrame({
+        'ds': pd.to_datetime(medians[["hour", "minute"]].assign(year=start.year, month=start.month, day=start.day)),
+        'y': medians['y']
+    })
+    print(predictions)
+
+
+    # if parking_lot_id not in models:
+    #     model = ForecastingModel(
+    #         id=parking_lot_id,
+    #         dataset=dataset,
+    #         path=os.path.join(config.models_path, parking_lot_id + ".json")
+    #     )
+    #     models[parking_lot_id] = model
+
+    # model = models[parking_lot_id]
+
+    
+    # dates = pd.date_range(start=start, end=end, freq='15min')
+    # predictions = model.predict(dates)
+
+    # predictions = pd.DataFrame(predictions[['ds', 'yhat']])
+    # predictions = predictions.rename(columns={'ds': 'date', 'yhat': 'occupancy'})
 
     stream = StringIO()
     predictions.to_csv(stream, index=False)

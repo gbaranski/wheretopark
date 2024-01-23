@@ -15,7 +15,7 @@ import (
 type environment struct {
 	Port           uint     `env:"PORT" envDefault:"8080"`
 	TimeseriesData string   `env:"TIMESERIES_DATA,expand" envDefault:"${HOME}/.local/share/wheretopark/timeseries"`
-	PycasterURL    *url.URL `env:"PYCASTER_URL,required"`
+	PycasterURL    *url.URL `env:"PYCASTER_URL" envDefault:"http://localhost:8000"`
 }
 
 func main() {
