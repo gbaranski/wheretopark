@@ -1,56 +1,4 @@
-version: "3.8"
 services:
-  traefik:
-    image: traefik:v2.10
-    command: 
-      - "--log.level=TRACE"
-      - "--api.insecure=true"
-      - "--providers.docker=true"
-      - "--providers.docker.exposedbydefault=false"
-      - "--entrypoints.web.address=:80"
-      - "--entrypoints.websecure.address=:443"
-      - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
-      - "--certificatesresolvers.myresolver.acme.email=contact@wheretopark.app"
-      - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
-    restart: unless-stopped
-    ports:
-      - "80:80"
-      - "443:443"
-      # The Web UI (enabled by --api.insecure=true)
-      - "8080:8080"
-    volumes:
-      # So that Traefik can listen to the Docker events
-      - "/var/run/docker.sock:/var/run/docker.sock"
-      - "$HOME/.local/share/wheretopark/letsencrypt:/letsencrypt"
-    healthcheck:
-      test: traefik healthcheck --ping
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.api.rule=Host(`traefik.wheretopark.app`)"
-
-
-  whoami:
-    image: "traefik/whoami"
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.whoami.rule=Host(`api.wheretopark.app`) && Path(`/whoami`)"
-      - "traefik.http.routers.whoami.entrypoints=websecure"
-      - "traefik.http.routers.whoami.tls.certresolver=myresolver"
-
-  dozzle:
-    image: amir20/dozzle:latest
-    restart: unless-stopped
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - ./dozzle/users.yml:/data/users.yml
-    environment:
-      DOZZLE_AUTH_PROVIDER: simple
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.dozzle.rule=Host(`dozzle.wheretopark.app`)"
-      - "traefik.http.routers.dozzle.entrypoints=websecure"
-      - "traefik.http.routers.dozzle.tls.certresolver=myresolver"
-
   config:
     image: nginx:alpine
     restart: unless-stopped
@@ -59,18 +7,17 @@ services:
     ports:
       - "9000:80"
     labels:
-      - "traefik.http.middlewares.config-redirect.replacepathregex.regex=/v1/providers"
-      - "traefik.http.middlewares.config-redirect.replacepathregex.replacement=/v1/config/providers"
-      - "traefik.http.middlewares.config-cors.headers.accesscontrolallowmethods=GET"
-      - "traefik.http.middlewares.config-cors.headers.accesscontrolalloworiginlist=*"
-      - "traefik.http.middlewares.config-strip.stripprefixregex.regex=^\\/[^\\/]+\\/[^\\/]+"
-      - "traefik.http.middlewares.config-content-type.headers.customresponseheaders.Content-Type=application/json"
+      - "traefik.http.middlewares.wheretopark-config-redirect.replacepathregex.regex=/v1/providers"
+      - "traefik.http.middlewares.wheretopark-config-redirect.replacepathregex.replacement=/v1/config/providers"
+      - "traefik.http.middlewares.wheretopark-config-cors.headers.accesscontrolallowmethods=GET"
+      - "traefik.http.middlewares.wheretopark-config-cors.headers.accesscontrolalloworiginlist=*"
+      - "traefik.http.middlewares.wheretopark-config-strip.stripprefixregex.regex=^\\/[^\\/]+\\/[^\\/]+"
+      - "traefik.http.middlewares.wheretopark-config-content-type.headers.customresponseheaders.Content-Type=application/json"
 
       - "traefik.enable=true"
-      - "traefik.http.routers.config.rule=Host(`api.wheretopark.app`) && (PathPrefix(`/v1/config`) || Path(`/v1/providers`))"
-      - "traefik.http.routers.config.entrypoints=websecure"
-      - "traefik.http.routers.config.tls.certresolver=myresolver"
-      - "traefik.http.routers.config.middlewares=config-redirect,config-cors,config-strip,config-content-type"
+      - "traefik.http.routers.wheretopark-config.rule=Host(`api.wheretopark.app`) && (PathPrefix(`/v1/config`) || Path(`/v1/providers`))"
+      - "traefik.http.routers.wheretopark-config.entrypoints=websecure"
+      - "traefik.http.routers.wheretopark-config.middlewares=wheretopark-config-redirect,wheretopark-config-cors,wheretopark-config-strip,wheretopark-config-content-type"
 
   influxer:
     restart: unless-stopped
@@ -98,15 +45,14 @@ services:
     ports:
       - "9001:8080"
     labels:
-      - "traefik.http.middlewares.cctv-cors.headers.accesscontrolallowmethods=GET"
-      - "traefik.http.middlewares.cctv-cors.headers.accesscontrolalloworiginlist=*"
-      - "traefik.http.middlewares.cctv-strip.stripprefix.prefixes=/v1/provider/cctv"
+      - "traefik.http.middlewares.wheretopark-cctv-cors.headers.accesscontrolallowmethods=GET"
+      - "traefik.http.middlewares.wheretopark-cctv-cors.headers.accesscontrolalloworiginlist=*"
+      - "traefik.http.middlewares.wheretopark-cctv-strip.stripprefix.prefixes=/v1/provider/cctv"
 
       - "traefik.enable=true"
-      - "traefik.http.routers.cctv.rule=Host(`api.wheretopark.app`) && PathPrefix(`/v1/provider/cctv`)"
-      - "traefik.http.routers.cctv.entrypoints=websecure"
-      - "traefik.http.routers.cctv.tls.certresolver=myresolver"
-      - "traefik.http.routers.cctv.middlewares=cctv-cors,cctv-strip"
+      - "traefik.http.routers.wheretopark-cctv.rule=Host(`api.wheretopark.app`) && PathPrefix(`/v1/provider/cctv`)"
+      - "traefik.http.routers.wheretopark-cctv.entrypoints=websecure"
+      - "traefik.http.routers.wheretopark-cctv.middlewares=wheretopark-cctv-cors,wheretopark-cctv-strip"
 
 
   gdansk:
@@ -120,15 +66,14 @@ services:
     ports:
       - "9002:8080"
     labels:
-      - "traefik.http.middlewares.gdansk-cors.headers.accesscontrolallowmethods=GET"
-      - "traefik.http.middlewares.gdansk-cors.headers.accesscontrolalloworiginlist=*"
-      - "traefik.http.middlewares.gdansk-strip.stripprefix.prefixes=/v1/provider/gdansk"
+      - "traefik.http.middlewares.wheretopark-gdansk-cors.headers.accesscontrolallowmethods=GET"
+      - "traefik.http.middlewares.wheretopark-gdansk-cors.headers.accesscontrolalloworiginlist=*"
+      - "traefik.http.middlewares.wheretopark-gdansk-strip.stripprefix.prefixes=/v1/provider/gdansk"
 
       - "traefik.enable=true"
-      - "traefik.http.routers.gdansk.rule=Host(`api.wheretopark.app`) && PathPrefix(`/v1/provider/gdansk`)"
-      - "traefik.http.routers.gdansk.entrypoints=websecure"
-      - "traefik.http.routers.gdansk.tls.certresolver=myresolver"
-      - "traefik.http.routers.gdansk.middlewares=gdansk-cors,gdansk-strip"
+      - "traefik.http.routers.wheretopark-gdansk.rule=Host(`api.wheretopark.app`) && PathPrefix(`/v1/provider/gdansk`)"
+      - "traefik.http.routers.wheretopark-gdansk.entrypoints=websecure"
+      - "traefik.http.routers.wheretopark-gdansk.middlewares=wheretopark-gdansk-cors,wheretopark-gdansk-strip"
 
   gdynia:
     restart: unless-stopped
@@ -141,15 +86,14 @@ services:
     ports:
       - "9003:8080"
     labels:
-      - "traefik.http.middlewares.gdynia-cors.headers.accesscontrolallowmethods=GET"
-      - "traefik.http.middlewares.gdynia-cors.headers.accesscontrolalloworiginlist=*"
-      - "traefik.http.middlewares.gdynia-strip.stripprefix.prefixes=/v1/provider/gdynia"
+      - "traefik.http.middlewares.wheretopark-gdynia-cors.headers.accesscontrolallowmethods=GET"
+      - "traefik.http.middlewares.wheretopark-gdynia-cors.headers.accesscontrolalloworiginlist=*"
+      - "traefik.http.middlewares.wheretopark-gdynia-strip.stripprefix.prefixes=/v1/provider/gdynia"
 
       - "traefik.enable=true"
-      - "traefik.http.routers.gdynia.rule=Host(`api.wheretopark.app`) && PathPrefix(`/v1/provider/gdynia`)"
-      - "traefik.http.routers.gdynia.entrypoints=websecure"
-      - "traefik.http.routers.gdynia.tls.certresolver=myresolver"
-      - "traefik.http.routers.gdynia.middlewares=gdynia-cors,gdynia-strip"
+      - "traefik.http.routers.wheretopark-gdynia.rule=Host(`api.wheretopark.app`) && PathPrefix(`/v1/provider/gdynia`)"
+      - "traefik.http.routers.wheretopark-gdynia.entrypoints=websecure"
+      - "traefik.http.routers.wheretopark-gdynia.middlewares=wheretopark-gdynia-cors,wheretopark-gdynia-strip"
 
   glasgow:
     restart: unless-stopped
@@ -162,15 +106,14 @@ services:
     ports:
       - "9004:8080"
     labels:
-      - "traefik.http.middlewares.glasgow-cors.headers.accesscontrolallowmethods=GET"
-      - "traefik.http.middlewares.glasgow-cors.headers.accesscontrolalloworiginlist=*"
-      - "traefik.http.middlewares.glasgow-strip.stripprefix.prefixes=/v1/provider/glasgow"
+      - "traefik.http.middlewares.wheretopark-glasgow-cors.headers.accesscontrolallowmethods=GET"
+      - "traefik.http.middlewares.wheretopark-glasgow-cors.headers.accesscontrolalloworiginlist=*"
+      - "traefik.http.middlewares.wheretopark-glasgow-strip.stripprefix.prefixes=/v1/provider/glasgow"
 
       - "traefik.enable=true"
-      - "traefik.http.routers.glasgow.rule=Host(`api.wheretopark.app`) && PathPrefix(`/v1/provider/glasgow`)"
-      - "traefik.http.routers.glasgow.entrypoints=websecure"
-      - "traefik.http.routers.glasgow.tls.certresolver=myresolver"
-      - "traefik.http.routers.glasgow.middlewares=glasgow-cors,glasgow-strip"
+      - "traefik.http.routers.wheretopark-glasgow.rule=Host(`api.wheretopark.app`) && PathPrefix(`/v1/provider/glasgow`)"
+      - "traefik.http.routers.wheretopark-glasgow.entrypoints=websecure"
+      - "traefik.http.routers.wheretopark-glasgow.middlewares=wheretopark-glasgow-cors,wheretopark-glasgow-strip"
 
   lacity:
     restart: unless-stopped
@@ -183,15 +126,14 @@ services:
     ports:
       - "9005:8080"
     labels:
-      - "traefik.http.middlewares.lacity-cors.headers.accesscontrolallowmethods=GET"
-      - "traefik.http.middlewares.lacity-cors.headers.accesscontrolalloworiginlist=*"
-      - "traefik.http.middlewares.lacity-strip.stripprefix.prefixes=/v1/provider/lacity"
+      - "traefik.http.middlewares.wheretopark-lacity-cors.headers.accesscontrolallowmethods=GET"
+      - "traefik.http.middlewares.wheretopark-lacity-cors.headers.accesscontrolalloworiginlist=*"
+      - "traefik.http.middlewares.wheretopark-lacity-strip.stripprefix.prefixes=/v1/provider/lacity"
 
       - "traefik.enable=true"
-      - "traefik.http.routers.lacity.rule=Host(`api.wheretopark.app`) && PathPrefix(`/v1/provider/lacity`)"
-      - "traefik.http.routers.lacity.entrypoints=websecure"
-      - "traefik.http.routers.lacity.tls.certresolver=myresolver"
-      - "traefik.http.routers.lacity.middlewares=lacity-cors,lacity-strip"
+      - "traefik.http.routers.wheretopark-lacity.rule=Host(`api.wheretopark.app`) && PathPrefix(`/v1/provider/lacity`)"
+      - "traefik.http.routers.wheretopark-lacity.entrypoints=websecure"
+      - "traefik.http.routers.wheretopark-lacity.middlewares=wheretopark-lacity-cors,wheretopark-lacity-strip"
 
   poznan:
     restart: unless-stopped
@@ -204,15 +146,14 @@ services:
     ports:
       - "9006:8080"
     labels:
-      - "traefik.http.middlewares.poznan-cors.headers.accesscontrolallowmethods=GET"
-      - "traefik.http.middlewares.poznan-cors.headers.accesscontrolalloworiginlist=*"
-      - "traefik.http.middlewares.poznan-strip.stripprefix.prefixes=/v1/provider/poznan"
+      - "traefik.http.middlewares.wheretopark-poznan-cors.headers.accesscontrolallowmethods=GET"
+      - "traefik.http.middlewares.wheretopark-poznan-cors.headers.accesscontrolalloworiginlist=*"
+      - "traefik.http.middlewares.wheretopark-poznan-strip.stripprefix.prefixes=/v1/provider/poznan"
 
       - "traefik.enable=true"
-      - "traefik.http.routers.poznan.rule=Host(`api.wheretopark.app`) && PathPrefix(`/v1/provider/poznan`)"
-      - "traefik.http.routers.poznan.entrypoints=websecure"
-      - "traefik.http.routers.poznan.tls.certresolver=myresolver"
-      - "traefik.http.routers.poznan.middlewares=poznan-cors,poznan-strip"
+      - "traefik.http.routers.wheretopark-poznan.rule=Host(`api.wheretopark.app`) && PathPrefix(`/v1/provider/poznan`)"
+      - "traefik.http.routers.wheretopark-poznan.entrypoints=websecure"
+      - "traefik.http.routers.wheretopark-poznan.middlewares=wheretopark-poznan-cors,wheretopark-poznan-strip"
 
 
   warsaw:
@@ -226,12 +167,16 @@ services:
     ports:
       - "9007:8080"
     labels:
-      - "traefik.http.middlewares.warsaw-cors.headers.accesscontrolallowmethods=GET"
-      - "traefik.http.middlewares.warsaw-cors.headers.accesscontrolalloworiginlist=*"
-      - "traefik.http.middlewares.warsaw-strip.stripprefix.prefixes=/v1/provider/warsaw"
+      - "traefik.http.middlewares.wheretopark-warsaw-cors.headers.accesscontrolallowmethods=GET"
+      - "traefik.http.middlewares.wheretopark-warsaw-cors.headers.accesscontrolalloworiginlist=*"
+      - "traefik.http.middlewares.wheretopark-warsaw-strip.stripprefix.prefixes=/v1/provider/warsaw"
 
       - "traefik.enable=true"
-      - "traefik.http.routers.warsaw.rule=Host(`api.wheretopark.app`) && PathPrefix(`/v1/provider/warsaw`)"
-      - "traefik.http.routers.warsaw.entrypoints=websecure"
-      - "traefik.http.routers.warsaw.tls.certresolver=myresolver"
-      - "traefik.http.routers.warsaw.middlewares=warsaw-cors,warsaw-strip"
+      - "traefik.http.routers.wheretopark-warsaw.rule=Host(`api.wheretopark.app`) && PathPrefix(`/v1/provider/warsaw`)"
+      - "traefik.http.routers.wheretopark-warsaw.entrypoints=websecure"
+      - "traefik.http.routers.wheretopark-warsaw.middlewares=wheretopark-warsaw-cors,wheretopark-warsaw-strip"
+
+networks:
+  default:
+    name: public
+    external: true
