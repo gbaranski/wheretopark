@@ -42,7 +42,7 @@ That's how it works:
   <img src="./docs/parking-lubin-lesna-wyszynskieg.jpeg" width="512" /> 
 </p>
 
-I connected cameras from cities such as:
+Cities that have cameras connected to wheretopark.app:
 - Gdańsk, Poland.
 - Kłodzko, Poland.
 - Lubin, Poland. 
@@ -51,7 +51,7 @@ I connected cameras from cities such as:
 
 A lot of cities in the world expose their existing parking lot systems to the public, parking meters, sensors, and gates with counters - in wheretopark.app we fetch these data sources, transform, and make available to Where To Park users.
 
-Cities that we currently support are:
+Cities that have their APIs connected to wheretopark.app:
 - Gdańsk, Poland.
 - Gdynia, Poland.
 - Sopot, Poland.
@@ -75,7 +75,6 @@ This approach results not only in less API requests when many users decide to us
 I had big plans with the app, winning many awards and speaking with the press. However the biggest struggle was to actually communicate with the cities, to get the camera access.
 After almost 2 years, tens or hundreds of calls and emails I eventually gave up, leaving the project as-is, in a state where it's completely usable, probably even for commercial use.
 
-I wrote [a blog post](https://gbaranski.com/wheretopark/) where I explain more on what happened.
-
+**I wrote [a blog post](https://gbaranski.com/wheretopark/)** where I explain more on what happened.
 
 **If you're interested in this project**, and you think you could possibly make it work somewhere. Reach out to me at [me@gbaranski.com](mailto:me@gbaranski.com), or through one of the ways [listed here](https://gbaranski.com/contact/). 
