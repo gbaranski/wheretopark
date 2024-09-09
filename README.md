@@ -20,7 +20,7 @@ iOS was initially developed with Swift and SwiftUI, right now it works similarly
 iOS app can be installed from [App Store](https://apps.apple.com/us/app/where-to-park/id6444453582).
 Android app can be installed from [Google Play](https://play.google.com/store/apps/details?id=com.gbaranski.wheretopark&utm_source=wheretopark.app).
 
-![iphone screenshot](./docs/iphone.webp)
+<img src="./docs/iphone.webp" height="512"/>
 
 
 ## Sources of real-time parking lot data 
@@ -36,9 +36,10 @@ Initial goal was to use CCTV cameras on all of parking lots, later I've discover
 However the AI model was already developed and working on a few parking lots.
 
 That's how it works:
+
 <p float="left">
-  <img src="/docs/parking-basen-klodzko.jpg" width="100" />
-  <img src="/docs/parking-lubin-lesna-wyszynskieg.jpeg" width="100" /> 
+  <img src="./docs/parking-basen-klodzko.jpg" width="512" />
+  <img src="./docs/parking-lubin-lesna-wyszynskieg.jpeg" width="512" /> 
 </p>
 
 I connected cameras from cities such as:
